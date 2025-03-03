@@ -5,7 +5,7 @@ title: OWASP HACTU8
 tags: example-tag
 level: 2
 type: code
-pitch: A very brief, one-line description of your project
+pitch: “Preparing for SkyNet” – OWASP hactu8 is an active security testing platform for robotics, IoT, and consumer electronics, integrating LLM-powered automation with OWASP security frameworks to empower ethical hackers and security professionals.
 
 ---
 
