@@ -1,4 +1,4 @@
-# HACTU8 REDMEN
+# HACTU8 README
 
 ## Overview
 This repository is part of the **HACTU8 Project**, focused on ethical hacking, AI security research, IoT security, and developing a structured security testing platform.
