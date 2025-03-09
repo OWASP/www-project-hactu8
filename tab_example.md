@@ -3,7 +3,7 @@ title: Example
 layout:  col-sidebar
 tab: true
 order: 2
-tags: example-tag
+tags: hactu8-tag
 ---
 
 ## Example
