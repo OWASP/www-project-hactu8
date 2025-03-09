@@ -1,4 +1,4 @@
-# HACTU8 Repository
+# HACTU8 REDMEN
 
 ## Overview
 This repository is part of the **HACTU8 Project**, focused on ethical hacking, AI security research, IoT security, and developing a structured security testing platform.
@@ -8,6 +8,20 @@ This repository is part of the **HACTU8 Project**, focused on ethical hacking, A
 - Develop PoC attacks and mitigation strategies.
 - Design a security testing platform for security researchers.
 - Follow a structured workflow to ensure reproducibility and collaboration.
+
+---
+
+## 📂 Repository Structure
+
+| Folder | Purpose |
+|---------------|---------|
+| **`/docs`** | Contains all project documentation, including research findings, methodologies, and references. |
+| **`/src`** | Holds source code for experiments, proof-of-concepts, and scripts. |
+| **`/notebooks`** | Jupyter notebooks for interactive analyses, LLM attack simulations, and defense testing. |
+| **`/tests`** | Contains automated test scripts and validation tools to ensure research reproducibility. |
+| **`/config`** | Configuration files for setting up environments, dependencies, and tools. |
+| **`/platform`** | Placeholder for eventual platform code (e.g., a security testing dashboard or automation tools). |
+| **`/spikes`** | Short-lived exploratory research that might not be committed to `/src`. |
 
 ---
 
@@ -90,5 +104,3 @@ git push -u origin feature/llm-vuln-analysis
 | Open a PR  | Do it from GitHub |
 | Merge PR into `dev`  | Done by a reviewer |
 | Delete merged branch  | `git branch -d feature/your-feature` |
-
-
