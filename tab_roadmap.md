@@ -14,8 +14,8 @@ This roadmap outlines the development plan for the OWASP HACTU8 reference platfo
 
 ## Project Phases
 
-| Phase | Name                        | Objective |
-|-------|-----------------------------|-----------|
+|   Phase   | Name                        | Objective |
+|-----------|-----------------------------|-----------|
 | **1** | Foundation and Integration  | Establish a running UI, test orchestration, extension architecture, and registry/discovery foundation |
 | **2** | Platform Development        | Expand into a fully functional MVP with integrated models, test automation, and extension marketplace |
 | **3** | Community Engagement        | Promote contribution, support external tools, and build adoption with documentation and collaboration models |
