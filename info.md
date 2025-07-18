@@ -1,4 +1,4 @@
-### HACTU8 Information
+<!--- ### HACTU8 Information
 * [Incubator Project](#)
 * [Type of Project](#)
 * [Version 0.0.0](#)
@@ -7,11 +7,11 @@
 
 ### Downloads or Social Links
 * [Download](#)
-* [Meetup](#)
+* [Meetup](#) -->
 
 ### Code Repository
-* [repo](#)
+* [repo](https://github.com/OWASP/www-project-hactu8/tree/reference-solution)
 
-### Change Log
-* [changes](#)
+<!--- ### Change Log
+* [changes](#) -->
 
