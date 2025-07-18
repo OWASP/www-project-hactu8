@@ -9,7 +9,7 @@ pitch: “Preparing for SkyNet” – OWASP hactu8 is an active security testing
 
 ---
 
-“Preparing for SkyNet”
+## Preparing for SkyNet: Tools for responsbile AI
 
 OWASP hactu8 builds on OWASP’s foundational IoT and LLM security projects to create an active security testing platform for robotics, IoT, and consumer electronics. It leverages existing resources like the OWASP IoT Top 10, OWASP IoT Security Testing Guide, and OWASP LLM projects to provide practical, hands-on tools for ethical hackers and security professionals.
 
