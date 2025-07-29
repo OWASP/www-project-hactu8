@@ -1,0 +1,49 @@
+{
+  "version": "0.2.0",
+  "compounds": [
+    {
+      "name": "Run iac-mfe-primary then iac-host",
+      "configurations": ["iac-mfe-primary:serve-dist", "iac-host"]
+    }
+  ],
+  "configurations": [
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "iac-host",
+      "cwd": "${workspaceFolder}/iac-host",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev"],
+      "env": {
+        "VITE_CORS_ORIGIN": "http://localhost:3001",
+        "VITE_PORT": "3000"
+      },
+      "console": "integratedTerminal"
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "iac-mfe-primary:serve-dist",
+      "cwd": "${workspaceFolder}/iac-mfe-primary",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "serve:dist"],
+      "env": {
+        "VITE_PORT": "3001"
+      },
+      "console": "integratedTerminal"
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "iac-mfe-primary",
+      "cwd": "${workspaceFolder}/iac-mfe-primary",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev"],
+      "env": {
+        "VITE_CORS_ORIGIN": "http://localhost:3000",
+        "VITE_PORT": "3001"
+      },
+      "console": "integratedTerminal"
+    }
+  ]
+}

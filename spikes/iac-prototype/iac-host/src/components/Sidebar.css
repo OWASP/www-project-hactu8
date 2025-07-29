@@ -1,0 +1,36 @@
+.sidebar {
+  width: 220px;
+  /* background: #1e1e2f; */
+  color: white;
+  padding: 1rem;
+  margin-right: 2rem;
+  height: 100vh;
+}
+
+.sidebar h2 {
+  font-size: 1.4rem;
+  margin-bottom: 1rem;
+}
+
+.sidebar ul {
+  list-style: none;
+  padding: 0;
+}
+
+.sidebar li {
+  margin-bottom: 1rem;
+}
+
+.sidebar li:last-child {
+  margin-bottom: 4rem;
+}
+
+.sidebar li.active a {
+  font-weight: bold;
+  color: #00c2ff;
+}
+
+.sidebar a {
+  color: white;
+  text-decoration: none;
+}
