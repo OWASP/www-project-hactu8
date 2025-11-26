@@ -1,4 +1,5 @@
 # HACTU8 README
+Intelligence Assurance Center
 
 ## Overview
 This repository is part of the **HACTU8 Project**, focused on ethical hacking, AI security research, IoT security, and developing a structured security testing platform.
@@ -7,6 +8,7 @@ This repository is part of the **HACTU8 Project**, focused on ethical hacking, A
 - Research vulnerabilities in AI, LLMs, IoT, and cloud security.
 - Develop PoC attacks and mitigation strategies.
 - Design a security testing platform for security researchers.
+- Integrate observability and assurance capabilities.
 - Follow a structured workflow to ensure reproducibility and collaboration.
 
 ---
