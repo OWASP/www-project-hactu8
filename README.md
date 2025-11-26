@@ -4,6 +4,18 @@ Intelligence Assurance Center
 ## Overview
 This repository is part of the **HACTU8 Project**, focused on ethical hacking, AI security research, IoT security, and developing a structured security testing platform.
 
+## Ideation
+UX for envisioning the HACTU8 toolkit
+
+### Dashboard
+![image](https://github.com/user-attachments/assets/5e59db22-b170-418e-8f18-238aa3ea7e10)
+
+### Registry
+![image](https://github.com/user-attachments/assets/69b6b7ab-4bdb-4e08-bde9-1ed2113d0057)
+
+### Console
+![image](https://github.com/user-attachments/assets/90f4c31b-c3f7-49f7-8a47-a6638580614c)
+
 ## Project Goals
 - Research vulnerabilities in AI, LLMs, IoT, and cloud security.
 - Develop PoC attacks and mitigation strategies.
