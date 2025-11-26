@@ -1,0 +1,27 @@
+audience:
+  - breaker
+  - builder
+community:
+  - name: project-hactu8
+    platform: slack
+    url: https://owasp.slack.com/archives/C089LHH96UX
+    description: "“Preparing for SkyNet”\n\nOWASP hactu8 builds on OWASP’s foundational IoT and LLM security projects to create an active security testing\
+      \ platform for robotics, IoT, and consumer electronics."
+leaders:
+  - name: Mark Roxberry
+    email: mark.roxberry@owasp.org
+    github: owasprox
+level: 2
+name: OWASP HACTU8
+pitch: “Preparing for SkyNet” – OWASP hactu8 is an active security testing platform for robotics, IoT, and consumer electronics, integrating LLM-powered
+  automation with OWASP security frameworks to empower ethical hackers and security professionals.
+repositories:
+  - name: www-project-hactu8
+    url: https://github.com/OWASP/www-project-hactu8
+    description: OWASP Foundation web repository
+tags:
+  - hactu8-tag
+  - custom-tag-1
+  - custom-tag-2
+type: code
+website: https://owasp.org/www-project-hactu8
