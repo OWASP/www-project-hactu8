@@ -2,5 +2,4 @@
 * [Mark Roxberry](mailto:mark.roxberry@owasp.org)
 
 ### Team
-* [Keith Rambo](mailto:krambo@delvalcyber.com)
-
+- Looking for any one interested in creating a platform for building and breaking.
