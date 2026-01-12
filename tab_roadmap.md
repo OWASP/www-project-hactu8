@@ -6,7 +6,7 @@ order: 1
 tags: hactu8-tag
 ---
 
-## Roadmap (As Of July 2025)
+## Roadmap (As Of January 2026)
 
 This roadmap outlines the development plan for the OWASP HACTU8 reference platform. Phase 1 focuses on building a foundational system to support AI assurance testing through UI scaffolding, test agent integration, registry design, and a lightweight scanner.
 
