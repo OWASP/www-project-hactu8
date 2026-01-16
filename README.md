@@ -31,6 +31,7 @@ It is an OWASP Incubator project. See: [https://owasp.org/www-project-hactu8/](h
 
 ---
 
+<!-- TODO: rewrite 
 ## 🔧 Interface Contracts (Examples, tbd)
 
 ### Model Provider Interface
@@ -111,6 +112,7 @@ We welcome contributions to:
 Use pull requests with spec updates and test cases.
 
 ---
+-->
 
 ## 🛡️ License
 
