@@ -1,5 +1,6 @@
 # HACTU8 Reference Application
 
+<!-- TODO: create a working readme.md to document, setup, run and debug the reference solution -->
 This repository contains the core specifications, architecture, and starter code for the HACTU8 reference application—a modular platform for secure AI and LLM system testing, scanning, and assurance.
 
 ---
@@ -7,7 +8,7 @@ This repository contains the core specifications, architecture, and starter code
 ## 📦 Project Structure
 
 ```text
-reference/
+reference-solution/
 ├── platform/       # UI, prompt workbench, registry browser, notification center
 ├── engine/         # Orchestration engine, agent scheduler, job runner
 ├── services/       # Identity, registry, plugin runtime, providers
@@ -30,7 +31,7 @@ It is an OWASP Incubator project. See: [https://owasp.org/www-project-hactu8/](h
 
 ---
 
-## 🔧 Interface Contracts
+## 🔧 Interface Contracts (Examples, tbd)
 
 ### Model Provider Interface
 
@@ -81,7 +82,7 @@ $ make init  # Or use scripts/setup.sh
 
 ## 🛠 Recommended Tools
 
-- Python 3.12
+- Python 3.13
 - FastAPI or NodeJS for services
 - React/SvelteKit for platform
 - Redis/PostgreSQL/TimescaleDB for storage
