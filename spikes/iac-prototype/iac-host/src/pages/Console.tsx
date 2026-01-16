@@ -4,16 +4,15 @@ const StreamlitConsole = React.lazy(() => import('iac_mfe_primary/StreamlitConso
 
 
 const Console = () => (
-  <div style={{ background: '#111' }} className="flex flex-col min-h-screen w-full h-full">
-    <header className="p-4 bg-white shadow">
+  <div className="flex flex-col min-h-screen w-full h-full">
+    <header className="p-4 bg-white shadow z-10">
       <h2>IAC Console</h2>
     </header>
-    <main className="flex-1 h-full overflow-hidden flex justify-center items-start">
-      <div style={{ background: '#111' }}>
-        <Suspense fallback={<div style={{ background: '#111', minHeight: 400 }}>Loading Streamlit Console ...</div>}>
-          <StreamlitConsole />
-        </Suspense>
-      </div>
+
+    <main className="flex-1 relative overflow-hidden">
+      <Suspense fallback={<div className="p-4">Loading Console...</div>}>
+        <StreamlitConsole />
+      </Suspense>
     </main>
   </div>
 );

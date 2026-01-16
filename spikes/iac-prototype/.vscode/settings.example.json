@@ -1,0 +1,11 @@
+{
+  "terminal.integrated.env.osx": {
+    "NPM_PATH": "npm"
+  },
+  "terminal.integrated.env.linux": {
+    "NPM_PATH": "npm"
+  },
+  "terminal.integrated.env.windows": {
+    "NPM_PATH": "npm.cmd"
+  }
+}

@@ -1,21 +1,23 @@
 // src/components/IntelligentConsole.tsx
 import React from 'react';
+import SmartFrame from './SmartFrame';
 
-const url = "http://localhost:8501?embed=true"; // Replace with your Streamlit app's URL
+const url = "http://localhost:8511?embed=true"; // Replace with your Streamlit app's URL
 
 const StreamlitDashboard: React.FC = () => {
-    return (
-        <div style={{ width: '100%', height: '100%', minHeight: 0, minWidth: 0, display: 'flex', flex: 1 }}>
-            <iframe
-                src={url}
-                className="w-full h-full flex-1"
-                allow="fullscreen"
-                style={{ minHeight: '750px', minWidth: '750px', flex: 1, border: 'none' }}
-                loading="lazy"
-                title="IAC Dashboard"
-            />
-        </div>
-    );
+  return (
+    <div
+      style={{
+        position: 'absolute', // key
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+      }}
+    >
+      <SmartFrame src={url} />
+    </div>
+  );
 };
 
 export default StreamlitDashboard;

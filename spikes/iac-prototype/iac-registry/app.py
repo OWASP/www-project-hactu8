@@ -280,7 +280,7 @@ def create_network_visualization(nodes: List, edges: List, selected_node_id: Opt
     
     fig.update_layout(
         title=dict(
-            text="Enterprise Registry Network Visualization",
+            text="Enterprise Registry Visualization",
             font=dict(size=16)
         ),
         showlegend=True,
@@ -304,7 +304,7 @@ def create_network_visualization(nodes: List, edges: List, selected_node_id: Opt
 
 def display_registry_list(registry_data: Dict, selected_category: Optional[str] = None):
     """Display the registry list in the sidebar"""
-    st.markdown('<div class="main-header"><h2>🏢 Enterprise Registry</h2></div>', unsafe_allow_html=True)
+    # st.markdown('<div class="main-header"><h2>🏢 Enterprise Registry</h2></div>', unsafe_allow_html=True)
     
     # Summary metrics
     total_items = sum(len(items) for items in registry_data.values())
@@ -364,7 +364,7 @@ def main():
                 st.session_state.selected_item_info = matching_node
     
     with col2:
-        st.markdown("### 🌐 Network Visualization")
+        # st.markdown("### 🌐 Registry Visualization")
         
         # Create and display the visualization
         fig = create_network_visualization(nodes, edges, st.session_state.selected_node_id)

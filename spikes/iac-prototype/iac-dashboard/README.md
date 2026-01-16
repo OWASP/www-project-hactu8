@@ -59,7 +59,7 @@ streamlit run app.py
 
 ## Usage
 
-The dashboard will be available at `http://localhost:8501`
+The dashboard will be available at `http://localhost:8511`
 
 ### Navigation
 Use the sidebar to navigate between different views:

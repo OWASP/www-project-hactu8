@@ -31,7 +31,7 @@ pip install -r requirements.txt
 streamlit run app.py
 ```
 
-2. Open your browser to the URL shown in the terminal (typically http://localhost:8501)
+2. Open your browser to the URL shown in the terminal (typically http://localhost:8511)
 
 ## Usage
 

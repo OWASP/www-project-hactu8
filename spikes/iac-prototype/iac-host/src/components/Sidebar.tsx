@@ -24,62 +24,23 @@ const icons = {
   ),
 };
 
-const navGroups = [
-  {
-    heading: '',
-    items: [
-      { path: '/', label: 'Dashboard', icon: icons.dashboard },
-      { path: '/registry', label: 'Registry', icon: icons.registry },
-      { path: '/console', label: 'Console', icon: icons.console },
-    ],
-  },
-  {
-    heading: 'Monitoring',
-    items: [
-      { path: '/logs', label: 'Logs', icon: icons.logs },
-      { path: '/events', label: 'Events', icon: icons.events },
-    ],
-  },
-  {
-    heading: 'Testing',
-    items: [
-      { path: '/prompt-injection', label: 'Prompt Injection Tester', icon: icons.assurance },
-      { path: '/training-leak', label: 'Training Data Leak Detector', icon: icons.assurance },
-      { path: '/misbehavior-monitor', label: 'Model Misbehavior Monitor', icon: icons.assurance },
-      { path: '/overreliance-risk', label: 'Overreliance Risk Analyzer', icon: icons.assurance },
-      { path: '/agency-validator', label: 'Excessive Agency Validator', icon: icons.assurance },
-      { path: '/insecure-output', label: 'Insecure Output Filter', icon: icons.assurance },
-      { path: '/supply-chain', label: 'Supply Chain Trust Checker', icon: icons.assurance },
-      { path: '/model-identity', label: 'Model Identity & Version Tracker', icon: icons.assurance },
-      { path: '/auth-context-audit', label: 'Authorization & Context Audit', icon: icons.assurance },
-      { path: '/privacy-compliance', label: 'Model Privacy Compliance Scanner', icon: icons.assurance },
-    ],
-  },
-  {
-    heading: 'Reporting',
-    items: [
-      { path: '/assurance', label: 'Assurance Results', icon: icons.assurance },
-      { path: '/reports', label: 'Reports', icon: icons.reports },
-    ],
-  },
-  {
-    heading: 'Other',
-    items: [
-      { path: '/workbench', label: 'Workbench', icon: icons.workbench },
-      { path: '/agents', label: 'Agents', icon: icons.agents },
-      { path: '/users', label: 'Users & Access', icon: icons.users },
-    ],
-  },
-    {
-    heading: 'User',
-    items: [
-      { path: '/extensions', label: 'Extensions', icon: icons.extensions },
-      { path: '/profile', label: 'Profile', icon: icons.profile },
-      { path: '/settings', label: 'Settings', icon: icons.settings },
-    ],
-  },
-];
 
+// Sidebar now loads Projects group dynamically after Monitoring
+
+function useMockProjects() {
+  const [projects, setProjects] = React.useState<any[]>([]);
+  React.useEffect(() => {
+    // Simulate API call
+    setTimeout(() => {
+      setProjects([
+        { id: 'proj-1', name: 'Red Team Demo', path: '/projects/red-team' },
+        { id: 'proj-2', name: 'Blue Team Demo', path: '/projects/blue-team' },
+        { id: 'proj-3', name: 'Purple Team Demo', path: '/projects/purple-team' },
+      ]);
+    }, 600);
+  }, []);
+  return projects;
+}
 
 const Sidebar = () => {
   const location = useLocation();
@@ -89,9 +50,99 @@ const Sidebar = () => {
   const [expandedGroups, setExpandedGroups] = useState<Record<number, boolean>>(() => {
     // By default, all groups are expanded
     const state: Record<number, boolean> = {};
-    navGroups.forEach((_, i) => { state[i] = true; });
+    // We'll set the right number of groups below
     return state;
   });
+
+  const projects = useMockProjects();
+
+  // Compose navGroups with Projects injected after Monitoring
+  const baseGroups = [
+    {
+      heading: '',
+      items: [
+        { path: '/', label: 'Dashboard', icon: icons.dashboard },
+        { path: '/registry', label: 'Registry', icon: icons.registry },
+        { path: '/console', label: 'Console', icon: icons.console },
+      ],
+    },
+    {
+      heading: 'Monitoring',
+      items: [
+        { path: '/logs', label: 'Logs', icon: icons.logs },
+        { path: '/events', label: 'Events', icon: icons.events },
+      ],
+    },
+  ];
+
+  const projectsGroup = projects.length > 0 ? {
+    heading: 'Projects',
+    items: projects.map((proj) => ({
+      path: proj.path,
+      label: proj.name,
+      icon: icons.workbench, // Or a custom icon
+    })),
+  } : null;
+
+  const restGroups = [
+    {
+      heading: 'Testing',
+      items: [
+        { path: '/prompt-injection', label: 'Prompt Injection Tester', icon: icons.assurance },
+        { path: '/training-leak', label: 'Training Data Leak Detector', icon: icons.assurance },
+        { path: '/misbehavior-monitor', label: 'Model Misbehavior Monitor', icon: icons.assurance },
+        { path: '/overreliance-risk', label: 'Overreliance Risk Analyzer', icon: icons.assurance },
+        { path: '/agency-validator', label: 'Excessive Agency Validator', icon: icons.assurance },
+        { path: '/insecure-output', label: 'Insecure Output Filter', icon: icons.assurance },
+        { path: '/supply-chain', label: 'Supply Chain Trust Checker', icon: icons.assurance },
+        { path: '/model-identity', label: 'Model Identity & Version Tracker', icon: icons.assurance },
+        { path: '/auth-context-audit', label: 'Authorization & Context Audit', icon: icons.assurance },
+        { path: '/privacy-compliance', label: 'Model Privacy Compliance Scanner', icon: icons.assurance },
+      ],
+    },
+    {
+      heading: 'Reporting',
+      items: [
+        { path: '/assurance', label: 'Assurance Results', icon: icons.assurance },
+        { path: '/reports', label: 'Reports', icon: icons.reports },
+      ],
+    },
+    {
+      heading: 'Other',
+      items: [
+        { path: '/workbench', label: 'Workbench', icon: icons.workbench },
+        { path: '/agents', label: 'Agents', icon: icons.agents },
+        { path: '/users', label: 'Users & Access', icon: icons.users },
+      ],
+    },
+    {
+      heading: 'User',
+      items: [
+        { path: '/extensions', label: 'Extensions', icon: icons.extensions },
+        { path: '/profile', label: 'Profile', icon: icons.profile },
+        { path: '/settings', label: 'Settings', icon: icons.settings },
+      ],
+    },
+  ];
+
+  // Inject Projects group after Monitoring
+  let navGroups = [...baseGroups];
+  if (projectsGroup) navGroups.push(projectsGroup);
+  navGroups = [...navGroups, ...restGroups];
+
+  // Ensure expandedGroups state matches navGroups length
+  React.useEffect(() => {
+    setExpandedGroups(prev => {
+      const next: Record<number, boolean> = { ...prev };
+      navGroups.forEach((_, i) => {
+        if (!(i in next)) next[i] = true;
+      });
+      // Remove any extra keys (convert k to number)
+      Object.keys(next).forEach(k => { if (parseInt(k, 10) >= navGroups.length) delete next[parseInt(k, 10)]; });
+      return next;
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [navGroups.length]);
 
   const handleToggle = () => {
     setSidebarState(prev => prev === 'expanded' ? 'collapsed' : 'expanded');
@@ -125,7 +176,7 @@ const Sidebar = () => {
     <div
       className={`sidebar ${sidebarState}`}
       style={{
-        width: sidebarState === 'expanded' ? 400 : 60,
+        width: sidebarState === 'expanded' ? 300 : 60,
         transition: 'width 0.2s',
         minWidth: 0,
         height: `calc(100vh - ${SIDEBAR_VERTICAL_OFFSET}px)`, // 64px header + 44px navbar
@@ -206,3 +257,4 @@ const Sidebar = () => {
 };
 
 export default Sidebar;
+
