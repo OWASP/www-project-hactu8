@@ -5,6 +5,9 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Sidebar from './components/Sidebar';
 import Header from './components/Header';
 import Navbar from './components/Navbar';
+import { FeatureFlagProvider } from './contexts/FeatureFlagContext';
+import { SystemMessageProvider, useSystemMessage } from './contexts/SystemMessageContext';
+import { getEffectiveConfig } from './config/environmentConfig';
 
 import Dashboard from './pages/Dashboard';
 import Events from './pages/Events';
@@ -32,8 +35,11 @@ import Profile from './pages/Profile';
 import Extensions from './pages/Extensions';
 import CreateNewResource from './pages/CreateNewResource';
 
-function App() {
+// Internal component that uses the context
+const AppContent: React.FC = () => {
   const [selectedConfig, setSelectedConfig] = useState<string>('config 1');
+  const { message, messageType } = useSystemMessage();
+  const envConfig = getEffectiveConfig();
 
   return (
     <Router>
@@ -47,10 +53,15 @@ function App() {
         }}
       >
         <Header selectedConfig={selectedConfig} setSelectedConfig={setSelectedConfig} />
-        <Navbar />
-        <div style={{ display: 'flex', flex: 1, minHeight: 0 }}>
-          <Sidebar />
-          <main
+        <Navbar
+          systemMessage={message}
+          messageType={messageType}
+          backgroundColor={envConfig.navbarColor}
+          textColor={envConfig.navbarTextColor}
+        />
+          <div style={{ display: 'flex', flex: 1, minHeight: 0 }}>
+            <Sidebar />
+            <main
             style={{
               flex: 1,
               minHeight: 0,
@@ -102,6 +113,16 @@ function App() {
         </div>
       </div>
     </Router>
+  );
+};
+
+function App() {
+  return (
+    <FeatureFlagProvider>
+      <SystemMessageProvider>
+        <AppContent />
+      </SystemMessageProvider>
+    </FeatureFlagProvider>
   );
 }
 

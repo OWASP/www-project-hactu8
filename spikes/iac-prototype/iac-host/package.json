@@ -5,7 +5,14 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "dev:test": "vite --mode test",
+    "dev:staging": "vite --mode staging",
+    "dev:production": "vite --mode production",
     "build": "tsc -b && vite build",
+    "build:test": "tsc -b && vite build --mode test",
+    "build:staging": "tsc -b && vite build --mode staging",
+    "build:production": "tsc -b && vite build --mode production",
+    "test": "echo \"No tests configured yet\" && exit 0",
     "lint": "eslint .",
     "preview": "vite preview"
   },

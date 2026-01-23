@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import './Sidebar.css'; // optional styling
+import { useFeatureFlags } from '../contexts/FeatureFlagContext';
 
 // Placeholder SVG icons for demonstration
 const icons = {
@@ -44,6 +45,7 @@ function useMockProjects() {
 
 const Sidebar = () => {
   const location = useLocation();
+  const { flags } = useFeatureFlags();
   // sidebarState: 'hidden' | 'collapsed' | 'expanded'
   const [sidebarState, setSidebarState] = useState('expanded');
   // Track expanded/collapsed state for each group
@@ -61,21 +63,21 @@ const Sidebar = () => {
     {
       heading: '',
       items: [
-        { path: '/', label: 'Dashboard', icon: icons.dashboard },
-        { path: '/registry', label: 'Registry', icon: icons.registry },
-        { path: '/console', label: 'Console', icon: icons.console },
+        ...(flags.navigation.dashboard ? [{ path: '/', label: 'Dashboard', icon: icons.dashboard }] : []),
+        ...(flags.navigation.registry ? [{ path: '/registry', label: 'Registry', icon: icons.registry }] : []),
+        ...(flags.navigation.console ? [{ path: '/console', label: 'Console', icon: icons.console }] : []),
       ],
     },
     {
       heading: 'Monitoring',
       items: [
-        { path: '/logs', label: 'Logs', icon: icons.logs },
-        { path: '/events', label: 'Events', icon: icons.events },
+        ...(flags.monitoring.logs ? [{ path: '/logs', label: 'Logs', icon: icons.logs }] : []),
+        ...(flags.monitoring.events ? [{ path: '/events', label: 'Events', icon: icons.events }] : []),
       ],
     },
   ];
 
-  const projectsGroup = projects.length > 0 ? {
+  const projectsGroup = (flags.projects.enabled && projects.length > 0) ? {
     heading: 'Projects',
     items: projects.map((proj) => ({
       path: proj.path,
@@ -88,39 +90,39 @@ const Sidebar = () => {
     {
       heading: 'Testing',
       items: [
-        { path: '/prompt-injection', label: 'Prompt Injection Tester', icon: icons.assurance },
-        { path: '/training-leak', label: 'Training Data Leak Detector', icon: icons.assurance },
-        { path: '/misbehavior-monitor', label: 'Model Misbehavior Monitor', icon: icons.assurance },
-        { path: '/overreliance-risk', label: 'Overreliance Risk Analyzer', icon: icons.assurance },
-        { path: '/agency-validator', label: 'Excessive Agency Validator', icon: icons.assurance },
-        { path: '/insecure-output', label: 'Insecure Output Filter', icon: icons.assurance },
-        { path: '/supply-chain', label: 'Supply Chain Trust Checker', icon: icons.assurance },
-        { path: '/model-identity', label: 'Model Identity & Version Tracker', icon: icons.assurance },
-        { path: '/auth-context-audit', label: 'Authorization & Context Audit', icon: icons.assurance },
-        { path: '/privacy-compliance', label: 'Model Privacy Compliance Scanner', icon: icons.assurance },
+        ...(flags.testing.promptInjection ? [{ path: '/prompt-injection', label: 'Prompt Injection Tester', icon: icons.assurance }] : []),
+        ...(flags.testing.trainingLeak ? [{ path: '/training-leak', label: 'Training Data Leak Detector', icon: icons.assurance }] : []),
+        ...(flags.testing.misbehaviorMonitor ? [{ path: '/misbehavior-monitor', label: 'Model Misbehavior Monitor', icon: icons.assurance }] : []),
+        ...(flags.testing.overrelianceRisk ? [{ path: '/overreliance-risk', label: 'Overreliance Risk Analyzer', icon: icons.assurance }] : []),
+        ...(flags.testing.agencyValidator ? [{ path: '/agency-validator', label: 'Excessive Agency Validator', icon: icons.assurance }] : []),
+        ...(flags.testing.insecureOutput ? [{ path: '/insecure-output', label: 'Insecure Output Filter', icon: icons.assurance }] : []),
+        ...(flags.testing.supplyChain ? [{ path: '/supply-chain', label: 'Supply Chain Trust Checker', icon: icons.assurance }] : []),
+        ...(flags.testing.modelIdentity ? [{ path: '/model-identity', label: 'Model Identity & Version Tracker', icon: icons.assurance }] : []),
+        ...(flags.testing.authContextAudit ? [{ path: '/auth-context-audit', label: 'Authorization & Context Audit', icon: icons.assurance }] : []),
+        ...(flags.testing.privacyCompliance ? [{ path: '/privacy-compliance', label: 'Model Privacy Compliance Scanner', icon: icons.assurance }] : []),
       ],
     },
     {
       heading: 'Reporting',
       items: [
-        { path: '/assurance', label: 'Assurance Results', icon: icons.assurance },
-        { path: '/reports', label: 'Reports', icon: icons.reports },
+        ...(flags.reporting.assuranceResults ? [{ path: '/assurance', label: 'Assurance Results', icon: icons.assurance }] : []),
+        ...(flags.reporting.reports ? [{ path: '/reports', label: 'Reports', icon: icons.reports }] : []),
       ],
     },
     {
       heading: 'Other',
       items: [
-        { path: '/workbench', label: 'Workbench', icon: icons.workbench },
-        { path: '/agents', label: 'Agents', icon: icons.agents },
-        { path: '/users', label: 'Users & Access', icon: icons.users },
+        ...(flags.other.workbench ? [{ path: '/workbench', label: 'Workbench', icon: icons.workbench }] : []),
+        ...(flags.other.agents ? [{ path: '/agents', label: 'Agents', icon: icons.agents }] : []),
+        ...(flags.other.users ? [{ path: '/users', label: 'Users & Access', icon: icons.users }] : []),
       ],
     },
     {
       heading: 'User',
       items: [
-        { path: '/extensions', label: 'Extensions', icon: icons.extensions },
-        { path: '/profile', label: 'Profile', icon: icons.profile },
-        { path: '/settings', label: 'Settings', icon: icons.settings },
+        ...(flags.user.extensions ? [{ path: '/extensions', label: 'Extensions', icon: icons.extensions }] : []),
+        ...(flags.user.profile ? [{ path: '/profile', label: 'Profile', icon: icons.profile }] : []),
+        ...(flags.user.settings ? [{ path: '/settings', label: 'Settings', icon: icons.settings }] : []),
       ],
     },
   ];

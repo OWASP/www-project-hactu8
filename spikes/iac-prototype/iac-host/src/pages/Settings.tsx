@@ -1,53 +1,183 @@
 
-import React, { useState } from 'react';
+import { useState } from 'react';
+import { useFeatureFlags } from '../contexts/FeatureFlagContext';
+import type { FeatureFlags } from '../config/featureFlags';
+import { presets, presetDescriptions } from '../config/featureFlagPresets';
+import type { PresetName } from '../config/featureFlagPresets';
 
+// TODO: Settings, other functions based on user authorization
 const sections = [
-    { key: 'profile', label: 'Profile' },
+    // { key: 'profile', label: 'Profile' },
     { key: 'security', label: 'Security' },
     { key: 'keys', label: 'API Keys' },
     { key: 'notifications', label: 'Notifications' },
     { key: 'billing', label: 'Billing' },
+    { key: 'features', label: 'Feature Flags' },
 ];
+
+function FeatureFlagsPanel() {
+    const { flags, updateFlags, resetFlags } = useFeatureFlags();
+
+    const handleToggle = (category: keyof FeatureFlags, feature: string) => {
+        const categoryFlags = flags[category] as any;
+        updateFlags({
+            [category]: {
+                ...categoryFlags,
+                [feature]: !categoryFlags[feature],
+            },
+        } as Partial<FeatureFlags>);
+    };
+
+    const loadPreset = (presetName: PresetName) => {
+        const preset = presets[presetName];
+        updateFlags(preset);
+    };
+
+    const renderCategory = (title: string, category: keyof FeatureFlags) => {
+        const categoryFlags = flags[category] as any;
+        return (
+            <div key={category} style={{ marginBottom: '2rem' }}>
+                <h4 style={{ marginBottom: '1rem', color: '#111827', fontWeight: 600 }}>{title}</h4>
+                <div style={{ display: 'grid', gap: '0.5rem' }}>
+                    {Object.keys(categoryFlags).map((feature) => (
+                        <label
+                            key={feature}
+                            style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '0.5rem',
+                                padding: '0.5rem',
+                                background: '#f9fafb',
+                                borderRadius: '4px',
+                                cursor: 'pointer',
+                            }}
+                        >
+                            <input
+                                type="checkbox"
+                                checked={categoryFlags[feature]}
+                                onChange={() => handleToggle(category, feature)}
+                                style={{ cursor: 'pointer' }}
+                            />
+                            <span style={{ textTransform: 'capitalize', color: '#1f2937', fontSize: '14px' }}>
+                                {feature.replace(/([A-Z])/g, ' $1').trim()}
+                            </span>
+                        </label>
+                    ))}
+                </div>
+            </div>
+        );
+    };
+
+    return (
+        <div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+                <div>
+                    <h3 style={{ color: '#111827', fontWeight: 700, fontSize: '1.5rem', margin: 0 }}>Feature Flags</h3>
+                    <p style={{ color: '#4b5563', marginTop: '0.5rem', fontSize: '14px' }}>
+                        Enable or disable features throughout the application.
+                    </p>
+                </div>
+                <button
+                    onClick={resetFlags}
+                    style={{
+                        padding: '0.5rem 1rem',
+                        background: '#dc2626',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '4px',
+                        cursor: 'pointer',
+                        fontWeight: 500,
+                    }}
+                >
+                    Reset to Defaults
+                </button>
+            </div>
+
+            {/* Presets Section */}
+            <div style={{ marginBottom: '2rem', padding: '1rem', background: '#f3f4f6', borderRadius: '6px' }}>
+                <h4 style={{ marginBottom: '1rem', color: '#111827', fontWeight: 600 }}>Quick Presets</h4>
+                <p style={{ color: '#4b5563', fontSize: '0.875rem', marginBottom: '1rem' }}>
+                    Load a predefined configuration to quickly set up feature flags for common use cases.
+                </p>
+                <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+                    {(Object.keys(presets) as PresetName[]).map((presetName) => (
+                        <button
+                            key={presetName}
+                            onClick={() => loadPreset(presetName)}
+                            style={{
+                                padding: '0.5rem 1rem',
+                                background: '#213547',
+                                color: 'white',
+                                border: 'none',
+                                borderRadius: '4px',
+                                cursor: 'pointer',
+                                fontWeight: 500,
+                                fontSize: '0.875rem',
+                            }}
+                            title={presetDescriptions[presetName]}
+                        >
+                            {presetName.charAt(0).toUpperCase() + presetName.slice(1)}
+                        </button>
+                    ))}
+                </div>
+            </div>
+
+            {/* Individual Feature Flags */}
+            <div style={{ maxHeight: 'calc(100vh - 400px)', overflowY: 'auto', paddingRight: '1rem' }}>
+                {renderCategory('Navigation', 'navigation')}
+                {renderCategory('Monitoring', 'monitoring')}
+                {renderCategory('Projects', 'projects')}
+                {renderCategory('Testing Tools', 'testing')}
+                {renderCategory('Reporting', 'reporting')}
+                {renderCategory('Other Features', 'other')}
+                {renderCategory('User Menu', 'user')}
+                {renderCategory('Navigation Bar', 'navbar')}
+            </div>
+        </div>
+    );
+}
 
 function SectionPanel({ section }: { section: string }) {
     switch (section) {
         case 'profile':
             return (
                 <div>
-                    <h3>Profile Settings</h3>
-                    <p>Update your personal information, email, and avatar.</p>
+                    <h3 style={{ color: '#111827' }}>Profile Settings</h3>
+                    <p style={{ color: '#4b5563' }}>Update your personal information, email, and avatar.</p>
                 </div>
             );
         case 'security':
             return (
                 <div>
-                    <h3>Security</h3>
-                    <p>Change your password, enable 2FA, and review recent activity.</p>
+                    <h3 style={{ color: '#111827' }}>Security</h3>
+                    <p style={{ color: '#4b5563' }}>Change your password, enable 2FA, and review recent activity.</p>
                 </div>
             );
         case 'keys':
             return (
                 <div>
-                    <h3>API Keys</h3>
-                    <p>Manage your API keys and access tokens.</p>
+                    <h3 style={{ color: '#111827' }}>API Keys</h3>
+                    <p style={{ color: '#4b5563' }}>Manage your API keys and access tokens.</p>
                 </div>
             );
         case 'notifications':
             return (
                 <div>
-                    <h3>Notifications</h3>
-                    <p>Configure your notification preferences.</p>
+                    <h3 style={{ color: '#111827' }}>Notifications</h3>
+                    <p style={{ color: '#4b5563' }}>Configure your notification preferences.</p>
                 </div>
             );
         case 'billing':
             return (
                 <div>
-                    <h3>Billing</h3>
-                    <p>View invoices and manage payment methods.</p>
+                    <h3 style={{ color: '#111827' }}>Billing</h3>
+                    <p style={{ color: '#4b5563' }}>View invoices and manage payment methods.</p>
                 </div>
             );
+        case 'features':
+            return <FeatureFlagsPanel />;
         default:
-            return <div>Select a section</div>;
+            return <div style={{ color: '#4b5563' }}>Select a section</div>;
     }
 }
 
@@ -56,9 +186,9 @@ const Settings = () => {
 
     // Minimal, unstyled layout
     return (
-        <div style={{ display: 'flex', minHeight: '60vh' }}>
-            <aside style={{ width: 200 }}>
-                <h3>Settings</h3>
+        <div style={{ display: 'flex', minHeight: '60vh', height: '100%', overflow: 'hidden' }}>
+            <aside style={{ width: 200, padding: '1rem', background: '#f9fafb', borderRight: '1px solid #e5e7eb' }}>
+                <h3 style={{ color: '#111827', marginBottom: '1rem' }}>Settings</h3>
                 <nav>
                     <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
                         {sections.map((s) => (
@@ -68,10 +198,13 @@ const Settings = () => {
                                         width: '100%',
                                         padding: '0.75rem 1rem',
                                         background: selected === s.key ? '#213547' : 'transparent',
+                                        color: selected === s.key ? '#ffffff' : '#374151',
                                         border: 'none',
                                         textAlign: 'left',
                                         fontWeight: selected === s.key ? 600 : 400,
                                         cursor: 'pointer',
+                                        borderRadius: '4px',
+                                        marginBottom: '0.25rem',
                                     }}
                                     onClick={() => setSelected(s.key)}
                                 >
@@ -82,7 +215,7 @@ const Settings = () => {
                     </ul>
                 </nav>
             </aside>
-            <main style={{ flex: 1, padding: '2rem' }}>
+            <main style={{ flex: 1, padding: '2rem', overflowY: 'auto', background: '#ffffff' }}>
                 <SectionPanel section={selected} />
             </main>
         </div>
