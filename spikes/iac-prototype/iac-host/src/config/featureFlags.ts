@@ -14,6 +14,13 @@ export interface FeatureFlags {
   projects: {
     enabled: boolean;
   };
+  library: {
+    enabled: boolean;
+    articles: boolean;
+    projectDocs: boolean;
+    owaspAI: boolean;
+    references: boolean;
+  };
   testing: {
     promptInjection: boolean;
     trainingLeak: boolean;
@@ -60,6 +67,13 @@ export const defaultFeatureFlags: FeatureFlags = {
   },
   projects: {
     enabled: true,
+  },
+  library: {
+    enabled: true,
+    articles: true,
+    projectDocs: true,
+    owaspAI: true,
+    references: true,
   },
   testing: {
     promptInjection: true,
@@ -109,11 +123,12 @@ export const loadFeatureFlags = (): FeatureFlags => {
     const stored = localStorage.getItem('featureFlags');
     if (stored) {
       const parsed = JSON.parse(stored);
-      // Merge with defaults to ensure all flags exist
+      //  Merge with defaults to ensure all flags exist
       return {
         ...defaultFeatureFlags,
         ...parsed,
         navigation: { ...defaultFeatureFlags.navigation, ...parsed.navigation },
+        library: { ...defaultFeatureFlags.library, ...parsed.library },
         monitoring: { ...defaultFeatureFlags.monitoring, ...parsed.monitoring },
         projects: { ...defaultFeatureFlags.projects, ...parsed.projects },
         testing: { ...defaultFeatureFlags.testing, ...parsed.testing },

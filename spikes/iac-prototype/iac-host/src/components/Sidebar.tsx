@@ -18,6 +18,7 @@ const icons = {
   settings: <svg width="20" height="20" fill="currentColor"><circle cx="10" cy="10" r="8" stroke="currentColor" strokeWidth="2" fill="none"/><circle cx="10" cy="10" r="3"/></svg>,
   console: <svg width="20" height="20" fill="currentColor"><rect x="3" y="5" width="14" height="10" rx="2"/><path d="M6 9l2 2-2 2" stroke="white" strokeWidth="2" fill="none"/><rect x="12" y="11" width="2" height="2" fill="white"/></svg>,
   profile: <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20"><circle cx="10" cy="7" r="4"/><rect x="3" y="13" width="14" height="5" rx="2"/></svg>,
+  library: <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20"><rect x="4" y="2" width="12" height="16" rx="1"/><path d="M7 6h6M7 9h6M7 12h4" stroke="white" strokeWidth="1.5"/></svg>,
   events: (
     <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
       <path d="M11 2L4 12h5l-1 6 7-10h-5l1-6z" fill="currentColor"/>
@@ -86,6 +87,19 @@ const Sidebar = () => {
     })),
   } : null;
 
+  const libraryGroup = flags.library.enabled ? {
+    heading: 'Library',
+    items: [
+      { path: '/library?section=knowledge-base', label: 'Knowledge Base', icon: icons.library },
+      ...(flags.library.projectDocs
+        ? [{ path: '/library?section=project-docs', label: 'Project Documents', icon: icons.library }]
+        : []),
+      ...(flags.library.articles
+        ? [{ path: '/library?section=research', label: 'Research', icon: icons.library }]
+        : []),
+    ],
+  } : null;
+
   const restGroups = [
     {
       heading: 'Testing',
@@ -129,6 +143,7 @@ const Sidebar = () => {
 
   // Inject Projects group after Monitoring
   let navGroups = [...baseGroups];
+  if (libraryGroup) navGroups.push(libraryGroup);
   if (projectsGroup) navGroups.push(projectsGroup);
   navGroups = [...navGroups, ...restGroups];
 

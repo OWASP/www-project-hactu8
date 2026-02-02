@@ -126,6 +126,7 @@ function FeatureFlagsPanel() {
             <div style={{ maxHeight: 'calc(100vh - 400px)', overflowY: 'auto', paddingRight: '1rem' }}>
                 {renderCategory('Navigation', 'navigation')}
                 {renderCategory('Monitoring', 'monitoring')}
+                {renderCategory('Library', 'library')}
                 {renderCategory('Projects', 'projects')}
                 {renderCategory('Testing Tools', 'testing')}
                 {renderCategory('Reporting', 'reporting')}

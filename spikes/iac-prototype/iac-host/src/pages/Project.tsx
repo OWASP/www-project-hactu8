@@ -141,7 +141,7 @@ const Project = () => {
   }
 
   return (
-    <div style={{ display: 'flex', minHeight: '60vh', borderRadius: 8, boxShadow: '0 2px 8px #0001' }}>
+    <div style={{ display: 'flex', padding: 32, minHeight: '60vh', borderRadius: 8, boxShadow: '0 2px 8px #0001' }}>
       <aside style={{ width: 300, borderRight: '1px solid #eee', padding: '1rem 1rem' }}>
         <h3>{project.name}</h3>
         <nav>

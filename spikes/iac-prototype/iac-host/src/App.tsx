@@ -34,6 +34,11 @@ import Settings from './pages/Settings';
 import Profile from './pages/Profile';
 import Extensions from './pages/Extensions';
 import CreateNewResource from './pages/CreateNewResource';
+import Library from './pages/Library';
+import LibraryArticles from './pages/LibraryArticles';
+import LibraryProjectDocs from './pages/LibraryProjectDocs';
+import LibraryOwaspAI from './pages/LibraryOwaspAI';
+import LibraryReferences from './pages/LibraryReferences';
 
 // Internal component that uses the context
 const AppContent: React.FC = () => {
@@ -102,6 +107,11 @@ const AppContent: React.FC = () => {
                 <Route path="/privacy-compliance" element={<PrivacyCompliance />} />
                 <Route path="/workbench" element={<Workbench />} />
                 <Route path="/registry" element={<Registry />} />
+                <Route path="/library" element={<Library />} />
+                <Route path="/library/articles" element={<LibraryArticles />} />
+                <Route path="/library/project-docs" element={<LibraryProjectDocs />} />
+                <Route path="/library/owasp-ai" element={<LibraryOwaspAI />} />
+                <Route path="/library/references" element={<LibraryReferences />} />
                 <Route path="/users" element={<Users />} />
                 <Route path="/settings" element={<Settings />} />
                 <Route path="/profile" element={<Profile />} />
