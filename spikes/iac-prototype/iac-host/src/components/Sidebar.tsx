@@ -47,7 +47,7 @@ function useMockProjects() {
 const Sidebar = () => {
   const location = useLocation();
   const { flags } = useFeatureFlags();
-  // sidebarState: 'hidden' | 'collapsed' | 'expanded'
+  // sidebarState: 'collapsed' | 'expanded'
   const [sidebarState, setSidebarState] = useState('expanded');
   // Track expanded/collapsed state for each group
   const [expandedGroups, setExpandedGroups] = useState<Record<number, boolean>>(() => {
@@ -87,7 +87,8 @@ const Sidebar = () => {
     })),
   } : null;
 
-  const libraryGroup = flags.library.enabled ? {
+  // Library is hidden when Copilot is enabled (Copilot replaces Library functionality)
+  const libraryGroup = (flags.library.enabled && !flags.copilot?.enabled) ? {
     heading: 'Library',
     items: [
       { path: '/library?section=knowledge-base', label: 'Knowledge Base', icon: icons.library },
@@ -164,25 +165,10 @@ const Sidebar = () => {
   const handleToggle = () => {
     setSidebarState(prev => prev === 'expanded' ? 'collapsed' : 'expanded');
   };
-  const handleHide = () => {
-    setSidebarState('hidden');
-  };
-  const handleShow = () => {
-    setSidebarState('expanded');
-  };
 
   const handleGroupToggle = (idx: number) => {
     setExpandedGroups(prev => ({ ...prev, [idx]: !prev[idx] }));
   };
-
-  if (sidebarState === 'hidden') {
-    return (
-      <button className="sidebar-show-btn" onClick={handleShow} title="Show Sidebar" style={{ position: 'absolute', top: 16, left: 0, zIndex: 50 }}>
-        {/* Show icon */}
-        <svg width="24" height="24" fill="currentColor"><path d="M4 12h16M4 6h16M4 18h16" stroke="currentColor" strokeWidth="2"/></svg>
-      </button>
-    );
-  }
 
   // Define header and navbar heights as constants
   const HEADER_HEIGHT = 64;
@@ -193,49 +179,46 @@ const Sidebar = () => {
     <div
       className={`sidebar ${sidebarState}`}
       style={{
-        width: sidebarState === 'expanded' ? 300 : 60,
-        transition: 'width 0.2s',
-        minWidth: 0,
-        height: `calc(100vh - ${SIDEBAR_VERTICAL_OFFSET}px)`, // 64px header + 44px navbar
+        height: `calc(100vh - ${SIDEBAR_VERTICAL_OFFSET}px)`,
         maxHeight: `calc(100vh - ${SIDEBAR_VERTICAL_OFFSET}px)`,
-        overflowY: 'auto',
       }}
     >
-      <div className="sidebar-header" style={{ display: 'flex', alignItems: 'center', justifyContent: sidebarState === 'expanded' ? 'space-between' : 'center', padding: '1rem 0.5rem' }}>
-        {sidebarState === 'expanded' && <h2 style={{ margin: 0, fontSize: 20 }}>Menu</h2>}
-        <div style={{ display: 'flex', gap: 8 }}>
-          <button className="sidebar-toggle-btn" onClick={handleToggle} title={sidebarState === 'expanded' ? 'Collapse' : 'Expand'} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 4 }}>
+      <div className={`sidebar-header ${sidebarState}`}>
+        {sidebarState === 'expanded' && <h2 className="sidebar-header__title">Menu</h2>}
+        <div className="sidebar-header__buttons">
+          <button className="sidebar-toggle-btn" onClick={handleToggle} title={sidebarState === 'expanded' ? 'Collapse' : 'Expand'}>
             {sidebarState === 'expanded' ? (
-              <svg width="20" height="20" fill="currentColor"><path d="M14 10l-4 4V6z"/></svg>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <polyline points="9 18 15 12 9 6" />
+              </svg>
             ) : (
-              <svg width="20" height="20" fill="currentColor"><path d="M6 10l4-4v8z"/></svg>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <polyline points="15 18 9 12 15 6" />
+              </svg>
             )}
-          </button>
-          <button className="sidebar-hide-btn" onClick={handleHide} title="Hide Sidebar" style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 4 }}>
-            <svg width="20" height="20" fill="currentColor"><rect x="4" y="9" width="12" height="2"/></svg>
           </button>
         </div>
       </div>
-      <ul className="sidebar-nav" style={{ listStyle: 'none', padding: 0, margin: 0, paddingBottom: '5rem' }}>
+      <ul className="sidebar-nav">
         {navGroups.map((group, groupIdx) => (
           <React.Fragment key={group.heading + groupIdx}>
             {sidebarState === 'expanded' && group.heading && (
-              <li style={{ margin: '16px 0 4px 4px', fontWeight: 600, fontSize: 18, color: '#6b7280', letterSpacing: 0.5, display: 'flex', alignItems: 'center' }}>
+              <li className="sidebar-nav__group-heading">
                 {/* Only show toggle if group has items */}
                 {group.items.length > 0 && (
                   <button
+                    className="sidebar-nav__group-toggle"
                     onClick={() => handleGroupToggle(groupIdx)}
-                    style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 2, marginRight: 8, display: 'flex', alignItems: 'center' }}
                     title={expandedGroups[groupIdx] ? 'Collapse' : 'Expand'}
                   >
                     {expandedGroups[groupIdx] ? (
                       // Down arrow
-                      <svg width="18" height="18" fill="#6b7280" viewBox="0 0 18 18" style={{ display: 'block' }}>
+                      <svg className="sidebar-nav__group-toggle-icon" width="18" height="18" fill="#6b7280" viewBox="0 0 18 18">
                         <path d="M5 7l4 4 4-4" stroke="#6b7280" strokeWidth="2" fill="none"/>
                       </svg>
                     ) : (
                       // Right arrow
-                      <svg width="18" height="18" fill="#6b7280" viewBox="0 0 18 18" style={{ display: 'block' }}>
+                      <svg className="sidebar-nav__group-toggle-icon" width="18" height="18" fill="#6b7280" viewBox="0 0 18 18">
                         <path d="M7 5l4 4-4 4" stroke="#6b7280" strokeWidth="2" fill="none"/>
                       </svg>
                     )}
@@ -245,22 +228,11 @@ const Sidebar = () => {
               </li>
             )}
             {expandedGroups[groupIdx] !== false && group.items.map((item) => {
+              const isActive = location.pathname === item.path;
               return (
-                <li key={item.path} className={location.pathname === item.path ? 'active' : ''} style={{ marginBottom: 8 }}>
-                  <Link to={item.path} style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 12,
-                    padding: '8px 12px',
-                    borderRadius: 6,
-                    textDecoration: 'none',
-                    color: 'inherit',
-                    background: location.pathname === item.path ? '#213547' : 'none',
-                    justifyContent: sidebarState === 'expanded' ? 'flex-start' : 'center',
-                    transition: 'background 0.2s',
-                    minWidth: 0
-                  }}>
-                    <span style={{ display: 'flex', alignItems: 'center', minWidth: 24 }}>{item.icon}</span>
+                <li key={item.path} className="sidebar-nav__item">
+                  <Link to={item.path} className={`sidebar-nav__link ${sidebarState} ${isActive ? 'active' : ''}`}>
+                    <span className="sidebar-nav__link-icon">{item.icon}</span>
                     {sidebarState === 'expanded' && <span>{item.label}</span>}
                   </Link>
                 </li>

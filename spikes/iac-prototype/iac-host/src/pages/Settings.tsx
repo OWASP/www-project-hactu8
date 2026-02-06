@@ -1,19 +1,201 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useFeatureFlags } from '../contexts/FeatureFlagContext';
 import type { FeatureFlags } from '../config/featureFlags';
 import { presets, presetDescriptions } from '../config/featureFlagPresets';
 import type { PresetName } from '../config/featureFlagPresets';
+import { checkHealth } from '../services/copilotService';
+
+// Health check status types
+type HealthStatus = 'healthy' | 'warning' | 'error' | 'loading';
+
+interface HealthCheckItem {
+    name: string;
+    status: HealthStatus;
+    message: string;
+    details?: string;
+}
 
 // TODO: Settings, other functions based on user authorization
 const sections = [
     // { key: 'profile', label: 'Profile' },
+    { key: 'health', label: 'Health' },
     { key: 'security', label: 'Security' },
     { key: 'keys', label: 'API Keys' },
     { key: 'notifications', label: 'Notifications' },
     { key: 'billing', label: 'Billing' },
     { key: 'features', label: 'Feature Flags' },
 ];
+
+function HealthPanel() {
+    const [healthChecks, setHealthChecks] = useState<HealthCheckItem[]>([
+        { name: 'Copilot API', status: 'loading', message: 'Checking...' },
+        { name: 'Model Configuration', status: 'loading', message: 'Checking...' },
+        { name: 'Platform', status: 'loading', message: 'Checking...' },
+    ]);
+
+    useEffect(() => {
+        performHealthChecks();
+    }, []);
+
+    const performHealthChecks = async () => {
+        const checks: HealthCheckItem[] = [];
+
+        // Check Copilot API
+        try {
+            const health = await checkHealth();
+            checks.push({
+                name: 'Copilot API',
+                status: health.status === 'ok' ? 'healthy' : 'warning',
+                message: health.status === 'ok' ? 'Connected' : 'API responding with issues',
+                details: `Documents: ${health.documentCount}, Vector store: ${health.vectorStoreCount}`,
+            });
+        } catch (error) {
+            checks.push({
+                name: 'Copilot API',
+                status: 'error',
+                message: 'Connection failed',
+                details: error instanceof Error ? error.message : 'Unknown error',
+            });
+        }
+
+        // Check Model Configuration
+        const modelConfig = import.meta.env.VITE_COPILOT_MODEL || 'Not configured';
+        const modelStatus: HealthStatus = modelConfig !== 'Not configured' ? 'healthy' : 'warning';
+        checks.push({
+            name: 'Model Configuration',
+            status: modelStatus,
+            message: modelConfig,
+            details: modelStatus === 'healthy' ? 'Model is configured' : 'Model not set in environment',
+        });
+
+        // Check Platform
+        const platform = import.meta.env.VITE_COPILOT_PLATFORM || 'OpenAI';
+        const platformStatus: HealthStatus = platform ? 'healthy' : 'warning';
+        checks.push({
+            name: 'Platform',
+            status: platformStatus,
+            message: platform,
+            details: `Using ${platform} for AI inference`,
+        });
+
+        setHealthChecks(checks);
+    };
+
+    const getStatusColor = (status: HealthStatus): string => {
+        switch (status) {
+            case 'healthy':
+                return '#10b981'; // green
+            case 'warning':
+                return '#f59e0b'; // yellow/orange
+            case 'error':
+                return '#ef4444'; // red
+            case 'loading':
+                return '#6b7280'; // gray
+        }
+    };
+
+    const getStatusBgColor = (status: HealthStatus): string => {
+        switch (status) {
+            case 'healthy':
+                return '#d1fae5'; // light green
+            case 'warning':
+                return '#fef3c7'; // light yellow
+            case 'error':
+                return '#fee2e2'; // light red
+            case 'loading':
+                return '#f3f4f6'; // light gray
+        }
+    };
+
+    return (
+        <div>
+            <div style={{ marginBottom: '1.5rem' }}>
+                <h3 style={{ color: '#111827', fontWeight: 700, fontSize: '1.5rem', margin: 0 }}>System Health</h3>
+                <p style={{ color: '#4b5563', marginTop: '0.5rem', fontSize: '14px' }}>
+                    Monitor the health status of integrated services and configurations.
+                </p>
+            </div>
+
+            <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '1rem' }}>
+                <button
+                    onClick={performHealthChecks}
+                    style={{
+                        padding: '0.5rem 1rem',
+                        background: '#213547',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '4px',
+                        cursor: 'pointer',
+                        fontWeight: 500,
+                        fontSize: '14px',
+                    }}
+                >
+                    Refresh Status
+                </button>
+            </div>
+
+            <div style={{ display: 'grid', gap: '1rem' }}>
+                {healthChecks.map((check) => (
+                    <div
+                        key={check.name}
+                        style={{
+                            padding: '1.5rem',
+                            border: '1px solid #e5e7eb',
+                            borderRadius: '8px',
+                            background: '#ffffff',
+                        }}
+                    >
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.75rem' }}>
+                            <h4 style={{ color: '#111827', fontWeight: 600, margin: 0, fontSize: '1.125rem' }}>
+                                {check.name}
+                            </h4>
+                            <div
+                                style={{
+                                    width: '80px',
+                                    height: '80px',
+                                    borderRadius: '8px',
+                                    background: getStatusBgColor(check.status),
+                                    border: `3px solid ${getStatusColor(check.status)}`,
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    fontWeight: 700,
+                                    fontSize: '0.75rem',
+                                    color: getStatusColor(check.status),
+                                    textTransform: 'uppercase',
+                                    letterSpacing: '0.05em',
+                                }}
+                            >
+                                {check.status === 'loading' ? '...' : check.status}
+                            </div>
+                        </div>
+                        <div style={{ marginBottom: '0.5rem' }}>
+                            <span
+                                style={{
+                                    display: 'inline-block',
+                                    padding: '0.25rem 0.75rem',
+                                    borderRadius: '4px',
+                                    background: getStatusBgColor(check.status),
+                                    color: getStatusColor(check.status),
+                                    fontSize: '0.875rem',
+                                    fontWeight: 600,
+                                }}
+                            >
+                                {check.message}
+                            </span>
+                        </div>
+                        {check.details && (
+                            <p style={{ color: '#6b7280', fontSize: '0.875rem', margin: '0.5rem 0 0 0' }}>
+                                {check.details}
+                            </p>
+                        )}
+                    </div>
+                ))}
+            </div>
+        </div>
+    );
+}
 
 function FeatureFlagsPanel() {
     const { flags, updateFlags, resetFlags } = useFeatureFlags();
@@ -127,6 +309,7 @@ function FeatureFlagsPanel() {
                 {renderCategory('Navigation', 'navigation')}
                 {renderCategory('Monitoring', 'monitoring')}
                 {renderCategory('Library', 'library')}
+                {renderCategory('Copilot', 'copilot')}
                 {renderCategory('Projects', 'projects')}
                 {renderCategory('Testing Tools', 'testing')}
                 {renderCategory('Reporting', 'reporting')}
@@ -140,6 +323,8 @@ function FeatureFlagsPanel() {
 
 function SectionPanel({ section }: { section: string }) {
     switch (section) {
+        case 'health':
+            return <HealthPanel />;
         case 'profile':
             return (
                 <div>
@@ -183,7 +368,7 @@ function SectionPanel({ section }: { section: string }) {
 }
 
 const Settings = () => {
-    const [selected, setSelected] = useState('profile');
+    const [selected, setSelected] = useState('health');
 
     // Minimal, unstyled layout
     return (

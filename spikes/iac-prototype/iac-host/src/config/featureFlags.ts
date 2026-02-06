@@ -21,6 +21,14 @@ export interface FeatureFlags {
     owaspAI: boolean;
     references: boolean;
   };
+  // IAC Copilot - Right sidebar with LLM-powered assistance
+  copilot: {
+    enabled: boolean;
+    assistMode: boolean;      // Active work assistance (research, planning, summarization)
+    owaspDocs: boolean;       // OWASP document lookup
+    projectDocs: boolean;     // HACTU8 project documentation
+    defaultExpanded: boolean; // Whether copilot is expanded on app load
+  };
   testing: {
     promptInjection: boolean;
     trainingLeak: boolean;
@@ -69,11 +77,18 @@ export const defaultFeatureFlags: FeatureFlags = {
     enabled: true,
   },
   library: {
-    enabled: true,
+    enabled: false, // Disabled - replaced by Copilot
     articles: true,
     projectDocs: true,
     owaspAI: true,
     references: true,
+  },
+  copilot: {
+    enabled: true,
+    assistMode: true,
+    owaspDocs: true,
+    projectDocs: true,
+    defaultExpanded: true,
   },
   testing: {
     promptInjection: true,
@@ -129,6 +144,7 @@ export const loadFeatureFlags = (): FeatureFlags => {
         ...parsed,
         navigation: { ...defaultFeatureFlags.navigation, ...parsed.navigation },
         library: { ...defaultFeatureFlags.library, ...parsed.library },
+        copilot: { ...defaultFeatureFlags.copilot, ...parsed.copilot },
         monitoring: { ...defaultFeatureFlags.monitoring, ...parsed.monitoring },
         projects: { ...defaultFeatureFlags.projects, ...parsed.projects },
         testing: { ...defaultFeatureFlags.testing, ...parsed.testing },

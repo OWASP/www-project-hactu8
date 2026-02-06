@@ -5,12 +5,25 @@
 
   color-scheme: light dark;
   color: rgba(255, 255, 255, 0.87);
-  /* background-color: #242424; */
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+
+  /* IAC Theme - CSS Variables */
+  --iac-primary: #213547;
+  --iac-accent: #b1d0dd;
+  --iac-accent-hover: #b1d0dd;
+  --iac-underline: #fbbf24;
+
+  /* Dark mode (default) */
+  --iac-bg: #0f172a;
+  --iac-surface: #1e293b;
+  --iac-surface-elevated: #213547;
+  --iac-text: #e2e8f0;
+  --iac-text-secondary: #94a3b8;
+  --iac-border: #334155;
 }
 
 a {
@@ -25,9 +38,56 @@ a:hover {
 body {
   margin: 0;
   display: flex;
-  place-items: center;
   min-width: 320px;
   min-height: 100vh;
+  background-color: var(--iac-bg);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 2rem;
+  height: 72px;
+  background: var(--iac-surface-elevated);
+  box-shadow: 0 2px 8px 0 #e5e7eb;
+  z-index: 10;
+}
+
+.header__left {
+  display: flex;
+  align-items: center;
+}
+
+.header__logo {
+  width: 48px;
+  height: 48px;
+  margin-right: 12px;
+  object-fit: contain;
+}
+
+.header__title {
+  font-size: 18px;
+  color: #fff;
+}
+
+.header__right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.header__profile-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+
+.header__profile-icon {
+  width: 28px;
+  height: 28px;
+  fill: currentColor;
 }
 
 h1 {
@@ -54,10 +114,157 @@ button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
 }
 
+/* Sidebar Styles */
+
+.sidebar {
+  transition: width 0.2s;
+  min-width: 0;
+  overflow-y: auto;
+}
+
+.sidebar.expanded {
+  width: 300px;
+}
+
+.sidebar.collapsed {
+  width: 60px;
+}
+
+.sidebar-header {
+  display: flex;
+  align-items: center;
+  padding: 1rem 0.5rem;
+}
+
+.sidebar-header.expanded {
+  justify-content: space-between;
+}
+
+.sidebar-header.collapsed {
+  justify-content: center;
+}
+
+.sidebar-header__title {
+  margin: 0;
+  font-size: 14px;
+  border-bottom: 2px solid var(--iac-underline);
+}
+
+.sidebar-header__buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.sidebar-toggle-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border: none !important;
+  border-radius: 4px !important;
+  background: transparent !important;
+  color: var(--iac-text-secondary);
+  cursor: pointer;
+  transition: all 0.2s;
+  padding: 0 !important;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+.sidebar-toggle-btn:hover {
+  background-color: var(--iac-border) !important;
+  color: var(--iac-text);
+}
+
+.sidebar-toggle-btn:focus,
+.sidebar-toggle-btn:focus-visible {
+  outline: none !important;
+}
+
+.sidebar-nav {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  padding-bottom: 5rem;
+}
+
+.sidebar-nav__group-heading {
+  margin: 16px 0 4px 4px;
+  font-weight: 600;
+  font-size: 14px;
+  color: #6b7280;
+  letter-spacing: 0.5px;
+  display: flex;
+  align-items: center;
+}
+
+.sidebar-nav__group-toggle {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 2px;
+  margin-right: 8px;
+  display: flex;
+  align-items: center;
+}
+
+.sidebar-nav__group-toggle-icon {
+  display: block;
+}
+
+.sidebar-nav__item {
+  margin-bottom: 8px;
+}
+
+.sidebar-nav__link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 12px;
+  border-radius: 6px;
+  text-decoration: none;
+  color: inherit;
+  transition: background 0.2s;
+  min-width: 0;
+}
+
+.sidebar-nav__link.expanded {
+  justify-content: flex-start;
+}
+
+.sidebar-nav__link.collapsed {
+  justify-content: center;
+}
+
+.sidebar-nav__link.active {
+  background: #213547;
+}
+
+.sidebar-nav__link:not(.active) {
+  background: none;
+}
+
+.sidebar-nav__link-icon {
+  display: flex;
+  align-items: center;
+  min-width: 24px;
+}
+
 @media (prefers-color-scheme: light) {
   :root {
     color: #213547;
     background-color: #ffffff;
+
+    /* Light mode IAC theme overrides */
+    --iac-bg: #ffffff;
+    --iac-surface: #f8fafc;
+    --iac-surface-elevated: #f1f5f9;
+    --iac-text: #213547;
+    --iac-text-secondary: #64748b;
+    --iac-border: #e2e8f0;
+    --iac-accent: #0284c7;
+    --iac-accent-hover: #0369a1;
   }
   a:hover {
     color: #747bff;

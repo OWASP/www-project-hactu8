@@ -9,23 +9,23 @@ interface HeaderProps {
 
 const Header: React.FC<HeaderProps> = ({ selectedConfig, setSelectedConfig }) => {
   const headerIcon = (
-    <img src={logo} alt="IAC Logo" style={{ width: 48, height: 48, marginRight: 12, objectFit: 'contain' }} />
+    <img src={logo} alt="IAC Logo" className="header__logo" />
   );
   const profileIcon = (
-    <svg width="28" height="28" fill="currentColor" viewBox="0 0 20 20"><circle cx="10" cy="7" r="4"/><rect x="3" y="13" width="14" height="5" rx="2"/></svg>
+    <svg className="header__profile-icon" viewBox="0 0 20 20"><circle cx="10" cy="7" r="4"/><rect x="3" y="13" width="14" height="5" rx="2"/></svg>
   );
   return (
-    <header style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '1rem 2rem', height: 72, background: '#213547', boxShadow: '0 2px 8px 0 #e5e7eb', zIndex: 10 }}>
-      <div style={{ display: 'flex', alignItems: 'center' }}>
+    <header className="header">
+      <div className="header__left">
         {headerIcon}
-        <span style={{ fontSize: 18, color: '#fff' }}><b>OWASP</b> HACTU8<br/>Intelligence Assurance Center</span>
+        <span className="header__title"><b>OWASP</b> HACTU8<br/>Intelligence Assurance Center</span>
       </div>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+      <div className="header__right">
         {/* <select value={selectedConfig} onChange={e => setSelectedConfig(e.target.value)} style={{ padding: '6px 12px', borderRadius: 6, border: '1px solid #e5e7eb', fontSize: 15 }}>
           <option value="config 1">config 1</option>
           <option value="config 2">config 2</option>
         </select> */}
-        <button style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0 }} title="Profile">
+        <button className="header__profile-button" title="Profile">
           {profileIcon}
         </button>
       </div>

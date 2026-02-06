@@ -24,6 +24,11 @@
         "run",
         "dev"
       ],
+      "serverReadyAction": {
+        "action": "openExternally",
+        "pattern": "Local:\\s+(https?://\\S+)",
+        "uriFormat": "%s"
+      },
       "env": {
         "VITE_CORS_ORIGIN": "http://localhost:3001",
         "VITE_PORT": "3000"

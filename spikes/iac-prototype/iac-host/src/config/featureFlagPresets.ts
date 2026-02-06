@@ -19,6 +19,20 @@ export const fullAccessPreset: FeatureFlags = {
   projects: {
     enabled: true,
   },
+  library: {
+    enabled: false,
+    articles: true,
+    projectDocs: true,
+    owaspAI: true,
+    references: true,
+  },
+  copilot: {
+    enabled: true,
+    assistMode: true,
+    owaspDocs: true,
+    projectDocs: true,
+    defaultExpanded: true,
+  },
   testing: {
     promptInjection: true,
     trainingLeak: true,
@@ -63,6 +77,20 @@ export const minimalPreset: FeatureFlags = {
   },
   projects: {
     enabled: false,
+  },
+  library: {
+    enabled: false,
+    articles: false,
+    projectDocs: false,
+    owaspAI: false,
+    references: false,
+  },
+  copilot: {
+    enabled: true,
+    assistMode: true,
+    owaspDocs: true,
+    projectDocs: true,
+    defaultExpanded: false,
   },
   testing: {
     promptInjection: false,
@@ -109,6 +137,20 @@ export const testingFocusPreset: FeatureFlags = {
   projects: {
     enabled: true,
   },
+  library: {
+    enabled: false,
+    articles: false,
+    projectDocs: false,
+    owaspAI: false,
+    references: false,
+  },
+  copilot: {
+    enabled: true,
+    assistMode: true,
+    owaspDocs: true,
+    projectDocs: true,
+    defaultExpanded: true,
+  },
   testing: {
     promptInjection: true,
     trainingLeak: true,
@@ -154,6 +196,20 @@ export const developerPreset: FeatureFlags = {
   projects: {
     enabled: true,
   },
+  library: {
+    enabled: false,
+    articles: true,
+    projectDocs: true,
+    owaspAI: true,
+    references: true,
+  },
+  copilot: {
+    enabled: true,
+    assistMode: true,
+    owaspDocs: true,
+    projectDocs: true,
+    defaultExpanded: true,
+  },
   testing: {
     promptInjection: false,
     trainingLeak: false,
@@ -198,6 +254,20 @@ export const securityFocusPreset: FeatureFlags = {
   },
   projects: {
     enabled: false,
+  },
+  library: {
+    enabled: false,
+    articles: false,
+    projectDocs: false,
+    owaspAI: true,
+    references: true,
+  },
+  copilot: {
+    enabled: true,
+    assistMode: true,
+    owaspDocs: true,
+    projectDocs: true,
+    defaultExpanded: true,
   },
   testing: {
     promptInjection: true,

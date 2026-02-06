@@ -3,23 +3,25 @@
   /* background: #1e1e2f; */
   color: white;
   padding: 1rem;
-  margin-right: 2rem;
+  /* margin-right: 2rem; */
   height: 100vh;
+  background-color: var(--iac-surface-elevated);
 }
 
-.sidebar h2 {
+/* .sidebar h2 {
   font-size: 1.4rem;
   margin-bottom: 1rem;
-}
+} */
 
 .sidebar ul {
   list-style: none;
   padding: 0;
+  font-size: 14px;
 }
 
-.sidebar li {
+/* .sidebar li {
   margin-bottom: 1rem;
-}
+} */
 
 .sidebar li:last-child {
   margin-bottom: 4rem;

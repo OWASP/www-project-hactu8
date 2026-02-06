@@ -5,8 +5,10 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Sidebar from './components/Sidebar';
 import Header from './components/Header';
 import Navbar from './components/Navbar';
+import { CopilotSidebar } from './components/CopilotSidebar';
 import { FeatureFlagProvider } from './contexts/FeatureFlagContext';
 import { SystemMessageProvider, useSystemMessage } from './contexts/SystemMessageContext';
+import { CopilotProvider } from './contexts/CopilotContext';
 import { getEffectiveConfig } from './config/environmentConfig';
 
 import Dashboard from './pages/Dashboard';
@@ -120,6 +122,7 @@ const AppContent: React.FC = () => {
               </Routes>
             </div>
           </main>
+            <CopilotSidebar />
         </div>
       </div>
     </Router>
@@ -130,7 +133,9 @@ function App() {
   return (
     <FeatureFlagProvider>
       <SystemMessageProvider>
-        <AppContent />
+        <CopilotProvider>
+          <AppContent />
+        </CopilotProvider>
       </SystemMessageProvider>
     </FeatureFlagProvider>
   );
