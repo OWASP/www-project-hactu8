@@ -2,7 +2,9 @@
   "permissions": {
     "allow": [
       "Bash(npm run build:*)",
-      "Bash(node --version:*)"
+      "Bash(node --version:*)",
+      "Bash(wc:*)",
+      "Bash(npx tsc:*)"
     ]
   }
 }

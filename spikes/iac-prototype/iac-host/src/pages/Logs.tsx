@@ -48,7 +48,7 @@ const Logs = () => {
   const [selected, setSelected] = useState(mockLogFiles[0]);
 
   return (
-    <div style={{ display: 'flex', minHeight: '60vh' }}>
+    <div style={{ display: 'flex', minHeight: '60vh', margin: '2rem' }}>
       <aside style={{ width: 300, borderRight: '1px solid #eee', padding: '1rem 1rem' }}>
         <h3>Log Files</h3>
         <nav>

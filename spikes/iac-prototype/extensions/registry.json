@@ -1,0 +1,132 @@
+{
+  "version": "1.0.0",
+  "generatedAt": "2025-01-01T00:00:00Z",
+  "extensions": [
+    {
+      "manifest": {
+        "id": "iac-prompt-injection-tests",
+        "name": "Prompt Injection Tests - IAC Core",
+        "version": "0.1.0",
+        "description": "Run predefined prompt injection tests against a configured target and report results to the Assurance Results view.",
+        "author": "OWASP HACTU8 Project",
+        "license": "Apache-2.0",
+        "type": "streamlit",
+        "category": "testing",
+        "permissions": ["network", "hostConfig", "reporting"],
+        "entryPoint": "app.py",
+        "settings": [
+          {
+            "key": "targetUrl",
+            "label": "Target URL",
+            "description": "The URL of the AI endpoint to test for prompt injection vulnerabilities.",
+            "type": "string",
+            "default": "http://localhost:8000",
+            "required": true
+          },
+          {
+            "key": "timeout",
+            "label": "Request Timeout (seconds)",
+            "description": "Maximum time to wait for each test request.",
+            "type": "number",
+            "default": 30
+          },
+          {
+            "key": "verbose",
+            "label": "Verbose Output",
+            "description": "Include detailed request/response data in test results.",
+            "type": "boolean",
+            "default": false
+          }
+        ],
+        "dependencies": [],
+        "minHostVersion": "0.1.0"
+      },
+      "zipFile": "iac-prompt-injection-tests-0.1.0.zip",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "publishedAt": "2025-01-01T00:00:00Z",
+      "updatedAt": "2025-01-01T00:00:00Z"
+    },
+    {
+      "manifest": {
+        "id": "iac-config-linter",
+        "name": "IAC Configuration Linter",
+        "version": "0.1.0",
+        "description": "Validates IAC host configuration files against best-practice rules and reports issues.",
+        "author": "OWASP HACTU8 Project",
+        "license": "Apache-2.0",
+        "type": "streamlit",
+        "category": "linting",
+        "permissions": ["hostConfig", "reporting"],
+        "entryPoint": "app.py",
+        "settings": [
+          {
+            "key": "strictMode",
+            "label": "Strict Mode",
+            "description": "Treat warnings as errors.",
+            "type": "boolean",
+            "default": false
+          },
+          {
+            "key": "ruleSet",
+            "label": "Rule Set",
+            "description": "Which rule set to apply.",
+            "type": "select",
+            "default": "default",
+            "options": [
+              { "label": "Default", "value": "default" },
+              { "label": "Strict", "value": "strict" },
+              { "label": "Minimal", "value": "minimal" }
+            ]
+          }
+        ],
+        "dependencies": [],
+        "minHostVersion": "0.1.0"
+      },
+      "zipFile": "iac-config-linter-0.1.0.zip",
+      "sha256": "a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2",
+      "publishedAt": "2025-01-01T00:00:00Z",
+      "updatedAt": "2025-01-01T00:00:00Z"
+    },
+    {
+      "manifest": {
+        "id": "iac-security-scanner",
+        "name": "IAC Security Scanner",
+        "version": "0.1.0",
+        "description": "Scans AI application configurations for common security misconfigurations and known vulnerabilities.",
+        "author": "OWASP HACTU8 Project",
+        "license": "Apache-2.0",
+        "type": "streamlit",
+        "category": "security-scanning",
+        "permissions": ["network", "hostConfig", "reporting"],
+        "entryPoint": "app.py",
+        "settings": [
+          {
+            "key": "scanDepth",
+            "label": "Scan Depth",
+            "description": "How deeply to analyze nested configurations.",
+            "type": "select",
+            "default": "standard",
+            "options": [
+              { "label": "Quick", "value": "quick" },
+              { "label": "Standard", "value": "standard" },
+              { "label": "Deep", "value": "deep" }
+            ]
+          },
+          {
+            "key": "includeInfoFindings",
+            "label": "Include Informational Findings",
+            "description": "Report low-severity informational findings alongside warnings and errors.",
+            "type": "boolean",
+            "default": true
+          }
+        ],
+        "dependencies": [],
+        "minHostVersion": "0.1.0"
+      },
+      "zipFile": "iac-security-scanner-0.1.0.zip",
+      "sha256": "f6e5d4c3b2a1f6e5d4c3b2a1f6e5d4c3b2a1f6e5d4c3b2a1f6e5d4c3b2a1f6e5",
+      "publishedAt": "2025-01-01T00:00:00Z",
+      "updatedAt": "2025-01-01T00:00:00Z"
+    }
+  ]
+}
