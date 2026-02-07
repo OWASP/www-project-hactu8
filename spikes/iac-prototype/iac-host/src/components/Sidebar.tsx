@@ -3,6 +3,8 @@ import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import './Sidebar.css'; // optional styling
 import { useFeatureFlags } from '../contexts/FeatureFlagContext';
+import { loadInstalled } from '../services/extensionService';
+import type { ExtensionCategory } from '../types/extensions';
 
 // Placeholder SVG icons for demonstration
 const icons = {
@@ -44,6 +46,18 @@ function useMockProjects() {
   return projects;
 }
 
+// Map extension categories to sidebar group headings.
+// The extension's category in its manifest determines which sidebar group it appears in.
+const CATEGORY_TO_GROUP: Record<ExtensionCategory, string> = {
+  testing: 'Testing',
+  linting: 'Tools',
+  formatting: 'Tools',
+  'security-scanning': 'Tools',
+  integration: 'Other',
+  reporting: 'Reporting',
+  utility: 'Tools',
+};
+
 const Sidebar = () => {
   const location = useLocation();
   const { flags } = useFeatureFlags();
@@ -58,6 +72,19 @@ const Sidebar = () => {
   });
 
   const projects = useMockProjects();
+
+  // Build extension nav items from installed extensions (persisted in localStorage)
+  const installedExtensions = loadInstalled();
+  const extensionNavByGroup: Record<string, { path: string; label: string; icon: JSX.Element }[]> = {};
+  for (const ext of installedExtensions) {
+    const group = CATEGORY_TO_GROUP[ext.manifest.category] ?? 'Other';
+    if (!extensionNavByGroup[group]) extensionNavByGroup[group] = [];
+    extensionNavByGroup[group].push({
+      path: `/ext/${ext.manifest.id}`,
+      label: ext.manifest.name,
+      icon: icons.extensions,
+    });
+  }
 
   // Compose navGroups with Projects injected after Monitoring
   const baseGroups = [
@@ -115,13 +142,20 @@ const Sidebar = () => {
         ...(flags.testing.modelIdentity ? [{ path: '/model-identity', label: 'Model Identity & Version Tracker', icon: icons.assurance }] : []),
         ...(flags.testing.authContextAudit ? [{ path: '/auth-context-audit', label: 'Authorization & Context Audit', icon: icons.assurance }] : []),
         ...(flags.testing.privacyCompliance ? [{ path: '/privacy-compliance', label: 'Model Privacy Compliance Scanner', icon: icons.assurance }] : []),
+        ...(extensionNavByGroup['Testing'] ?? []),
       ],
     },
+    // Tools group — only appears when extensions with tool categories are installed
+    ...((extensionNavByGroup['Tools'] ?? []).length > 0 ? [{
+      heading: 'Tools',
+      items: extensionNavByGroup['Tools'],
+    }] : []),
     {
       heading: 'Reporting',
       items: [
         ...(flags.reporting.assuranceResults ? [{ path: '/assurance', label: 'Assurance Results', icon: icons.assurance }] : []),
         ...(flags.reporting.reports ? [{ path: '/reports', label: 'Reports', icon: icons.reports }] : []),
+        ...(extensionNavByGroup['Reporting'] ?? []),
       ],
     },
     {
@@ -130,6 +164,7 @@ const Sidebar = () => {
         ...(flags.other.workbench ? [{ path: '/workbench', label: 'Workbench', icon: icons.workbench }] : []),
         ...(flags.other.agents ? [{ path: '/agents', label: 'Agents', icon: icons.agents }] : []),
         ...(flags.other.users ? [{ path: '/users', label: 'Users & Access', icon: icons.users }] : []),
+        ...(extensionNavByGroup['Other'] ?? []),
       ],
     },
     {

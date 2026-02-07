@@ -1,5 +1,6 @@
-import React, { useState, useCallback } from 'react';
-import type { InstalledExtension, StreamlitConfig } from '../../types/extensions';
+import React, { useState, useCallback, useEffect } from 'react';
+import type { InstalledExtension, StreamlitConfig, TestRunResult } from '../../types/extensions';
+import resultsService from '../../services/resultsService';
 
 interface StreamlitExtensionProps {
   extension: InstalledExtension;
@@ -19,6 +20,34 @@ const StreamlitExtension: React.FC<StreamlitExtensionProps> = ({ extension, onSt
   const streamlitConfig = extension.runtime.type === 'streamlit'
     ? extension.runtime.streamlit
     : null;
+
+  // -------------------------------------------------------------------------
+  // Listen for test results posted by the Streamlit iframe via postMessage.
+  // The extension sends { type: 'iac-extension-results', payload: TestRunResult }
+  // -------------------------------------------------------------------------
+  useEffect(() => {
+    function handleMessage(event: MessageEvent) {
+      // Only process messages that look like our extension results
+      if (
+        event.data &&
+        typeof event.data === 'object' &&
+        event.data.type === 'iac-extension-results' &&
+        event.data.payload
+      ) {
+        const result = event.data.payload as TestRunResult;
+        // Basic validation — must have runId and results array
+        if (result.runId && Array.isArray(result.results)) {
+          resultsService.addResult(result);
+          console.info(
+            `[IAC] Received test results from extension "${extension.manifest.id}" — run ${result.runId} (${result.results.length} tests)`
+          );
+        }
+      }
+    }
+
+    window.addEventListener('message', handleMessage);
+    return () => window.removeEventListener('message', handleMessage);
+  }, [extension.manifest.id]);
 
   const handleLoad = useCallback(() => {
     setLoaded(true);
@@ -91,7 +120,7 @@ const containerStyle: React.CSSProperties = {
   width: '100%',
   height: '100%',
   minHeight: '400px',
-  backgroundColor: '#000',
+  backgroundColor: 'var(--iac-bg, #0f172a)',
 };
 
 const iframeStyle: React.CSSProperties = {
@@ -110,8 +139,8 @@ const loaderStyle: React.CSSProperties = {
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  backgroundColor: '#000',
-  color: '#888',
+  backgroundColor: 'var(--iac-bg, #0f172a)',
+  color: 'var(--iac-text-secondary, #94a3b8)',
   zIndex: 1,
 };
 

@@ -28,7 +28,8 @@ const DEFAULT_RESULTS_DIR = '~/.iac/results';
 // Default: raw URL pointing at the registry.json in this repo
 const DEFAULT_REGISTRY_URL =
   import.meta.env.VITE_EXTENSION_REGISTRY_URL ||
-  'https://raw.githubusercontent.com/OWASP/www-project-hactu8/main/spikes/iac-prototype/extensions/registry.json';
+  'https://raw.githubusercontent.com/OWASP/www-project-hactu8/86928e5bd1739496e35b43eab2b55b9d1108adf3/spikes/iac-prototype/extensions/registry.json';
+  // 'https://raw.githubusercontent.com/OWASP/www-project-hactu8/main/spikes/iac-prototype/extensions/registry.json';
 
 // ---------------------------------------------------------------------------
 // localStorage helpers

@@ -1,0 +1,27 @@
+# IAC Host theme for Streamlit extensions
+# Default: light theme. Dark mode is toggled via CSS custom properties in iac_theme.py.
+#
+# Light theme CSS variable reference (from IAC index.css):
+#   --iac-bg:               #ffffff  (main background)
+#   --iac-surface:          #f8fafc  (card/panel surfaces)
+#   --iac-surface-elevated: #f1f5f9  (header, active states)
+#   --iac-text:             #213547  (primary text)
+#   --iac-text-secondary:   #64748b  (secondary text)
+#   --iac-border:           #e2e8f0  (borders)
+#   --iac-accent:           #0284c7  (accent/links)
+
+[theme]
+base = "light"
+primaryColor = "#0284c7"
+backgroundColor = "#ffffff"
+secondaryBackgroundColor = "#f8fafc"
+textColor = "#213547"
+font = "sans serif"
+
+[server]
+headless = true
+enableCORS = false
+enableXsrfProtection = false
+
+[browser]
+gatherUsageStats = false

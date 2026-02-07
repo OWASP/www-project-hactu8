@@ -38,17 +38,17 @@ import ExtensionSettings from '../components/Extensions/ExtensionSettings';
 //
 // --- Layer 5: Management UI --- [CP5] ✅ This file
 //
-// --- Layer 6: First Extension — "Prompt Injection Tests - IAC Core" --- [CP6]
-// TODO: Create Streamlit app for prompt injection testing
-// TODO: Package as zip with manifest.json
-// TODO: Add to extensions/registry.json
-// TODO: App reads config.json for target URL, writes results to shared results dir
+// --- Layer 6: First Extension — "Prompt Injection Tests - IAC Core" --- [CP6] ✅
+//   extensions/iac-prompt-injection-tests/ — Streamlit app + manifest.json
+//   14 test cases across 6 categories (direct override, extraction, delimiters, context, indirect, output)
+//   Reads config.json from install dir, writes TestRunResult JSON to shared results dir
+//   Already listed in registry.json
 //
-// --- Layer 7: Reporting Integration --- [CP7]
-// TODO: Define test results JSON schema (test run id, timestamp, pass/fail, details)
-// TODO: Shared results dir convention: ~/.iac/results/<extension-id>/<run-id>.json
-// TODO: Build Reporting > Assurance Results view — reads results dir, displays runs
-// TODO: Auto-refresh when new results arrive (poll or watch)
+// --- Layer 7: Reporting Integration --- [CP7] ✅
+//   resultsService — localStorage CRUD, mock data fallback, loadResultsWithMocks()
+//   AssuranceResults page — sidebar run list, detail view with metrics/pass rate/filter/table
+//   Auto-refresh every 30s via setInterval poll
+//   Convention: ~/.iac/results/<extension-id>/<run-id>.json (Streamlit writes, future API serves)
 // =============================================================================
 
 // ---------------------------------------------------------------------------

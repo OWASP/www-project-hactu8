@@ -1,0 +1,38 @@
+{
+  "id": "iac-prompt-injection-tests",
+  "name": "Prompt Injection Tests - IAC Core",
+  "version": "0.1.0",
+  "description": "Run predefined prompt injection tests against a configured target and report results to the Assurance Results view.",
+  "author": "OWASP HACTU8 Project",
+  "license": "Apache-2.0",
+  "type": "streamlit",
+  "category": "testing",
+  "permissions": ["network", "hostConfig", "reporting"],
+  "entryPoint": "app.py",
+  "settings": [
+    {
+      "key": "targetUrl",
+      "label": "Target URL",
+      "description": "The URL of the AI endpoint to test for prompt injection vulnerabilities.",
+      "type": "string",
+      "default": "http://localhost:8000",
+      "required": true
+    },
+    {
+      "key": "timeout",
+      "label": "Request Timeout (seconds)",
+      "description": "Maximum time to wait for each test request.",
+      "type": "number",
+      "default": 30
+    },
+    {
+      "key": "verbose",
+      "label": "Verbose Output",
+      "description": "Include detailed request/response data in test results.",
+      "type": "boolean",
+      "default": false
+    }
+  ],
+  "dependencies": [],
+  "minHostVersion": "0.1.0"
+}

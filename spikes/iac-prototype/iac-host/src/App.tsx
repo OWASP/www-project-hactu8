@@ -35,6 +35,7 @@ import Users from './pages/Users';
 import Settings from './pages/Settings';
 import Profile from './pages/Profile';
 import Extensions from './pages/Extensions';
+import ExtensionView from './pages/ExtensionView';
 import CreateNewResource from './pages/CreateNewResource';
 import Library from './pages/Library';
 import LibraryArticles from './pages/LibraryArticles';
@@ -118,6 +119,7 @@ const AppContent: React.FC = () => {
                 <Route path="/settings" element={<Settings />} />
                 <Route path="/profile" element={<Profile />} />
                 <Route path="/extensions" element={<Extensions />} />
+                <Route path="/ext/:extensionId" element={<ExtensionView />} />
                 <Route path="/create-new-resource" element={<CreateNewResource />} />
               </Routes>
             </div>
