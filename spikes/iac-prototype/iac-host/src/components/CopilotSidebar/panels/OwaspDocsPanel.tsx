@@ -4,10 +4,16 @@
 
 import React, { useState } from 'react';
 import { useCopilot } from '../../../contexts/CopilotContext';
+import copilotService from '../../../services/copilotService';
 
 const OwaspDocsPanel: React.FC = () => {
   const { documents, syncOwaspDocs, isSyncing } = useCopilot();
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
+  const [syncError, setSyncError] = useState<string | null>(null);
+  const [showSources, setShowSources] = useState(false);
+  const [sourceItems, setSourceItems] = useState<Array<{ id: string; title: string; sourceUrl?: string }>>([]);
+  const [sourceError, setSourceError] = useState<string | null>(null);
+  const [sourcesLoading, setSourcesLoading] = useState(false);
 
   // Filter to show only OWASP documents
   const owaspDocs = documents.filter(d => d.sourceType === 'owasp');
@@ -22,9 +28,40 @@ const OwaspDocsPanel: React.FC = () => {
 
   const handleSync = async () => {
     try {
+      setSyncError(null);
       await syncOwaspDocs();
     } catch (error) {
+      const message = error instanceof Error ? error.message : 'Failed to sync OWASP docs';
       console.error('Failed to sync OWASP docs:', error);
+      setSyncError(message);
+    }
+  };
+
+  const toggleSources = async () => {
+    const next = !showSources;
+    setShowSources(next);
+
+    if (!next) {
+      return;
+    }
+
+    setSourcesLoading(true);
+    setSourceError(null);
+
+    try {
+      const response = await copilotService.getSources();
+      const items = response.sources?.owasp?.documents || [];
+      const normalized = items.map((item: any) => ({
+        id: item.id,
+        title: item.title,
+        sourceUrl: item.source_url || item.sourceUrl,
+      }));
+      setSourceItems(normalized);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Failed to load sources';
+      setSourceError(message);
+    } finally {
+      setSourcesLoading(false);
     }
   };
 
@@ -55,14 +92,87 @@ const OwaspDocsPanel: React.FC = () => {
       {/* Section Header with Sync Button */}
       <div className="copilot-section-header">
         <span className="copilot-section-title">OWASP AI Security</span>
-        <button
-          className="copilot-section-action"
-          onClick={handleSync}
-          disabled={isSyncing}
-        >
-          {isSyncing ? 'Syncing...' : 'Sync'}
-        </button>
+        <div style={{ display: 'flex', gap: '6px' }}>
+          <button
+            className="copilot-section-action"
+            onClick={toggleSources}
+            disabled={sourcesLoading}
+            style={{ backgroundColor: '#2a2a4a', color: '#9e9e9e' }}
+          >
+            {sourcesLoading ? 'Loading...' : (showSources ? 'Hide Sources' : 'View Sources')}
+          </button>
+          <button
+            className="copilot-section-action"
+            onClick={handleSync}
+            disabled={isSyncing}
+          >
+            {isSyncing ? 'Syncing...' : 'Sync'}
+          </button>
+        </div>
       </div>
+
+      {syncError && (
+        <div className="copilot-empty" style={{ padding: '12px', border: '1px solid #ef4444', borderRadius: '6px', marginBottom: '12px' }}>
+          <p className="copilot-empty-text" style={{ fontSize: '12px', color: '#ef4444' }}>
+            {syncError}
+          </p>
+        </div>
+      )}
+
+      {showSources && (
+        <div style={{ marginBottom: '12px' }}>
+          {sourceError ? (
+            <div className="copilot-empty" style={{ padding: '12px', border: '1px solid #ef4444', borderRadius: '6px' }}>
+              <p className="copilot-empty-text" style={{ fontSize: '12px', color: '#ef4444' }}>
+                {sourceError}
+              </p>
+            </div>
+          ) : (
+            <div className="copilot-doc-list">
+              {sourceItems.length === 0 ? (
+                <div className="copilot-empty" style={{ padding: '12px' }}>
+                  <p className="copilot-empty-text" style={{ fontSize: '12px' }}>
+                    No OWASP sources indexed yet.
+                  </p>
+                </div>
+              ) : (
+                sourceItems.map(item => (
+                  <a
+                    key={item.id}
+                    href={item.sourceUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="copilot-doc-item"
+                    style={{ textDecoration: 'none', cursor: item.sourceUrl ? 'pointer' : 'default' }}
+                    aria-disabled={!item.sourceUrl}
+                  >
+                    <div className="copilot-doc-info">
+                      <span className="copilot-doc-icon">📄</span>
+                      <span className="copilot-doc-title" title={item.title}>
+                        {item.title}
+                      </span>
+                    </div>
+                    {item.sourceUrl && (
+                      <svg
+                        width="14"
+                        height="14"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="#9e9e9e"
+                        strokeWidth="2"
+                      >
+                        <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+                        <polyline points="15 3 21 3 21 9" />
+                        <line x1="10" y1="14" x2="21" y2="3" />
+                      </svg>
+                    )}
+                  </a>
+                ))
+              )}
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Category Filter */}
       {categories.length > 1 && (

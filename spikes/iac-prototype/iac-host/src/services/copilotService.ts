@@ -13,9 +13,32 @@ import type {
   HealthResponse,
   CopilotTab,
 } from '../types/copilot';
+import type { ModelRegistryResponse } from '../types/modelProvider';
+import { getModelProviderHeaders } from './modelProviderService';
 
 // API base URL - configurable via environment variable
-const API_BASE = import.meta.env.VITE_COPILOT_API_URL || 'http://localhost:8000';
+const RAW_COPILOT_API_BASE = import.meta.env.VITE_COPILOT_API_URL || '';
+
+function normalizeApiBase(rawBase: string): string {
+  const trimmed = rawBase.trim();
+  if (!trimmed) {
+    return '';
+  }
+
+  if (trimmed.startsWith('http://') || trimmed.startsWith('https://')) {
+    return trimmed;
+  }
+
+  if (trimmed.startsWith('/')) {
+    return trimmed;
+  }
+
+  const protocol = typeof window !== 'undefined' ? window.location.protocol : 'http:';
+  return `${protocol}//${trimmed}`;
+}
+
+export const COPILOT_API_BASE = normalizeApiBase(RAW_COPILOT_API_BASE);
+const API_BASE = COPILOT_API_BASE;
 
 /**
  * Generic fetch wrapper with error handling.
@@ -30,6 +53,7 @@ async function fetchApi<T>(
     ...options,
     headers: {
       'Content-Type': 'application/json',
+      ...getModelProviderHeaders(),
       ...options.headers,
     },
   });
@@ -96,6 +120,9 @@ export async function uploadDocument(
   const response = await fetch(url, {
     method: 'POST',
     body: formData,
+    headers: {
+      ...getModelProviderHeaders(),
+    },
   });
 
   if (!response.ok) {
@@ -160,6 +187,13 @@ export async function getStats(): Promise<{
   return fetchApi('/api/copilot/stats');
 }
 
+/**
+ * Get available model providers and models.
+ */
+export async function getModelRegistry(): Promise<ModelRegistryResponse> {
+  return fetchApi<ModelRegistryResponse>('/api/copilot/models');
+}
+
 // Export service as default
 const copilotService = {
   checkHealth,
@@ -171,6 +205,7 @@ const copilotService = {
   syncOwaspDocuments,
   getSources,
   getStats,
+  getModelRegistry,
 };
 
 export default copilotService;

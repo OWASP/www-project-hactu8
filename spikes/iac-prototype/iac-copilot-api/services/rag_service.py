@@ -1,4 +1,4 @@
-"""RAG (Retrieval-Augmented Generation) service for the IAC Copilot."""
+"""RAG service for the IAC Copilot API."""
 
 import os
 from typing import List, Dict, Any, Optional
@@ -10,7 +10,6 @@ from .vector_store import VectorStoreService
 class RAGService:
     """Service for RAG-enhanced chat with document context."""
 
-    # System prompts for different modes
     SYSTEM_PROMPTS = {
         "assist": """You are an IAC (Intelligence Assurance Copilot) assistant helping users with research, planning, and summarization tasks.
 
@@ -40,20 +39,14 @@ You have access to HACTU8 project documentation including:
 - API references
 - Contributing guidelines
 
-Help users understand the HACTU8 project, its components, and how to work with it. Reference specific documentation sections when answering."""
+Help users understand the HACTU8 project, its components, and how to work with it. Reference specific documentation sections when answering.""",
     }
 
     def __init__(self, vector_store: Optional[VectorStoreService] = None):
-        """Initialize the RAG service.
-
-        Args:
-            vector_store: VectorStoreService instance. Creates new one if not provided.
-        """
         self.vector_store = vector_store or VectorStoreService()
         self.openai_client = openai.OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
     def _resolve_model(self, provider_id: Optional[str], model_id: Optional[str]) -> str:
-        """Resolve the model name for the requested provider."""
         if model_id:
             return model_id
 
@@ -66,15 +59,23 @@ Help users understand the HACTU8 project, its components, and how to work with i
         return os.getenv("OPENAI_MODEL", "gpt-4o-mini")
 
     def _get_openai_client(self, api_key: Optional[str], base_url: Optional[str]) -> openai.OpenAI:
-        """Create an OpenAI-compatible client, optionally using a custom base URL."""
         resolved_key = api_key or os.getenv("OPENAI_API_KEY") or ""
         if base_url:
             return openai.OpenAI(api_key=resolved_key or "local", base_url=base_url)
 
         return openai.OpenAI(api_key=resolved_key)
 
+    def _get_ollama_client(self, base_url: Optional[str]) -> openai.OpenAI:
+        resolved_base = (base_url or os.getenv("OLLAMA_BASE_URL") or "").strip()
+        if not resolved_base:
+            return openai.OpenAI(api_key="local")
+
+        if not resolved_base.endswith("/v1"):
+            resolved_base = f"{resolved_base.rstrip('/')}/v1"
+
+        return openai.OpenAI(api_key="local", base_url=resolved_base)
+
     async def _call_anthropic(self, messages: List[Dict[str, str]], model: str, api_key: Optional[str]) -> str:
-        """Call Anthropic Messages API without additional SDK dependencies."""
         resolved_key = api_key or os.getenv("ANTHROPIC_API_KEY")
         if not resolved_key:
             raise ValueError("Anthropic API key is not configured")
@@ -116,60 +117,47 @@ Help users understand the HACTU8 project, its components, and how to work with i
         document_ids: Optional[List[str]] = None,
         n_results: int = 5
     ) -> List[Dict[str, Any]]:
-        """Retrieve relevant document chunks for a query.
-
-        Args:
-            query: The user's query
-            mode: The copilot mode ('assist', 'owasp', 'project')
-            document_ids: Optional list of specific document IDs to search within
-            n_results: Maximum number of chunks to retrieve
-
-        Returns:
-            List of relevant document chunks with metadata
-        """
-        # Build filter based on mode
         filter_metadata = None
+        collection_key = "assist"
+        allowed_source_types = None
 
         if mode == "owasp":
             filter_metadata = {"source_type": "owasp"}
+            collection_key = "owasp"
         elif mode == "project":
             filter_metadata = {"source_type": "project"}
-        elif document_ids:
-            # For assist mode with specific documents, we'll filter after search
-            pass
+            collection_key = "project"
+        else:
+            allowed_source_types = {"user_upload", "url"}
 
-        # Search vector store
         results = self.vector_store.search(
             query=query,
-            n_results=n_results * 2 if document_ids else n_results,  # Get more if filtering
-            filter_metadata=filter_metadata
+            n_results=n_results * 2 if document_ids else n_results,
+            filter_metadata=filter_metadata,
+            collection_key=collection_key
         )
 
-        # Filter by document_ids if specified
+        if allowed_source_types:
+            results = [
+                r for r in results
+                if r.get("metadata", {}).get("source_type") in allowed_source_types
+            ]
+
         if document_ids:
-            results = [r for r in results if r['metadata'].get('document_id') in document_ids]
+            results = [r for r in results if r["metadata"].get("document_id") in document_ids]
             results = results[:n_results]
 
-        return results
+        return results[:n_results]
 
     def build_context_prompt(self, chunks: List[Dict[str, Any]]) -> str:
-        """Build a context prompt from retrieved chunks.
-
-        Args:
-            chunks: List of document chunks with content and metadata
-
-        Returns:
-            Formatted context string for the LLM
-        """
         if not chunks:
             return "No relevant documents found in the knowledge base."
 
         context_parts = ["Relevant context from documents:\n"]
-
         for i, chunk in enumerate(chunks, 1):
-            title = chunk['metadata'].get('title', 'Unknown Document')
-            source_type = chunk['metadata'].get('source_type', 'unknown')
-            content = chunk['content']
+            title = chunk["metadata"].get("title", "Unknown Document")
+            source_type = chunk["metadata"].get("source_type", "unknown")
+            content = chunk["content"]
 
             context_parts.append(f"[Source {i}: {title} ({source_type})]")
             context_parts.append(content)
@@ -178,26 +166,18 @@ Help users understand the HACTU8 project, its components, and how to work with i
         return "\n".join(context_parts)
 
     def format_sources(self, chunks: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
-        """Format chunks as source citations for the response.
-
-        Args:
-            chunks: List of document chunks
-
-        Returns:
-            List of formatted source references
-        """
         sources = []
         seen_docs = set()
 
         for chunk in chunks:
-            doc_id = chunk['metadata'].get('document_id')
+            doc_id = chunk["metadata"].get("document_id")
             if doc_id and doc_id not in seen_docs:
                 seen_docs.add(doc_id)
                 sources.append({
                     "id": doc_id,
-                    "title": chunk['metadata'].get('title', 'Unknown'),
-                    "source_type": chunk['metadata'].get('source_type', 'unknown'),
-                    "relevance": 1.0 - chunk.get('distance', 0.0)  # Convert distance to relevance
+                    "title": chunk["metadata"].get("title", "Unknown"),
+                    "source_type": chunk["metadata"].get("source_type", "unknown"),
+                    "relevance": 1.0 - chunk.get("distance", 0.0)
                 })
 
         return sources
@@ -213,87 +193,55 @@ Help users understand the HACTU8 project, its components, and how to work with i
         api_key: Optional[str] = None,
         base_url: Optional[str] = None
     ) -> Dict[str, Any]:
-        """Process a chat message with RAG-enhanced context.
-
-        Args:
-            message: The user's message
-            mode: The copilot mode ('assist', 'owasp', 'project')
-            document_ids: Optional list of document IDs to use as context
-            conversation_history: Optional previous messages in the conversation
-
-        Returns:
-            Dictionary with 'reply' and 'sources'
-        """
-        # Get relevant context
         chunks = self.get_relevant_context(
             query=message,
             mode=mode,
             document_ids=document_ids
         )
 
-        # Build the context prompt
         context = self.build_context_prompt(chunks)
-
-        # Get the system prompt for this mode
         system_prompt = self.SYSTEM_PROMPTS.get(mode, self.SYSTEM_PROMPTS["assist"])
 
-        # Build messages
         messages = [
             {"role": "system", "content": system_prompt},
             {"role": "system", "content": context}
         ]
 
-        # Add conversation history if provided
         if conversation_history:
-            for msg in conversation_history[-10:]:  # Limit to last 10 messages
+            for msg in conversation_history[-10:]:
                 messages.append({"role": msg["role"], "content": msg["content"]})
 
-        # Add the current message
         messages.append({"role": "user", "content": message})
 
         resolved_provider = (provider_id or "openai").lower()
         resolved_model = self._resolve_model(resolved_provider, model_id)
 
-        # Call the requested LLM provider
         try:
             if resolved_provider in ("openai", "ollama", "foundry", "custom"):
-                if resolved_provider in ("ollama", "foundry", "custom") and not base_url:
+                if resolved_provider in ("foundry", "custom") and not base_url:
                     raise ValueError("Base URL is required for the selected provider")
 
-                client = self._get_openai_client(api_key, base_url)
+                if resolved_provider == "ollama":
+                    client = self._get_ollama_client(base_url)
+                else:
+                    client = self._get_openai_client(api_key, base_url)
                 response = client.chat.completions.create(
                     model=resolved_model,
                     messages=messages,
                     temperature=0.7,
                     max_tokens=1024
                 )
-
                 reply = response.choices[0].message.content or "(No response from model)"
             elif resolved_provider == "anthropic":
                 reply = await self._call_anthropic(messages, resolved_model, api_key)
             else:
                 raise ValueError(f"Unsupported model provider: {resolved_provider}")
-
         except Exception as e:
             reply = f"I apologize, but I encountered an error processing your request: {str(e)}"
 
-        # Format sources
         sources = self.format_sources(chunks)
 
         return {
             "reply": reply,
             "sources": sources
         }
-
-    def chat_sync(
-        self,
-        message: str,
-        mode: str = "assist",
-        document_ids: Optional[List[str]] = None,
-        conversation_history: Optional[List[Dict[str, str]]] = None
-    ) -> Dict[str, Any]:
-        """Synchronous version of chat for non-async contexts."""
-        import asyncio
-        return asyncio.get_event_loop().run_until_complete(
-            self.chat(message, mode, document_ids, conversation_history)
-        )

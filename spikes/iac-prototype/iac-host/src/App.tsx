@@ -9,6 +9,7 @@ import { CopilotSidebar } from './components/CopilotSidebar';
 import { FeatureFlagProvider } from './contexts/FeatureFlagContext';
 import { SystemMessageProvider, useSystemMessage } from './contexts/SystemMessageContext';
 import { CopilotProvider } from './contexts/CopilotContext';
+import { ModelProviderProvider } from './contexts/ModelProviderContext';
 import { getEffectiveConfig } from './config/environmentConfig';
 
 import Dashboard from './pages/Dashboard';
@@ -135,9 +136,11 @@ function App() {
   return (
     <FeatureFlagProvider>
       <SystemMessageProvider>
-        <CopilotProvider>
-          <AppContent />
-        </CopilotProvider>
+        <ModelProviderProvider>
+          <CopilotProvider>
+            <AppContent />
+          </CopilotProvider>
+        </ModelProviderProvider>
       </SystemMessageProvider>
     </FeatureFlagProvider>
   );

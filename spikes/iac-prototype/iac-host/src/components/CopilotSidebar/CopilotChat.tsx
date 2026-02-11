@@ -3,6 +3,9 @@
  */
 
 import React, { useState, useRef, useEffect } from 'react';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
+import rehypeSanitize from 'rehype-sanitize';
 import { useCopilot } from '../../contexts/CopilotContext';
 
 const CopilotChat: React.FC = () => {
@@ -70,7 +73,9 @@ const CopilotChat: React.FC = () => {
             className={`copilot-message ${message.role}`}
           >
             <div className="copilot-message-content">
-              {message.content}
+              <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeSanitize]}>
+                {message.content}
+              </ReactMarkdown>
             </div>
             {message.sources && message.sources.length > 0 && (
               <div className="copilot-message-sources">

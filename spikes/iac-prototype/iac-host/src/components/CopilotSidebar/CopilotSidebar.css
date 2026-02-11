@@ -14,6 +14,30 @@
   width: 400px;
 }
 
+.copilot-sidebar.maximized {
+  position: fixed;
+  top: 0;
+  right: 0;
+  height: 100vh;
+  width: min(100vw, 960px);
+  z-index: 40;
+  box-shadow: -20px 0 40px rgba(0, 0, 0, 0.35);
+}
+
+@media (max-width: 900px) {
+  .copilot-sidebar.maximized {
+    width: 100vw;
+  }
+}
+
+.copilot-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(8, 12, 20, 0.6);
+  backdrop-filter: blur(4px);
+  z-index: 30;
+}
+
 .copilot-sidebar.collapsed {
   width: 48px;
 }
@@ -75,6 +99,46 @@
 .copilot-header-btn:focus,
 .copilot-header-btn:focus-visible {
   outline: none !important;
+}
+
+/* Model provider banner */
+.copilot-provider-banner {
+  /* margin: 12px 12px 0; */
+  padding: 12px;
+  /* border-radius: 8px; */
+  border: 2px solid rgba(245, 158, 11, 0.4);
+  background: rgba(245, 158, 11, 0.12);
+  color: var(--iac-text);
+  display: grid;
+  gap: 6px;
+  font-size: 12px;
+}
+
+.copilot-provider-banner-title {
+  font-weight: 600;
+  color: #f59e0b;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-size: 11px;
+}
+
+.copilot-provider-banner-text {
+  color: var(--iac-text-secondary);
+}
+
+.copilot-provider-banner-link {
+  align-self: flex-start;
+  color: var(--iac-text);
+  font-weight: 600;
+  text-decoration: none;
+  padding: 6px 10px;
+  border-radius: 6px;
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.copilot-provider-banner-link:hover {
+  background: rgba(0, 0, 0, 0.35);
 }
 
 /* Tabs */

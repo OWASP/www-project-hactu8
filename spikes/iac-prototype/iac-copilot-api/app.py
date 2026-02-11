@@ -1,4 +1,4 @@
-"""FastAPI backend for the IAC Copilot."""
+"""FastAPI backend for the IAC Copilot API."""
 
 import os
 import hashlib
@@ -32,7 +32,6 @@ url_fetcher: Optional[URLFetcher] = None
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    """Initialize services on startup."""
     global vector_store, rag_service, owasp_fetcher, url_fetcher
 
     print("Initializing IAC Copilot services...")
@@ -56,12 +55,11 @@ app = FastAPI(
     lifespan=lifespan
 )
 
-# CORS configuration for React frontend
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
-        "http://localhost:5173",  # Vite dev server
-        "http://localhost:3000",  # Alternative dev server
+        "http://localhost:5173",
+        "http://localhost:3000",
         "http://127.0.0.1:5173",
         "http://127.0.0.1:3000",
     ],
@@ -71,7 +69,6 @@ app.add_middleware(
 )
 
 
-# Request/Response models
 class URLAddRequest(BaseModel):
     url: str
     title: Optional[str] = None
@@ -154,30 +151,25 @@ def _default_model_registry() -> List[ModelProviderEntry]:
     ]
 
 
-# Health check endpoint
 @app.get("/api/copilot/health", response_model=HealthResponse)
 async def health_check():
-    """Check the health of the Copilot API."""
     return HealthResponse(
         status="healthy",
-        vector_store_count=vector_store.get_collection_stats()['count'] if vector_store else 0,
+        vector_store_count=vector_store.get_collection_stats()["count"] if vector_store else 0,
         document_count=len(document_store)
     )
 
 
 @app.get("/api/copilot/models", response_model=ModelRegistryResponse)
 async def get_model_registry():
-    """Return the configured model providers and models."""
     return ModelRegistryResponse(
         providers=_default_model_registry(),
         updated_at=datetime.utcnow()
     )
 
 
-# Chat endpoint
 @app.post("/api/copilot/chat", response_model=ChatResponse)
 async def chat(request: ChatRequest, http_request: Request):
-    """Process a chat message with RAG-enhanced context."""
     if not rag_service:
         raise HTTPException(status_code=503, detail="RAG service not initialized")
 
@@ -202,10 +194,8 @@ async def chat(request: ChatRequest, http_request: Request):
     )
 
 
-# Document management endpoints
 @app.get("/api/copilot/documents", response_model=DocumentListResponse)
 async def list_documents(source_type: Optional[str] = None):
-    """List all indexed documents, optionally filtered by source type."""
     docs = list(document_store.values())
 
     if source_type:
@@ -222,20 +212,15 @@ async def upload_document(
     file: UploadFile = File(...),
     title: Optional[str] = Form(None)
 ):
-    """Upload and index a document."""
     if not vector_store:
         raise HTTPException(status_code=503, detail="Vector store not initialized")
 
-    # Read file content
     content = await file.read()
-
-    # Determine how to process based on content type
     mime_type = file.content_type or "text/plain"
 
     if mime_type in ["text/plain", "text/markdown", "application/json"]:
         text_content = content.decode("utf-8")
     elif mime_type == "application/pdf":
-        # For MVP, just extract text (could use PyPDF2 for better extraction)
         try:
             text_content = content.decode("utf-8", errors="ignore")
         except Exception:
@@ -246,11 +231,9 @@ async def upload_document(
             detail=f"Unsupported file type: {mime_type}"
         )
 
-    # Create document ID from content hash
     content_hash = hashlib.sha256(content).hexdigest()
     doc_id = hashlib.md5(f"{file.filename}_{content_hash}".encode()).hexdigest()
 
-    # Create document
     doc = Document(
         id=doc_id,
         title=title or file.filename or "Untitled Document",
@@ -261,7 +244,6 @@ async def upload_document(
         mime_type=mime_type
     )
 
-    # Chunk and index content
     chunks = _chunk_content(text_content)
     vector_store.add_document_chunks(
         chunks=chunks,
@@ -270,10 +252,10 @@ async def upload_document(
             "title": doc.title,
             "source_type": SourceType.USER_UPLOAD.value,
             "file_name": file.filename
-        }
+        },
+        collection_key="assist"
     )
 
-    # Store document metadata
     document_store[doc_id] = doc
 
     return DocumentUploadResponse(
@@ -284,7 +266,6 @@ async def upload_document(
 
 @app.post("/api/copilot/documents/url", response_model=Document)
 async def add_url_document(request: URLAddRequest):
-    """Add and index a document from a URL."""
     if not url_fetcher or not vector_store:
         raise HTTPException(status_code=503, detail="Services not initialized")
 
@@ -303,12 +284,18 @@ async def add_url_document(request: URLAddRequest):
 
 @app.delete("/api/copilot/documents/{document_id}")
 async def delete_document(document_id: str):
-    """Delete a document and its indexed chunks."""
     if document_id not in document_store:
         raise HTTPException(status_code=404, detail="Document not found")
 
+    doc = document_store[document_id]
+    collection_key = "assist"
+    if doc.source_type == SourceType.OWASP:
+        collection_key = "owasp"
+    elif doc.source_type == SourceType.PROJECT:
+        collection_key = "project"
+
     if vector_store:
-        chunks_deleted = vector_store.delete_document(document_id)
+        chunks_deleted = vector_store.delete_document(document_id, collection_key=collection_key)
     else:
         chunks_deleted = 0
 
@@ -317,10 +304,8 @@ async def delete_document(document_id: str):
     return {"deleted": True, "chunks_removed": chunks_deleted}
 
 
-# OWASP sync endpoint
 @app.post("/api/copilot/sync/owasp", response_model=OwaspSyncResponse)
 async def sync_owasp_documents():
-    """Fetch and index OWASP documents from GitHub."""
     if not owasp_fetcher or not vector_store:
         raise HTTPException(status_code=503, detail="Services not initialized")
 
@@ -333,10 +318,8 @@ async def sync_owasp_documents():
     )
 
 
-# Sources endpoint
 @app.get("/api/copilot/sources")
 async def get_configured_sources():
-    """Get statistics about configured document sources."""
     sources = {
         "user_upload": {"count": 0, "documents": []},
         "owasp": {"count": 0, "documents": []},
@@ -358,14 +341,12 @@ async def get_configured_sources():
     return {
         "sources": sources,
         "total_documents": len(document_store),
-        "total_chunks": vector_store.get_collection_stats()['count'] if vector_store else 0
+        "total_chunks": vector_store.get_collection_stats()["count"] if vector_store else 0
     }
 
 
-# Vector store stats endpoint
 @app.get("/api/copilot/stats")
 async def get_stats():
-    """Get statistics about the vector store and documents."""
     vs_stats = vector_store.get_collection_stats() if vector_store else {}
 
     return {
@@ -381,7 +362,6 @@ async def get_stats():
 
 
 def _chunk_content(content: str, chunk_size: int = 1000, overlap: int = 200) -> List[str]:
-    """Split content into overlapping chunks."""
     if len(content) <= chunk_size:
         return [content]
 
@@ -405,8 +385,3 @@ def _chunk_content(content: str, chunk_size: int = 1000, overlap: int = 200) -> 
         start = end - overlap
 
     return chunks
-
-
-if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)

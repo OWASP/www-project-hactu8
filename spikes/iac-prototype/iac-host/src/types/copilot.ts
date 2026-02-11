@@ -80,6 +80,7 @@ export interface SourceStats {
     id: string;
     title: string;
     createdAt: string;
+    sourceUrl?: string;
   }[];
 }
 

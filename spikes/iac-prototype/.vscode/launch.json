@@ -7,6 +7,7 @@
         "iac-dashboard",
         "iac-registry",
         "iac-console",
+        "iac-copilot-api",
         "iac-mfe-primary:serve-dist",
         "iac-host"
       ]
@@ -86,7 +87,8 @@
       "console": "integratedTerminal",
       "cwd": "${workspaceFolder}/iac-dashboard",
       "env": {
-        "PYTHONPATH": "${workspaceFolder}/iac-dashboard"
+        "PYTHONPATH": "${workspaceFolder}/iac-dashboard",
+        "STREAMLIT_DEBUG": "true"
       },
       "python": "${workspaceFolder}/iac-dashboard/.venv/bin/python",
       "justMyCode": true,
@@ -111,7 +113,8 @@
       "console": "integratedTerminal",
       "cwd": "${workspaceFolder}/iac-registry",
       "env": {
-        "PYTHONPATH": "${workspaceFolder}/iac-registry"
+        "PYTHONPATH": "${workspaceFolder}/iac-registry",
+        "STREAMLIT_DEBUG": "true"
       },
       "python": "${workspaceFolder}/iac-registry/.venv/bin/python",
       "justMyCode": true,
@@ -136,9 +139,30 @@
       "console": "integratedTerminal",
       "cwd": "${workspaceFolder}/iac-console",
       "env": {
-        "PYTHONPATH": "${workspaceFolder}/iac-console"
+        "PYTHONPATH": "${workspaceFolder}/iac-console",
       },
       "python": "${workspaceFolder}/iac-console/.venv/bin/python",
+      "justMyCode": true,
+      "stopOnEntry": false,
+      "showReturnValue": true
+    },
+    {
+      "name": "iac-copilot-api",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "uvicorn",
+      "args": [
+        "app:app",
+        "--reload",
+        "--port",
+        "8000"
+      ],
+      "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}/iac-copilot-api",
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}/iac-copilot-api"
+      },
+      "python": "${workspaceFolder}/iac-copilot-api/.venv/bin/python",
       "justMyCode": true,
       "stopOnEntry": false,
       "showReturnValue": true

@@ -217,6 +217,163 @@ hr {
 .element-container {
     margin-bottom: 0.5rem !important;
 }
+
+/* =========================================================================
+   DARK MODE OVERRIDES
+   When html[data-iac-theme="dark"] is set, force Streamlit's own rendered
+   elements to use our dark color tokens. Streamlit's config.toml base="light"
+   controls initial render, but these CSS rules override it at runtime.
+   ========================================================================= */
+
+html[data-iac-theme="dark"] .stApp,
+html[data-iac-theme="dark"] .stApp > header {
+    background-color: var(--iac-bg) !important;
+}
+
+html[data-iac-theme="dark"] .stApp {
+    color: var(--iac-text) !important;
+}
+
+/* Main text elements */
+html[data-iac-theme="dark"] h1,
+html[data-iac-theme="dark"] h2,
+html[data-iac-theme="dark"] h3,
+html[data-iac-theme="dark"] h4,
+html[data-iac-theme="dark"] h5,
+html[data-iac-theme="dark"] h6,
+html[data-iac-theme="dark"] p,
+html[data-iac-theme="dark"] li,
+html[data-iac-theme="dark"] label,
+html[data-iac-theme="dark"] .stMarkdown,
+html[data-iac-theme="dark"] [data-testid="stMetricValue"] {
+    color: var(--iac-text) !important;
+}
+
+/* Secondary text */
+html[data-iac-theme="dark"] .stCaption,
+html[data-iac-theme="dark"] small,
+html[data-iac-theme="dark"] [data-testid="stMetricLabel"],
+html[data-iac-theme="dark"] [data-testid="stMetricDelta"] {
+    color: var(--iac-text-secondary) !important;
+}
+
+/* Sidebar / secondary backgrounds */
+html[data-iac-theme="dark"] section[data-testid="stSidebar"],
+html[data-iac-theme="dark"] [data-testid="stSidebarContent"] {
+    background-color: var(--iac-surface) !important;
+    color: var(--iac-text) !important;
+}
+
+/* Input fields */
+html[data-iac-theme="dark"] .stTextInput input,
+html[data-iac-theme="dark"] .stNumberInput input,
+html[data-iac-theme="dark"] .stSelectbox > div,
+html[data-iac-theme="dark"] [data-baseweb="input"] input,
+html[data-iac-theme="dark"] [data-baseweb="base-input"] {
+    background-color: var(--iac-surface) !important;
+    color: var(--iac-text) !important;
+    border-color: var(--iac-border) !important;
+}
+
+/* Expanders */
+html[data-iac-theme="dark"] details,
+html[data-iac-theme="dark"] [data-testid="stExpander"] {
+    background-color: var(--iac-surface) !important;
+    border-color: var(--iac-border) !important;
+}
+
+html[data-iac-theme="dark"] details summary,
+html[data-iac-theme="dark"] .streamlit-expanderHeader {
+    color: var(--iac-text) !important;
+}
+
+html[data-iac-theme="dark"] details[open] > div {
+    background-color: var(--iac-surface) !important;
+}
+
+/* Code blocks */
+html[data-iac-theme="dark"] pre,
+html[data-iac-theme="dark"] code,
+html[data-iac-theme="dark"] .stCode,
+html[data-iac-theme="dark"] [data-testid="stCode"] {
+    background-color: var(--iac-surface-elevated) !important;
+    color: var(--iac-text) !important;
+}
+
+/* Alerts / info boxes */
+html[data-iac-theme="dark"] .stAlert {
+    background-color: var(--iac-surface) !important;
+    color: var(--iac-text) !important;
+    border-color: var(--iac-border) !important;
+}
+
+/* Buttons (non-primary) */
+html[data-iac-theme="dark"] .stButton > button:not([kind="primary"]) {
+    background-color: var(--iac-surface) !important;
+    color: var(--iac-text) !important;
+    border-color: var(--iac-border) !important;
+}
+
+/* Primary buttons */
+html[data-iac-theme="dark"] .stButton > button[kind="primary"] {
+    background-color: var(--iac-accent) !important;
+    color: var(--iac-bg) !important;
+}
+
+/* Dividers */
+html[data-iac-theme="dark"] hr {
+    border-color: var(--iac-border) !important;
+}
+
+/* Metric containers */
+html[data-iac-theme="dark"] [data-testid="stMetric"] {
+    background-color: var(--iac-surface) !important;
+    border-color: var(--iac-border) !important;
+}
+
+/* Checkbox labels, radio */
+html[data-iac-theme="dark"] .stCheckbox label,
+html[data-iac-theme="dark"] .stRadio label {
+    color: var(--iac-text) !important;
+}
+
+/* Selectbox dropdown */
+html[data-iac-theme="dark"] [data-baseweb="select"] > div,
+html[data-iac-theme="dark"] [data-baseweb="popover"] > div {
+    background-color: var(--iac-surface) !important;
+    color: var(--iac-text) !important;
+}
+
+/* Tooltip / help icons */
+html[data-iac-theme="dark"] [data-testid="stTooltipIcon"] {
+    color: var(--iac-text-secondary) !important;
+}
+
+/* Number input step buttons */
+html[data-iac-theme="dark"] .stNumberInput button {
+    background-color: var(--iac-surface-elevated) !important;
+    color: var(--iac-text) !important;
+    border-color: var(--iac-border) !important;
+}
+
+/* Progress bar track */
+html[data-iac-theme="dark"] .stProgress > div {
+    background-color: var(--iac-surface-elevated) !important;
+}
+
+/* JSON viewer */
+html[data-iac-theme="dark"] [data-testid="stJson"] {
+    background-color: var(--iac-surface) !important;
+}
+
+/* Success/warning/error messages */
+html[data-iac-theme="dark"] .stSuccess,
+html[data-iac-theme="dark"] .stWarning,
+html[data-iac-theme="dark"] .stError,
+html[data-iac-theme="dark"] .stInfo {
+    background-color: var(--iac-surface) !important;
+    color: var(--iac-text) !important;
+}
 </style>
 """
 
@@ -231,10 +388,12 @@ def apply_iac_theme():
 
 
 def inject_theme_toggle(theme: str = "light"):
-    """Inject JavaScript that sets the data-iac-theme attribute on <html>.
+    """Inject JavaScript that sets the data-iac-theme attribute on the
+    Streamlit app's root <html> element.
 
-    This activates the dark CSS custom-property overrides when theme="dark".
-    Call this after the toggle button logic so it runs on every Streamlit rerun.
+    components.html() renders inside its own nested iframe, so we must
+    walk up via window.parent to reach the Streamlit document where our
+    CSS selectors (html[data-iac-theme="dark"]) actually live.
 
     Parameters
     ----------
@@ -245,7 +404,15 @@ def inject_theme_toggle(theme: str = "light"):
     <script>
     (function() {{
         var theme = '{theme}';
-        document.documentElement.setAttribute('data-iac-theme', theme);
+        // components.html() lives in a nested iframe.
+        // Walk up to the Streamlit app's document (parent frame).
+        try {{
+            var target = window.parent.document.documentElement;
+            target.setAttribute('data-iac-theme', theme);
+        }} catch(e) {{
+            // Same-origin fallback: try current document
+            document.documentElement.setAttribute('data-iac-theme', theme);
+        }}
     }})();
     </script>
     """

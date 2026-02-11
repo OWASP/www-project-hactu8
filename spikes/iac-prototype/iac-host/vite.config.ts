@@ -16,5 +16,11 @@ export default defineConfig({
   ],
   server: {
     port: Number(process.env.VITE_PORT) || 5173,
+    proxy: {
+      '/api/copilot': {
+        target: process.env.VITE_COPILOT_PROXY_TARGET || 'http://localhost:3000',
+        changeOrigin: true,
+      },
+    },
   },
 });

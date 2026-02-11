@@ -111,6 +111,9 @@ web_modules/
 
 # dotenv environment variable files
 .env
+.env.development
+.env.test
+.env.production
 .env.development.local
 .env.test.local
 .env.production.local
@@ -363,3 +366,13 @@ pyrightconfig.json
 .ionide
 
 # End of https://www.toptal.com/developers/gitignore/api/node,python,visualstudiocode,macos
+spikes/iac-prototype/iac-copilot-api/data/chroma/chroma.sqlite3
+spikes/iac-prototype/iac-copilot-api/data/chroma/6680405b-0bcf-4d73-924b-c5977dfb26b9/data_level0.bin
+spikes/iac-prototype/iac-copilot-api/data/chroma/6680405b-0bcf-4d73-924b-c5977dfb26b9/header.bin
+spikes/iac-prototype/iac-copilot-api/data/chroma/6680405b-0bcf-4d73-924b-c5977dfb26b9/length.bin
+spikes/iac-prototype/iac-copilot-api/data/chroma/6680405b-0bcf-4d73-924b-c5977dfb26b9/link_lists.bin
+spikes/iac-prototype/iac-copilot-api/data/chroma/bb66dd33-b886-4e4b-84d2-c9aa973c54b1/data_level0.bin
+spikes/iac-prototype/iac-copilot-api/data/chroma/bb66dd33-b886-4e4b-84d2-c9aa973c54b1/header.bin
+spikes/iac-prototype/iac-copilot-api/data/chroma/bb66dd33-b886-4e4b-84d2-c9aa973c54b1/index_metadata.pickle
+spikes/iac-prototype/iac-copilot-api/data/chroma/bb66dd33-b886-4e4b-84d2-c9aa973c54b1/length.bin
+spikes/iac-prototype/iac-copilot-api/data/chroma/bb66dd33-b886-4e4b-84d2-c9aa973c54b1/link_lists.bin

@@ -4,7 +4,17 @@ import { useFeatureFlags } from '../contexts/FeatureFlagContext';
 import type { FeatureFlags } from '../config/featureFlags';
 import { presets, presetDescriptions } from '../config/featureFlagPresets';
 import type { PresetName } from '../config/featureFlagPresets';
-import { checkHealth } from '../services/copilotService';
+import { checkHealth, getModelRegistry, COPILOT_API_BASE } from '../services/copilotService';
+import { useModelProvider } from '../contexts/ModelProviderContext';
+import type { ModelProviderConfig, ModelProviderId, ModelRegistryResponse } from '../types/modelProvider';
+import {
+    MODEL_BASE_URLS,
+    createConfigId,
+    getProviderLabel,
+    getProviderModels,
+    getProviderOptions,
+    providerRequiresBaseUrl,
+} from '../services/modelProviderService';
 
 // Health check status types
 type HealthStatus = 'healthy' | 'warning' | 'error' | 'loading';
@@ -20,6 +30,7 @@ interface HealthCheckItem {
 const sections = [
     // { key: 'profile', label: 'Profile' },
     { key: 'health', label: 'Health' },
+    { key: 'modelProvider', label: 'Model Providers' },
     { key: 'security', label: 'Security' },
     { key: 'keys', label: 'API Keys' },
     { key: 'notifications', label: 'Notifications' },
@@ -28,6 +39,7 @@ const sections = [
 ];
 
 function HealthPanel() {
+    const { config } = useModelProvider();
     const [healthChecks, setHealthChecks] = useState<HealthCheckItem[]>([
         { name: 'Copilot API', status: 'loading', message: 'Checking...' },
         { name: 'Model Configuration', status: 'loading', message: 'Checking...' },
@@ -36,7 +48,7 @@ function HealthPanel() {
 
     useEffect(() => {
         performHealthChecks();
-    }, []);
+    }, [config]);
 
     const performHealthChecks = async () => {
         const checks: HealthCheckItem[] = [];
@@ -60,23 +72,25 @@ function HealthPanel() {
         }
 
         // Check Model Configuration
-        const modelConfig = import.meta.env.VITE_COPILOT_MODEL || 'Not configured';
-        const modelStatus: HealthStatus = modelConfig !== 'Not configured' ? 'healthy' : 'warning';
+        const modelConfig = config?.model || 'Not configured';
+        const modelStatus: HealthStatus = config?.model ? 'healthy' : 'warning';
         checks.push({
             name: 'Model Configuration',
             status: modelStatus,
             message: modelConfig,
-            details: modelStatus === 'healthy' ? 'Model is configured' : 'Model not set in environment',
+            details: modelStatus === 'healthy'
+                ? `Provider: ${getProviderLabel(config?.providerId || 'openai')}`
+                : 'Model not configured in settings',
         });
 
         // Check Platform
-        const platform = import.meta.env.VITE_COPILOT_PLATFORM || 'OpenAI';
-        const platformStatus: HealthStatus = platform ? 'healthy' : 'warning';
+        const platform = config ? getProviderLabel(config.providerId) : 'Not configured';
+        const platformStatus: HealthStatus = config ? 'healthy' : 'warning';
         checks.push({
             name: 'Platform',
             status: platformStatus,
             message: platform,
-            details: `Using ${platform} for AI inference`,
+            details: config ? `Using ${platform} for AI inference` : 'No model provider selected',
         });
 
         setHealthChecks(checks);
@@ -192,6 +206,440 @@ function HealthPanel() {
                         )}
                     </div>
                 ))}
+            </div>
+        </div>
+    );
+}
+
+function ModelProviderPanel() {
+    const {
+        config,
+        configs,
+        defaultConfigId,
+        addConfig,
+        updateConfig,
+        removeConfig,
+        setDefaultConfig,
+        resetConfig,
+    } = useModelProvider();
+    const [registry, setRegistry] = useState<ModelRegistryResponse | null>(null);
+    const [registryError, setRegistryError] = useState<string | null>(null);
+    const [registryLoading, setRegistryLoading] = useState<boolean>(false);
+    const [editingId, setEditingId] = useState<string | null>(null);
+    const [useCustomModel, setUseCustomModel] = useState(false);
+    const [formState, setFormState] = useState<ModelProviderConfig>(() => {
+        const providerId = config?.providerId || 'openai';
+        const modelDefaults = getProviderModels(providerId, registry);
+        return {
+            id: config?.id || createConfigId(),
+            providerId,
+            model: config?.model || modelDefaults[0] || '',
+            apiKey: config?.apiKey || '',
+            baseUrl: config?.baseUrl || MODEL_BASE_URLS[providerId] || '',
+            updatedAt: config?.updatedAt,
+        };
+    });
+
+    const loadRegistry = async () => {
+        setRegistryLoading(true);
+        try {
+            const response = await getModelRegistry();
+            setRegistry(response);
+            setRegistryError(null);
+        } catch (error) {
+            setRegistryError(error instanceof Error ? error.message : 'Failed to load registry');
+        } finally {
+            setRegistryLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        loadRegistry();
+    }, []);
+
+    useEffect(() => {
+        const providerId = config?.providerId || 'openai';
+        const modelDefaults = getProviderModels(providerId, registry);
+        const hasCustomModel = Boolean(config?.model && !modelDefaults.includes(config.model));
+        setFormState({
+            id: config?.id || createConfigId(),
+            providerId,
+            model: config?.model || modelDefaults[0] || '',
+            apiKey: config?.apiKey || '',
+            baseUrl: config?.baseUrl || MODEL_BASE_URLS[providerId] || '',
+            updatedAt: config?.updatedAt,
+        });
+        setUseCustomModel(hasCustomModel);
+        setEditingId(null);
+    }, [config, registry]);
+
+    const providerOptions = getProviderOptions(registry);
+    const modelOptions = getProviderModels(formState.providerId, registry);
+    const hasModelOptions = modelOptions.length > 0;
+    const showBaseUrl = providerRequiresBaseUrl(formState.providerId, registry);
+
+    const handleProviderChange = (nextProviderId: ModelProviderId) => {
+        const nextModelOptions = getProviderModels(nextProviderId, registry);
+        const nextModel = nextModelOptions.includes(formState.model)
+            ? formState.model
+            : (nextModelOptions[0] || '');
+
+        setUseCustomModel(false);
+        setFormState(prev => ({
+            ...prev,
+            providerId: nextProviderId,
+            model: nextModel,
+            baseUrl: MODEL_BASE_URLS[nextProviderId] || '',
+        }));
+    };
+
+    const handleSave = () => {
+        const trimmedModel = formState.model.trim();
+        if (!trimmedModel) {
+            return;
+        }
+
+        const nextConfig: ModelProviderConfig = {
+            id: editingId || formState.id,
+            providerId: formState.providerId,
+            model: trimmedModel,
+            apiKey: formState.apiKey.trim() || undefined,
+            baseUrl: formState.baseUrl.trim() || undefined,
+            updatedAt: new Date().toISOString(),
+        };
+
+        if (editingId) {
+            updateConfig(nextConfig);
+        } else {
+            addConfig(nextConfig);
+        }
+
+        setEditingId(null);
+    };
+
+    const handleEdit = (target: ModelProviderConfig) => {
+        const availableModels = getProviderModels(target.providerId, registry);
+        setEditingId(target.id);
+        setFormState({
+            id: target.id,
+            providerId: target.providerId,
+            model: target.model,
+            apiKey: target.apiKey || '',
+            baseUrl: target.baseUrl || MODEL_BASE_URLS[target.providerId] || '',
+            updatedAt: target.updatedAt,
+        });
+        setUseCustomModel(availableModels.length > 0 && !availableModels.includes(target.model));
+    };
+
+    const handleAddNew = () => {
+        const providerId = 'openai';
+        const modelDefaults = getProviderModels(providerId, registry);
+        setEditingId(null);
+        setUseCustomModel(false);
+        setFormState({
+            id: createConfigId(),
+            providerId,
+            model: modelDefaults[0] || '',
+            apiKey: '',
+            baseUrl: MODEL_BASE_URLS[providerId] || '',
+            updatedAt: undefined,
+        });
+    };
+
+    return (
+        <div>
+            <div style={{ marginBottom: '1.5rem' }}>
+                <h3 style={{ color: '#111827', fontWeight: 700, fontSize: '1.5rem', margin: 0 }}>Model Providers</h3>
+                <p style={{ color: '#4b5563', marginTop: '0.5rem', fontSize: '14px' }}>
+                    Select the platform and model used by the Copilot panels.
+                </p>
+            </div>
+
+            <div style={{ display: 'grid', gap: '1rem', maxWidth: 620 }}>
+                <div style={{ display: 'grid', gap: '0.75rem' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <h4 style={{ margin: 0, fontSize: '14px', color: '#111827', fontWeight: 600 }}>Saved Providers</h4>
+                        <div style={{ display: 'flex', gap: '0.5rem' }}>
+                            <button
+                                onClick={loadRegistry}
+                                disabled={registryLoading || !COPILOT_API_BASE}
+                                style={{
+                                    padding: '0.35rem 0.75rem',
+                                    background: '#ffffff',
+                                    color: '#111827',
+                                    border: '1px solid #d1d5db',
+                                    borderRadius: '4px',
+                                    cursor: registryLoading || !COPILOT_API_BASE ? 'not-allowed' : 'pointer',
+                                    fontSize: '12px',
+                                    fontWeight: 600,
+                                }}
+                            >
+                                {registryLoading ? 'Refreshing...' : 'Refresh'}
+                            </button>
+                            <button
+                                onClick={handleAddNew}
+                                style={{
+                                    padding: '0.35rem 0.75rem',
+                                    background: '#213547',
+                                    color: '#ffffff',
+                                    border: 'none',
+                                    borderRadius: '4px',
+                                    cursor: 'pointer',
+                                    fontSize: '12px',
+                                    fontWeight: 600,
+                                }}
+                            >
+                                Add Provider
+                            </button>
+                        </div>
+                    </div>
+                    {configs.length === 0 ? (
+                        <div style={{ padding: '0.75rem', border: '1px dashed #e5e7eb', borderRadius: '6px', fontSize: '12px', color: '#6b7280' }}>
+                            No saved providers yet. Add a provider below.
+                        </div>
+                    ) : (
+                        <div style={{ display: 'grid', gap: '0.5rem' }}>
+                            {configs.map(saved => (
+                                <div
+                                    key={saved.id}
+                                    style={{
+                                        display: 'grid',
+                                        gridTemplateColumns: '20px 1fr auto',
+                                        alignItems: 'center',
+                                        gap: '0.75rem',
+                                        padding: '0.75rem',
+                                        border: '1px solid #e5e7eb',
+                                        borderRadius: '6px',
+                                        background: '#ffffff',
+                                    }}
+                                >
+                                    <input
+                                        type="radio"
+                                        checked={saved.id === defaultConfigId}
+                                        onChange={() => setDefaultConfig(saved.id)}
+                                    />
+                                    <div>
+                                        <div style={{ fontSize: '13px', fontWeight: 600, color: '#111827' }}>
+                                            {getProviderLabel(saved.providerId)} - {saved.model}
+                                        </div>
+                                        {saved.baseUrl && (
+                                            <div style={{ fontSize: '12px', color: '#6b7280' }}>{saved.baseUrl}</div>
+                                        )}
+                                    </div>
+                                    <div style={{ display: 'flex', gap: '0.5rem' }}>
+                                        <button
+                                            onClick={() => setDefaultConfig(saved.id)}
+                                            style={{
+                                                padding: '0.35rem 0.6rem',
+                                                borderRadius: '4px',
+                                                border: '1px solid #d1d5db',
+                                                background: saved.id === defaultConfigId ? '#1f2937' : '#ffffff',
+                                                color: saved.id === defaultConfigId ? '#ffffff' : '#111827',
+                                                cursor: 'pointer',
+                                                fontSize: '12px',
+                                                fontWeight: 600,
+                                            }}
+                                        >
+                                            Use in Copilot
+                                        </button>
+                                        <button
+                                            onClick={() => handleEdit(saved)}
+                                            style={{
+                                                padding: '0.35rem 0.6rem',
+                                                borderRadius: '4px',
+                                                border: '1px solid #d1d5db',
+                                                background: '#ffffff',
+                                                color: '#111827',
+                                                cursor: 'pointer',
+                                                fontSize: '12px',
+                                                fontWeight: 600,
+                                            }}
+                                        >
+                                            Edit
+                                        </button>
+                                        <button
+                                            onClick={() => removeConfig(saved.id)}
+                                            style={{
+                                                padding: '0.35rem 0.6rem',
+                                                borderRadius: '4px',
+                                                border: 'none',
+                                                background: '#ef4444',
+                                                color: '#ffffff',
+                                                cursor: 'pointer',
+                                                fontSize: '12px',
+                                            }}
+                                        >
+                                            Remove
+                                        </button>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    )}
+                </div>
+
+                <label style={{ display: 'grid', gap: '0.5rem', fontSize: '14px', color: '#374151' }}>
+                    Platform
+                    <select
+                        value={formState.providerId}
+                        onChange={e => handleProviderChange(e.target.value as ModelProviderId)}
+                        style={{
+                            padding: '0.6rem 0.75rem',
+                            borderRadius: '6px',
+                            border: '1px solid #d1d5db',
+                            background: '#ffffff',
+                            color: '#111827',
+                        }}
+                    >
+                        {providerOptions.map(provider => (
+                            <option key={provider.id} value={provider.id}>
+                                {provider.label}
+                            </option>
+                        ))}
+                    </select>
+                </label>
+
+                <label style={{ display: 'grid', gap: '0.5rem', fontSize: '14px', color: '#374151' }}>
+                    Model
+                    {hasModelOptions ? (
+                        <>
+                            <select
+                                value={useCustomModel ? '__custom__' : formState.model}
+                                onChange={e => {
+                                    const nextValue = e.target.value;
+                                    if (nextValue === '__custom__') {
+                                        setUseCustomModel(true);
+                                        setFormState(prev => ({ ...prev, model: '' }));
+                                        return;
+                                    }
+                                    setUseCustomModel(false);
+                                    setFormState(prev => ({ ...prev, model: nextValue }));
+                                }}
+                                style={{
+                                    padding: '0.6rem 0.75rem',
+                                    borderRadius: '6px',
+                                    border: '1px solid #d1d5db',
+                                    background: '#ffffff',
+                                    color: '#111827',
+                                }}
+                            >
+                                {modelOptions.map(option => (
+                                    <option key={option} value={option}>
+                                        {option}
+                                    </option>
+                                ))}
+                                <option value="__custom__">Custom...</option>
+                            </select>
+                            {useCustomModel && (
+                                <input
+                                    value={formState.model}
+                                    onChange={e => setFormState(prev => ({ ...prev, model: e.target.value }))}
+                                    placeholder="Enter custom model"
+                                    style={{
+                                        padding: '0.6rem 0.75rem',
+                                        borderRadius: '6px',
+                                        border: '1px solid #d1d5db',
+                                        background: '#ffffff',
+                                        color: '#111827',
+                                    }}
+                                />
+                            )}
+                        </>
+                    ) : (
+                        <input
+                            value={formState.model}
+                            onChange={e => setFormState(prev => ({ ...prev, model: e.target.value }))}
+                            placeholder="Enter a model"
+                            style={{
+                                padding: '0.6rem 0.75rem',
+                                borderRadius: '6px',
+                                border: '1px solid #d1d5db',
+                                background: '#ffffff',
+                                color: '#111827',
+                            }}
+                        />
+                    )}
+                </label>
+
+                <label style={{ display: 'grid', gap: '0.5rem', fontSize: '14px', color: '#374151' }}>
+                    API Key
+                    <input
+                        type="password"
+                        value={formState.apiKey}
+                        onChange={e => setFormState(prev => ({ ...prev, apiKey: e.target.value }))}
+                        placeholder="Enter your API key"
+                        style={{
+                            padding: '0.6rem 0.75rem',
+                            borderRadius: '6px',
+                            border: '1px solid #d1d5db',
+                            background: '#ffffff',
+                            color: '#111827',
+                        }}
+                    />
+                </label>
+
+                {showBaseUrl && (
+                    <label style={{ display: 'grid', gap: '0.5rem', fontSize: '14px', color: '#374151' }}>
+                        Base URL
+                        <input
+                            value={formState.baseUrl}
+                            onChange={e => setFormState(prev => ({ ...prev, baseUrl: e.target.value }))}
+                            placeholder="http://localhost:11434"
+                            style={{
+                                padding: '0.6rem 0.75rem',
+                                borderRadius: '6px',
+                                border: '1px solid #d1d5db',
+                                background: '#ffffff',
+                                color: '#111827',
+                            }}
+                        />
+                    </label>
+                )}
+
+                <div style={{ display: 'flex', gap: '0.75rem', marginTop: '0.5rem' }}>
+                    <button
+                        onClick={handleSave}
+                        style={{
+                            padding: '0.6rem 1.2rem',
+                            background: '#213547',
+                            color: '#ffffff',
+                            border: 'none',
+                            borderRadius: '6px',
+                            cursor: 'pointer',
+                            fontWeight: 600,
+                        }}
+                    >
+                        {editingId ? 'Update Provider' : 'Save Provider'}
+                    </button>
+                    <button
+                        onClick={resetConfig}
+                        style={{
+                            padding: '0.6rem 1.2rem',
+                            background: '#ef4444',
+                            color: '#ffffff',
+                            border: 'none',
+                            borderRadius: '6px',
+                            cursor: 'pointer',
+                            fontWeight: 600,
+                        }}
+                    >
+                        Clear
+                    </button>
+                </div>
+
+                <p style={{ color: '#6b7280', fontSize: '12px' }}>
+                    Configuration is stored locally in your browser and used for Copilot requests.
+                </p>
+                {registryError && (
+                    <p style={{ color: '#ef4444', fontSize: '12px' }}>
+                            Registry error: {registryError}. {COPILOT_API_BASE ? `Base: ${COPILOT_API_BASE}` : ''}
+                    </p>
+                )}
+                {!registryError && registryLoading && (
+                    <p style={{ color: '#6b7280', fontSize: '12px' }}>
+                        Loading provider registry...
+                    </p>
+                )}
             </div>
         </div>
     );
@@ -325,6 +773,8 @@ function SectionPanel({ section }: { section: string }) {
     switch (section) {
         case 'health':
             return <HealthPanel />;
+        case 'modelProvider':
+            return <ModelProviderPanel />;
         case 'profile':
             return (
                 <div>
@@ -367,8 +817,17 @@ function SectionPanel({ section }: { section: string }) {
     }
 }
 
+const SETTINGS_SECTION_KEY = 'iac-settings-section';
+
 const Settings = () => {
-    const [selected, setSelected] = useState('health');
+    const [selected, setSelected] = useState(() => {
+        const stored = localStorage.getItem(SETTINGS_SECTION_KEY);
+        return stored || 'health';
+    });
+
+    useEffect(() => {
+        localStorage.setItem(SETTINGS_SECTION_KEY, selected);
+    }, [selected]);
 
     // Minimal, unstyled layout
     return (

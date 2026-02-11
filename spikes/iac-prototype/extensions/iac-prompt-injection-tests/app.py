@@ -6,6 +6,8 @@ tests against a configured AI endpoint and reports results.
 
 This extension reads its configuration from config.json (written by the host)
 and writes test results to the shared results directory.
+
+Layout: 3-panel test harness — Config | Tests | Run Results
 """
 
 import os
@@ -91,15 +93,41 @@ apply_iac_theme()
 config = load_config()
 settings = config["settings"]
 
-st.title("Prompt Injection Tests - IAC Core")
-st.caption(f"Extension v0.1.0 | Host v{config['hostVersion']}")
+# Initialize session state
+if "last_run" not in st.session_state:
+    st.session_state["last_run"] = None
+if "iac_theme" not in st.session_state:
+    st.session_state["iac_theme"] = "light"
 
 # ---------------------------------------------------------------------------
-# Sidebar — Configuration
+# Header row — title + theme toggle
 # ---------------------------------------------------------------------------
 
-with st.sidebar:
-    st.header("Configuration")
+title_col, toggle_col = st.columns([4, 1])
+with title_col:
+    st.title("Prompt Injection Tests - IAC Core")
+    st.caption(f"Extension v0.1.0 | Host v{config['hostVersion']}")
+with toggle_col:
+    theme_label = "Switch to Dark" if st.session_state["iac_theme"] == "light" else "Switch to Light"
+    if st.button(theme_label, key="theme_toggle"):
+        st.session_state["iac_theme"] = "dark" if st.session_state["iac_theme"] == "light" else "light"
+        st.rerun()
+    inject_theme_toggle(st.session_state["iac_theme"])
+
+st.divider()
+
+# ---------------------------------------------------------------------------
+# 3-Panel Layout — Config | Tests | Run Results
+# ---------------------------------------------------------------------------
+
+col_config, col_tests, col_results = st.columns([1.2, 1.8, 2])
+
+# ---------------------------------------------------------------------------
+# LEFT PANEL — Configuration
+# ---------------------------------------------------------------------------
+
+with col_config:
+    st.subheader("Configuration")
 
     target_url = st.text_input(
         "Target URL",
@@ -119,10 +147,15 @@ with st.sidebar:
     )
 
     st.divider()
+
+    run_button = st.button("Run All Tests", type="primary", use_container_width=True)
+
+    st.divider()
+
+    # Test suite category summary
     st.subheader("Test Suite")
     st.metric("Total tests", len(TEST_CASES))
 
-    # Group by category for display
     categories = {}
     for tc in TEST_CASES:
         cat = tc["category"]
@@ -134,110 +167,93 @@ with st.sidebar:
     st.divider()
     st.caption(f"Results dir: {config['resultsDir']}")
 
-    # Theme toggle
-    st.divider()
-    if "iac_theme" not in st.session_state:
-        st.session_state["iac_theme"] = "light"
-
-    theme_label = "Switch to Dark" if st.session_state["iac_theme"] == "light" else "Switch to Light"
-    if st.button(theme_label, key="theme_toggle"):
-        st.session_state["iac_theme"] = "dark" if st.session_state["iac_theme"] == "light" else "light"
-        st.rerun()
-
-    inject_theme_toggle(st.session_state["iac_theme"])
-
 # ---------------------------------------------------------------------------
-# Main area — Run tests & display results
+# CENTER PANEL — Test Suite (always visible)
 # ---------------------------------------------------------------------------
 
-col1, col2 = st.columns([1, 3])
+with col_tests:
+    st.subheader(f"Tests ({len(TEST_CASES)})")
 
-with col1:
-    run_button = st.button("Run All Tests", type="primary", use_container_width=True)
-
-# Initialize session state for results
-if "last_run" not in st.session_state:
-    st.session_state["last_run"] = None
-
-if run_button:
-    progress_bar = st.progress(0, text="Running tests...")
-    status_text = st.empty()
-
-    def update_progress(current, total):
-        progress_bar.progress(current / total, text=f"Running test {current}/{total}...")
-
-    with st.spinner("Running prompt injection tests..."):
-        run_result = run_all_tests(
-            target_url=target_url,
-            timeout=timeout,
-            verbose=verbose,
-            progress_callback=update_progress,
-        )
-
-    # Save results to shared results directory
-    try:
-        results_path = save_results(run_result, config["resultsDir"])
-        st.success(f"Results saved to: {results_path}")
-    except Exception as e:
-        st.warning(f"Could not save results: {e}")
-
-    # Send results to IAC Host via postMessage (for Assurance Results page)
-    post_results_to_host(run_result)
-
-    progress_bar.empty()
-    st.session_state["last_run"] = run_result
-
-# ---------------------------------------------------------------------------
-# Display results
-# ---------------------------------------------------------------------------
-
-run_result = st.session_state.get("last_run")
-
-if run_result:
-    st.divider()
-    summary = run_result["summary"]
-
-    # Summary metrics
-    st.subheader("Results Summary")
-    m1, m2, m3, m4, m5 = st.columns(5)
-    m1.metric("Total", summary["total"])
-    m2.metric("Passed", summary["passed"])
-    m3.metric("Failed", summary["failed"])
-    m4.metric("Errors", summary["errors"])
-    m5.metric("Duration", f"{summary['duration']}ms")
-
-    # Pass rate
-    if summary["total"] > 0:
-        pass_rate = summary["passed"] / summary["total"] * 100
-        st.progress(pass_rate / 100, text=f"Pass rate: {pass_rate:.0f}%")
-
-    # Detailed results table
-    st.subheader("Test Details")
-
-    # Failed tests first, then errors, then passed
-    status_order = {"fail": 0, "error": 1, "pass": 2, "skip": 3}
-    sorted_results = sorted(run_result["results"], key=lambda r: status_order.get(r["status"], 99))
-
-    for r in sorted_results:
-        icon = {"pass": "\u2705", "fail": "\u274c", "error": "\u26a0\ufe0f", "skip": "\u23ed\ufe0f"}.get(r["status"], "\u2753")
-        with st.expander(f"{icon} {r['name']} — {r['status'].upper()} ({r.get('duration', 0)}ms)"):
-            st.write(f"**ID:** {r['id']}")
-            st.write(f"**Status:** {r['status']}")
-            st.write(f"**Message:** {r['message']}")
-            if r.get("details"):
-                st.code(r["details"], language="json")
-
-    # Raw JSON export
-    with st.expander("Raw JSON"):
-        st.json(run_result)
-
-else:
-    st.info("Click **Run All Tests** to execute the prompt injection test suite against the configured target.")
-
-    # Show available test cases
-    st.subheader("Available Tests")
     for tc in TEST_CASES:
         with st.expander(f"{tc['name']} ({tc['category']})"):
             st.write(f"**ID:** {tc['id']}")
             st.write(f"**Description:** {tc['description']}")
             st.code(tc["payload"], language="text")
+
+# ---------------------------------------------------------------------------
+# RIGHT PANEL — Run Results
+# ---------------------------------------------------------------------------
+
+with col_results:
+    st.subheader("Run Results")
+
+    # Handle test execution
+    if run_button:
+        progress_bar = st.progress(0, text="Running tests...")
+
+        def update_progress(current, total):
+            progress_bar.progress(current / total, text=f"Running test {current}/{total}...")
+
+        with st.spinner("Running prompt injection tests..."):
+            run_result = run_all_tests(
+                target_url=target_url,
+                timeout=timeout,
+                verbose=verbose,
+                progress_callback=update_progress,
+            )
+
+        # Save results to shared results directory
+        try:
+            results_path = save_results(run_result, config["resultsDir"])
+            st.success(f"Results saved to: {results_path}")
+        except Exception as e:
+            st.warning(f"Could not save results: {e}")
+
+        # Send results to IAC Host via postMessage (for Assurance Results page)
+        post_results_to_host(run_result)
+
+        progress_bar.empty()
+        st.session_state["last_run"] = run_result
+
+    # Display results
+    run_result = st.session_state.get("last_run")
+
+    if run_result:
+        summary = run_result["summary"]
+
+        # Summary metrics — compact row
+        m1, m2, m3 = st.columns(3)
+        m1.metric("Total", summary["total"])
+        m2.metric("Passed", summary["passed"])
+        m3.metric("Failed", summary["failed"])
+
+        m4, m5 = st.columns(2)
+        m4.metric("Errors", summary["errors"])
+        m5.metric("Duration", f"{summary['duration']}ms")
+
+        # Pass rate
+        if summary["total"] > 0:
+            pass_rate = summary["passed"] / summary["total"] * 100
+            st.progress(pass_rate / 100, text=f"Pass rate: {pass_rate:.0f}%")
+
+        st.divider()
+
+        # Detailed results — failed first, then errors, then passed
+        status_order = {"fail": 0, "error": 1, "pass": 2, "skip": 3}
+        sorted_results = sorted(run_result["results"], key=lambda r: status_order.get(r["status"], 99))
+
+        for r in sorted_results:
+            icon = {"pass": "\u2705", "fail": "\u274c", "error": "\u26a0\ufe0f", "skip": "\u23ed\ufe0f"}.get(r["status"], "\u2753")
+            with st.expander(f"{icon} {r['name']} — {r['status'].upper()} ({r.get('duration', 0)}ms)"):
+                st.write(f"**ID:** {r['id']}")
+                st.write(f"**Status:** {r['status']}")
+                st.write(f"**Message:** {r['message']}")
+                if r.get("details"):
+                    st.code(r["details"], language="json")
+
+        # Raw JSON export
+        with st.expander("Raw JSON"):
+            st.json(run_result)
+
+    else:
+        st.info("Click **Run All Tests** to execute the prompt injection test suite.")
