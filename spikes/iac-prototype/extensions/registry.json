@@ -127,6 +127,68 @@
       "sha256": "f6e5d4c3b2a1f6e5d4c3b2a1f6e5d4c3b2a1f6e5d4c3b2a1f6e5d4c3b2a1f6e5",
       "publishedAt": "2025-01-01T00:00:00Z",
       "updatedAt": "2025-01-01T00:00:00Z"
+    },
+    {
+      "manifest": {
+        "id": "mcp-attack-vulnerability-tests",
+        "name": "MCP Attack Vulnerability Tests",
+        "version": "0.1.0",
+        "description": "Automated MCP resource poisoning and tool poisoning vulnerability assessment across multiple model providers. Tests 40 attack vectors across 3 prompt tiers with HACTU8 IAC schema output.",
+        "author": "OWASP HACTU8 Project",
+        "license": "Apache-2.0",
+        "type": "streamlit",
+        "category": "testing",
+        "permissions": ["network", "hostConfig", "reporting"],
+        "entryPoint": "app.py",
+        "settings": [
+          {
+            "key": "modelProvider",
+            "label": "Model Provider",
+            "description": "The LLM provider to test against.",
+            "type": "select",
+            "default": "ollama",
+            "options": [
+              { "label": "Ollama", "value": "ollama" },
+              { "label": "Anthropic", "value": "anthropic" },
+              { "label": "OpenAI", "value": "openai" }
+            ]
+          },
+          {
+            "key": "model",
+            "label": "Model",
+            "description": "The model identifier to test (e.g. mistral, claude-sonnet-4-6, gpt-4o).",
+            "type": "string",
+            "default": "mistral",
+            "required": true
+          },
+          {
+            "key": "targetUrl",
+            "label": "Target URL",
+            "description": "The URL of the model endpoint or API being tested.",
+            "type": "string",
+            "default": "http://localhost:11434",
+            "required": true
+          },
+          {
+            "key": "attackType",
+            "label": "Attack Type",
+            "description": "Which attack categories to run.",
+            "type": "select",
+            "default": "all",
+            "options": [
+              { "label": "All Attacks", "value": "all" },
+              { "label": "Resource Poisoning Only", "value": "resource" },
+              { "label": "Tool Poisoning Only", "value": "tool" }
+            ]
+          }
+        ],
+        "dependencies": [],
+        "minHostVersion": "0.1.0"
+      },
+      "zipFile": "mcp-attack-vulnerability-tests-0.1.0.zip",
+      "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+      "publishedAt": "2026-03-02T00:00:00Z",
+      "updatedAt": "2026-03-02T00:00:00Z"
     }
   ]
 }
