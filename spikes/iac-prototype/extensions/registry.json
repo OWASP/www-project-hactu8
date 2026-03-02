@@ -200,7 +200,7 @@
         "minHostVersion": "0.1.0"
       },
       "zipFile": "mcp-attack-vulnerability-tests-0.1.0.zip",
-      "sha256": "b08c4d0936ed29b5eb517ffd76c9fea593abf7f74cac551b3aa734c265372de1",
+      "sha256": "124e968fcdeb4298e9cbf4bf5a237fcc01ce9a2b101cffe574a1a371b1f476ef",
       "publishedAt": "2026-03-02T00:00:00Z",
       "updatedAt": "2026-03-02T00:00:00Z"
     }
