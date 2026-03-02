@@ -42,7 +42,7 @@
         "minHostVersion": "0.1.0"
       },
       "zipFile": "iac-prompt-injection-tests-0.1.0.zip",
-      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "sha256": "b3ab46e137af5e09cc3e7120cd4a0189bb78e7bcb58601c9de05aea290e509b2",
       "publishedAt": "2025-01-01T00:00:00Z",
       "updatedAt": "2025-01-01T00:00:00Z"
     },
@@ -180,13 +180,27 @@
               { "label": "Resource Poisoning Only", "value": "resource" },
               { "label": "Tool Poisoning Only", "value": "tool" }
             ]
+          },
+          {
+            "key": "timeout",
+            "label": "Request Timeout (seconds)",
+            "description": "Maximum time to wait for each model query.",
+            "type": "number",
+            "default": 120
+          },
+          {
+            "key": "verbose",
+            "label": "Verbose Output",
+            "description": "Include detailed response data and indicator matches in results.",
+            "type": "boolean",
+            "default": false
           }
         ],
         "dependencies": [],
         "minHostVersion": "0.1.0"
       },
       "zipFile": "mcp-attack-vulnerability-tests-0.1.0.zip",
-      "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+      "sha256": "b7a86883cab459f5da0755c8ce3a715cb07f0517817737a56eed6aa1b55dede4",
       "publishedAt": "2026-03-02T00:00:00Z",
       "updatedAt": "2026-03-02T00:00:00Z"
     }
