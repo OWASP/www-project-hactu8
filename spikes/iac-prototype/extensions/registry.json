@@ -42,7 +42,7 @@
         "minHostVersion": "0.1.0"
       },
       "zipFile": "iac-prompt-injection-tests-0.1.0.zip",
-      "sha256": "b3ab46e137af5e09cc3e7120cd4a0189bb78e7bcb58601c9de05aea290e509b2",
+      "sha256": "a916dd6c0ea4e3d35ea165192553b612d719103646e99ab0792f077dce06dab2",
       "publishedAt": "2025-01-01T00:00:00Z",
       "updatedAt": "2025-01-01T00:00:00Z"
     },
@@ -200,7 +200,7 @@
         "minHostVersion": "0.1.0"
       },
       "zipFile": "mcp-attack-vulnerability-tests-0.1.0.zip",
-      "sha256": "b7a86883cab459f5da0755c8ce3a715cb07f0517817737a56eed6aa1b55dede4",
+      "sha256": "df7de12d67df7596f527aca663daed09ad8376bf38103a068d57f79b006b9975",
       "publishedAt": "2026-03-02T00:00:00Z",
       "updatedAt": "2026-03-02T00:00:00Z"
     }
