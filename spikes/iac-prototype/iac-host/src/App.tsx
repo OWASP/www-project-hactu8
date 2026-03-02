@@ -10,6 +10,7 @@ import { FeatureFlagProvider } from './contexts/FeatureFlagContext';
 import { SystemMessageProvider, useSystemMessage } from './contexts/SystemMessageContext';
 import { CopilotProvider } from './contexts/CopilotContext';
 import { ModelProviderProvider } from './contexts/ModelProviderContext';
+import { ExtensionProvider } from './contexts/ExtensionContext';
 import { getEffectiveConfig } from './config/environmentConfig';
 
 import Dashboard from './pages/Dashboard';
@@ -138,7 +139,9 @@ function App() {
       <SystemMessageProvider>
         <ModelProviderProvider>
           <CopilotProvider>
-            <AppContent />
+            <ExtensionProvider>
+              <AppContent />
+            </ExtensionProvider>
           </CopilotProvider>
         </ModelProviderProvider>
       </SystemMessageProvider>

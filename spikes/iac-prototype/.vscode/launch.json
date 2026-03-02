@@ -4,9 +4,22 @@
     {
       "name": "Run all",
       "configurations": [
+        "extension-api",
         "iac-dashboard",
         "iac-registry",
         "iac-console",
+        "iac-copilot-api",
+        "iac-mfe-primary:serve-dist",
+        "iac-host"
+      ]
+    },
+    {
+      "name": "Run all (iac-host only in browser)",
+      "configurations": [
+        "extension-api",
+        "iac-dashboard:headless",
+        "iac-registry:headless",
+        "iac-console:headless",
         "iac-copilot-api",
         "iac-mfe-primary:serve-dist",
         "iac-host"
@@ -70,6 +83,32 @@
       "console": "integratedTerminal"
     },
     {
+      "name": "iac-dashboard:headless",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "streamlit",
+      "args": [
+        "run",
+        "${workspaceFolder}/iac-dashboard/app.py",
+        "--server.port",
+        "8511",
+        "--server.headless",
+        "true",
+        "--browser.gatherUsageStats",
+        "false"
+      ],
+      "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}/iac-dashboard",
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}/iac-dashboard",
+        "STREAMLIT_DEBUG": "true"
+      },
+      "python": "${workspaceFolder}/iac-dashboard/.venv/bin/python",
+      "justMyCode": true,
+      "stopOnEntry": false,
+      "showReturnValue": true
+    },
+    {
       "name": "iac-dashboard",
       "type": "debugpy",
       "request": "launch",
@@ -96,6 +135,32 @@
       "showReturnValue": true
     },
     {
+      "name": "iac-registry:headless",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "streamlit",
+      "args": [
+        "run",
+        "${workspaceFolder}/iac-registry/app.py",
+        "--server.port",
+        "8512",
+        "--server.headless",
+        "true",
+        "--browser.gatherUsageStats",
+        "false"
+      ],
+      "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}/iac-registry",
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}/iac-registry",
+        "STREAMLIT_DEBUG": "true"
+      },
+      "python": "${workspaceFolder}/iac-registry/.venv/bin/python",
+      "justMyCode": true,
+      "stopOnEntry": false,
+      "showReturnValue": true
+    },
+    {
       "name": "iac-registry",
       "type": "debugpy",
       "request": "launch",
@@ -117,6 +182,31 @@
         "STREAMLIT_DEBUG": "true"
       },
       "python": "${workspaceFolder}/iac-registry/.venv/bin/python",
+      "justMyCode": true,
+      "stopOnEntry": false,
+      "showReturnValue": true
+    },
+    {
+      "name": "iac-console:headless",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "streamlit",
+      "args": [
+        "run",
+        "${workspaceFolder}/iac-console/app.py",
+        "--server.port",
+        "8513",
+        "--server.headless",
+        "true",
+        "--browser.gatherUsageStats",
+        "false"
+      ],
+      "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}/iac-console",
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}/iac-console",
+      },
+      "python": "${workspaceFolder}/iac-console/.venv/bin/python",
       "justMyCode": true,
       "stopOnEntry": false,
       "showReturnValue": true
@@ -160,12 +250,31 @@
       "console": "integratedTerminal",
       "cwd": "${workspaceFolder}/iac-copilot-api",
       "env": {
-        "PYTHONPATH": "${workspaceFolder}/iac-copilot-api"
+        "PYTHONPATH": "${workspaceFolder}/iac-copilot-api",
+        "OWASP_REPOS_DISCOVER": "0"
       },
       "python": "${workspaceFolder}/iac-copilot-api/.venv/bin/python",
       "justMyCode": true,
       "stopOnEntry": false,
       "showReturnValue": true
     },
+    {
+      "name": "extension-api",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "extension_api",
+      "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}",
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}",
+        "EXTENSION_API_PORT": "5001",
+        "FLASK_ENV": "development",
+        "FLASK_DEBUG": "1"
+      },
+      "python": "${workspaceFolder}/iac-console/.venv/bin/python",
+      "justMyCode": true,
+      "stopOnEntry": false,
+      "showReturnValue": true
+    }
   ]
 }

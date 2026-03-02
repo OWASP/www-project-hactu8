@@ -8,6 +8,7 @@ import { useCopilot } from '../../../contexts/CopilotContext';
 const AssistPanel: React.FC = () => {
   const { documents, uploadDocument, addDocumentUrl, removeDocument, isLoading } = useCopilot();
   const [urlInput, setUrlInput] = useState('');
+  const [isSourcesExpanded, setIsSourcesExpanded] = useState(false);
   const [isDragOver, setIsDragOver] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -75,75 +76,92 @@ const AssistPanel: React.FC = () => {
 
   return (
     <div className="assist-panel">
-      {/* Upload Area */}
-      <div
-        className={`copilot-upload-area ${isDragOver ? 'drag-over' : ''}`}
-        onDrop={handleDrop}
-        onDragOver={handleDragOver}
-        onDragLeave={handleDragLeave}
-        onClick={() => fileInputRef.current?.click()}
-      >
-        <div className="copilot-upload-icon">📎</div>
-        <div className="copilot-upload-text">
-          Drop files here or click to upload
-        </div>
-        <input
-          ref={fileInputRef}
-          type="file"
-          multiple
-          accept=".txt,.md,.pdf,.json"
-          style={{ display: 'none' }}
-          onChange={e => handleFileSelect(e.target.files)}
-        />
-      </div>
-
-      {/* URL Input */}
-      <form className="copilot-url-input" onSubmit={handleUrlSubmit}>
-        <input
-          type="url"
-          value={urlInput}
-          onChange={e => setUrlInput(e.target.value)}
-          placeholder="Add URL..."
-          disabled={isLoading}
-        />
-        <button type="submit" disabled={!urlInput.trim() || isLoading}>
-          Add
-        </button>
-      </form>
-
-      {/* Document List */}
       <div className="copilot-section-header">
-        <span className="copilot-section-title">Your Documents ({userDocs.length})</span>
+        <span className="copilot-section-title">Data Sources ({userDocs.length})</span>
+        <button
+          type="button"
+          className="copilot-section-toggle"
+          onClick={() => setIsSourcesExpanded(prev => !prev)}
+          aria-expanded={isSourcesExpanded}
+          aria-controls="assist-sources-panel"
+        >
+          {isSourcesExpanded ? 'Collapse' : 'Expand'}
+        </button>
       </div>
 
-      {userDocs.length === 0 ? (
-        <div className="copilot-empty" style={{ padding: '20px' }}>
-          <p className="copilot-empty-text" style={{ fontSize: '12px' }}>
-            No documents yet. Upload files or add URLs to get started.
-          </p>
-        </div>
-      ) : (
-        <div className="copilot-doc-list">
-          {userDocs.map(doc => (
-            <div key={doc.id} className="copilot-doc-item">
-              <div className="copilot-doc-info">
-                <span className="copilot-doc-icon">{getDocIcon(doc)}</span>
-                <span className="copilot-doc-title" title={doc.title}>
-                  {doc.title}
-                </span>
-              </div>
-              <button
-                className="copilot-doc-delete"
-                onClick={() => handleDelete(doc.id)}
-                title="Remove document"
-              >
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <line x1="18" y1="6" x2="6" y2="18" />
-                  <line x1="6" y1="6" x2="18" y2="18" />
-                </svg>
-              </button>
+      {isSourcesExpanded && (
+        <div id="assist-sources-panel">
+          {/* Upload Area */}
+          <div
+            className={`copilot-upload-area ${isDragOver ? 'drag-over' : ''}`}
+            onDrop={handleDrop}
+            onDragOver={handleDragOver}
+            onDragLeave={handleDragLeave}
+            onClick={() => fileInputRef.current?.click()}
+          >
+            <div className="copilot-upload-icon">📎</div>
+            <div className="copilot-upload-text">
+              Drop files here or click to upload
             </div>
-          ))}
+            <input
+              ref={fileInputRef}
+              type="file"
+              multiple
+              accept=".txt,.md,.pdf,.json"
+              style={{ display: 'none' }}
+              onChange={e => handleFileSelect(e.target.files)}
+            />
+          </div>
+
+          {/* URL Input */}
+          <form className="copilot-url-input" onSubmit={handleUrlSubmit}>
+            <input
+              type="url"
+              value={urlInput}
+              onChange={e => setUrlInput(e.target.value)}
+              placeholder="Add URL..."
+              disabled={isLoading}
+            />
+            <button type="submit" disabled={!urlInput.trim() || isLoading}>
+              Add
+            </button>
+          </form>
+
+          {/* Document List */}
+          <div className="copilot-section-header">
+            <span className="copilot-section-title">Your Documents ({userDocs.length})</span>
+          </div>
+
+          {userDocs.length === 0 ? (
+            <div className="copilot-empty" style={{ padding: '20px' }}>
+              <p className="copilot-empty-text" style={{ fontSize: '12px' }}>
+                No documents yet. Upload files or add URLs to get started.
+              </p>
+            </div>
+          ) : (
+            <div className="copilot-doc-list">
+              {userDocs.map(doc => (
+                <div key={doc.id} className="copilot-doc-item">
+                  <div className="copilot-doc-info">
+                    <span className="copilot-doc-icon">{getDocIcon(doc)}</span>
+                    <span className="copilot-doc-title" title={doc.title}>
+                      {doc.title}
+                    </span>
+                  </div>
+                  <button
+                    className="copilot-doc-delete"
+                    onClick={() => handleDelete(doc.id)}
+                    title="Remove document"
+                  >
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <line x1="18" y1="6" x2="6" y2="18" />
+                      <line x1="6" y1="6" x2="18" y2="18" />
+                    </svg>
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       )}
     </div>

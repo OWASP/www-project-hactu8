@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import type { RegistryEntry, InstalledExtension, ExtensionCategory } from '../types/extensions';
 import extensionService from '../services/extensionService';
+import { useExtensions } from '../contexts/ExtensionContext';
 import { ExtensionRenderer } from '../components/Extensions';
 import ExtensionSettings from '../components/Extensions/ExtensionSettings';
 
@@ -97,8 +98,8 @@ const STATUS_COLORS: Record<string, string> = {
 
 const Extensions: React.FC = () => {
   const [registry, setRegistry] = useState<RegistryEntry[]>([]);
-  const [installed, setInstalled] = useState<InstalledExtension[]>([]);
   const [isLoadingRegistry, setIsLoadingRegistry] = useState(false);
+  const [isInstallingId, setIsInstallingId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [view, setView] = useState<ViewState>({
     sidebarTab: 'available',
@@ -106,9 +107,23 @@ const Extensions: React.FC = () => {
     selectedExtensionId: null,
   });
 
-  // Load installed on mount, fetch registry
+  // Use the extension context for installed extensions
+  const { installed, installExtension, uninstallExtension, updateSettings, updateStatus } = useExtensions();
+
+  // Load registry on mount
   useEffect(() => {
-    setInstalled(extensionService.loadInstalled());
+    const handleFetchRegistry = async () => {
+      setIsLoadingRegistry(true);
+      setError(null);
+      try {
+        const entries = await extensionService.fetchRegistry();
+        setRegistry(entries);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Failed to load registry');
+      } finally {
+        setIsLoadingRegistry(false);
+      }
+    };
     handleFetchRegistry();
   }, []);
 
@@ -125,33 +140,40 @@ const Extensions: React.FC = () => {
     }
   }, []);
 
-  const handleInstall = useCallback((entry: RegistryEntry) => {
-    try {
-      const updated = extensionService.installExtension(entry, installed);
-      setInstalled(updated);
-      setView({ sidebarTab: 'installed', mainPanel: 'detail', selectedExtensionId: entry.manifest.id });
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Install failed');
-    }
-  }, [installed]);
+  const handleInstall = useCallback((entry: RegistryEntry, installPath?: string) => {
+    setIsInstallingId(entry.manifest.id);
+    setError(null);
+    
+    installExtension(entry, installPath)
+      .then(() => {
+        setView({ sidebarTab: 'installed', mainPanel: 'detail', selectedExtensionId: entry.manifest.id });
+        setIsInstallingId(null);
+      })
+      .catch((err) => {
+        setError(err instanceof Error ? err.message : 'Install failed');
+        setIsInstallingId(null);
+      });
+  }, [installExtension]);
 
   const handleUninstall = useCallback((extensionId: string) => {
-    const updated = extensionService.uninstallExtension(extensionId, installed);
-    setInstalled(updated);
-    if (view.selectedExtensionId === extensionId) {
-      setView((v) => ({ ...v, mainPanel: 'none', selectedExtensionId: null }));
-    }
-  }, [installed, view.selectedExtensionId]);
+    uninstallExtension(extensionId)
+      .then(() => {
+        if (view.selectedExtensionId === extensionId) {
+          setView((v) => ({ ...v, mainPanel: 'none', selectedExtensionId: null }));
+        }
+      })
+      .catch((err) => {
+        setError(err instanceof Error ? err.message : 'Uninstall failed');
+      });
+  }, [uninstallExtension, view.selectedExtensionId]);
 
   const handleSaveSettings = useCallback((extensionId: string, settings: Record<string, string | number | boolean>) => {
-    const updated = extensionService.updateSettings(extensionId, settings, installed);
-    setInstalled(updated);
-  }, [installed]);
+    updateSettings(extensionId, settings);
+  }, [updateSettings]);
 
   const handleStatusChange = useCallback((extensionId: string, status: 'active' | 'error', errMsg?: string) => {
-    const updated = extensionService.updateStatus(extensionId, status, installed, errMsg);
-    setInstalled(updated);
-  }, [installed]);
+    updateStatus(extensionId, status, errMsg);
+  }, [updateStatus]);
 
   const selectExtension = useCallback((id: string, panel: MainPanel) => {
     setView((v) => ({ ...v, mainPanel: panel, selectedExtensionId: id }));

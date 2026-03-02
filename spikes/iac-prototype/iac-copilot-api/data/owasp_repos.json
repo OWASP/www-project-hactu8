@@ -1,0 +1,37 @@
+[
+  {
+    "owner": "OWASP",
+    "repo": "www-project-top-10-for-large-language-model-applications",
+    "title": "OWASP Top 10 for LLM Applications",
+    "category": "Standards",
+    "description": "The most critical security risks for Large Language Model applications.",
+    "paths": [
+      "2_0_vulns/",
+      "Archive/",
+      "1_1_vulns/"
+    ],
+    "file_pattern": ".*\\.md$"
+  },
+  {
+    "owner": "OWASP",
+    "repo": "www-project-ai-security-and-privacy-guide",
+    "title": "OWASP AI Security and Privacy Guide",
+    "category": "Guides",
+    "description": "Comprehensive guide on AI security and privacy best practices.",
+    "paths": [
+      "content/"
+    ],
+    "file_pattern": ".*\\.md$"
+  },
+  {
+    "owner": "OWASP",
+    "repo": "www-project-machine-learning-security-top-10",
+    "title": "OWASP ML Security Top 10",
+    "category": "Standards",
+    "description": "Top security risks specific to machine learning systems.",
+    "paths": [
+      ""
+    ],
+    "file_pattern": ".*\\.md$"
+  }
+]

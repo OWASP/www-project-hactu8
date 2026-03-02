@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import './Sidebar.css'; // optional styling
 import { useFeatureFlags } from '../contexts/FeatureFlagContext';
-import { loadInstalled } from '../services/extensionService';
+import { useExtensions } from '../contexts/ExtensionContext';
 import type { ExtensionCategory } from '../types/extensions';
 
 // Placeholder SVG icons for demonstration
@@ -61,6 +61,7 @@ const CATEGORY_TO_GROUP: Record<ExtensionCategory, string> = {
 const Sidebar = () => {
   const location = useLocation();
   const { flags } = useFeatureFlags();
+  const { installed: installedExtensions } = useExtensions();
   // sidebarState: 'collapsed' | 'expanded'
   const [sidebarState, setSidebarState] = useState('expanded');
   // Track expanded/collapsed state for each group
@@ -74,7 +75,6 @@ const Sidebar = () => {
   const projects = useMockProjects();
 
   // Build extension nav items from installed extensions (persisted in localStorage)
-  const installedExtensions = loadInstalled();
   const extensionNavByGroup: Record<string, { path: string; label: string; icon: JSX.Element }[]> = {};
   for (const ext of installedExtensions) {
     const group = CATEGORY_TO_GROUP[ext.manifest.category] ?? 'Other';

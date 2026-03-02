@@ -13,6 +13,10 @@ import type {
   ExtensionRegistry,
   RegistryEntry,
 } from '../types/extensions';
+import {
+  loadModelProviderState,
+  getProviderModels,
+} from './modelProviderService';
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -25,11 +29,12 @@ const PORT_RANGE_END = 8599;
 const HOST_VERSION = '0.1.0';
 const DEFAULT_RESULTS_DIR = '~/.iac/results';
 
-// Default: raw URL pointing at the registry.json in this repo
+// Default: Use local registry in dev, GitHub in production
 const DEFAULT_REGISTRY_URL =
   import.meta.env.VITE_EXTENSION_REGISTRY_URL ||
-  'https://raw.githubusercontent.com/OWASP/www-project-hactu8/86928e5bd1739496e35b43eab2b55b9d1108adf3/spikes/iac-prototype/extensions/registry.json';
-  // 'https://raw.githubusercontent.com/OWASP/www-project-hactu8/main/spikes/iac-prototype/extensions/registry.json';
+  (import.meta.env.DEV
+    ? 'http://localhost:5001/extensions/registry.json'
+    : 'https://raw.githubusercontent.com/OWASP/www-project-hactu8/main/spikes/iac-prototype/extensions/registry.json');
 
 // ---------------------------------------------------------------------------
 // localStorage helpers
@@ -73,6 +78,74 @@ export function assignPort(installed: InstalledExtension[]): number {
 // Install / Uninstall
 // ---------------------------------------------------------------------------
 
+/**
+ * Call backend API to delete the extension directory.
+ * Backend will remove the directory from ~/.iac/extensions/{extensionId}
+ */
+async function deleteExtension(extensionId: string, installPath: string): Promise<void> {
+  const apiUrl = import.meta.env.VITE_EXTENSION_API_URL || 'http://localhost:5001';
+
+  const response = await fetch(`${apiUrl}/api/extensions/uninstall`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      extensionId,
+      installPath,
+    }),
+  });
+
+  if (!response.ok) {
+    const error = await response.json().catch(() => ({ message: 'Unknown error' }));
+    throw new Error(error.message || `Uninstallation failed (${response.status})`);
+  }
+}
+
+/**
+ * Call backend API to download and extract the extension zip file.
+ * Backend should handle:
+ *  1. Download zip from registry.zipFile URL
+ *  2. Verify SHA256 hash
+ *  3. Extract to installPath
+ *  4. Return success/error
+ */
+async function downloadAndExtractExtension(
+  entry: RegistryEntry,
+  installPath: string
+): Promise<void> {
+  const apiUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5001';
+
+  // Convert registry zipFile (filename) to full URL
+  // If zipFile is already a full URL, use it as-is
+  let zipUrl = entry.zipFile;
+  if (!zipUrl.startsWith('http://') && !zipUrl.startsWith('https://')) {
+    // For local development, use the Flask server to serve zip files
+    if (import.meta.env.DEV) {
+      zipUrl = `${apiUrl}/extensions/${entry.zipFile}`;
+    } else {
+      // In production, construct full URL from registry URL
+      const registryUrl = getRegistryUrl();
+      // Replace 'registry.json' with the zip filename
+      zipUrl = registryUrl.replace(/registry\.json$/, entry.zipFile);
+    }
+  }
+
+  const response = await fetch(`${apiUrl}/api/extensions/install`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      extensionId: entry.manifest.id,
+      zipUrl: zipUrl,
+      sha256: entry.sha256,
+      installPath,
+    }),
+  });
+
+  if (!response.ok) {
+    const error = await response.json().catch(() => ({ message: 'Unknown error' }));
+    throw new Error(error.message || `Installation failed (${response.status})`);
+  }
+}
+
 /** Build the runtime config for an extension based on its type */
 function buildRuntimeConfig(
   entry: RegistryEntry,
@@ -105,20 +178,30 @@ function buildDefaultSettings(
 
 /**
  * Install an extension from a registry entry.
+ * Calls backend API to download and extract the zip file, then stores metadata.
  * Returns the updated list of installed extensions.
  */
-export function installExtension(
+export async function installExtension(
   entry: RegistryEntry,
   installed: InstalledExtension[],
-  installPath?: string
-): InstalledExtension[] {
+  installPath: string = '~/.iac/extensions'
+): Promise<InstalledExtension[]> {
   // Prevent duplicate installs
   if (installed.some((ext) => ext.manifest.id === entry.manifest.id)) {
     throw new Error(`Extension "${entry.manifest.id}" is already installed`);
   }
 
   const port = assignPort(installed);
-  const resolvedInstallPath = installPath ?? `~/.iac/extensions/${entry.manifest.id}`;
+  const resolvedInstallPath = `${installPath}/${entry.manifest.id}`;
+
+  // Call backend API to download and extract the extension
+  try {
+    await downloadAndExtractExtension(entry, resolvedInstallPath);
+  } catch (err) {
+    throw new Error(
+      `Failed to install extension: ${err instanceof Error ? err.message : 'Unknown error'}`
+    );
+  }
 
   const newExtension: InstalledExtension = {
     manifest: entry.manifest,
@@ -136,12 +219,29 @@ export function installExtension(
 
 /**
  * Uninstall an extension by id.
+ * Calls backend API to delete the files, then removes from localStorage.
  * Returns the updated list of installed extensions.
  */
-export function uninstallExtension(
+export async function uninstallExtension(
   extensionId: string,
   installed: InstalledExtension[]
-): InstalledExtension[] {
+): Promise<InstalledExtension[]> {
+  // Find the extension to get its install path
+  const extension = installed.find((ext) => ext.manifest.id === extensionId);
+  if (!extension) {
+    throw new Error(`Extension "${extensionId}" is not installed`);
+  }
+
+  // Call backend API to delete the extension directory
+  try {
+    await deleteExtension(extensionId, extension.installPath);
+  } catch (err) {
+    throw new Error(
+      `Failed to uninstall extension: ${err instanceof Error ? err.message : 'Unknown error'}`
+    );
+  }
+
+  // Remove from localStorage
   const updated = installed.filter((ext) => ext.manifest.id !== extensionId);
   saveInstalled(updated);
   return updated;
@@ -220,12 +320,25 @@ export function generateHostConfig(extension: InstalledExtension): ExtensionHost
         ? parseInt(new URL(extension.runtime.url).port, 10)
         : parseInt(new URL(extension.runtime.baseUrl).port, 10);
 
+  // Load model providers from IAC settings
+  const modelProviderState = loadModelProviderState();
+  const modelProviders = modelProviderState?.configs?.length ? {
+    providers: modelProviderState.configs.map(config => ({
+      id: config.providerId,
+      enabled: true,
+      baseUrl: config.baseUrl,
+      apiKey: config.apiKey,
+      models: getProviderModels(config.providerId),
+    }))
+  } : undefined;
+
   return {
     hostVersion: HOST_VERSION,
     extensionId: extension.manifest.id,
     port,
     resultsDir: `${DEFAULT_RESULTS_DIR}/${extension.manifest.id}`,
     settings: extension.settings,
+    modelProviders,
   };
 }
 
@@ -235,7 +348,15 @@ export function generateHostConfig(extension: InstalledExtension): ExtensionHost
 
 /** Get the configured registry URL (user-overridable, persisted in localStorage) */
 export function getRegistryUrl(): string {
-  return localStorage.getItem(REGISTRY_URL_KEY) || DEFAULT_REGISTRY_URL;
+  const stored = localStorage.getItem(REGISTRY_URL_KEY);
+  
+  // Auto-migrate old hardcoded URLs to use the new default
+  if (stored && stored.includes('86928e5bd1739496e35b43eab2b55b9d1108adf3')) {
+    localStorage.removeItem(REGISTRY_URL_KEY);
+    return DEFAULT_REGISTRY_URL;
+  }
+  
+  return stored || DEFAULT_REGISTRY_URL;
 }
 
 /** Override the registry source URL */

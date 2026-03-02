@@ -1,5 +1,6 @@
 """Service for fetching OWASP documents from GitHub repositories."""
 
+import json
 import os
 import re
 import hashlib
@@ -9,39 +10,146 @@ import httpx
 from ..models.document import Document, SourceType
 
 
+DEFAULT_OWASP_REPOS: List[Dict[str, Any]] = [
+    {
+        "owner": "OWASP",
+        "repo": "www-project-top-10-for-large-language-model-applications",
+        "title": "OWASP Top 10 for LLM Applications",
+        "category": "Standards",
+        "description": "The most critical security risks for Large Language Model applications.",
+        "paths": ["2_0_vulns/", "Archive/", "1_1_vulns/"],
+        "file_pattern": r".*\.md$"
+    },
+    {
+        "owner": "OWASP",
+        "repo": "www-project-ai-security-and-privacy-guide",
+        "title": "OWASP AI Security and Privacy Guide",
+        "category": "Guides",
+        "description": "Comprehensive guide on AI security and privacy best practices.",
+        "paths": ["content/"],
+        "file_pattern": r".*\.md$"
+    },
+    {
+        "owner": "OWASP",
+        "repo": "www-project-machine-learning-security-top-10",
+        "title": "OWASP ML Security Top 10",
+        "category": "Standards",
+        "description": "Top security risks specific to machine learning systems.",
+        "paths": [""],
+        "file_pattern": r".*\.md$"
+    }
+]
+
+
+def _parse_next_link(link_header: str) -> Optional[str]:
+    for part in link_header.split(","):
+        section = part.split(";")
+        if len(section) < 2:
+            continue
+        if 'rel="next"' in section[1]:
+            url = section[0].strip()
+            if url.startswith("<") and url.endswith(">"):
+                return url[1:-1]
+    return None
+
+
+def _title_from_repo_name(name: str) -> str:
+    pretty = name.replace("www-project-", "").replace("-", " ").strip()
+    if not pretty:
+        return name
+    return f"OWASP {pretty.title()}"
+
+
+def _discover_owasp_repos() -> List[Dict[str, Any]]:
+    if os.getenv("OWASP_REPOS_DISCOVER") != "1":
+        return []
+
+    token = os.getenv("OWASP_GITHUB_TOKEN") or os.getenv("GITHUB_TOKEN")
+    headers = {
+        "Accept": "application/vnd.github.v3+json",
+        "User-Agent": "IAC-Copilot"
+    }
+    if token:
+        headers["Authorization"] = f"token {token}"
+
+    repos: List[Dict[str, Any]] = []
+    url = "https://api.github.com/orgs/OWASP/repos"
+    params = {"per_page": 100, "page": 1, "type": "public"}
+    page_count = 0
+
+    try:
+        with httpx.Client() as client:
+            while url:
+                page_count += 1
+                response = client.get(url, headers=headers, params=params)
+                if response.status_code != 200:
+                    print(f"Failed to discover OWASP repos: {response.status_code}")
+                    break
+
+                data = response.json()
+                if not isinstance(data, list):
+                    break
+
+                page_matches = 0
+                for repo in data:
+                    name = repo.get("name", "")
+                    if not name.startswith("www-project-"):
+                        continue
+
+                    repos.append({
+                        "owner": repo.get("owner", {}).get("login", "OWASP"),
+                        "repo": name,
+                        "title": _title_from_repo_name(name),
+                        "category": "Projects",
+                        "description": repo.get("description") or "",
+                        "paths": [""],
+                        "file_pattern": r".*\.md$"
+                    })
+                    page_matches += 1
+
+                print(
+                    f"Discovered {page_matches} OWASP repos on page {page_count}; total {len(repos)}."
+                )
+
+                url = _parse_next_link(response.headers.get("Link", ""))
+                params = None
+
+    except (httpx.HTTPError, OSError) as exc:
+        print(f"Failed to discover OWASP repos: {exc}")
+        return []
+
+    return repos
+
+
+def _load_owasp_repos() -> List[Dict[str, Any]]:
+    default_path = os.path.normpath(
+        os.path.join(os.path.dirname(__file__), "..", "data", "owasp_repos.json")
+    )
+    file_path = os.getenv("OWASP_REPOS_PATH", default_path)
+
+    try:
+        with open(file_path, "r", encoding="utf-8") as handle:
+            data = json.load(handle)
+            if isinstance(data, list):
+                return data
+            print(f"Invalid OWASP repos format in {file_path}; using defaults.")
+    except FileNotFoundError:
+        pass
+    except (json.JSONDecodeError, OSError) as exc:
+        print(f"Failed to load OWASP repos from {file_path}: {exc}")
+
+    discovered = _discover_owasp_repos()
+    if discovered:
+        return discovered
+
+    return DEFAULT_OWASP_REPOS
+
+
 class OwaspFetcher:
     """Fetches and indexes OWASP documentation from GitHub."""
 
     # OWASP GitHub repositories to fetch
-    OWASP_REPOS = [
-        {
-            "owner": "OWASP",
-            "repo": "www-project-top-10-for-large-language-model-applications",
-            "title": "OWASP Top 10 for LLM Applications",
-            "category": "Standards",
-            "description": "The most critical security risks for Large Language Model applications.",
-            "paths": ["2_0_vulns/", "Archive/", "1_1_vulns/"],
-            "file_pattern": r".*\.md$"
-        },
-        {
-            "owner": "OWASP",
-            "repo": "www-project-ai-security-and-privacy-guide",
-            "title": "OWASP AI Security and Privacy Guide",
-            "category": "Guides",
-            "description": "Comprehensive guide on AI security and privacy best practices.",
-            "paths": ["content/"],
-            "file_pattern": r".*\.md$"
-        },
-        {
-            "owner": "OWASP",
-            "repo": "www-project-machine-learning-security-top-10",
-            "title": "OWASP ML Security Top 10",
-            "category": "Standards",
-            "description": "Top security risks specific to machine learning systems.",
-            "paths": [""],
-            "file_pattern": r".*\.md$"
-        }
-    ]
+    OWASP_REPOS = _load_owasp_repos()
 
     def __init__(self, github_token: Optional[str] = None):
         """Initialize the OWASP fetcher.
@@ -85,10 +193,36 @@ class OwaspFetcher:
             response = await client.get(url, headers=self._get_headers())
 
             if response.status_code == 200:
-                return response.json()
+                payload = response.json()
+                if isinstance(payload, list):
+                    return payload
+                if isinstance(payload, dict) and payload.get("type") == "file":
+                    return [payload]
+                return []
             else:
                 print(f"Failed to fetch {url}: {response.status_code}")
                 return []
+
+    async def fetch_repo_files_recursive(
+        self,
+        owner: str,
+        repo: str,
+        path: str = ""
+    ) -> List[Dict[str, Any]]:
+        contents = await self.fetch_repo_contents(owner, repo, path)
+        files: List[Dict[str, Any]] = []
+
+        for item in contents:
+            if item.get("type") == "file":
+                files.append(item)
+                continue
+
+            if item.get("type") == "dir":
+                files.extend(
+                    await self.fetch_repo_files_recursive(owner, repo, item.get("path", ""))
+                )
+
+        return files
 
     async def fetch_file_content(
         self,
@@ -219,7 +353,7 @@ class OwaspFetcher:
 
             for search_path in repo_config.get("paths", [""]):
                 try:
-                    contents = await self.fetch_repo_contents(owner, repo, search_path)
+                    contents = await self.fetch_repo_files_recursive(owner, repo, search_path)
 
                     for item in contents:
                         if item["type"] != "file":

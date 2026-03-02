@@ -131,6 +131,15 @@ export interface ExtensionHostConfig {
   port: number;
   resultsDir: string;          // shared results directory path
   settings: Record<string, string | number | boolean>;
+  modelProviders?: {           // optional: IAC model provider configuration
+    providers: Array<{
+      id: string;
+      enabled: boolean;
+      baseUrl?: string;
+      apiKey?: string;
+      models: string[];
+    }>
+  };
 }
 
 // ---------------------------------------------------------------------------

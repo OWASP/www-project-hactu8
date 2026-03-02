@@ -53,127 +53,145 @@ const HACTU8_RESOURCES = [
 
 const ProjectDocsPanel: React.FC = () => {
   const { documents, refreshDocuments, isLoading } = useCopilot();
+  const [isSourcesExpanded, setIsSourcesExpanded] = React.useState(false);
 
   // Filter to show only project documents
   const projectDocs = documents.filter(d => d.sourceType === 'project');
 
   return (
     <div className="project-panel">
-      {/* Section Header */}
       <div className="copilot-section-header">
-        <span className="copilot-section-title">HACTU8 Project</span>
+        <span className="copilot-section-title">Data Sources ({projectDocs.length})</span>
         <button
-          className="copilot-section-action"
-          onClick={refreshDocuments}
-          disabled={isLoading}
+          type="button"
+          className="copilot-section-toggle"
+          onClick={() => setIsSourcesExpanded(prev => !prev)}
+          aria-expanded={isSourcesExpanded}
+          aria-controls="project-sources-panel"
         >
-          Refresh
+          {isSourcesExpanded ? 'Collapse' : 'Expand'}
         </button>
       </div>
 
-      {/* Quick Links */}
-      <div style={{ marginBottom: '16px' }}>
-        <p style={{
-          fontSize: '11px',
-          color: '#9e9e9e',
-          marginBottom: '8px',
-          textTransform: 'uppercase',
-          letterSpacing: '0.5px',
-        }}>
-          Quick Links
-        </p>
-        <div className="copilot-doc-list">
-          {HACTU8_RESOURCES.map(resource => (
-            <a
-              key={resource.id}
-              href={resource.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="copilot-doc-item"
-              style={{ textDecoration: 'none', cursor: 'pointer' }}
-              title={resource.description}
+      {isSourcesExpanded && (
+        <div id="project-sources-panel">
+          {/* Section Header */}
+          <div className="copilot-section-header">
+            <span className="copilot-section-title">HACTU8 Project</span>
+            <button
+              className="copilot-section-action"
+              onClick={refreshDocuments}
+              disabled={isLoading}
             >
-              <div className="copilot-doc-info">
-                <span className="copilot-doc-icon">{resource.icon}</span>
-                <span className="copilot-doc-title">{resource.title}</span>
-              </div>
-              <svg
-                width="14"
-                height="14"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="#9e9e9e"
-                strokeWidth="2"
-              >
-                <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
-                <polyline points="15 3 21 3 21 9" />
-                <line x1="10" y1="14" x2="21" y2="3" />
-              </svg>
-            </a>
-          ))}
-        </div>
-      </div>
-
-      {/* Indexed Project Documents */}
-      {projectDocs.length > 0 && (
-        <>
-          <p style={{
-            fontSize: '11px',
-            color: '#9e9e9e',
-            marginBottom: '8px',
-            textTransform: 'uppercase',
-            letterSpacing: '0.5px',
-          }}>
-            Indexed Documents
-          </p>
-          <div className="copilot-doc-list">
-            {projectDocs.map(doc => (
-              <div key={doc.id} className="copilot-doc-item">
-                <div className="copilot-doc-info">
-                  <span className="copilot-doc-icon">📄</span>
-                  <span className="copilot-doc-title" title={doc.title}>
-                    {doc.title}
-                  </span>
-                </div>
-                {doc.sourceUrl && (
-                  <a
-                    href={doc.sourceUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    style={{ color: '#9e9e9e' }}
-                  >
-                    <svg
-                      width="14"
-                      height="14"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                    >
-                      <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
-                      <polyline points="15 3 21 3 21 9" />
-                      <line x1="10" y1="14" x2="21" y2="3" />
-                    </svg>
-                  </a>
-                )}
-              </div>
-            ))}
+              Refresh
+            </button>
           </div>
-        </>
-      )}
 
-      {/* Help text */}
-      <div style={{
-        marginTop: '16px',
-        padding: '12px',
-        backgroundColor: 'rgba(79, 195, 247, 0.1)',
-        borderRadius: '6px',
-        fontSize: '12px',
-        color: '#9e9e9e',
-      }}>
-        <strong style={{ color: '#4fc3f7' }}>Tip:</strong> Ask questions about HACTU8 architecture,
-        implementation, or how to contribute to the project.
-      </div>
+          {/* Quick Links */}
+          <div style={{ marginBottom: '16px' }}>
+            <p style={{
+              fontSize: '11px',
+              color: '#9e9e9e',
+              marginBottom: '8px',
+              textTransform: 'uppercase',
+              letterSpacing: '0.5px',
+            }}>
+              Quick Links
+            </p>
+            <div className="copilot-doc-list">
+              {HACTU8_RESOURCES.map(resource => (
+                <a
+                  key={resource.id}
+                  href={resource.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="copilot-doc-item"
+                  style={{ textDecoration: 'none', cursor: 'pointer' }}
+                  title={resource.description}
+                >
+                  <div className="copilot-doc-info">
+                    <span className="copilot-doc-icon">{resource.icon}</span>
+                    <span className="copilot-doc-title">{resource.title}</span>
+                  </div>
+                  <svg
+                    width="14"
+                    height="14"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="#9e9e9e"
+                    strokeWidth="2"
+                  >
+                    <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+                    <polyline points="15 3 21 3 21 9" />
+                    <line x1="10" y1="14" x2="21" y2="3" />
+                  </svg>
+                </a>
+              ))}
+            </div>
+          </div>
+
+          {/* Indexed Project Documents */}
+          {projectDocs.length > 0 && (
+            <>
+              <p style={{
+                fontSize: '11px',
+                color: '#9e9e9e',
+                marginBottom: '8px',
+                textTransform: 'uppercase',
+                letterSpacing: '0.5px',
+              }}>
+                Indexed Documents
+              </p>
+              <div className="copilot-doc-list">
+                {projectDocs.map(doc => (
+                  <div key={doc.id} className="copilot-doc-item">
+                    <div className="copilot-doc-info">
+                      <span className="copilot-doc-icon">📄</span>
+                      <span className="copilot-doc-title" title={doc.title}>
+                        {doc.title}
+                      </span>
+                    </div>
+                    {doc.sourceUrl && (
+                      <a
+                        href={doc.sourceUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={{ color: '#9e9e9e' }}
+                      >
+                        <svg
+                          width="14"
+                          height="14"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                        >
+                          <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+                          <polyline points="15 3 21 3 21 9" />
+                          <line x1="10" y1="14" x2="21" y2="3" />
+                        </svg>
+                      </a>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </>
+          )}
+
+          {/* Help text */}
+          <div style={{
+            marginTop: '16px',
+            padding: '12px',
+            backgroundColor: 'rgba(79, 195, 247, 0.1)',
+            borderRadius: '6px',
+            fontSize: '12px',
+            color: '#9e9e9e',
+          }}>
+            <strong style={{ color: '#4fc3f7' }}>Tip:</strong> Ask questions about HACTU8 architecture,
+            implementation, or how to contribute to the project.
+          </div>
+        </div>
+      )}
     </div>
   );
 };
