@@ -18,7 +18,9 @@ Or set environment variables:
 
 import json
 import os
+import subprocess
 import sys
+from datetime import datetime, timezone
 from pathlib import Path
 
 from flask import Flask, request, jsonify
@@ -250,6 +252,205 @@ def uninstall_extension():
         import traceback
         traceback.print_exc()
         return jsonify({"error": error_msg}), 500
+
+# ===== Extension Runtime Process Registry =====
+
+# Maps extensionId -> {"process": Popen, "pid": int, "port": int, "startedAt": str}
+_extension_processes: dict = {}
+
+
+# ===== Extension Runtime Endpoints =====
+
+@app.route("/api/extensions/runtime/start", methods=["POST"])
+def start_extension_runtime():
+    """
+    Start an installed extension's Streamlit process on first use.
+
+    POST /api/extensions/runtime/start
+
+    Request body:
+    {
+        "extensionId": "my-ext",
+        "port": 8501,
+        "installPath": "~/.iac/extensions/my-ext"
+    }
+
+    Response on success (200):
+    {
+        "status": "started" | "already_running",
+        "extensionId": "my-ext",
+        "pid": 12345,
+        "port": 8501
+    }
+    """
+    try:
+        data = request.get_json()
+        if not data:
+            return jsonify({"error": "Request body must be JSON"}), 400
+
+        extension_id = data.get("extensionId")
+        port = data.get("port")
+        install_path = data.get("installPath")
+
+        if not extension_id:
+            return jsonify({"error": "Missing required field: extensionId"}), 400
+        if not port:
+            return jsonify({"error": "Missing required field: port"}), 400
+        if not install_path:
+            return jsonify({"error": "Missing required field: installPath"}), 400
+
+        # Return existing process if still alive
+        if extension_id in _extension_processes:
+            info = _extension_processes[extension_id]
+            if info["process"].poll() is None:
+                return jsonify({
+                    "status": "already_running",
+                    "extensionId": extension_id,
+                    "pid": info["pid"],
+                    "port": info["port"],
+                }), 200
+            # Process died — remove stale entry
+            del _extension_processes[extension_id]
+
+        resolved_path = Path(install_path).expanduser().resolve()
+        entry_point = resolved_path / "app.py"
+
+        if not entry_point.exists():
+            return jsonify({"error": f"Entry point not found: {entry_point}"}), 400
+
+        env = {
+            **os.environ,
+            "PYTHONPATH": str(resolved_path),
+            # Prevent SIGSEGV on macOS ARM64 Python 3.13 when forking from
+            # within a Flask debug (werkzeug reloader) process.
+            "OBJC_DISABLE_INITIALIZE_FORK_SAFETY": "YES",
+        }
+
+        proc = subprocess.Popen(
+            [
+                sys.executable,
+                "-m",
+                "streamlit",
+                "run",
+                str(entry_point),
+                "--server.port",
+                str(port),
+                "--server.headless",
+                "true",
+                "--browser.gatherUsageStats",
+                "false",
+                # Disable watchdog file watcher to avoid a second fork on macOS ARM64.
+                "--server.fileWatcherType",
+                "none",
+            ],
+            cwd=str(resolved_path),
+            env=env,
+            # Detach from the Flask process group so the child survives independently
+            # and is not subject to the parent's fork-unsafe state.
+            start_new_session=True,
+        )
+
+        _extension_processes[extension_id] = {
+            "process": proc,
+            "pid": proc.pid,
+            "port": port,
+            "startedAt": datetime.now(timezone.utc).isoformat(),
+        }
+
+        print(f"[{extension_id}] Runtime started (pid={proc.pid}, port={port})")
+        return jsonify({
+            "status": "started",
+            "extensionId": extension_id,
+            "pid": proc.pid,
+            "port": port,
+        }), 200
+
+    except Exception as e:
+        print(f"[ERROR] start_extension_runtime: {e}")
+        import traceback
+        traceback.print_exc()
+        return jsonify({"error": f"Unexpected error: {str(e)}"}), 500
+
+
+@app.route("/api/extensions/runtime/stop", methods=["POST"])
+def stop_extension_runtime():
+    """
+    Stop a running extension process.
+
+    POST /api/extensions/runtime/stop
+
+    Request body:
+    {
+        "extensionId": "my-ext"
+    }
+
+    Response (200):
+    {
+        "status": "stopped" | "not_running",
+        "extensionId": "my-ext"
+    }
+    """
+    try:
+        data = request.get_json()
+        if not data:
+            return jsonify({"error": "Request body must be JSON"}), 400
+
+        extension_id = data.get("extensionId")
+        if not extension_id:
+            return jsonify({"error": "Missing required field: extensionId"}), 400
+
+        if extension_id not in _extension_processes:
+            return jsonify({"status": "not_running", "extensionId": extension_id}), 200
+
+        info = _extension_processes[extension_id]
+        proc = info["process"]
+
+        if proc.poll() is None:
+            proc.terminate()
+            try:
+                proc.wait(timeout=8)
+            except subprocess.TimeoutExpired:
+                proc.kill()
+
+        del _extension_processes[extension_id]
+        print(f"[{extension_id}] Runtime stopped")
+        return jsonify({"status": "stopped", "extensionId": extension_id}), 200
+
+    except Exception as e:
+        print(f"[ERROR] stop_extension_runtime: {e}")
+        return jsonify({"error": f"Unexpected error: {str(e)}"}), 500
+
+
+@app.route("/api/extensions/runtime/status", methods=["GET"])
+def extension_runtime_status():
+    """
+    Query the runtime status of all active extension processes.
+
+    GET /api/extensions/runtime/status
+
+    Response (200):
+    {
+        "my-ext": {"running": true, "pid": 12345, "port": 8501, "startedAt": "..."}
+    }
+    """
+    result = {}
+    stale = []
+
+    for ext_id, info in _extension_processes.items():
+        if info["process"].poll() is None:
+            result[ext_id] = {
+                "running": True,
+                "pid": info["pid"],
+                "port": info["port"],
+                "startedAt": info["startedAt"],
+            }
+        else:
+            stale.append(ext_id)
+
+    for ext_id in stale:
+        del _extension_processes[ext_id]
+
+    return jsonify(result), 200
 
 
 # ===== Startup & Configuration =====

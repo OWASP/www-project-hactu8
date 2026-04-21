@@ -343,6 +343,77 @@ export function generateHostConfig(extension: InstalledExtension): ExtensionHost
 }
 
 // ---------------------------------------------------------------------------
+// Extension runtime lifecycle (lazy start on first use)
+// ---------------------------------------------------------------------------
+
+const EXTENSION_API_URL = import.meta.env.VITE_EXTENSION_API_URL || 'http://localhost:5001';
+
+/**
+ * Start an installed extension's runtime process on the server.
+ * Safe to call multiple times — returns "already_running" if already up.
+ */
+export async function startExtensionRuntime(
+  extension: InstalledExtension
+): Promise<{ status: string; extensionId: string; pid: number; port: number }> {
+  const port =
+    extension.runtime.type === 'streamlit'
+      ? extension.runtime.streamlit.port
+      : extension.runtime.type === 'iframe'
+        ? parseInt(new URL(extension.runtime.url).port, 10)
+        : parseInt(new URL(extension.runtime.baseUrl).port, 10);
+
+  const response = await fetch(`${EXTENSION_API_URL}/api/extensions/runtime/start`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      extensionId: extension.manifest.id,
+      port,
+      installPath: extension.installPath,
+    }),
+  });
+
+  if (!response.ok) {
+    const err = await response.json().catch(() => ({ error: 'Unknown error' }));
+    throw new Error(err.error || `Failed to start extension runtime (${response.status})`);
+  }
+
+  return response.json();
+}
+
+/**
+ * Stop a running extension's runtime process on the server.
+ * Safe to call when already stopped — returns "not_running" without error.
+ */
+export async function stopExtensionRuntime(extensionId: string): Promise<void> {
+  const response = await fetch(`${EXTENSION_API_URL}/api/extensions/runtime/stop`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ extensionId }),
+  });
+
+  if (!response.ok) {
+    const err = await response.json().catch(() => ({ error: 'Unknown error' }));
+    throw new Error(err.error || `Failed to stop extension runtime (${response.status})`);
+  }
+}
+
+/**
+ * Fetch the live runtime status of all active extension processes from the server.
+ * Returns an object keyed by extensionId.
+ */
+export async function fetchExtensionRuntimeStatus(): Promise<
+  Record<string, { running: boolean; pid: number; port: number; startedAt: string }>
+> {
+  try {
+    const response = await fetch(`${EXTENSION_API_URL}/api/extensions/runtime/status`);
+    if (!response.ok) return {};
+    return response.json();
+  } catch {
+    return {};
+  }
+}
+
+// ---------------------------------------------------------------------------
 // Registry
 // ---------------------------------------------------------------------------
 
@@ -416,6 +487,9 @@ const extensionService = {
   setRegistryUrl,
   resetRegistryUrl,
   fetchRegistry,
+  startExtensionRuntime,
+  stopExtensionRuntime,
+  fetchExtensionRuntimeStatus,
 };
 
 export default extensionService;

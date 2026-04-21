@@ -7,17 +7,17 @@ import resultsService from '../services/resultsService';
 // ---------------------------------------------------------------------------
 
 const STATUS_COLORS: Record<TestResultStatus, string> = {
-  pass: '#10b981',
-  fail: '#ef4444',
-  error: '#f59e0b',
-  skip: '#6b7280',
+  pass: 'var(--iac-success)',
+  fail: 'var(--iac-error)',
+  error: 'var(--iac-warning)',
+  skip: 'var(--iac-text-secondary)',
 };
 
 const STATUS_BG: Record<TestResultStatus, string> = {
-  pass: '#d1fae5',
-  fail: '#fee2e2',
-  error: '#fef3c7',
-  skip: '#f3f4f6',
+  pass: 'var(--iac-success-bg)',
+  fail: 'var(--iac-error-bg)',
+  error: 'var(--iac-warning-bg)',
+  skip: 'var(--iac-surface)',
 };
 
 const STATUS_ICONS: Record<TestResultStatus, string> = {
@@ -126,7 +126,7 @@ const AssuranceResults: React.FC = () => {
       {/* ---- Sidebar: Run list ---- */}
       <aside style={sidebarStyle}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
-          <h3 style={{ color: '#111827', margin: 0 }}>Test Runs</h3>
+          <h3 style={{ color: 'var(--iac-text)', margin: 0 }}>Test Runs</h3>
           <button onClick={handleRefresh} style={smallButtonStyle} title="Refresh">
             Refresh
           </button>
@@ -152,13 +152,13 @@ const AssuranceResults: React.FC = () => {
         </div>
 
         {importError && (
-          <div style={{ padding: '0.5rem', background: '#fee2e2', color: '#dc2626', borderRadius: '4px', fontSize: '0.75rem', marginBottom: '0.5rem' }}>
+          <div style={{ padding: '0.5rem', background: 'var(--iac-error-bg)', color: 'var(--iac-error)', borderRadius: '4px', fontSize: '0.75rem', marginBottom: '0.5rem' }}>
             {importError}
           </div>
         )}
 
         {results.length === 0 ? (
-          <p style={{ color: '#6b7280', fontSize: '0.875rem' }}>
+          <p style={{ color: 'var(--iac-text-secondary)', fontSize: '0.875rem' }}>
             No test results yet. Run tests from an installed extension.
           </p>
         ) : (
@@ -174,20 +174,20 @@ const AssuranceResults: React.FC = () => {
                   onClick={() => setSelectedRunId(run.runId)}
                   style={{
                     ...cardStyle,
-                    borderColor: isSelected ? '#213547' : '#e5e7eb',
-                    background: isSelected ? '#f0f4f8' : '#ffffff',
+                    borderColor: isSelected ? 'var(--iac-surface-elevated)' : 'var(--iac-border)',
+                    background: isSelected ? 'var(--iac-surface-elevated)' : 'var(--iac-surface)',
                     cursor: 'pointer',
                   }}
                 >
-                  <div style={{ fontWeight: 600, fontSize: '0.85rem', color: '#111827', marginBottom: '0.15rem' }}>
+                  <div style={{ fontWeight: 600, fontSize: '0.85rem', color: 'var(--iac-text)', marginBottom: '0.15rem' }}>
                     {run.extensionName}
                   </div>
-                  <div style={{ fontSize: '0.75rem', color: '#6b7280', marginBottom: '0.35rem' }}>
+                  <div style={{ fontSize: '0.75rem', color: 'var(--iac-text-secondary)', marginBottom: '0.35rem' }}>
                     {formatTimestamp(run.timestamp)}
                   </div>
                   <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
                     <PassRateBar rate={passRate} />
-                    <span style={{ fontSize: '0.75rem', color: '#374151', fontWeight: 600 }}>
+                    <span style={{ fontSize: '0.75rem', color: 'var(--iac-text)', fontWeight: 600 }}>
                       {passRate}%
                     </span>
                   </div>
@@ -203,7 +203,7 @@ const AssuranceResults: React.FC = () => {
             })}
 
             {results.length > 0 && (
-              <button onClick={handleClear} style={{ ...smallButtonStyle, background: '#dc2626', marginTop: '0.5rem' }}>
+              <button onClick={handleClear} style={{ ...smallButtonStyle, background: 'var(--iac-error)', marginTop: '0.5rem' }}>
                 Clear All
               </button>
             )}
@@ -214,7 +214,7 @@ const AssuranceResults: React.FC = () => {
       {/* ---- Main: Run detail ---- */}
       <main style={mainStyle}>
         {!selectedRun ? (
-          <div style={{ color: '#6b7280', textAlign: 'center', marginTop: '4rem' }}>
+          <div style={{ color: 'var(--iac-text-secondary)', textAlign: 'center', marginTop: '4rem' }}>
             <p>Select a test run to view details.</p>
           </div>
         ) : (
@@ -262,10 +262,10 @@ function RunDetail({ run, filterStatus, onFilterChange, onExport }: RunDetailPro
       <div style={{ marginBottom: '1.5rem' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
           <div>
-            <h3 style={{ color: '#111827', fontWeight: 700, fontSize: '1.5rem', margin: '0 0 0.25rem' }}>
+            <h3 style={{ color: 'var(--iac-text)', fontWeight: 700, fontSize: '1.5rem', margin: '0 0 0.25rem' }}>
               {run.extensionName}
             </h3>
-            <p style={{ color: '#6b7280', margin: 0, fontSize: '0.875rem' }}>
+            <p style={{ color: 'var(--iac-text-secondary)', margin: 0, fontSize: '0.875rem' }}>
               Run <code>{run.runId}</code> &bull; {formatTimestamp(run.timestamp)} &bull; Target: <code>{run.target}</code>
             </p>
           </div>
@@ -291,14 +291,14 @@ function RunDetail({ run, filterStatus, onFilterChange, onExport }: RunDetailPro
       {/* Pass rate bar */}
       <div style={{ marginBottom: '1.5rem' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.25rem' }}>
-          <span style={{ fontSize: '0.875rem', color: '#374151', fontWeight: 600 }}>Pass Rate</span>
-          <span style={{ fontSize: '0.875rem', color: '#374151', fontWeight: 700 }}>{passRate}%</span>
+          <span style={{ fontSize: '0.875rem', color: 'var(--iac-text)', fontWeight: 600 }}>Pass Rate</span>
+          <span style={{ fontSize: '0.875rem', color: 'var(--iac-text)', fontWeight: 700 }}>{passRate}%</span>
         </div>
-        <div style={{ height: 12, background: '#f3f4f6', borderRadius: 6, overflow: 'hidden' }}>
+        <div style={{ height: 12, background: 'var(--iac-surface)', borderRadius: 6, overflow: 'hidden' }}>
           <div style={{
             height: '100%',
             width: `${passRate}%`,
-            background: passRate >= 80 ? '#10b981' : passRate >= 50 ? '#f59e0b' : '#ef4444',
+            background: passRate >= 80 ? 'var(--iac-success)' : passRate >= 50 ? 'var(--iac-warning)' : 'var(--iac-error)',
             borderRadius: 6,
             transition: 'width 0.3s',
           }} />
@@ -313,9 +313,9 @@ function RunDetail({ run, filterStatus, onFilterChange, onExport }: RunDetailPro
             onClick={() => onFilterChange(s)}
             style={{
               padding: '0.35rem 0.75rem',
-              background: filterStatus === s ? '#213547' : 'transparent',
-              color: filterStatus === s ? '#fff' : '#374151',
-              border: '1px solid #d1d5db',
+              background: filterStatus === s ? 'var(--iac-surface-elevated)' : 'transparent',
+              color: filterStatus === s ? 'var(--iac-text)' : 'var(--iac-text)',
+              border: '1px solid var(--iac-border)',
               borderRadius: '4px',
               cursor: 'pointer',
               fontWeight: filterStatus === s ? 600 : 400,
@@ -329,7 +329,7 @@ function RunDetail({ run, filterStatus, onFilterChange, onExport }: RunDetailPro
       </div>
 
       {/* Results table */}
-      <div style={{ border: '1px solid #e5e7eb', borderRadius: '6px', overflow: 'hidden' }}>
+      <div style={{ border: '1px solid var(--iac-border)', borderRadius: '6px', overflow: 'hidden' }}>
         {/* Table header */}
         <div style={tableHeaderStyle}>
           <div style={{ width: 36 }}></div>
@@ -339,7 +339,7 @@ function RunDetail({ run, filterStatus, onFilterChange, onExport }: RunDetailPro
         </div>
 
         {sorted.length === 0 ? (
-          <div style={{ padding: '1rem', color: '#6b7280', textAlign: 'center' }}>
+          <div style={{ padding: '1rem', color: 'var(--iac-text-secondary)', textAlign: 'center' }}>
             No results matching filter.
           </div>
         ) : (
@@ -363,7 +363,7 @@ function TestCaseRow({ testCase }: { testCase: TestCaseResult }) {
         onClick={() => setExpanded(!expanded)}
         style={{
           ...tableRowStyle,
-          background: expanded ? '#f9fafb' : '#ffffff',
+          background: expanded ? 'var(--iac-surface)' : 'var(--iac-bg)',
           cursor: 'pointer',
         }}
       >
@@ -371,8 +371,8 @@ function TestCaseRow({ testCase }: { testCase: TestCaseResult }) {
           {STATUS_ICONS[testCase.status]}
         </div>
         <div style={{ flex: 2 }}>
-          <div style={{ fontWeight: 500, color: '#111827', fontSize: '0.875rem' }}>{testCase.name}</div>
-          <div style={{ fontSize: '0.75rem', color: '#6b7280' }}>{testCase.id}</div>
+          <div style={{ fontWeight: 500, color: 'var(--iac-text)', fontSize: '0.875rem' }}>{testCase.name}</div>
+          <div style={{ fontSize: '0.75rem', color: 'var(--iac-text-secondary)' }}>{testCase.id}</div>
         </div>
         <div style={{ flex: 1 }}>
           <span style={{
@@ -388,14 +388,14 @@ function TestCaseRow({ testCase }: { testCase: TestCaseResult }) {
             {testCase.status}
           </span>
         </div>
-        <div style={{ width: 100, textAlign: 'right', fontSize: '0.85rem', color: '#374151' }}>
+        <div style={{ width: 100, textAlign: 'right', fontSize: '0.85rem', color: 'var(--iac-text)' }}>
           {testCase.duration ? formatDuration(testCase.duration) : '—'}
         </div>
       </div>
 
       {expanded && (
-        <div style={{ padding: '0.75rem 1rem 0.75rem 3rem', background: '#f9fafb', borderTop: '1px solid #e5e7eb' }}>
-          <p style={{ margin: '0 0 0.25rem', fontSize: '0.85rem', color: '#374151' }}>
+        <div style={{ padding: '0.75rem 1rem 0.75rem 3rem', background: 'var(--iac-surface)', borderTop: '1px solid var(--iac-border)' }}>
+          <p style={{ margin: '0 0 0.25rem', fontSize: '0.85rem', color: 'var(--iac-text)' }}>
             <strong>Message:</strong> {testCase.message}
           </p>
           {testCase.details && (
@@ -411,24 +411,24 @@ function MetricCard({ label, value, color }: { label: string; value: string | nu
   return (
     <div style={{
       padding: '1rem',
-      border: '1px solid #e5e7eb',
+      border: '1px solid var(--iac-border)',
       borderRadius: '6px',
-      background: '#ffffff',
+      background: 'var(--iac-surface)',
       textAlign: 'center',
     }}>
-      <div style={{ fontSize: '0.75rem', color: '#6b7280', marginBottom: '0.25rem' }}>{label}</div>
-      <div style={{ fontSize: '1.5rem', fontWeight: 700, color: color ?? '#111827' }}>{value}</div>
+      <div style={{ fontSize: '0.75rem', color: 'var(--iac-text-secondary)', marginBottom: '0.25rem' }}>{label}</div>
+      <div style={{ fontSize: '1.5rem', fontWeight: 700, color: color ?? 'var(--iac-text)' }}>{value}</div>
     </div>
   );
 }
 
 function PassRateBar({ rate }: { rate: number }) {
   return (
-    <div style={{ flex: 1, height: 6, background: '#f3f4f6', borderRadius: 3, overflow: 'hidden' }}>
+    <div style={{ flex: 1, height: 6, background: 'var(--iac-surface)', borderRadius: 3, overflow: 'hidden' }}>
       <div style={{
         height: '100%',
         width: `${rate}%`,
-        background: rate >= 80 ? '#10b981' : rate >= 50 ? '#f59e0b' : '#ef4444',
+        background: rate >= 80 ? 'var(--iac-success)' : rate >= 50 ? 'var(--iac-warning)' : 'var(--iac-error)',
         borderRadius: 3,
       }} />
     </div>
@@ -442,8 +442,8 @@ function PassRateBar({ rate }: { rate: number }) {
 const sidebarStyle: React.CSSProperties = {
   width: 320,
   padding: '1rem',
-  background: '#f9fafb',
-  borderRight: '1px solid #e5e7eb',
+  background: 'var(--iac-surface)',
+  borderRight: '1px solid var(--iac-border)',
   display: 'flex',
   flexDirection: 'column',
   overflowY: 'auto',
@@ -453,20 +453,20 @@ const mainStyle: React.CSSProperties = {
   flex: 1,
   padding: '2rem',
   overflowY: 'auto',
-  background: '#ffffff',
+  background: 'var(--iac-bg)',
 };
 
 const cardStyle: React.CSSProperties = {
   padding: '0.75rem',
-  border: '1px solid #e5e7eb',
+  border: '1px solid var(--iac-border)',
   borderRadius: '6px',
-  background: '#ffffff',
+  background: 'var(--iac-surface)',
 };
 
 const smallButtonStyle: React.CSSProperties = {
   padding: '0.3rem 0.6rem',
-  background: '#213547',
-  color: '#ffffff',
+  background: 'var(--iac-surface-elevated)',
+  color: 'var(--iac-text)',
   border: 'none',
   borderRadius: '4px',
   cursor: 'pointer',
@@ -478,11 +478,11 @@ const tableHeaderStyle: React.CSSProperties = {
   display: 'flex',
   alignItems: 'center',
   padding: '0.5rem 1rem',
-  background: '#f3f4f6',
-  borderBottom: '1px solid #e5e7eb',
+  background: 'var(--iac-surface)',
+  borderBottom: '1px solid var(--iac-border)',
   fontSize: '0.75rem',
   fontWeight: 600,
-  color: '#6b7280',
+  color: 'var(--iac-text-secondary)',
   textTransform: 'uppercase',
 };
 
@@ -490,13 +490,13 @@ const tableRowStyle: React.CSSProperties = {
   display: 'flex',
   alignItems: 'center',
   padding: '0.5rem 1rem',
-  borderBottom: '1px solid #f3f4f6',
+  borderBottom: '1px solid var(--iac-border)',
 };
 
 const codeBlockStyle: React.CSSProperties = {
   padding: '0.5rem 0.75rem',
-  background: '#1a1a2e',
-  color: '#e2e8f0',
+  background: 'var(--iac-code-bg)',
+  color: 'var(--iac-code-text)',
   borderRadius: '4px',
   fontSize: '0.75rem',
   overflowX: 'auto',
@@ -507,9 +507,9 @@ const codeBlockStyle: React.CSSProperties = {
 
 const toolbarButtonStyle: React.CSSProperties = {
   padding: '0.3rem 0.6rem',
-  background: '#f3f4f6',
-  color: '#374151',
-  border: '1px solid #d1d5db',
+  background: 'var(--iac-surface)',
+  color: 'var(--iac-text)',
+  border: '1px solid var(--iac-border)',
   borderRadius: '4px',
   cursor: 'pointer',
   fontWeight: 500,
@@ -518,8 +518,8 @@ const toolbarButtonStyle: React.CSSProperties = {
 
 const exportRunButtonStyle: React.CSSProperties = {
   padding: '0.4rem 0.8rem',
-  background: '#213547',
-  color: '#ffffff',
+  background: 'var(--iac-surface-elevated)',
+  color: 'var(--iac-text)',
   border: 'none',
   borderRadius: '4px',
   cursor: 'pointer',

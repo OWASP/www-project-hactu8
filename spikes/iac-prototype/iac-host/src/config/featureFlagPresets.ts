@@ -9,6 +9,7 @@ import type { FeatureFlags } from './featureFlags';
 export const fullAccessPreset: FeatureFlags = {
   navigation: {
     dashboard: true,
+    workbench: true,
     registry: true,
     console: true,
   },
@@ -49,9 +50,13 @@ export const fullAccessPreset: FeatureFlags = {
     assuranceResults: true,
     reports: true,
   },
+  agents: {
+    enabled: true,
+    phases: true,
+    skills: true,
+    mcpClients: false,
+  },
   other: {
-    workbench: true,
-    agents: true,
     users: true,
   },
   user: {
@@ -68,6 +73,7 @@ export const fullAccessPreset: FeatureFlags = {
 export const minimalPreset: FeatureFlags = {
   navigation: {
     dashboard: true,
+    workbench: true,
     registry: false,
     console: false,
   },
@@ -108,9 +114,13 @@ export const minimalPreset: FeatureFlags = {
     assuranceResults: false,
     reports: false,
   },
+  agents: {
+    enabled: false,
+    phases: false,
+    skills: false,
+    mcpClients: false,
+  },
   other: {
-    workbench: false,
-    agents: false,
     users: false,
   },
   user: {
@@ -127,6 +137,7 @@ export const minimalPreset: FeatureFlags = {
 export const testingFocusPreset: FeatureFlags = {
   navigation: {
     dashboard: true,
+    workbench: false,
     registry: false,
     console: true,
   },
@@ -167,9 +178,13 @@ export const testingFocusPreset: FeatureFlags = {
     assuranceResults: true,
     reports: true,
   },
+  agents: {
+    enabled: false,
+    phases: false,
+    skills: false,
+    mcpClients: false,
+  },
   other: {
-    workbench: false,
-    agents: false,
     users: false,
   },
   user: {
@@ -186,6 +201,7 @@ export const testingFocusPreset: FeatureFlags = {
 export const developerPreset: FeatureFlags = {
   navigation: {
     dashboard: true,
+    workbench: true,
     registry: true,
     console: true,
   },
@@ -226,9 +242,13 @@ export const developerPreset: FeatureFlags = {
     assuranceResults: false,
     reports: false,
   },
+  agents: {
+    enabled: true,
+    phases: true,
+    skills: true,
+    mcpClients: false,
+  },
   other: {
-    workbench: true,
-    agents: true,
     users: true,
   },
   user: {
@@ -245,6 +265,7 @@ export const developerPreset: FeatureFlags = {
 export const securityFocusPreset: FeatureFlags = {
   navigation: {
     dashboard: true,
+    workbench: false,
     registry: true,
     console: false,
   },
@@ -285,9 +306,13 @@ export const securityFocusPreset: FeatureFlags = {
     assuranceResults: true,
     reports: true,
   },
+  agents: {
+    enabled: true,
+    phases: true,
+    skills: false,
+    mcpClients: false,
+  },
   other: {
-    workbench: false,
-    agents: false,
     users: true,
   },
   user: {

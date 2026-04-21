@@ -8,7 +8,7 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "serve:dist": "npx serve --cors -l $VITE_PORT dist"
+    "serve:dist": "npx serve --cors -l ${VITE_PORT:-3001} dist"
   },
   "dependencies": {
     "react": "^19.1.0",

@@ -11,7 +11,9 @@ import { SystemMessageProvider, useSystemMessage } from './contexts/SystemMessag
 import { CopilotProvider } from './contexts/CopilotContext';
 import { ModelProviderProvider } from './contexts/ModelProviderContext';
 import { ExtensionProvider } from './contexts/ExtensionContext';
+import { AgentProvider } from './contexts/AgentContext';
 import { getEffectiveConfig } from './config/environmentConfig';
+import { ThemeProvider, useTheme } from './contexts/ThemeContext';
 
 import Dashboard from './pages/Dashboard';
 import Events from './pages/Events';
@@ -50,10 +52,12 @@ const AppContent: React.FC = () => {
   const [selectedConfig, setSelectedConfig] = useState<string>('config 1');
   const { message, messageType } = useSystemMessage();
   const envConfig = getEffectiveConfig();
+  const { theme } = useTheme();
 
   return (
     <Router>
       <div
+        data-theme={theme}
         style={{
           display: 'flex',
           flexDirection: 'column',
@@ -140,7 +144,11 @@ function App() {
         <ModelProviderProvider>
           <CopilotProvider>
             <ExtensionProvider>
-              <AppContent />
+              <AgentProvider>
+                <ThemeProvider>
+                  <AppContent />
+                </ThemeProvider>
+              </AgentProvider>
             </ExtensionProvider>
           </CopilotProvider>
         </ModelProviderProvider>

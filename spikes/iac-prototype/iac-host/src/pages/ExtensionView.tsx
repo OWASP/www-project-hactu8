@@ -25,8 +25,8 @@ const ExtensionView: React.FC = () => {
   if (!extension) {
     return (
       <div style={notFoundStyle}>
-        <h3 style={{ color: '#111827' }}>Extension Not Found</h3>
-        <p style={{ color: '#6b7280' }}>
+        <h3 style={{ color: 'var(--iac-text)' }}>Extension Not Found</h3>
+        <p style={{ color: 'var(--iac-muted)' }}>
           The extension <code>{extensionId}</code> is not installed.
         </p>
         <Link to="/extensions" style={linkStyle}>
@@ -37,10 +37,10 @@ const ExtensionView: React.FC = () => {
   }
 
   const statusColor =
-    extension.status === 'active' ? '#10b981'
-    : extension.status === 'error' ? '#ef4444'
-    : extension.status === 'stopped' ? '#f59e0b'
-    : '#6b7280';
+    extension.status === 'active' ? 'var(--iac-success)'
+    : extension.status === 'error' ? 'var(--iac-error)'
+    : extension.status === 'stopped' ? 'var(--iac-warning)'
+    : 'var(--iac-muted)';
 
   return (
     <div style={containerStyle}>
@@ -49,7 +49,7 @@ const ExtensionView: React.FC = () => {
         <Link to="/extensions" style={backLinkStyle}>
           &larr; Extensions
         </Link>
-        <h3 style={{ margin: 0, color: '#111827', fontSize: '1.1rem' }}>
+        <h3 style={{ margin: 0, color: 'var(--iac-text)', fontSize: '1.1rem' }}>
           {extension.manifest.name}
         </h3>
         <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.3rem', fontSize: '0.8rem', color: statusColor, fontWeight: 600 }}>
@@ -82,13 +82,13 @@ const headerStyle: React.CSSProperties = {
   alignItems: 'center',
   gap: '1rem',
   padding: '0.5rem 1rem',
-  borderBottom: '1px solid #e5e7eb',
-  background: '#f9fafb',
+  borderBottom: '1px solid var(--iac-border)',
+  background: 'var(--iac-surface)',
   flexShrink: 0,
 };
 
 const backLinkStyle: React.CSSProperties = {
-  color: '#213547',
+  color: 'var(--iac-surface-elevated)',
   textDecoration: 'none',
   fontSize: '0.85rem',
   fontWeight: 500,
@@ -109,8 +109,8 @@ const linkStyle: React.CSSProperties = {
   display: 'inline-block',
   marginTop: '1rem',
   padding: '0.5rem 1.5rem',
-  background: '#213547',
-  color: '#ffffff',
+  background: 'var(--iac-surface-elevated)',
+  color: 'var(--iac-text)',
   borderRadius: '4px',
   textDecoration: 'none',
   fontWeight: 600,

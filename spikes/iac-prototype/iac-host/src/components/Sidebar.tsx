@@ -92,10 +92,18 @@ const Sidebar = () => {
       heading: '',
       items: [
         ...(flags.navigation.dashboard ? [{ path: '/', label: 'Dashboard', icon: icons.dashboard }] : []),
+        ...(flags.navigation.workbench ? [{ path: '/workbench', label: 'Workbench', icon: icons.workbench }] : []),
         ...(flags.navigation.registry ? [{ path: '/registry', label: 'Registry', icon: icons.registry }] : []),
         ...(flags.navigation.console ? [{ path: '/console', label: 'Console', icon: icons.console }] : []),
       ],
     },
+    // Agents group sits at the top — root-level first-class feature
+    ...(flags.agents?.enabled ? [{
+      heading: 'Agents',
+      items: [
+        { path: '/agents', label: 'OWASP Test Orchestrator', icon: icons.agents },
+      ],
+    }] : []),
     {
       heading: 'Monitoring',
       items: [
@@ -161,8 +169,6 @@ const Sidebar = () => {
     {
       heading: 'Other',
       items: [
-        ...(flags.other.workbench ? [{ path: '/workbench', label: 'Workbench', icon: icons.workbench }] : []),
-        ...(flags.other.agents ? [{ path: '/agents', label: 'Agents', icon: icons.agents }] : []),
         ...(flags.other.users ? [{ path: '/users', label: 'Users & Access', icon: icons.users }] : []),
         ...(extensionNavByGroup['Other'] ?? []),
       ],
@@ -224,11 +230,11 @@ const Sidebar = () => {
           <button className="sidebar-toggle-btn" onClick={handleToggle} title={sidebarState === 'expanded' ? 'Collapse' : 'Expand'}>
             {sidebarState === 'expanded' ? (
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <polyline points="9 18 15 12 9 6" />
+                <polyline points="15 18 9 12 15 6" />
               </svg>
             ) : (
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <polyline points="15 18 9 12 15 6" />
+                <polyline points="9 18 15 12 9 6" />
               </svg>
             )}
           </button>

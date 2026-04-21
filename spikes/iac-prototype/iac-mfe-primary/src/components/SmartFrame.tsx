@@ -1,54 +1,45 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import './SmartFrame.css';
+
+type SmartFrameProps = {
+  src: string;
+  title?: string;
+  className?: string;
+} & React.IframeHTMLAttributes<HTMLIFrameElement>;
 
 const SmartFrame = ({
   src,
-  title = "SmartIframe",
-  style = {},
+  title = 'SmartIframe',
+  className,
   ...props
-}: {
-  src: string;
-  title?: string;
-  style?: React.CSSProperties;
-  [key: string]: any;
-}) => {
+}: SmartFrameProps) => {
   const [loaded, setLoaded] = useState(false);
+  const [timedOut, setTimedOut] = useState(false);
 
-  const containerStyle: React.CSSProperties = {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: '#000',
-    ...style,
-  };
+  useEffect(() => {
+    setLoaded(false);
+    setTimedOut(false);
 
-  const iframeStyle: React.CSSProperties = {
-    width: '100%',
-    height: '100%',
-    border: 'none',
-    opacity: loaded ? 1 : 0,
-    transition: 'opacity 0.3s ease-in-out',
-  };
+    const timeout = window.setTimeout(() => {
+      setTimedOut(true);
+    }, 10000);
 
-  const loaderStyle: React.CSSProperties = {
-    backgroundColor: '#000',
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    zIndex: 1,
-    display: loaded ? 'none' : 'block',
-  };
+    return () => window.clearTimeout(timeout);
+  }, [src]);
 
   return (
-    <div style={containerStyle}>
-      <div style={loaderStyle} />
+    <div className={['smart-frame-container', className].filter(Boolean).join(' ')}>
+      <div className={loaded || timedOut ? 'smart-frame-loader is-hidden' : 'smart-frame-loader'} />
+      <div className={timedOut && !loaded ? 'smart-frame-timeout' : 'smart-frame-timeout is-hidden'}>
+        <div>
+          <strong>Unable to load embedded app.</strong>
+          <div>Check that this service is running: {src}</div>
+        </div>
+      </div>
       <iframe
         title={title}
         src={src}
-        style={iframeStyle}
+        className={loaded ? 'smart-frame-iframe is-loaded' : 'smart-frame-iframe'}
         onLoad={() => setLoaded(true)}
         {...props}
       />

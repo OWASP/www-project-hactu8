@@ -18,6 +18,7 @@ from services.vector_store import VectorStoreService
 from services.rag_service import RAGService
 from services.owasp_fetcher import OwaspFetcher
 from services.url_fetcher import URLFetcher
+from agents.router import router as agents_router
 
 
 # In-memory document store (replace with database in production)
@@ -67,6 +68,8 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+app.include_router(agents_router, prefix="/api")
 
 
 class URLAddRequest(BaseModel):

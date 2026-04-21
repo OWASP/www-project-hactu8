@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 
 interface Reference {
@@ -85,26 +85,26 @@ const LibraryReferences = () => {
     }
   };
 
-  const getTypeColor = (type: string) => {
+  const getTypeStyle = (type: string): React.CSSProperties => {
     switch (type) {
-      case 'api': return 'bg-green-100 text-green-800';
-      case 'guide': return 'bg-blue-100 text-blue-800';
-      case 'specification': return 'bg-purple-100 text-purple-800';
-      case 'tool': return 'bg-orange-100 text-orange-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case 'api': return { background: 'var(--iac-success-bg)', color: 'var(--iac-success-text)' };
+      case 'guide': return { background: 'var(--iac-info-bg)', color: 'var(--iac-info-text)' };
+      case 'specification': return { background: 'var(--iac-badge-bg)', color: 'var(--iac-badge-text)' };
+      case 'tool': return { background: 'var(--iac-warning-bg)', color: 'var(--iac-warning-text)' };
+      default: return { background: 'var(--iac-surface)', color: 'var(--iac-text-secondary)' };
     }
   };
 
   return (
     <div className="flex flex-col h-full w-full overflow-auto">
-      <header className="p-6 bg-white shadow z-10">
+      <header className="p-6 shadow z-10" style={{ background: 'var(--iac-surface)' }}>
         <div className="flex items-center gap-4 mb-4">
-          <Link to="/library" className="text-blue-600 hover:text-blue-800">
+          <Link to="/library" style={{ color: 'var(--iac-link)' }}>
             ← Back to Library
           </Link>
         </div>
         <h1 className="text-3xl font-bold">Technical References</h1>
-        <p className="text-gray-600 mt-2">API documentation and technical references</p>
+        <p className="mt-2" style={{ color: 'var(--iac-text-secondary)' }}>API documentation and technical references</p>
       </header>
 
       <main className="flex-1 p-6">
@@ -115,19 +115,25 @@ const LibraryReferences = () => {
             placeholder="Search references..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full px-4 py-2 rounded-lg"
+            style={{
+              border: '1px solid var(--iac-input-border)',
+              background: 'var(--iac-input-bg)',
+              color: 'var(--iac-text)',
+            }}
           />
-          
+
           <div className="flex gap-2 flex-wrap">
             {types.map(type => (
               <button
                 key={type.value}
                 onClick={() => setSelectedType(type.value)}
-                className={`px-4 py-2 rounded-lg transition-colors ${
-                  selectedType === type.value
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-                }`}
+                className="px-4 py-2 rounded-lg transition-colors"
+                style={{
+                  background: selectedType === type.value ? 'var(--iac-surface-elevated)' : 'var(--iac-surface)',
+                  color: selectedType === type.value ? 'var(--iac-text)' : 'var(--iac-text-secondary)',
+                  border: '1px solid var(--iac-border)',
+                }}
               >
                 {type.label}
               </button>
@@ -138,25 +144,26 @@ const LibraryReferences = () => {
         {/* References Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-6xl">
           {filteredRefs.length === 0 ? (
-            <p className="text-gray-500 text-center py-8 col-span-2">No references found.</p>
+            <p className="text-center py-8 col-span-2" style={{ color: 'var(--iac-text-secondary)' }}>No references found.</p>
           ) : (
             filteredRefs.map(ref => (
               <div
                 key={ref.id}
-                className="bg-white p-5 rounded-lg shadow border border-gray-200 hover:shadow-md transition-shadow cursor-pointer"
+                className="p-5 rounded-lg shadow hover:shadow-md transition-shadow cursor-pointer"
+                style={{ background: 'var(--iac-surface)', border: '1px solid var(--iac-border)' }}
                 onClick={() => ref.url && window.open(ref.url, '_blank')}
               >
                 <div className="flex items-start gap-4">
                   <div className="text-3xl">{getTypeIcon(ref.type)}</div>
                   <div className="flex-1">
                     <div className="flex items-start justify-between gap-2 mb-2">
-                      <h3 className="text-lg font-semibold text-gray-900">{ref.title}</h3>
-                      <span className={`px-2 py-1 rounded text-xs whitespace-nowrap ${getTypeColor(ref.type)}`}>
+                      <h3 className="text-lg font-semibold" style={{ color: 'var(--iac-text)' }}>{ref.title}</h3>
+                      <span className="px-2 py-1 rounded text-xs whitespace-nowrap" style={getTypeStyle(ref.type)}>
                         {ref.type}
                       </span>
                     </div>
-                    <p className="text-sm text-gray-600 mb-2">{ref.description}</p>
-                    <p className="text-xs text-gray-500">Category: {ref.category}</p>
+                    <p className="text-sm mb-2" style={{ color: 'var(--iac-text-secondary)' }}>{ref.description}</p>
+                    <p className="text-xs" style={{ color: 'var(--iac-muted)' }}>Category: {ref.category}</p>
                   </div>
                 </div>
               </div>
@@ -165,13 +172,13 @@ const LibraryReferences = () => {
         </div>
 
         {/* Quick Links */}
-        <div className="mt-8 p-4 bg-gray-50 border border-gray-200 rounded-lg max-w-4xl">
-          <h3 className="font-semibold text-gray-900 mb-3">Quick Links</h3>
+        <div className="mt-8 p-4 rounded-lg max-w-4xl" style={{ background: 'var(--iac-surface)', border: '1px solid var(--iac-border)' }}>
+          <h3 className="font-semibold mb-3" style={{ color: 'var(--iac-text)' }}>Quick Links</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm">
-            <a href="#" className="text-blue-600 hover:text-blue-800">→ API Authentication</a>
-            <a href="#" className="text-blue-600 hover:text-blue-800">→ Rate Limiting</a>
-            <a href="#" className="text-blue-600 hover:text-blue-800">→ Error Codes</a>
-            <a href="#" className="text-blue-600 hover:text-blue-800">→ SDK Downloads</a>
+            <a href="#" style={{ color: 'var(--iac-link)' }}>→ API Authentication</a>
+            <a href="#" style={{ color: 'var(--iac-link)' }}>→ Rate Limiting</a>
+            <a href="#" style={{ color: 'var(--iac-link)' }}>→ Error Codes</a>
+            <a href="#" style={{ color: 'var(--iac-link)' }}>→ SDK Downloads</a>
           </div>
         </div>
       </main>

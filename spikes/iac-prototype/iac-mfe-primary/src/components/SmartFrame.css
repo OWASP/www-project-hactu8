@@ -1,0 +1,42 @@
+.smart-frame-container {
+  position: absolute;
+  inset: 0;
+  background-color: #000;
+}
+
+.smart-frame-iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
+}
+
+.smart-frame-iframe.is-loaded {
+  opacity: 1;
+}
+
+.smart-frame-loader {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background-color: #000;
+}
+
+.smart-frame-timeout {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 1rem;
+  font-size: 0.9rem;
+  color: #fff;
+  background-color: #111;
+}
+
+.is-hidden {
+  display: none;
+}

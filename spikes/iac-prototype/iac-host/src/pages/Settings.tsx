@@ -1,5 +1,7 @@
 
 import { useState, useEffect } from 'react';
+import { useTheme } from '../contexts/ThemeContext';
+import type { AppTheme } from '../contexts/ThemeContext';
 import { useFeatureFlags } from '../contexts/FeatureFlagContext';
 import type { FeatureFlags } from '../config/featureFlags';
 import { presets, presetDescriptions } from '../config/featureFlagPresets';
@@ -31,6 +33,7 @@ const sections = [
     // { key: 'profile', label: 'Profile' },
     { key: 'health', label: 'Health' },
     { key: 'modelProvider', label: 'Model Providers' },
+    { key: 'appearance', label: 'Appearance' },
     { key: 'security', label: 'Security' },
     { key: 'keys', label: 'API Keys' },
     { key: 'notifications', label: 'Notifications' },
@@ -99,34 +102,34 @@ function HealthPanel() {
     const getStatusColor = (status: HealthStatus): string => {
         switch (status) {
             case 'healthy':
-                return '#10b981'; // green
+                return 'var(--iac-success)';
             case 'warning':
-                return '#f59e0b'; // yellow/orange
+                return 'var(--iac-warning)';
             case 'error':
-                return '#ef4444'; // red
+                return 'var(--iac-error)';
             case 'loading':
-                return '#6b7280'; // gray
+                return 'var(--iac-text-secondary)';
         }
     };
 
     const getStatusBgColor = (status: HealthStatus): string => {
         switch (status) {
             case 'healthy':
-                return '#d1fae5'; // light green
+                return 'var(--iac-success-bg)';
             case 'warning':
-                return '#fef3c7'; // light yellow
+                return 'var(--iac-warning-bg)';
             case 'error':
-                return '#fee2e2'; // light red
+                return 'var(--iac-error-bg)';
             case 'loading':
-                return '#f3f4f6'; // light gray
+                return 'var(--iac-surface)';
         }
     };
 
     return (
         <div>
             <div style={{ marginBottom: '1.5rem' }}>
-                <h3 style={{ color: '#111827', fontWeight: 700, fontSize: '1.5rem', margin: 0 }}>System Health</h3>
-                <p style={{ color: '#4b5563', marginTop: '0.5rem', fontSize: '14px' }}>
+                <h3 style={{ color: 'var(--iac-text)', fontWeight: 700, fontSize: '1.5rem', margin: 0 }}>System Health</h3>
+                <p style={{ color: 'var(--iac-text-secondary)', marginTop: '0.5rem', fontSize: '14px' }}>
                     Monitor the health status of integrated services and configurations.
                 </p>
             </div>
@@ -136,8 +139,8 @@ function HealthPanel() {
                     onClick={performHealthChecks}
                     style={{
                         padding: '0.5rem 1rem',
-                        background: '#213547',
-                        color: 'white',
+                        background: 'var(--iac-surface-elevated)',
+                        color: 'var(--iac-text)',
                         border: 'none',
                         borderRadius: '4px',
                         cursor: 'pointer',
@@ -155,13 +158,13 @@ function HealthPanel() {
                         key={check.name}
                         style={{
                             padding: '1.5rem',
-                            border: '1px solid #e5e7eb',
+                            border: '1px solid var(--iac-border)',
                             borderRadius: '8px',
-                            background: '#ffffff',
+                            background: 'var(--iac-surface)',
                         }}
                     >
                         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.75rem' }}>
-                            <h4 style={{ color: '#111827', fontWeight: 600, margin: 0, fontSize: '1.125rem' }}>
+                            <h4 style={{ color: 'var(--iac-text)', fontWeight: 600, margin: 0, fontSize: '1.125rem' }}>
                                 {check.name}
                             </h4>
                             <div
@@ -200,7 +203,7 @@ function HealthPanel() {
                             </span>
                         </div>
                         {check.details && (
-                            <p style={{ color: '#6b7280', fontSize: '0.875rem', margin: '0.5rem 0 0 0' }}>
+                            <p style={{ color: 'var(--iac-text-secondary)', fontSize: '0.875rem', margin: '0.5rem 0 0 0' }}>
                                 {check.details}
                             </p>
                         )}
@@ -349,8 +352,8 @@ function ModelProviderPanel() {
     return (
         <div>
             <div style={{ marginBottom: '1.5rem' }}>
-                <h3 style={{ color: '#111827', fontWeight: 700, fontSize: '1.5rem', margin: 0 }}>Model Providers</h3>
-                <p style={{ color: '#4b5563', marginTop: '0.5rem', fontSize: '14px' }}>
+                <h3 style={{ color: 'var(--iac-text)', fontWeight: 700, fontSize: '1.5rem', margin: 0 }}>Model Providers</h3>
+                <p style={{ color: 'var(--iac-text-secondary)', marginTop: '0.5rem', fontSize: '14px' }}>
                     Select the platform and model used by the Copilot panels.
                 </p>
             </div>
@@ -358,16 +361,16 @@ function ModelProviderPanel() {
             <div style={{ display: 'grid', gap: '1rem', maxWidth: 620 }}>
                 <div style={{ display: 'grid', gap: '0.75rem' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                        <h4 style={{ margin: 0, fontSize: '14px', color: '#111827', fontWeight: 600 }}>Saved Providers</h4>
+                        <h4 style={{ margin: 0, fontSize: '14px', color: 'var(--iac-text)', fontWeight: 600 }}>Saved Providers</h4>
                         <div style={{ display: 'flex', gap: '0.5rem' }}>
                             <button
                                 onClick={loadRegistry}
                                 disabled={registryLoading || !COPILOT_API_BASE}
                                 style={{
                                     padding: '0.35rem 0.75rem',
-                                    background: '#ffffff',
-                                    color: '#111827',
-                                    border: '1px solid #d1d5db',
+                                    background: 'var(--iac-surface)',
+                                    color: 'var(--iac-text)',
+                                    border: '1px solid var(--iac-border)',
                                     borderRadius: '4px',
                                     cursor: registryLoading || !COPILOT_API_BASE ? 'not-allowed' : 'pointer',
                                     fontSize: '12px',
@@ -380,8 +383,8 @@ function ModelProviderPanel() {
                                 onClick={handleAddNew}
                                 style={{
                                     padding: '0.35rem 0.75rem',
-                                    background: '#213547',
-                                    color: '#ffffff',
+                                    background: 'var(--iac-surface-elevated)',
+                                    color: 'var(--iac-text)',
                                     border: 'none',
                                     borderRadius: '4px',
                                     cursor: 'pointer',
@@ -394,7 +397,7 @@ function ModelProviderPanel() {
                         </div>
                     </div>
                     {configs.length === 0 ? (
-                        <div style={{ padding: '0.75rem', border: '1px dashed #e5e7eb', borderRadius: '6px', fontSize: '12px', color: '#6b7280' }}>
+                        <div style={{ padding: '0.75rem', border: '1px dashed var(--iac-border)', borderRadius: '6px', fontSize: '12px', color: 'var(--iac-text-secondary)' }}>
                             No saved providers yet. Add a provider below.
                         </div>
                     ) : (
@@ -408,9 +411,9 @@ function ModelProviderPanel() {
                                         alignItems: 'center',
                                         gap: '0.75rem',
                                         padding: '0.75rem',
-                                        border: '1px solid #e5e7eb',
+                                        border: '1px solid var(--iac-border)',
                                         borderRadius: '6px',
-                                        background: '#ffffff',
+                                        background: 'var(--iac-surface)',
                                     }}
                                 >
                                     <input
@@ -419,11 +422,11 @@ function ModelProviderPanel() {
                                         onChange={() => setDefaultConfig(saved.id)}
                                     />
                                     <div>
-                                        <div style={{ fontSize: '13px', fontWeight: 600, color: '#111827' }}>
+                                        <div style={{ fontSize: '13px', fontWeight: 600, color: 'var(--iac-text)' }}>
                                             {getProviderLabel(saved.providerId)} - {saved.model}
                                         </div>
                                         {saved.baseUrl && (
-                                            <div style={{ fontSize: '12px', color: '#6b7280' }}>{saved.baseUrl}</div>
+                                            <div style={{ fontSize: '12px', color: 'var(--iac-text-secondary)' }}>{saved.baseUrl}</div>
                                         )}
                                     </div>
                                     <div style={{ display: 'flex', gap: '0.5rem' }}>
@@ -432,9 +435,9 @@ function ModelProviderPanel() {
                                             style={{
                                                 padding: '0.35rem 0.6rem',
                                                 borderRadius: '4px',
-                                                border: '1px solid #d1d5db',
-                                                background: saved.id === defaultConfigId ? '#1f2937' : '#ffffff',
-                                                color: saved.id === defaultConfigId ? '#ffffff' : '#111827',
+                                                border: '1px solid var(--iac-border)',
+                                                background: saved.id === defaultConfigId ? 'var(--iac-surface-elevated)' : 'var(--iac-surface)',
+                                                color: 'var(--iac-text)',
                                                 cursor: 'pointer',
                                                 fontSize: '12px',
                                                 fontWeight: 600,
@@ -447,9 +450,9 @@ function ModelProviderPanel() {
                                             style={{
                                                 padding: '0.35rem 0.6rem',
                                                 borderRadius: '4px',
-                                                border: '1px solid #d1d5db',
-                                                background: '#ffffff',
-                                                color: '#111827',
+                                                border: '1px solid var(--iac-border)',
+                                                background: 'var(--iac-surface)',
+                                                color: 'var(--iac-text)',
                                                 cursor: 'pointer',
                                                 fontSize: '12px',
                                                 fontWeight: 600,
@@ -463,8 +466,8 @@ function ModelProviderPanel() {
                                                 padding: '0.35rem 0.6rem',
                                                 borderRadius: '4px',
                                                 border: 'none',
-                                                background: '#ef4444',
-                                                color: '#ffffff',
+                                                background: 'var(--iac-error)',
+                                                color: 'var(--iac-error-text)',
                                                 cursor: 'pointer',
                                                 fontSize: '12px',
                                             }}
@@ -478,7 +481,7 @@ function ModelProviderPanel() {
                     )}
                 </div>
 
-                <label style={{ display: 'grid', gap: '0.5rem', fontSize: '14px', color: '#374151' }}>
+                <label style={{ display: 'grid', gap: '0.5rem', fontSize: '14px', color: 'var(--iac-text-secondary)' }}>
                     Platform
                     <select
                         value={formState.providerId}
@@ -486,9 +489,9 @@ function ModelProviderPanel() {
                         style={{
                             padding: '0.6rem 0.75rem',
                             borderRadius: '6px',
-                            border: '1px solid #d1d5db',
-                            background: '#ffffff',
-                            color: '#111827',
+                            border: '1px solid var(--iac-input-border)',
+                            background: 'var(--iac-input-bg)',
+                            color: 'var(--iac-text)',
                         }}
                     >
                         {providerOptions.map(provider => (
@@ -499,7 +502,7 @@ function ModelProviderPanel() {
                     </select>
                 </label>
 
-                <label style={{ display: 'grid', gap: '0.5rem', fontSize: '14px', color: '#374151' }}>
+                <label style={{ display: 'grid', gap: '0.5rem', fontSize: '14px', color: 'var(--iac-text-secondary)' }}>
                     Model
                     {hasModelOptions ? (
                         <>
@@ -518,9 +521,9 @@ function ModelProviderPanel() {
                                 style={{
                                     padding: '0.6rem 0.75rem',
                                     borderRadius: '6px',
-                                    border: '1px solid #d1d5db',
-                                    background: '#ffffff',
-                                    color: '#111827',
+                                    border: '1px solid var(--iac-input-border)',
+                                    background: 'var(--iac-input-bg)',
+                                    color: 'var(--iac-text)',
                                 }}
                             >
                                 {modelOptions.map(option => (
@@ -538,9 +541,9 @@ function ModelProviderPanel() {
                                     style={{
                                         padding: '0.6rem 0.75rem',
                                         borderRadius: '6px',
-                                        border: '1px solid #d1d5db',
-                                        background: '#ffffff',
-                                        color: '#111827',
+                                        border: '1px solid var(--iac-input-border)',
+                                        background: 'var(--iac-input-bg)',
+                                        color: 'var(--iac-text)',
                                     }}
                                 />
                             )}
@@ -553,15 +556,15 @@ function ModelProviderPanel() {
                             style={{
                                 padding: '0.6rem 0.75rem',
                                 borderRadius: '6px',
-                                border: '1px solid #d1d5db',
-                                background: '#ffffff',
-                                color: '#111827',
+                                border: '1px solid var(--iac-input-border)',
+                                background: 'var(--iac-input-bg)',
+                                color: 'var(--iac-text)',
                             }}
                         />
                     )}
                 </label>
 
-                <label style={{ display: 'grid', gap: '0.5rem', fontSize: '14px', color: '#374151' }}>
+                <label style={{ display: 'grid', gap: '0.5rem', fontSize: '14px', color: 'var(--iac-text-secondary)' }}>
                     API Key
                     <input
                         type="password"
@@ -571,15 +574,15 @@ function ModelProviderPanel() {
                         style={{
                             padding: '0.6rem 0.75rem',
                             borderRadius: '6px',
-                            border: '1px solid #d1d5db',
-                            background: '#ffffff',
-                            color: '#111827',
+                            border: '1px solid var(--iac-input-border)',
+                            background: 'var(--iac-input-bg)',
+                            color: 'var(--iac-text)',
                         }}
                     />
                 </label>
 
                 {showBaseUrl && (
-                    <label style={{ display: 'grid', gap: '0.5rem', fontSize: '14px', color: '#374151' }}>
+                    <label style={{ display: 'grid', gap: '0.5rem', fontSize: '14px', color: 'var(--iac-text-secondary)' }}>
                         Base URL
                         <input
                             value={formState.baseUrl}
@@ -588,9 +591,9 @@ function ModelProviderPanel() {
                             style={{
                                 padding: '0.6rem 0.75rem',
                                 borderRadius: '6px',
-                                border: '1px solid #d1d5db',
-                                background: '#ffffff',
-                                color: '#111827',
+                                border: '1px solid var(--iac-input-border)',
+                                background: 'var(--iac-input-bg)',
+                                color: 'var(--iac-text)',
                             }}
                         />
                     </label>
@@ -601,8 +604,8 @@ function ModelProviderPanel() {
                         onClick={handleSave}
                         style={{
                             padding: '0.6rem 1.2rem',
-                            background: '#213547',
-                            color: '#ffffff',
+                            background: 'var(--iac-surface-elevated)',
+                            color: 'var(--iac-text)',
                             border: 'none',
                             borderRadius: '6px',
                             cursor: 'pointer',
@@ -615,8 +618,8 @@ function ModelProviderPanel() {
                         onClick={resetConfig}
                         style={{
                             padding: '0.6rem 1.2rem',
-                            background: '#ef4444',
-                            color: '#ffffff',
+                            background: 'var(--iac-error)',
+                            color: 'var(--iac-error-text)',
                             border: 'none',
                             borderRadius: '6px',
                             cursor: 'pointer',
@@ -627,16 +630,16 @@ function ModelProviderPanel() {
                     </button>
                 </div>
 
-                <p style={{ color: '#6b7280', fontSize: '12px' }}>
+                <p style={{ color: 'var(--iac-text-secondary)', fontSize: '12px' }}>
                     Configuration is stored locally in your browser and used for Copilot requests.
                 </p>
                 {registryError && (
-                    <p style={{ color: '#ef4444', fontSize: '12px' }}>
+                    <p style={{ color: 'var(--iac-error)', fontSize: '12px' }}>
                             Registry error: {registryError}. {COPILOT_API_BASE ? `Base: ${COPILOT_API_BASE}` : ''}
                     </p>
                 )}
                 {!registryError && registryLoading && (
-                    <p style={{ color: '#6b7280', fontSize: '12px' }}>
+                    <p style={{ color: 'var(--iac-text-secondary)', fontSize: '12px' }}>
                         Loading provider registry...
                     </p>
                 )}
@@ -667,7 +670,7 @@ function FeatureFlagsPanel() {
         const categoryFlags = flags[category] as any;
         return (
             <div key={category} style={{ marginBottom: '2rem' }}>
-                <h4 style={{ marginBottom: '1rem', color: '#111827', fontWeight: 600 }}>{title}</h4>
+                <h4 style={{ marginBottom: '1rem', color: 'var(--iac-text)', fontWeight: 600 }}>{title}</h4>
                 <div style={{ display: 'grid', gap: '0.5rem' }}>
                     {Object.keys(categoryFlags).map((feature) => (
                         <label
@@ -677,7 +680,7 @@ function FeatureFlagsPanel() {
                                 alignItems: 'center',
                                 gap: '0.5rem',
                                 padding: '0.5rem',
-                                background: '#f9fafb',
+                                background: 'var(--iac-surface)',
                                 borderRadius: '4px',
                                 cursor: 'pointer',
                             }}
@@ -688,7 +691,7 @@ function FeatureFlagsPanel() {
                                 onChange={() => handleToggle(category, feature)}
                                 style={{ cursor: 'pointer' }}
                             />
-                            <span style={{ textTransform: 'capitalize', color: '#1f2937', fontSize: '14px' }}>
+                            <span style={{ textTransform: 'capitalize', color: 'var(--iac-text)', fontSize: '14px' }}>
                                 {feature.replace(/([A-Z])/g, ' $1').trim()}
                             </span>
                         </label>
@@ -702,8 +705,8 @@ function FeatureFlagsPanel() {
         <div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
                 <div>
-                    <h3 style={{ color: '#111827', fontWeight: 700, fontSize: '1.5rem', margin: 0 }}>Feature Flags</h3>
-                    <p style={{ color: '#4b5563', marginTop: '0.5rem', fontSize: '14px' }}>
+                    <h3 style={{ color: 'var(--iac-text)', fontWeight: 700, fontSize: '1.5rem', margin: 0 }}>Feature Flags</h3>
+                    <p style={{ color: 'var(--iac-text-secondary)', marginTop: '0.5rem', fontSize: '14px' }}>
                         Enable or disable features throughout the application.
                     </p>
                 </div>
@@ -711,8 +714,8 @@ function FeatureFlagsPanel() {
                     onClick={resetFlags}
                     style={{
                         padding: '0.5rem 1rem',
-                        background: '#dc2626',
-                        color: 'white',
+                        background: 'var(--iac-error)',
+                        color: 'var(--iac-error-text)',
                         border: 'none',
                         borderRadius: '4px',
                         cursor: 'pointer',
@@ -724,9 +727,9 @@ function FeatureFlagsPanel() {
             </div>
 
             {/* Presets Section */}
-            <div style={{ marginBottom: '2rem', padding: '1rem', background: '#f3f4f6', borderRadius: '6px' }}>
-                <h4 style={{ marginBottom: '1rem', color: '#111827', fontWeight: 600 }}>Quick Presets</h4>
-                <p style={{ color: '#4b5563', fontSize: '0.875rem', marginBottom: '1rem' }}>
+            <div style={{ marginBottom: '2rem', padding: '1rem', background: 'var(--iac-surface)', borderRadius: '6px' }}>
+                <h4 style={{ marginBottom: '1rem', color: 'var(--iac-text)', fontWeight: 600 }}>Quick Presets</h4>
+                <p style={{ color: 'var(--iac-text-secondary)', fontSize: '0.875rem', marginBottom: '1rem' }}>
                     Load a predefined configuration to quickly set up feature flags for common use cases.
                 </p>
                 <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
@@ -736,8 +739,8 @@ function FeatureFlagsPanel() {
                             onClick={() => loadPreset(presetName)}
                             style={{
                                 padding: '0.5rem 1rem',
-                                background: '#213547',
-                                color: 'white',
+                                background: 'var(--iac-surface-elevated)',
+                                color: 'var(--iac-text)',
                                 border: 'none',
                                 borderRadius: '4px',
                                 cursor: 'pointer',
@@ -759,11 +762,89 @@ function FeatureFlagsPanel() {
                 {renderCategory('Library', 'library')}
                 {renderCategory('Copilot', 'copilot')}
                 {renderCategory('Projects', 'projects')}
+                {renderCategory('Agents', 'agents')}
                 {renderCategory('Testing Tools', 'testing')}
                 {renderCategory('Reporting', 'reporting')}
                 {renderCategory('Other Features', 'other')}
                 {renderCategory('User Menu', 'user')}
                 {renderCategory('Navigation Bar', 'navbar')}
+            </div>
+        </div>
+    );
+}
+
+const THEME_CARDS: { id: AppTheme; label: string; desc: string; preview: React.CSSProperties[]; font: string }[] = [
+    {
+        id: 'basic',
+        label: 'Basic',
+        desc: 'Clean, system-font interface using the standard IAC host color palette.',
+        font: 'system-ui, sans-serif',
+        preview: [
+            { background: '#0f172a', border: '1px solid #334155' },
+            { background: '#1e293b', border: '1px solid #334155' },
+            { background: '#b1d0dd', border: 'none' },
+            { background: '#fbbf24', border: 'none' },
+        ],
+    },
+    {
+        id: 'terminal',
+        label: 'Terminal',
+        desc: 'Monospace, high-contrast terminal aesthetic with green-teal accent.',
+        font: "'SF Mono','JetBrains Mono',ui-monospace,monospace",
+        preview: [
+            { background: '#0d1520', border: '1px solid #1e3048' },
+            { background: '#111b2a', border: '1px solid #1e3048' },
+            { background: '#2dd4a0', border: 'none' },
+            { background: '#e8a030', border: 'none' },
+        ],
+    },
+];
+
+function AppearancePanel() {
+    const { theme, setTheme } = useTheme();
+
+    return (
+        <div>
+            <h3 style={{ marginBottom: 6, color: 'var(--iac-text)' }}>Appearance</h3>
+            <p style={{ color: 'var(--iac-text-secondary)', marginBottom: 24, fontSize: 14 }}>
+                Choose a display theme for the entire application.
+            </p>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, maxWidth: 560 }}>
+                {THEME_CARDS.map(card => {
+                    const active = theme === card.id;
+                    return (
+                        <div
+                            key={card.id}
+                            onClick={() => setTheme(card.id)}
+                            style={{
+                                border: `2px solid ${active ? 'var(--iac-surface-elevated)' : 'var(--iac-border)'}`,
+                                borderRadius: 10,
+                                padding: 16,
+                                cursor: 'pointer',
+                                background: active ? 'var(--iac-surface)' : 'var(--iac-bg)',
+                                transition: 'all 0.15s',
+                            }}
+                        >
+                            {/* Color swatch preview */}
+                            <div style={{ display: 'flex', gap: 6, marginBottom: 12 }}>
+                                {card.preview.map((s, i) => (
+                                    <div key={i} style={{ width: 28, height: 28, borderRadius: 5, ...s }} />
+                                ))}
+                            </div>
+                            {/* Font sample */}
+                            <div style={{ fontFamily: card.font, fontSize: 12, color: 'var(--iac-text-secondary)', marginBottom: 8, background: 'var(--iac-surface)', padding: '4px 8px', borderRadius: 4 }}>
+                                Aa 0123
+                            </div>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
+                                <span style={{ fontWeight: 600, fontSize: 14, color: 'var(--iac-text)' }}>{card.label}</span>
+                                {active && (
+                                    <span style={{ fontSize: 11, background: 'var(--iac-surface-elevated)', color: 'var(--iac-text)', borderRadius: 3, padding: '1px 7px', fontWeight: 600 }}>Active</span>
+                                )}
+                            </div>
+                            <p style={{ fontSize: 12, color: 'var(--iac-text-secondary)', margin: 0, lineHeight: 1.5 }}>{card.desc}</p>
+                        </div>
+                    );
+                })}
             </div>
         </div>
     );
@@ -778,42 +859,44 @@ function SectionPanel({ section }: { section: string }) {
         case 'profile':
             return (
                 <div>
-                    <h3 style={{ color: '#111827' }}>Profile Settings</h3>
-                    <p style={{ color: '#4b5563' }}>Update your personal information, email, and avatar.</p>
+                    <h3 style={{ color: 'var(--iac-text)' }}>Profile Settings</h3>
+                    <p style={{ color: 'var(--iac-text-secondary)' }}>Update your personal information, email, and avatar.</p>
                 </div>
             );
         case 'security':
             return (
                 <div>
-                    <h3 style={{ color: '#111827' }}>Security</h3>
-                    <p style={{ color: '#4b5563' }}>Change your password, enable 2FA, and review recent activity.</p>
+                    <h3 style={{ color: 'var(--iac-text)' }}>Security</h3>
+                    <p style={{ color: 'var(--iac-text-secondary)' }}>Change your password, enable 2FA, and review recent activity.</p>
                 </div>
             );
         case 'keys':
             return (
                 <div>
-                    <h3 style={{ color: '#111827' }}>API Keys</h3>
-                    <p style={{ color: '#4b5563' }}>Manage your API keys and access tokens.</p>
+                    <h3 style={{ color: 'var(--iac-text)' }}>API Keys</h3>
+                    <p style={{ color: 'var(--iac-text-secondary)' }}>Manage your API keys and access tokens.</p>
                 </div>
             );
         case 'notifications':
             return (
                 <div>
-                    <h3 style={{ color: '#111827' }}>Notifications</h3>
-                    <p style={{ color: '#4b5563' }}>Configure your notification preferences.</p>
+                    <h3 style={{ color: 'var(--iac-text)' }}>Notifications</h3>
+                    <p style={{ color: 'var(--iac-text-secondary)' }}>Configure your notification preferences.</p>
                 </div>
             );
         case 'billing':
             return (
                 <div>
-                    <h3 style={{ color: '#111827' }}>Billing</h3>
-                    <p style={{ color: '#4b5563' }}>View invoices and manage payment methods.</p>
+                    <h3 style={{ color: 'var(--iac-text)' }}>Billing</h3>
+                    <p style={{ color: 'var(--iac-text-secondary)' }}>View invoices and manage payment methods.</p>
                 </div>
             );
+        case 'appearance':
+            return <AppearancePanel />;
         case 'features':
             return <FeatureFlagsPanel />;
         default:
-            return <div style={{ color: '#4b5563' }}>Select a section</div>;
+            return <div style={{ color: 'var(--iac-text-secondary)' }}>Select a section</div>;
     }
 }
 
@@ -832,8 +915,8 @@ const Settings = () => {
     // Minimal, unstyled layout
     return (
         <div style={{ display: 'flex', minHeight: '60vh', height: '100%', overflow: 'hidden' }}>
-            <aside style={{ width: 200, padding: '1rem', background: '#f9fafb', borderRight: '1px solid #e5e7eb' }}>
-                <h3 style={{ color: '#111827', marginBottom: '1rem' }}>Settings</h3>
+            <aside style={{ width: 200, padding: '1rem', background: 'var(--iac-surface)', borderRight: '1px solid var(--iac-border)' }}>
+                <h3 style={{ color: 'var(--iac-text)', marginBottom: '1rem' }}>Settings</h3>
                 <nav>
                     <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
                         {sections.map((s) => (
@@ -842,8 +925,8 @@ const Settings = () => {
                                     style={{
                                         width: '100%',
                                         padding: '0.75rem 1rem',
-                                        background: selected === s.key ? '#213547' : 'transparent',
-                                        color: selected === s.key ? '#ffffff' : '#374151',
+                                        background: selected === s.key ? 'var(--iac-surface-elevated)' : 'transparent',
+                                        color: selected === s.key ? 'var(--iac-text)' : 'var(--iac-text-secondary)',
                                         border: 'none',
                                         textAlign: 'left',
                                         fontWeight: selected === s.key ? 600 : 400,
@@ -860,7 +943,7 @@ const Settings = () => {
                     </ul>
                 </nav>
             </aside>
-            <main style={{ flex: 1, padding: '2rem', overflowY: 'auto', background: '#ffffff' }}>
+            <main style={{ flex: 1, padding: '2rem', overflowY: 'auto', background: 'var(--iac-bg)' }}>
                 <SectionPanel section={selected} />
             </main>
         </div>

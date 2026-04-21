@@ -18,6 +18,8 @@ extensions/*/results/
 # Logs
 *.log
 /tmp/
+.iac-runtime/
+.release/
 
 # OS
 .DS_Store

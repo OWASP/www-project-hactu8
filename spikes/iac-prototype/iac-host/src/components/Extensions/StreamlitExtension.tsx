@@ -1,6 +1,7 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import type { InstalledExtension, StreamlitConfig, TestRunResult } from '../../types/extensions';
 import resultsService from '../../services/resultsService';
+import { startExtensionRuntime } from '../../services/extensionService';
 
 interface StreamlitExtensionProps {
   extension: InstalledExtension;
@@ -16,10 +17,37 @@ function buildStreamlitUrl(config: StreamlitConfig): string {
 const StreamlitExtension: React.FC<StreamlitExtensionProps> = ({ extension, onStatusChange }) => {
   const [loaded, setLoaded] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [starting, setStarting] = useState(true);
 
   const streamlitConfig = extension.runtime.type === 'streamlit'
     ? extension.runtime.streamlit
     : null;
+
+  // -------------------------------------------------------------------------
+  // Lazy-launch: start extension runtime on first render, then render iframe.
+  // -------------------------------------------------------------------------
+  useEffect(() => {
+    let cancelled = false;
+    setStarting(true);
+    setError(null);
+
+    startExtensionRuntime(extension)
+      .then(() => {
+        if (!cancelled) setStarting(false);
+      })
+      .catch((err: unknown) => {
+        if (!cancelled) {
+          const msg = err instanceof Error ? err.message : 'Failed to start extension runtime';
+          setError(msg);
+          setStarting(false);
+          onStatusChange?.(extension.manifest.id, 'error', msg);
+        }
+      });
+
+    return () => { cancelled = true; };
+  // Re-launch only when the extension identity changes (e.g. user navigates to a different extension).
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [extension.manifest.id, extension.installPath]);
 
   // -------------------------------------------------------------------------
   // Listen for test results posted by the Streamlit iframe via postMessage.
@@ -72,19 +100,24 @@ const StreamlitExtension: React.FC<StreamlitExtensionProps> = ({ extension, onSt
 
   const url = buildStreamlitUrl(streamlitConfig);
 
+  if (starting) {
+    return (
+      <div style={statusContainerStyle}>
+        <p>Starting {extension.manifest.name}...</p>
+      </div>
+    );
+  }
+
   if (error) {
     return (
       <div style={statusContainerStyle}>
         <h3 style={{ margin: '0 0 0.5rem' }}>{extension.manifest.name}</h3>
         <p style={{ color: '#ef4444' }}>{error}</p>
         <p style={{ color: '#888', fontSize: '0.875rem' }}>
-          Make sure the Streamlit app is running:
+          The extension process could not be started:
         </p>
-        <code style={codeBlockStyle}>
-          cd {extension.installPath} && streamlit run {extension.manifest.entryPoint} --server.port {streamlitConfig.port}
-        </code>
         <button
-          onClick={() => { setError(null); setLoaded(false); }}
+          onClick={() => { setError(null); setLoaded(false); setStarting(true); }}
           style={retryButtonStyle}
         >
           Retry

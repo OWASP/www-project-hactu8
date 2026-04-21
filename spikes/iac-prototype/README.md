@@ -160,6 +160,64 @@ If you're using Visual Studio Code, you can use the preconfigured launch configu
 
 This will start all components simultaneously.
 
+### Option 3: Standalone Process Supervisor (No VS Code Debug)
+
+Use the root supervisor to start and stop all core services with one command.
+
+```bash
+cd iac-prototype
+npm run iac:up
+```
+
+To stop all processes from another terminal:
+
+```bash
+cd iac-prototype
+npm run iac:down
+```
+
+Lifecycle behavior:
+
+- Starts core services in dependency order and waits for each to be ready.
+- Runs Streamlit services in headless mode for standalone orchestration.
+- Handles Ctrl+C, SIGTERM, and close events by requesting graceful shutdown.
+- If a process does not stop within the grace period, it is force-killed.
+- Writes runtime state under `.iac-runtime/supervisor-state.json` for explicit stop.
+
+### Option 4: Build a Handoff Folder/Zip (Standalone Artifact)
+
+Create a distributable folder (and zip when archiver is available):
+
+```bash
+cd iac-prototype
+npm run iac:package
+```
+
+To include existing Python virtual environments in the artifact:
+
+```bash
+npm run iac:package:with-venv
+```
+
+Output:
+
+- Folder: `.release/iac-prototype-standalone`
+- Zip: `.release/iac-prototype-standalone.zip` (created automatically when supported)
+
+Handoff runtime commands inside the packaged folder:
+
+- macOS/Linux start: `./start-iac.sh`
+- macOS/Linux stop: `./stop-iac.sh`
+- Windows start: `start-iac.cmd`
+- Windows stop: `stop-iac.cmd`
+
+Notes:
+
+- First start auto-runs dependency bootstrap if `node_modules` or Python virtual environments are missing.
+- You can also run bootstrap manually with `npm run iac:bootstrap`.
+- Prerequisites on target machine: Node.js 22+, npm, and Python 3.13+.
+- `.venv` handoff is only portable to machines with matching OS/architecture and compatible Python runtime paths.
+
 ## Accessing the Applications
 
 Once all components are running, you can access them at:

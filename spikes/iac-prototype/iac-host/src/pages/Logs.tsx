@@ -49,7 +49,7 @@ const Logs = () => {
 
   return (
     <div style={{ display: 'flex', minHeight: '60vh', margin: '2rem' }}>
-      <aside style={{ width: 300, borderRight: '1px solid #eee', padding: '1rem 1rem' }}>
+      <aside style={{ width: 300, borderRight: '1px solid var(--iac-border)', padding: '1rem 1rem' }}>
         <h3>Log Files</h3>
         <nav>
           <ul style={{ listStyle: 'none', margin: 0, padding: 0 }}>
@@ -59,8 +59,8 @@ const Logs = () => {
                   style={{
                     width: '100%',
                     padding: '0.75rem 1rem',
-                    background: selected === file ? '#213547' : 'transparent',
-                    // color: selected === file ? '#fff' : '#222',
+                    background: selected === file ? 'var(--iac-surface-elevated)' : 'transparent',
+                    color: selected === file ? 'var(--iac-text)' : 'var(--iac-text-secondary)',
                     border: 'none',
                     textAlign: 'left',
                     fontWeight: selected === file ? 600 : 400,

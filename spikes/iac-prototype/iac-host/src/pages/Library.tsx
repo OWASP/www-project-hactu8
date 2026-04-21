@@ -177,9 +177,9 @@ const Library = () => {
 
   return (
     <div style={{ display: 'flex', minHeight: '60vh', borderRadius: 8, boxShadow: '0 2px 8px #0001' }}>
-      <aside style={{ width: 300, borderRight: '1px solid #eee', padding: '1rem 1rem' }}>
+      <aside style={{ width: 300, borderRight: '1px solid var(--iac-border)', padding: '1rem 1rem' }}>
         <h3>Library</h3>
-        <p style={{ color: '#6b7280', marginTop: 4 }}>Browse curated documentation and research.</p>
+        <p style={{ color: 'var(--iac-text-secondary)', marginTop: 4 }}>Browse curated documentation and research.</p>
         <nav style={{ marginTop: '1.5rem' }}>
           <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
             {librarySections.map((section) => (
@@ -188,8 +188,8 @@ const Library = () => {
                   style={{
                     width: '100%',
                     padding: '1rem 1.5rem',
-                    background: selected === section.key ? '#213547' : 'none',
-                    color: selected === section.key ? '#ffffff' : '#111827',
+                    background: selected === section.key ? 'var(--iac-surface-elevated)' : 'none',
+                    color: selected === section.key ? 'var(--iac-text)' : 'var(--iac-text-secondary)',
                     border: 'none',
                     textAlign: 'left',
                     fontWeight: selected === section.key ? 600 : 400,
@@ -211,11 +211,11 @@ const Library = () => {
       <main style={{ flex: 1, padding: '2rem 3rem', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
         <div>
           <h2 style={{ margin: 0 }}>{activeSection?.label}</h2>
-          <p style={{ color: '#6b7280', marginTop: 6 }}>{activeSection?.description}</p>
+          <p style={{ color: 'var(--iac-text-secondary)', marginTop: 6 }}>{activeSection?.description}</p>
         </div>
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-          <label style={{ fontWeight: 600, color: '#111827' }}>Search documents</label>
+          <label style={{ fontWeight: 600, color: 'var(--iac-text)' }}>Search documents</label>
           <input
             type="search"
             placeholder="Search within this section"
@@ -224,17 +224,19 @@ const Library = () => {
             style={{
               padding: '0.75rem 1rem',
               borderRadius: 8,
-              border: '1px solid #e5e7eb',
+              border: '1px solid var(--iac-input-border)',
               fontSize: '0.95rem',
+              background: 'var(--iac-input-bg)',
+              color: 'var(--iac-text)',
             }}
           />
         </div>
 
         <div style={{ display: 'grid', gridTemplateColumns: 'minmax(240px, 320px) 1fr', gap: '1.5rem', minHeight: 360 }}>
-          <div style={{ borderRight: '1px solid #e5e7eb', paddingRight: '1rem' }}>
+          <div style={{ borderRight: '1px solid var(--iac-border)', paddingRight: '1rem' }}>
             <h4 style={{ marginTop: 0, marginBottom: '0.75rem' }}>Documents</h4>
             {filteredItems.length === 0 ? (
-              <p style={{ color: '#6b7280' }}>No results found.</p>
+              <p style={{ color: 'var(--iac-text-secondary)' }}>No results found.</p>
             ) : (
               <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'grid', gap: '0.75rem' }}>
                 {filteredItems.map((item) => (
@@ -245,14 +247,15 @@ const Library = () => {
                         width: '100%',
                         padding: '0.75rem 1rem',
                         borderRadius: 8,
-                        border: '1px solid #e5e7eb',
-                        background: selectedItemId === item.id ? '#f3f4f6' : '#ffffff',
+                        border: '1px solid var(--iac-border)',
+                        background: selectedItemId === item.id ? 'var(--iac-surface-elevated)' : 'var(--iac-surface)',
+                        color: 'var(--iac-text)',
                         textAlign: 'left',
                         cursor: 'pointer',
                       }}
                     >
                       <div style={{ fontWeight: 600, marginBottom: 4 }}>{item.title}</div>
-                      <div style={{ color: '#6b7280', fontSize: '0.85rem' }}>{item.summary}</div>
+                      <div style={{ color: 'var(--iac-text-secondary)', fontSize: '0.85rem' }}>{item.summary}</div>
                     </button>
                   </li>
                 ))}
@@ -262,15 +265,15 @@ const Library = () => {
 
           <div style={{ paddingLeft: '0.5rem' }}>
             {!activeItem && (
-              <div style={{ color: '#6b7280' }}>Select a document to preview it.</div>
+              <div style={{ color: 'var(--iac-text-secondary)' }}>Select a document to preview it.</div>
             )}
             {activeItem?.type === 'markdown' && (
-              <div style={{ background: '#ffffff', borderRadius: 8, padding: '1.5rem', border: '1px solid #e5e7eb' }}>
+              <div style={{ background: 'var(--iac-surface)', borderRadius: 8, padding: '1.5rem', border: '1px solid var(--iac-border)' }}>
                 <ReactMarkdown>{activeItem.content ?? ''}</ReactMarkdown>
               </div>
             )}
             {activeItem?.type === 'pdf' && (
-              <div style={{ background: '#ffffff', borderRadius: 8, padding: '0.5rem', border: '1px solid #e5e7eb' }}>
+              <div style={{ background: 'var(--iac-surface)', borderRadius: 8, padding: '0.5rem', border: '1px solid var(--iac-border)' }}>
                 {activeItem.url ? (
                   <iframe
                     title={activeItem.title}
@@ -278,7 +281,7 @@ const Library = () => {
                     style={{ width: '100%', height: '70vh', border: 'none' }}
                   />
                 ) : (
-                  <div style={{ padding: '1rem', color: '#6b7280' }}>
+                  <div style={{ padding: '1rem', color: 'var(--iac-text-secondary)' }}>
                     No PDF source configured for this document.
                   </div>
                 )}

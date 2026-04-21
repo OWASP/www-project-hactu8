@@ -18,8 +18,6 @@ import streamlit.components.v1 as components
 from tests.runner import run_all_tests, save_results
 from tests.payloads import TEST_CASES
 
-# Import shared IAC theme (one directory up)
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 from iac_theme import apply_iac_theme, inject_theme_toggle
 
 

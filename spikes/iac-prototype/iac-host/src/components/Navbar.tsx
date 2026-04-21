@@ -19,8 +19,8 @@ interface NavbarProps {
 const Navbar: React.FC<NavbarProps> = ({
   systemMessage = '',
   messageType = 'info',
-  backgroundColor = '#f3f4f6',
-  textColor = '#6b7280',
+  backgroundColor = 'var(--iac-surface)',
+  textColor = 'var(--iac-text-secondary)',
 }) => {
   const [showMenu, setShowMenu] = useState(false);
   const { flags } = useFeatureFlags();
@@ -42,14 +42,14 @@ const Navbar: React.FC<NavbarProps> = ({
 
     switch (messageType) {
       case 'warning':
-        return { ...baseStyle, background: '#fef3c7', color: '#92400e', border: '1px solid #fbbf24' };
+        return { ...baseStyle, background: 'var(--iac-warning-bg)', color: 'var(--iac-warning-text)', border: '1px solid var(--iac-warning)' };
       case 'error':
-        return { ...baseStyle, background: '#fee2e2', color: '#991b1b', border: '1px solid #f87171' };
+        return { ...baseStyle, background: 'var(--iac-error-bg)', color: 'var(--iac-error-text)', border: '1px solid var(--iac-error)' };
       case 'success':
-        return { ...baseStyle, background: '#d1fae5', color: '#065f46', border: '1px solid #34d399' };
+        return { ...baseStyle, background: 'var(--iac-success-bg)', color: 'var(--iac-success-text)', border: '1px solid var(--iac-success)' };
       case 'info':
       default:
-        return { ...baseStyle, background: '#dbeafe', color: '#1e40af', border: '1px solid #60a5fa' };
+        return { ...baseStyle, background: 'var(--iac-info-bg)', color: 'var(--iac-info-text)', border: '1px solid var(--iac-info)' };
     }
   };
 
@@ -60,7 +60,7 @@ const Navbar: React.FC<NavbarProps> = ({
       display: 'flex',
       alignItems: 'center',
       padding: '0 2rem',
-      borderBottom: '1px solid #e5e7eb',
+      borderBottom: '1px solid var(--iac-border)',
       position: 'relative',
       transition: 'background-color 0.3s ease',
     }}>

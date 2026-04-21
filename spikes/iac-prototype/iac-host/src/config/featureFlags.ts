@@ -4,6 +4,7 @@ export interface FeatureFlags {
   // Sidebar Navigation Items
   navigation: {
     dashboard: boolean;
+    workbench: boolean;
     registry: boolean;
     console: boolean;
   };
@@ -45,9 +46,13 @@ export interface FeatureFlags {
     assuranceResults: boolean;
     reports: boolean;
   };
+  agents: {
+    enabled: boolean;
+    phases: boolean;
+    skills: boolean;
+    mcpClients: boolean;
+  };
   other: {
-    workbench: boolean;
-    agents: boolean;
     users: boolean;
   };
   user: {
@@ -66,6 +71,7 @@ export interface FeatureFlags {
 export const defaultFeatureFlags: FeatureFlags = {
   navigation: {
     dashboard: true,
+    workbench: true,
     registry: true,
     console: true,
   },
@@ -106,9 +112,13 @@ export const defaultFeatureFlags: FeatureFlags = {
     assuranceResults: true,
     reports: true,
   },
+  agents: {
+    enabled: true,
+    phases: true,
+    skills: true,
+    mcpClients: false,
+  },
   other: {
-    workbench: true,
-    agents: true,
     users: true,
   },
   user: {
@@ -131,27 +141,50 @@ export const isFeatureEnabled = (
   return categoryFlags?.[feature] ?? false;
 };
 
+const FLAGS_SCHEMA_VERSION = 3; // Increment when flag shape changes to bust stale localStorage
+
 // Helper to load feature flags from localStorage or environment
 export const loadFeatureFlags = (): FeatureFlags => {
   try {
+    // Bust stale localStorage if schema version changed
+    const storedVersion = parseInt(localStorage.getItem('featureFlagsVersion') ?? '0', 10);
+    if (storedVersion < FLAGS_SCHEMA_VERSION) {
+      localStorage.removeItem('featureFlags');
+      localStorage.setItem('featureFlagsVersion', String(FLAGS_SCHEMA_VERSION));
+      return defaultFeatureFlags;
+    }
+
     // Try to load from localStorage first
     const stored = localStorage.getItem('featureFlags');
     if (stored) {
       const parsed = JSON.parse(stored);
       //  Merge with defaults to ensure all flags exist
+      const p = parsed;
+      // Merge only known keys per group to prevent stale localStorage keys bleeding in
       return {
-        ...defaultFeatureFlags,
-        ...parsed,
-        navigation: { ...defaultFeatureFlags.navigation, ...parsed.navigation },
-        library: { ...defaultFeatureFlags.library, ...parsed.library },
-        copilot: { ...defaultFeatureFlags.copilot, ...parsed.copilot },
-        monitoring: { ...defaultFeatureFlags.monitoring, ...parsed.monitoring },
-        projects: { ...defaultFeatureFlags.projects, ...parsed.projects },
-        testing: { ...defaultFeatureFlags.testing, ...parsed.testing },
-        reporting: { ...defaultFeatureFlags.reporting, ...parsed.reporting },
-        other: { ...defaultFeatureFlags.other, ...parsed.other },
-        user: { ...defaultFeatureFlags.user, ...parsed.user },
-        navbar: { ...defaultFeatureFlags.navbar, ...parsed.navbar },
+        navigation: {
+          dashboard:  p.navigation?.dashboard  ?? defaultFeatureFlags.navigation.dashboard,
+          workbench:  p.navigation?.workbench  ?? defaultFeatureFlags.navigation.workbench,
+          registry:   p.navigation?.registry   ?? defaultFeatureFlags.navigation.registry,
+          console:    p.navigation?.console    ?? defaultFeatureFlags.navigation.console,
+        },
+        monitoring: { ...defaultFeatureFlags.monitoring, ...p.monitoring },
+        projects:   { ...defaultFeatureFlags.projects,   ...p.projects },
+        library:    { ...defaultFeatureFlags.library,    ...p.library },
+        copilot:    { ...defaultFeatureFlags.copilot,    ...p.copilot },
+        testing:    { ...defaultFeatureFlags.testing,    ...p.testing },
+        reporting:  { ...defaultFeatureFlags.reporting,  ...p.reporting },
+        agents: {
+          enabled:    p.agents?.enabled    ?? defaultFeatureFlags.agents.enabled,
+          phases:     p.agents?.phases     ?? defaultFeatureFlags.agents.phases,
+          skills:     p.agents?.skills     ?? defaultFeatureFlags.agents.skills,
+          mcpClients: p.agents?.mcpClients ?? defaultFeatureFlags.agents.mcpClients,
+        },
+        other: {
+          users: p.other?.users ?? defaultFeatureFlags.other.users,
+        },
+        user:    { ...defaultFeatureFlags.user,    ...p.user },
+        navbar:  { ...defaultFeatureFlags.navbar,  ...p.navbar },
       };
     }
   } catch (error) {

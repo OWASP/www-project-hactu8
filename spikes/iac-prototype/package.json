@@ -1,0 +1,12 @@
+{
+  "name": "iac-prototype-orchestration",
+  "private": true,
+  "version": "0.1.0",
+  "scripts": {
+    "iac:bootstrap": "node scripts/iac-bootstrap.mjs",
+    "iac:package": "node scripts/iac-package.mjs",
+    "iac:package:with-venv": "node scripts/iac-package.mjs --with-venv",
+    "iac:up": "node scripts/iac-supervisor.mjs up",
+    "iac:down": "node scripts/iac-supervisor.mjs down"
+  }
+}

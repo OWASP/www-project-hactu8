@@ -54,14 +54,14 @@ const LibraryArticles = () => {
 
   return (
     <div className="flex flex-col h-full w-full overflow-auto">
-      <header className="p-6 bg-white shadow z-10">
+      <header className="p-6 shadow z-10" style={{ background: 'var(--iac-surface)' }}>
         <div className="flex items-center gap-4 mb-4">
-          <Link to="/library" className="text-blue-600 hover:text-blue-800">
+          <Link to="/library" style={{ color: 'var(--iac-link)' }}>
             ← Back to Library
           </Link>
         </div>
         <h1 className="text-3xl font-bold">Articles & Research</h1>
-        <p className="text-gray-600 mt-2">Browse research papers and articles on AI security</p>
+        <p className="mt-2" style={{ color: 'var(--iac-text-secondary)' }}>Browse research papers and articles on AI security</p>
       </header>
 
       <main className="flex-1 p-6">
@@ -72,19 +72,25 @@ const LibraryArticles = () => {
             placeholder="Search articles..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full px-4 py-2 rounded-lg"
+            style={{
+              border: '1px solid var(--iac-input-border)',
+              background: 'var(--iac-input-bg)',
+              color: 'var(--iac-text)',
+            }}
           />
-          
+
           <div className="flex gap-2 flex-wrap">
             {categories.map(category => (
               <button
                 key={category}
                 onClick={() => setSelectedCategory(category)}
-                className={`px-4 py-2 rounded-lg transition-colors ${
-                  selectedCategory === category
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-                }`}
+                className="px-4 py-2 rounded-lg transition-colors"
+                style={{
+                  background: selectedCategory === category ? 'var(--iac-surface-elevated)' : 'var(--iac-surface)',
+                  color: selectedCategory === category ? 'var(--iac-text)' : 'var(--iac-text-secondary)',
+                  border: '1px solid var(--iac-border)',
+                }}
               >
                 {category}
               </button>
@@ -95,26 +101,27 @@ const LibraryArticles = () => {
         {/* Articles List */}
         <div className="space-y-4 max-w-4xl">
           {filteredArticles.length === 0 ? (
-            <p className="text-gray-500 text-center py-8">No articles found matching your criteria.</p>
+            <p className="text-center py-8" style={{ color: 'var(--iac-text-secondary)' }}>No articles found matching your criteria.</p>
           ) : (
             filteredArticles.map(article => (
-              <div key={article.id} className="bg-white p-6 rounded-lg shadow border border-gray-200">
+              <div key={article.id} className="p-6 rounded-lg shadow" style={{ background: 'var(--iac-surface)', border: '1px solid var(--iac-border)' }}>
                 <div className="flex items-start justify-between gap-4 mb-2">
-                  <h2 className="text-xl font-semibold text-gray-900">{article.title}</h2>
-                  <span className="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm whitespace-nowrap">
+                  <h2 className="text-xl font-semibold" style={{ color: 'var(--iac-text)' }}>{article.title}</h2>
+                  <span className="px-3 py-1 rounded-full text-sm whitespace-nowrap" style={{ background: 'var(--iac-info-bg)', color: 'var(--iac-info-text)' }}>
                     {article.category}
                   </span>
                 </div>
-                <p className="text-gray-600 text-sm mb-2">
+                <p className="text-sm mb-2" style={{ color: 'var(--iac-text-secondary)' }}>
                   By {article.authors.join(', ')} • {new Date(article.date).toLocaleDateString()}
                 </p>
-                <p className="text-gray-700 mb-4">{article.summary}</p>
+                <p className="mb-4" style={{ color: 'var(--iac-text)' }}>{article.summary}</p>
                 {article.url && (
-                  <a 
+                  <a
                     href={article.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-blue-600 hover:text-blue-800 inline-flex items-center gap-1"
+                    className="inline-flex items-center gap-1"
+                    style={{ color: 'var(--iac-link)' }}
                   >
                     Read more
                     <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2">

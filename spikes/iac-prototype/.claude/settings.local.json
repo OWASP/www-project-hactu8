@@ -4,7 +4,10 @@
       "Bash(npm run build:*)",
       "Bash(node --version:*)",
       "Bash(wc:*)",
-      "Bash(npx tsc:*)"
+      "Bash(npx tsc:*)",
+      "WebFetch(domain:markrox.dev)",
+      "Bash(cp /Users/roxberry/Workspaces/owasp/www-project-hactu8/spikes/iac-prototype/extensions/iac_theme.py /Users/roxberry/Workspaces/owasp/www-project-hactu8/spikes/iac-prototype/extensions/iac-prompt-injection-tests/iac_theme.py)",
+      "Bash(cp /Users/roxberry/Workspaces/owasp/www-project-hactu8/spikes/iac-prototype/extensions/iac_theme.py /Users/roxberry/.iac/extensions/iac-prompt-injection-tests/iac_theme.py)"
     ]
   }
 }

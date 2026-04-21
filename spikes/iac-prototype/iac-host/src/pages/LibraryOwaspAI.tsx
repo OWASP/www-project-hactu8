@@ -72,14 +72,14 @@ const LibraryOwaspAI = () => {
 
   return (
     <div className="flex flex-col h-full w-full overflow-auto">
-      <header className="p-6 bg-white shadow z-10">
+      <header className="p-6 shadow z-10" style={{ background: 'var(--iac-surface)' }}>
         <div className="flex items-center gap-4 mb-4">
-          <Link to="/library" className="text-blue-600 hover:text-blue-800">
+          <Link to="/library" style={{ color: 'var(--iac-link)' }}>
             ← Back to Library
           </Link>
         </div>
         <h1 className="text-3xl font-bold">OWASP AI Documents</h1>
-        <p className="text-gray-600 mt-2">OWASP resources and guidelines for AI security</p>
+        <p className="mt-2" style={{ color: 'var(--iac-text-secondary)' }}>OWASP resources and guidelines for AI security</p>
       </header>
 
       <main className="flex-1 p-6">
@@ -90,11 +90,12 @@ const LibraryOwaspAI = () => {
               <button
                 key={category}
                 onClick={() => setSelectedCategory(category)}
-                className={`px-4 py-2 rounded-lg transition-colors ${
-                  selectedCategory === category
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-                }`}
+                className="px-4 py-2 rounded-lg transition-colors"
+                style={{
+                  background: selectedCategory === category ? 'var(--iac-surface-elevated)' : 'var(--iac-surface)',
+                  color: selectedCategory === category ? 'var(--iac-text)' : 'var(--iac-text-secondary)',
+                  border: '1px solid var(--iac-border)',
+                }}
               >
                 {category}
               </button>
@@ -110,20 +111,20 @@ const LibraryOwaspAI = () => {
               href={doc.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="block bg-white p-6 rounded-lg shadow border border-gray-200 hover:shadow-lg transition-shadow"
-              style={{ textDecoration: 'none', color: 'inherit' }}
+              className="block p-6 rounded-lg shadow hover:shadow-lg transition-shadow"
+              style={{ textDecoration: 'none', color: 'inherit', background: 'var(--iac-surface)', border: '1px solid var(--iac-border)' }}
             >
               <div className="flex items-start gap-4">
                 <div className="text-4xl">{doc.icon}</div>
                 <div className="flex-1">
                   <div className="flex items-start justify-between gap-2 mb-2">
-                    <h3 className="text-lg font-semibold text-gray-900">{doc.title}</h3>
-                    <span className="px-2 py-1 bg-purple-100 text-purple-800 rounded text-xs whitespace-nowrap">
+                    <h3 className="text-lg font-semibold" style={{ color: 'var(--iac-text)' }}>{doc.title}</h3>
+                    <span className="px-2 py-1 rounded text-xs whitespace-nowrap" style={{ background: 'var(--iac-badge-bg)', color: 'var(--iac-badge-text)' }}>
                       {doc.category}
                     </span>
                   </div>
-                  <p className="text-gray-600 text-sm mb-3">{doc.description}</p>
-                  <div className="flex items-center gap-1 text-blue-600 text-sm">
+                  <p className="text-sm mb-3" style={{ color: 'var(--iac-text-secondary)' }}>{doc.description}</p>
+                  <div className="flex items-center gap-1 text-sm" style={{ color: 'var(--iac-link)' }}>
                     <span>View on OWASP</span>
                     <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2">
                       <path d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />

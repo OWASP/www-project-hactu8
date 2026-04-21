@@ -87,7 +87,7 @@ function FeaturePanel({ project, feature }: { project: any, feature: string }) {
             <ul>
               {project.prompts.map((p: any) => (
                 <li key={p.id}>
-                  <strong>{p.text}</strong> <span style={{ color: '#888', fontSize: 12 }}>({p.created})</span>
+                  <strong>{p.text}</strong> <span style={{ color: 'var(--iac-muted)', fontSize: 12 }}>({p.created})</span>
                 </li>
               ))}
             </ul>
@@ -141,8 +141,8 @@ const Project = () => {
   }
 
   return (
-    <div style={{ display: 'flex', padding: 32, minHeight: '60vh', borderRadius: 8, boxShadow: '0 2px 8px #0001' }}>
-      <aside style={{ width: 300, borderRight: '1px solid #eee', padding: '1rem 1rem' }}>
+    <div style={{ display: 'flex', padding: 32, minHeight: '60vh', borderRadius: 8, boxShadow: '0 2px 8px rgba(0,0,0,0.07)' }}>
+      <aside style={{ width: 300, borderRight: '1px solid var(--iac-border)', padding: '1rem 1rem' }}>
         <h3>{project.name}</h3>
         <nav>
           <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
@@ -152,14 +152,14 @@ const Project = () => {
                   style={{
                     width: '100%',
                     padding: '1rem 2rem',
-                    background: selected === f.key ? '#213547' : 'none',
+                    background: selected === f.key ? 'var(--iac-surface-elevated)' : 'none',
                     border: 'none',
                     textAlign: 'left',
                     fontWeight: selected === f.key ? 600 : 400,
-                    // color: selected === f.key ? '#1976d2' : '#333',
+                    // color: selected === f.key ? 'var(--iac-accent)' : 'var(--iac-text)',
                     cursor: 'pointer',
                     outline: 'none',
-                    // borderLeft: selected === f.key ? '4px solid #1976d2' : '4px solid transparent',
+                    // borderLeft: selected === f.key ? '4px solid var(--iac-accent)' : '4px solid transparent',
                     transition: 'background 0.2s, border-left 0.2s',
                   }}
                   onClick={() => setSelected(f.key)}

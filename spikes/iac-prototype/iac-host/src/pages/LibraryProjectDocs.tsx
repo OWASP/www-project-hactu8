@@ -86,21 +86,21 @@ const LibraryProjectDocs = () => {
 
   return (
     <div className="flex flex-col h-full w-full overflow-auto">
-      <header className="p-6 bg-white shadow z-10">
+      <header className="p-6 shadow z-10" style={{ background: 'var(--iac-surface)' }}>
         <div className="flex items-center gap-4 mb-4">
-          <Link to="/library" className="text-blue-600 hover:text-blue-800">
+          <Link to="/library" style={{ color: 'var(--iac-link)' }}>
             ← Back to Library
           </Link>
         </div>
         <h1 className="text-3xl font-bold">Project Documents</h1>
-        <p className="text-gray-600 mt-2">Official OWASP HACTU8 project documentation</p>
+        <p className="mt-2" style={{ color: 'var(--iac-text-secondary)' }}>Official OWASP HACTU8 project documentation</p>
       </header>
 
       <main className="flex-1 p-6">
         {/* Configuration Info */}
-        <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-          <h3 className="font-semibold text-blue-900 mb-2">📖 Document Sources</h3>
-          <ul className="text-sm text-blue-800 space-y-1">
+        <div className="mb-6 p-4 rounded-lg" style={{ background: 'var(--iac-info-bg)', border: '1px solid var(--iac-info)' }}>
+          <h3 className="font-semibold mb-2" style={{ color: 'var(--iac-info-text)' }}>📖 Document Sources</h3>
+          <ul className="text-sm space-y-1" style={{ color: 'var(--iac-info-text)' }}>
             <li>• <strong>Wiki:</strong> github.com/OWASP/www-project-hactu8.wiki</li>
             <li>• <strong>Local Docs:</strong> Configured documentation folders</li>
           </ul>
@@ -113,37 +113,45 @@ const LibraryProjectDocs = () => {
             placeholder="Search documents..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full px-4 py-2 rounded-lg"
+            style={{
+              border: '1px solid var(--iac-input-border)',
+              background: 'var(--iac-input-bg)',
+              color: 'var(--iac-text)',
+            }}
           />
-          
+
           <div className="flex gap-2">
             <button
               onClick={() => setSelectedSource('all')}
-              className={`px-4 py-2 rounded-lg transition-colors ${
-                selectedSource === 'all'
-                  ? 'bg-blue-600 text-white'
-                  : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-              }`}
+              className="px-4 py-2 rounded-lg transition-colors"
+              style={{
+                background: selectedSource === 'all' ? 'var(--iac-surface-elevated)' : 'var(--iac-surface)',
+                color: selectedSource === 'all' ? 'var(--iac-text)' : 'var(--iac-text-secondary)',
+                border: '1px solid var(--iac-border)',
+              }}
             >
               All Sources
             </button>
             <button
               onClick={() => setSelectedSource('wiki')}
-              className={`px-4 py-2 rounded-lg transition-colors ${
-                selectedSource === 'wiki'
-                  ? 'bg-blue-600 text-white'
-                  : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-              }`}
+              className="px-4 py-2 rounded-lg transition-colors"
+              style={{
+                background: selectedSource === 'wiki' ? 'var(--iac-surface-elevated)' : 'var(--iac-surface)',
+                color: selectedSource === 'wiki' ? 'var(--iac-text)' : 'var(--iac-text-secondary)',
+                border: '1px solid var(--iac-border)',
+              }}
             >
               Wiki
             </button>
             <button
               onClick={() => setSelectedSource('local')}
-              className={`px-4 py-2 rounded-lg transition-colors ${
-                selectedSource === 'local'
-                  ? 'bg-blue-600 text-white'
-                  : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-              }`}
+              className="px-4 py-2 rounded-lg transition-colors"
+              style={{
+                background: selectedSource === 'local' ? 'var(--iac-surface-elevated)' : 'var(--iac-surface)',
+                color: selectedSource === 'local' ? 'var(--iac-text)' : 'var(--iac-text-secondary)',
+                border: '1px solid var(--iac-border)',
+              }}
             >
               Local Docs
             </button>
@@ -153,18 +161,19 @@ const LibraryProjectDocs = () => {
         {/* Documents List */}
         {loading ? (
           <div className="text-center py-8">
-            <p className="text-gray-500">Loading documents...</p>
+            <p style={{ color: 'var(--iac-text-secondary)' }}>Loading documents...</p>
           </div>
         ) : (
           <div className="space-y-3 max-w-4xl">
             {filteredDocs.length === 0 ? (
-              <p className="text-gray-500 text-center py-8">No documents found.</p>
+              <p className="text-center py-8" style={{ color: 'var(--iac-text-secondary)' }}>No documents found.</p>
             ) : (
               filteredDocs.map(doc => (
                 <div
                   key={doc.id}
                   onClick={() => handleDocumentClick(doc)}
-                  className="bg-white p-5 rounded-lg shadow border border-gray-200 hover:shadow-md transition-shadow cursor-pointer"
+                  className="p-5 rounded-lg shadow hover:shadow-md transition-shadow cursor-pointer"
+                  style={{ background: 'var(--iac-surface)', border: '1px solid var(--iac-border)' }}
                 >
                   <div className="flex items-start justify-between gap-4">
                     <div className="flex-1">
@@ -173,17 +182,17 @@ const LibraryProjectDocs = () => {
                           {doc.source === 'wiki' ? '📚' : '📄'}
                         </span>
                         <div>
-                          <h3 className="text-lg font-semibold text-gray-900">{doc.title}</h3>
-                          <p className="text-sm text-gray-500">
+                          <h3 className="text-lg font-semibold" style={{ color: 'var(--iac-text)' }}>{doc.title}</h3>
+                          <p className="text-sm" style={{ color: 'var(--iac-text-secondary)' }}>
                             {doc.category} • Updated {new Date(doc.lastModified).toLocaleDateString()}
                           </p>
                         </div>
                       </div>
-                      <p className="text-sm text-gray-600 ml-11">
+                      <p className="text-sm ml-11" style={{ color: 'var(--iac-text-secondary)' }}>
                         Source: {doc.source === 'wiki' ? 'OWASP Wiki' : 'Local Documentation'}
                       </p>
                     </div>
-                    <div className="text-gray-400">
+                    <div style={{ color: 'var(--iac-muted)' }}>
                       <svg width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2">
                         <path d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
                       </svg>

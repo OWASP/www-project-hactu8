@@ -24,6 +24,31 @@
   --iac-text: #e2e8f0;
   --iac-text-secondary: #94a3b8;
   --iac-border: #334155;
+
+  /* Status colors */
+  --iac-success: #22c55e;
+  --iac-success-bg: rgba(34, 197, 94, 0.12);
+  --iac-success-text: #86efac;
+  --iac-error: #ef4444;
+  --iac-error-bg: rgba(239, 68, 68, 0.12);
+  --iac-error-text: #fca5a5;
+  --iac-warning: #f59e0b;
+  --iac-warning-bg: rgba(245, 158, 11, 0.12);
+  --iac-warning-text: #fcd34d;
+  --iac-info: #3b82f6;
+  --iac-info-bg: rgba(59, 130, 246, 0.12);
+  --iac-info-text: #93c5fd;
+
+  /* Interactive */
+  --iac-link: #60a5fa;
+  --iac-link-hover: #93c5fd;
+  --iac-input-bg: #0f172a;
+  --iac-input-border: #334155;
+  --iac-badge-bg: #1e3a5f;
+  --iac-badge-text: #93c5fd;
+  --iac-code-bg: #0d1b2a;
+  --iac-code-text: #a5f3fc;
+  --iac-muted: #475569;
 }
 
 a {
@@ -251,6 +276,66 @@ button:focus-visible {
   min-width: 24px;
 }
 
+/* ── Terminal Theme ── */
+[data-theme="terminal"] {
+  font-family: 'SF Mono', 'JetBrains Mono', ui-monospace, monospace;
+  --iac-bg: #0d1520;
+  --iac-surface: #111b2a;
+  --iac-surface-elevated: #152030;
+  --iac-text: #e2e8f0;
+  --iac-text-secondary: #94a3b8;
+  --iac-border: #1e3048;
+  --iac-accent: #2dd4a0;
+  --iac-accent-hover: #1db88a;
+  --iac-primary: #152030;
+  --iac-underline: #2dd4a0;
+  /* extended terminal tokens used by Workbench */
+  --iac-t-bg1: #111b2a;
+  --iac-t-bg2: #152030;
+  --iac-t-bg3: #1a2840;
+  --iac-t-accent2: #1db88a;
+  --iac-t-red: #e85555;
+  --iac-t-amber: #e8a030;
+  --iac-t-cyan: #38c0d4;
+  --iac-t-txt3: #64748b;
+  --iac-t-border2: #253a55;
+
+  /* Terminal status overrides */
+  --iac-success: #2dd4a0;
+  --iac-success-bg: rgba(45, 212, 160, 0.10);
+  --iac-success-text: #6ee7b7;
+  --iac-error: #e85555;
+  --iac-error-bg: rgba(232, 85, 85, 0.12);
+  --iac-error-text: #fca5a5;
+  --iac-warning: #e8a030;
+  --iac-warning-bg: rgba(232, 160, 48, 0.12);
+  --iac-warning-text: #fcd34d;
+  --iac-info: #38c0d4;
+  --iac-info-bg: rgba(56, 192, 212, 0.12);
+  --iac-info-text: #67e8f9;
+  --iac-link: #38c0d4;
+  --iac-link-hover: #2dd4a0;
+  --iac-input-bg: #0d1520;
+  --iac-input-border: #1e3048;
+  --iac-badge-bg: rgba(45, 212, 160, 0.12);
+  --iac-badge-text: #2dd4a0;
+  --iac-code-bg: #0d1520;
+  --iac-code-text: #38c0d4;
+  --iac-muted: #3d5470;
+}
+
+/* Sidebar active link – terminal override */
+[data-theme="terminal"] .sidebar-nav__link.active {
+  background: #1a2840;
+  border-left: 2px solid #2dd4a0;
+}
+
+/* Header – terminal override */
+[data-theme="terminal"] .header {
+  background: #111b2a;
+  box-shadow: 0 1px 0 #1e3048;
+}
+
 @media (prefers-color-scheme: light) {
   :root {
     color: #213547;
@@ -265,6 +350,15 @@ button:focus-visible {
     --iac-border: #e2e8f0;
     --iac-accent: #0284c7;
     --iac-accent-hover: #0369a1;
+    --iac-input-bg: #ffffff;
+    --iac-input-border: #d1d5db;
+    --iac-badge-bg: #dbeafe;
+    --iac-badge-text: #1e40af;
+    --iac-code-bg: #f1f5f9;
+    --iac-code-text: #0369a1;
+    --iac-link: #2563eb;
+    --iac-link-hover: #1d4ed8;
+    --iac-muted: #9ca3af;
   }
   a:hover {
     color: #747bff;

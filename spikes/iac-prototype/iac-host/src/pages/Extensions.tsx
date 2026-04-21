@@ -86,10 +86,10 @@ const TYPE_LABELS: Record<string, string> = {
 };
 
 const STATUS_COLORS: Record<string, string> = {
-  installed: '#6b7280',
-  active: '#10b981',
-  stopped: '#f59e0b',
-  error: '#ef4444',
+  installed: 'var(--iac-muted)',
+  active: 'var(--iac-success)',
+  stopped: 'var(--iac-warning)',
+  error: 'var(--iac-error)',
 };
 
 // ---------------------------------------------------------------------------
@@ -188,7 +188,7 @@ const Extensions: React.FC = () => {
     <div style={{ display: 'flex', minHeight: '60vh', height: '100%', overflow: 'hidden' }}>
       {/* ---- Sidebar ---- */}
       <aside style={sidebarStyle}>
-        <h3 style={{ color: '#111827', marginBottom: '0.75rem' }}>Extensions</h3>
+        <h3 style={{ color: 'var(--iac-text)', marginBottom: '0.75rem' }}>Extensions</h3>
 
         {/* Tab selector */}
         <div style={{ display: 'flex', gap: '0.25rem', marginBottom: '1rem' }}>
@@ -231,7 +231,7 @@ const Extensions: React.FC = () => {
       {/* ---- Main content ---- */}
       <main style={mainStyle}>
         {view.mainPanel === 'none' && (
-          <div style={{ color: '#6b7280', textAlign: 'center', marginTop: '4rem' }}>
+          <div style={{ color: 'var(--iac-muted)', textAlign: 'center', marginTop: '4rem' }}>
             <p>Select an extension to view details.</p>
           </div>
         )}
@@ -262,7 +262,7 @@ const Extensions: React.FC = () => {
               <button onClick={() => setView((v) => ({ ...v, mainPanel: 'detail' }))} style={backButtonStyle}>
                 &larr; Back
               </button>
-              <h3 style={{ margin: 0, color: '#111827' }}>{selectedInstalled.manifest.name}</h3>
+              <h3 style={{ margin: 0, color: 'var(--iac-text)' }}>{selectedInstalled.manifest.name}</h3>
               <StatusBadge status={selectedInstalled.status} />
             </div>
             <div style={{ flex: 1, position: 'relative', minHeight: '400px' }}>
@@ -286,9 +286,9 @@ function TabButton({ label, active, onClick }: { label: string; active: boolean;
       style={{
         flex: 1,
         padding: '0.5rem',
-        background: active ? '#213547' : 'transparent',
-        color: active ? '#ffffff' : '#374151',
-        border: 'none',
+        background: active ? 'var(--iac-surface-elevated)' : 'transparent',
+        color: active ? 'var(--iac-text)' : 'var(--iac-text-secondary)',
+        border: `1px solid ${active ? 'var(--iac-border)' : 'transparent'}`,
         borderRadius: '4px',
         cursor: 'pointer',
         fontWeight: active ? 600 : 400,
@@ -313,18 +313,18 @@ interface AvailableListProps {
 
 function AvailableList({ registry, installedIds, isLoading, error, onRefresh, onInstall, onSelect, selectedId }: AvailableListProps) {
   if (isLoading) {
-    return <p style={{ color: '#6b7280', fontSize: '0.875rem' }}>Loading registry...</p>;
+    return <p style={{ color: 'var(--iac-muted)', fontSize: '0.875rem' }}>Loading registry...</p>;
   }
   if (error) {
     return (
       <div>
-        <p style={{ color: '#ef4444', fontSize: '0.875rem' }}>{error}</p>
+        <p style={{ color: 'var(--iac-error)', fontSize: '0.875rem' }}>{error}</p>
         <button onClick={onRefresh} style={smallButtonStyle}>Retry</button>
       </div>
     );
   }
   if (registry.length === 0) {
-    return <p style={{ color: '#6b7280', fontSize: '0.875rem' }}>No extensions found in registry.</p>;
+    return <p style={{ color: 'var(--iac-muted)', fontSize: '0.875rem' }}>No extensions found in registry.</p>;
   }
 
   return (
@@ -338,27 +338,27 @@ function AvailableList({ registry, installedIds, isLoading, error, onRefresh, on
             onClick={() => onSelect(entry.manifest.id)}
             style={{
               ...cardStyle,
-              borderColor: isSelected ? '#213547' : '#e5e7eb',
-              background: isSelected ? '#f0f4f8' : '#ffffff',
+              borderColor: isSelected ? 'var(--iac-surface-elevated)' : 'var(--iac-border)',
+              background: isSelected ? 'var(--iac-surface)' : 'var(--iac-bg)',
               cursor: 'pointer',
             }}
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
               <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ fontWeight: 600, fontSize: '0.9rem', color: '#111827', marginBottom: '0.15rem' }}>
+                <div style={{ fontWeight: 600, fontSize: '0.9rem', color: 'var(--iac-text)', marginBottom: '0.15rem' }}>
                   {entry.manifest.name}
                 </div>
-                <div style={{ fontSize: '0.75rem', color: '#6b7280', marginBottom: '0.35rem' }}>
+                <div style={{ fontSize: '0.75rem', color: 'var(--iac-muted)', marginBottom: '0.35rem' }}>
                   {entry.manifest.description}
                 </div>
                 <div style={{ display: 'flex', gap: '0.35rem', flexWrap: 'wrap' }}>
-                  <Badge label={CATEGORY_LABELS[entry.manifest.category] ?? entry.manifest.category} color="#e0e7ff" textColor="#3730a3" />
-                  <Badge label={TYPE_LABELS[entry.manifest.type] ?? entry.manifest.type} color="#fef3c7" textColor="#92400e" />
+                  <Badge label={CATEGORY_LABELS[entry.manifest.category] ?? entry.manifest.category} color="var(--iac-info-bg)" textColor="var(--iac-info-text)" />
+                  <Badge label={TYPE_LABELS[entry.manifest.type] ?? entry.manifest.type} color="var(--iac-warning-bg)" textColor="var(--iac-warning-text)" />
                 </div>
               </div>
               <div style={{ marginLeft: '0.5rem', flexShrink: 0 }}>
                 {isInstalled ? (
-                  <span style={{ fontSize: '0.75rem', color: '#10b981', fontWeight: 600 }}>Installed</span>
+                  <span style={{ fontSize: '0.75rem', color: 'var(--iac-success)', fontWeight: 600 }}>Installed</span>
                 ) : (
                   <button
                     onClick={(e) => { e.stopPropagation(); onInstall(entry); }}
@@ -384,7 +384,7 @@ interface InstalledListProps {
 
 function InstalledList({ installed, onSelect, selectedId }: InstalledListProps) {
   if (installed.length === 0) {
-    return <p style={{ color: '#6b7280', fontSize: '0.875rem' }}>No extensions installed.</p>;
+    return <p style={{ color: 'var(--iac-muted)', fontSize: '0.875rem' }}>No extensions installed.</p>;
   }
 
   return (
@@ -397,17 +397,17 @@ function InstalledList({ installed, onSelect, selectedId }: InstalledListProps) 
             onClick={() => onSelect(ext.manifest.id)}
             style={{
               ...cardStyle,
-              borderColor: isSelected ? '#213547' : '#e5e7eb',
-              background: isSelected ? '#f0f4f8' : '#ffffff',
+              borderColor: isSelected ? 'var(--iac-surface-elevated)' : 'var(--iac-border)',
+              background: isSelected ? 'var(--iac-surface)' : 'var(--iac-bg)',
               cursor: 'pointer',
             }}
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ fontWeight: 600, fontSize: '0.9rem', color: '#111827', marginBottom: '0.15rem' }}>
+                <div style={{ fontWeight: 600, fontSize: '0.9rem', color: 'var(--iac-text)', marginBottom: '0.15rem' }}>
                   {ext.manifest.name}
                 </div>
-                <div style={{ fontSize: '0.75rem', color: '#6b7280' }}>
+                <div style={{ fontSize: '0.75rem', color: 'var(--iac-muted)' }}>
                   v{ext.manifest.version}
                 </div>
               </div>
@@ -436,7 +436,7 @@ interface DetailPanelProps {
 function DetailPanel({ registryEntry, installedExtension, onInstall, onUninstall, onOpenSettings, onOpen }: DetailPanelProps) {
   const manifest = installedExtension?.manifest ?? registryEntry?.manifest;
   if (!manifest) {
-    return <p style={{ color: '#6b7280' }}>Extension not found.</p>;
+    return <p style={{ color: 'var(--iac-muted)' }}>Extension not found.</p>;
   }
 
   const isInstalled = !!installedExtension;
@@ -448,16 +448,16 @@ function DetailPanel({ registryEntry, installedExtension, onInstall, onUninstall
     <div>
       {/* Header */}
       <div style={{ marginBottom: '1.5rem' }}>
-        <h3 style={{ color: '#111827', fontWeight: 700, fontSize: '1.5rem', margin: '0 0 0.25rem' }}>
+        <h3 style={{ color: 'var(--iac-text)', fontWeight: 700, fontSize: '1.5rem', margin: '0 0 0.25rem' }}>
           {manifest.name}
         </h3>
-        <p style={{ color: '#4b5563', margin: '0 0 0.75rem', fontSize: '0.925rem' }}>
+        <p style={{ color: 'var(--iac-text-secondary)', margin: '0 0 0.75rem', fontSize: '0.925rem' }}>
           {manifest.description}
         </p>
         <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', alignItems: 'center' }}>
-          <Badge label={CATEGORY_LABELS[manifest.category] ?? manifest.category} color="#e0e7ff" textColor="#3730a3" />
-          <Badge label={TYPE_LABELS[manifest.type] ?? manifest.type} color="#fef3c7" textColor="#92400e" />
-          <Badge label={`v${manifest.version}`} color="#f3f4f6" textColor="#374151" />
+          <Badge label={CATEGORY_LABELS[manifest.category] ?? manifest.category} color="var(--iac-info-bg)" textColor="var(--iac-info-text)" />
+          <Badge label={TYPE_LABELS[manifest.type] ?? manifest.type} color="var(--iac-warning-bg)" textColor="var(--iac-warning-text)" />
+          <Badge label={`v${manifest.version}`} color="var(--iac-surface)" textColor="var(--iac-border)" />
           {isInstalled && <StatusBadge status={installedExtension.status} />}
         </div>
       </div>
@@ -490,10 +490,10 @@ function DetailPanel({ registryEntry, installedExtension, onInstall, onUninstall
       {/* Permissions */}
       {manifest.permissions.length > 0 && (
         <div style={{ marginTop: '1.5rem' }}>
-          <h4 style={{ color: '#111827', fontWeight: 600, marginBottom: '0.5rem' }}>Permissions</h4>
+          <h4 style={{ color: 'var(--iac-text)', fontWeight: 600, marginBottom: '0.5rem' }}>Permissions</h4>
           <div style={{ display: 'flex', gap: '0.35rem', flexWrap: 'wrap' }}>
             {manifest.permissions.map((p) => (
-              <Badge key={p} label={p} color="#fef2f2" textColor="#991b1b" />
+              <Badge key={p} label={p} color="var(--iac-error-bg)" textColor="var(--iac-error-text)" />
             ))}
           </div>
         </div>
@@ -502,10 +502,10 @@ function DetailPanel({ registryEntry, installedExtension, onInstall, onUninstall
       {/* Settings summary */}
       {manifest.settings && manifest.settings.length > 0 && (
         <div style={{ marginTop: '1.5rem' }}>
-          <h4 style={{ color: '#111827', fontWeight: 600, marginBottom: '0.5rem' }}>
+          <h4 style={{ color: 'var(--iac-text)', fontWeight: 600, marginBottom: '0.5rem' }}>
             Configurable Settings ({manifest.settings.length})
           </h4>
-          <ul style={{ margin: 0, paddingLeft: '1.25rem', color: '#4b5563', fontSize: '0.875rem' }}>
+          <ul style={{ margin: 0, paddingLeft: '1.25rem', color: 'var(--iac-text-secondary)', fontSize: '0.875rem' }}>
             {manifest.settings.map((s) => (
               <li key={s.key} style={{ marginBottom: '0.25rem' }}>
                 <strong>{s.label}</strong> — {s.description ?? s.type}
@@ -517,9 +517,9 @@ function DetailPanel({ registryEntry, installedExtension, onInstall, onUninstall
 
       {/* Run instructions for installed Streamlit extensions */}
       {isInstalled && manifest.type === 'streamlit' && port !== null && (
-        <div style={{ marginTop: '1.5rem', padding: '1rem', background: '#f9fafb', borderRadius: '6px', border: '1px solid #e5e7eb' }}>
-          <h4 style={{ color: '#111827', fontWeight: 600, marginBottom: '0.5rem' }}>Run Instructions</h4>
-          <p style={{ color: '#4b5563', fontSize: '0.85rem', marginBottom: '0.5rem' }}>
+        <div style={{ marginTop: '1.5rem', padding: '1rem', background: 'var(--iac-surface)', borderRadius: '6px', border: '1px solid var(--iac-border)' }}>
+          <h4 style={{ color: 'var(--iac-text)', fontWeight: 600, marginBottom: '0.5rem' }}>Run Instructions</h4>
+          <p style={{ color: 'var(--iac-text-secondary)', fontSize: '0.85rem', marginBottom: '0.5rem' }}>
             Start the Streamlit app, then click <strong>Open</strong> above to view it here.
           </p>
           <code style={codeBlockStyle}>
@@ -530,9 +530,9 @@ function DetailPanel({ registryEntry, installedExtension, onInstall, onUninstall
 
       {/* Config preview */}
       {isInstalled && (
-        <div style={{ marginTop: '1.5rem', padding: '1rem', background: '#f9fafb', borderRadius: '6px', border: '1px solid #e5e7eb' }}>
-          <h4 style={{ color: '#111827', fontWeight: 600, marginBottom: '0.5rem' }}>Host Config (config.json)</h4>
-          <p style={{ color: '#4b5563', fontSize: '0.85rem', marginBottom: '0.5rem' }}>
+        <div style={{ marginTop: '1.5rem', padding: '1rem', background: 'var(--iac-surface)', borderRadius: '6px', border: '1px solid var(--iac-border)' }}>
+          <h4 style={{ color: 'var(--iac-text)', fontWeight: 600, marginBottom: '0.5rem' }}>Host Config (config.json)</h4>
+          <p style={{ color: 'var(--iac-text-secondary)', fontSize: '0.85rem', marginBottom: '0.5rem' }}>
             This config is written to the extension install directory for the extension to read.
           </p>
           <pre style={{ ...codeBlockStyle, whiteSpace: 'pre-wrap', wordBreak: 'break-all' }}>
@@ -572,13 +572,13 @@ function StatusBadge({ status }: { status: string }) {
       gap: '0.3rem',
       fontSize: '0.75rem',
       fontWeight: 600,
-      color: STATUS_COLORS[status] ?? '#6b7280',
+      color: STATUS_COLORS[status] ?? 'var(--iac-muted)',
     }}>
       <span style={{
         width: 8,
         height: 8,
         borderRadius: '50%',
-        background: STATUS_COLORS[status] ?? '#6b7280',
+        background: STATUS_COLORS[status] ?? 'var(--iac-muted)',
         display: 'inline-block',
       }} />
       {status}
@@ -589,8 +589,8 @@ function StatusBadge({ status }: { status: string }) {
 function InfoField({ label, value }: { label: string; value: string }) {
   return (
     <div>
-      <div style={{ fontSize: '0.75rem', color: '#6b7280', marginBottom: '0.1rem' }}>{label}</div>
-      <div style={{ fontSize: '0.9rem', color: '#111827', fontWeight: 500 }}>{value}</div>
+      <div style={{ fontSize: '0.75rem', color: 'var(--iac-muted)', marginBottom: '0.1rem' }}>{label}</div>
+      <div style={{ fontSize: '0.9rem', color: 'var(--iac-text)', fontWeight: 500 }}>{value}</div>
     </div>
   );
 }
@@ -602,8 +602,8 @@ function InfoField({ label, value }: { label: string; value: string }) {
 const sidebarStyle: React.CSSProperties = {
   width: 320,
   padding: '1rem',
-  background: '#f9fafb',
-  borderRight: '1px solid #e5e7eb',
+  background: 'var(--iac-surface)',
+  borderRight: '1px solid var(--iac-border)',
   display: 'flex',
   flexDirection: 'column',
   overflowY: 'auto',
@@ -613,20 +613,20 @@ const mainStyle: React.CSSProperties = {
   flex: 1,
   padding: '2rem',
   overflowY: 'auto',
-  background: '#ffffff',
+  background: 'var(--iac-bg)',
 };
 
 const cardStyle: React.CSSProperties = {
   padding: '0.75rem',
-  border: '1px solid #e5e7eb',
+  border: '1px solid var(--iac-border)',
   borderRadius: '6px',
-  background: '#ffffff',
+  background: 'var(--iac-bg)',
 };
 
 const installButtonStyle: React.CSSProperties = {
   padding: '0.3rem 0.75rem',
-  background: '#213547',
-  color: '#ffffff',
+  background: 'var(--iac-surface-elevated)',
+  color: 'var(--iac-text)',
   border: 'none',
   borderRadius: '4px',
   cursor: 'pointer',
@@ -636,8 +636,8 @@ const installButtonStyle: React.CSSProperties = {
 
 const smallButtonStyle: React.CSSProperties = {
   padding: '0.35rem 0.75rem',
-  background: '#213547',
-  color: '#ffffff',
+  background: 'var(--iac-surface-elevated)',
+  color: 'var(--iac-text)',
   border: 'none',
   borderRadius: '4px',
   cursor: 'pointer',
@@ -648,8 +648,8 @@ const smallButtonStyle: React.CSSProperties = {
 
 const primaryButtonStyle: React.CSSProperties = {
   padding: '0.5rem 1.5rem',
-  background: '#213547',
-  color: '#ffffff',
+  background: 'var(--iac-surface-elevated)',
+  color: 'var(--iac-text)',
   border: 'none',
   borderRadius: '4px',
   cursor: 'pointer',
@@ -659,8 +659,8 @@ const primaryButtonStyle: React.CSSProperties = {
 const secondaryButtonStyle: React.CSSProperties = {
   padding: '0.5rem 1.5rem',
   background: 'transparent',
-  color: '#213547',
-  border: '1px solid #213547',
+  color: 'var(--iac-surface-elevated)',
+  border: '1px solid var(--iac-surface-elevated)',
   borderRadius: '4px',
   cursor: 'pointer',
   fontWeight: 600,
@@ -669,8 +669,8 @@ const secondaryButtonStyle: React.CSSProperties = {
 const dangerButtonStyle: React.CSSProperties = {
   padding: '0.5rem 1.5rem',
   background: 'transparent',
-  color: '#dc2626',
-  border: '1px solid #dc2626',
+  color: 'var(--iac-error)',
+  border: '1px solid var(--iac-error)',
   borderRadius: '4px',
   cursor: 'pointer',
   fontWeight: 600,
@@ -679,8 +679,8 @@ const dangerButtonStyle: React.CSSProperties = {
 const backButtonStyle: React.CSSProperties = {
   padding: '0.35rem 0.75rem',
   background: 'transparent',
-  color: '#213547',
-  border: '1px solid #d1d5db',
+  color: 'var(--iac-surface-elevated)',
+  border: '1px solid var(--iac-border)',
   borderRadius: '4px',
   cursor: 'pointer',
   fontWeight: 500,
@@ -691,8 +691,8 @@ const backButtonStyle: React.CSSProperties = {
 const codeBlockStyle: React.CSSProperties = {
   display: 'block',
   padding: '0.5rem 0.75rem',
-  background: '#1a1a2e',
-  color: '#e2e8f0',
+  background: 'var(--iac-code-bg)',
+  color: 'var(--iac-code-text)',
   borderRadius: '4px',
   fontSize: '0.8rem',
   overflowX: 'auto',
