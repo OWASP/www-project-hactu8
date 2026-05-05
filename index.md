@@ -9,8 +9,6 @@ pitch: Preparing for autonomous systems at scale — OWASP HACTU8 is a security 
 
 ---
 
-# HACTU8
-
 ## Overview
 
 HACTU8 is an OWASP Incubator Project focused on advancing security testing for modern, interconnected systems. The platform supports ethical hacking, validation, and assurance across environments that combine artificial intelligence, Internet of Things (IoT), robotics, and distributed software systems.
