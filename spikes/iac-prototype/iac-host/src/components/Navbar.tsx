@@ -60,7 +60,6 @@ const Navbar: React.FC<NavbarProps> = ({
       display: 'flex',
       alignItems: 'center',
       padding: '0 2rem',
-      borderBottom: '1px solid var(--iac-border)',
       position: 'relative',
       transition: 'background-color 0.3s ease',
     }}>

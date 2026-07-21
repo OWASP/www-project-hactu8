@@ -188,6 +188,8 @@ class OwaspFetcher:
         Returns:
             List of file/directory entries
         """
+        # Strip trailing slashes to avoid GitHub API 302 redirects
+        path = path.rstrip("/")
         url = f"{self.base_url}/repos/{owner}/{repo}/contents/{path}"
 
         async with httpx.AsyncClient() as client:

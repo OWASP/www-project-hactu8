@@ -1,0 +1,13 @@
+# Core demo (run_demo.py) needs NOTHING beyond the Python standard library.
+#
+# The extras below are only for the optional live-server path and the optional
+# real-OpenAI backend. Install what you need:
+#
+#   pip install -r requirements.txt          # everything
+#   pip install flask requests               # live two-terminal server demo
+#   pip install openai                        # real OpenAI backend
+
+flask>=3.0
+requests>=2.31
+openai>=1.30
+pytest>=8.0

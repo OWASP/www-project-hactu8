@@ -24,6 +24,7 @@
   --iac-text: #e2e8f0;
   --iac-text-secondary: #94a3b8;
   --iac-border: #334155;
+  --iac-nav-border: #ffffff;
 
   /* Status colors */
   --iac-success: #22c55e;
@@ -75,7 +76,7 @@ body {
   padding: 1rem 2rem;
   height: 72px;
   background: var(--iac-surface-elevated);
-  box-shadow: 0 2px 8px 0 #e5e7eb;
+  /* box-shadow: 0 2px 8px 0 #e5e7eb; */
   z-index: 10;
 }
 
@@ -113,6 +114,11 @@ body {
   width: 28px;
   height: 28px;
   fill: currentColor;
+}
+
+nav {
+  border-top: 1px solid var(--iac-nav-border);
+  border-bottom: 1px solid var(--iac-nav-border);
 }
 
 h1 {

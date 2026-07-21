@@ -17,16 +17,16 @@ export const environmentConfigs: Record<Environment, EnvironmentConfig> = {
   development: {
     name: 'development',
     displayName: 'Development',
-    message: 'Running in Development Environment',
+    message: 'Development',
     messageType: 'success',
-    navbarColor: '#d1fae5', // Light green
-    navbarTextColor: '#065f46', // Dark green
+    navbarColor: '#047857', // Dark emerald green
+    navbarTextColor: '#ffffff', // White
     showOnLoad: true,
   },
   test: {
     name: 'test',
     displayName: 'Test',
-    message: 'Running in Test Environment',
+    message: 'Test',
     messageType: 'warning',
     navbarColor: '#fef3c7', // Light yellow
     navbarTextColor: '#92400e', // Dark orange
@@ -35,7 +35,7 @@ export const environmentConfigs: Record<Environment, EnvironmentConfig> = {
   staging: {
     name: 'staging',
     displayName: 'Staging',
-    message: 'Running in Staging Environment - Use with caution',
+    message: 'Staging - Use with caution',
     messageType: 'warning',
     navbarColor: '#fed7aa', // Light orange
     navbarTextColor: '#7c2d12', // Dark orange
@@ -53,7 +53,7 @@ export const environmentConfigs: Record<Environment, EnvironmentConfig> = {
   local: {
     name: 'local',
     displayName: 'Local',
-    message: 'Running on Local Machine',
+    message: 'Local Machine',
     messageType: 'info',
     navbarColor: '#dbeafe', // Light blue
     navbarTextColor: '#1e40af', // Dark blue
