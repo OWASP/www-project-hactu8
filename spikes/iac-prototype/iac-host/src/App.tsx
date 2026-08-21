@@ -49,6 +49,7 @@ import SkillsExplorer from './pages/SkillsExplorer';
 import AgentsCreator from './pages/AgentsCreator';
 import AgentsInstalled from './pages/AgentsInstalled';
 import AgentsExplorer from './pages/AgentsExplorer';
+import AgentDefinitionsPreview from './pages/AgentDefinitionsPreview';
 import CreateNewResource from './pages/CreateNewResource';
 import Library from './pages/Library';
 import LibraryArticles from './pages/LibraryArticles';
@@ -141,6 +142,7 @@ const AppContent: React.FC = () => {
                 <Route path="/agents/catalog/creator" element={<AgentsCreator />} />
                 <Route path="/agents/catalog/installed" element={<AgentsInstalled />} />
                 <Route path="/agents/catalog/explorer" element={<AgentsExplorer />} />
+                <Route path="/agents/definitions" element={<AgentDefinitionsPreview />} />
                 <Route path="/create-new-resource" element={<CreateNewResource />} />
               </Routes>
             </div>

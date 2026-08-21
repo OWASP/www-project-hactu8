@@ -117,6 +117,9 @@ const Sidebar = () => {
         ...(flags.agents.catalog?.enabled && flags.agents.catalog.explorer
           ? [{ path: '/agents/catalog/explorer', label: 'Explorer', icon: icons.agents }]
           : []),
+        ...(flags.agents.definitionsPreview
+          ? [{ path: '/agents/definitions', label: 'Definitions (Preview)', icon: icons.agents }]
+          : []),
       ],
     }] : []),
     {

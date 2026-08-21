@@ -65,6 +65,11 @@ export interface FeatureFlags {
       installed: boolean;
       explorer: boolean;
     };
+    // MVP placeholder/preview only — no backend behind this yet. Previews the
+    // phase-2 concept of schedulable/autonomous Agent *definitions* (trigger,
+    // approval policy, which skills it orchestrates), distinct from the
+    // single hardcoded engagement runner at /agents today.
+    definitionsPreview: boolean;
   };
   other: {
     users: boolean;
@@ -143,6 +148,7 @@ export const defaultFeatureFlags: FeatureFlags = {
       installed: true,
       explorer: true,
     },
+    definitionsPreview: true,
   },
   other: {
     users: true,
@@ -212,6 +218,7 @@ export const loadFeatureFlags = (): FeatureFlags => {
             installed: p.agents?.catalog?.installed ?? defaultFeatureFlags.agents.catalog.installed,
             explorer:  p.agents?.catalog?.explorer  ?? defaultFeatureFlags.agents.catalog.explorer,
           },
+          definitionsPreview: p.agents?.definitionsPreview ?? defaultFeatureFlags.agents.definitionsPreview,
         },
         other: {
           users: p.other?.users ?? defaultFeatureFlags.other.users,

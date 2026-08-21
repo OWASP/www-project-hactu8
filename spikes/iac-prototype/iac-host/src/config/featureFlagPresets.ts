@@ -67,6 +67,7 @@ export const fullAccessPreset: FeatureFlags = {
       installed: true,
       explorer: true,
     },
+    definitionsPreview: true,
   },
   other: {
     users: true,
@@ -143,6 +144,7 @@ export const minimalPreset: FeatureFlags = {
       installed: false,
       explorer: false,
     },
+    definitionsPreview: false,
   },
   other: {
     users: false,
@@ -219,6 +221,7 @@ export const testingFocusPreset: FeatureFlags = {
       installed: false,
       explorer: false,
     },
+    definitionsPreview: false,
   },
   other: {
     users: false,
@@ -295,6 +298,7 @@ export const developerPreset: FeatureFlags = {
       installed: true,
       explorer: true,
     },
+    definitionsPreview: true,
   },
   other: {
     users: true,
@@ -371,6 +375,7 @@ export const securityFocusPreset: FeatureFlags = {
       installed: true,
       explorer: true,
     },
+    definitionsPreview: true,
   },
   other: {
     users: true,
