@@ -103,6 +103,15 @@ const Sidebar = () => {
         ...(flags.navigation.console ? [{ path: '/console', label: 'Console', icon: icons.console }] : []),
       ],
     },
+    // Skills group — create, install, and browse curated Assurance Center skills
+    ...(flags.skills?.enabled ? [{
+      heading: 'Skills',
+      items: [
+        ...(flags.skills.creator ? [{ path: '/skills/creator', label: 'Creator', icon: icons.skills }] : []),
+        ...(flags.skills.installed ? [{ path: '/skills/installed', label: 'Installed', icon: icons.skills }] : []),
+        ...(flags.skills.explorer ? [{ path: '/skills/explorer', label: 'Explorer', icon: icons.skills }] : []),
+      ],
+    }] : []),
     // Agents group sits at the top — root-level first-class feature
     ...(flags.agents?.enabled ? [{
       heading: 'Agents',
@@ -174,15 +183,6 @@ const Sidebar = () => {
     ...((extensionNavByGroup['Tools'] ?? []).length > 0 ? [{
       heading: 'Tools',
       items: extensionNavByGroup['Tools'],
-    }] : []),
-    // Skills group — create, install, and browse curated Assurance Center skills
-    ...(flags.skills?.enabled ? [{
-      heading: 'Skills',
-      items: [
-        ...(flags.skills.creator ? [{ path: '/skills/creator', label: 'Creator', icon: icons.skills }] : []),
-        ...(flags.skills.installed ? [{ path: '/skills/installed', label: 'Installed', icon: icons.skills }] : []),
-        ...(flags.skills.explorer ? [{ path: '/skills/explorer', label: 'Explorer', icon: icons.skills }] : []),
-      ],
     }] : []),
     {
       heading: 'Reporting',
