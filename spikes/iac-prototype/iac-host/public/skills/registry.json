@@ -1,0 +1,73 @@
+{
+  "version": "1.0.0",
+  "generatedAt": "2026-01-01T00:00:00Z",
+  "curator": "OWASP HACTU8 Skills Board",
+  "skills": [
+    {
+      "manifest": {
+        "id": "owasp-llm-top10-review",
+        "name": "OWASP LLM Top 10 Review",
+        "version": "0.1.0",
+        "description": "Systematically reviews an AI application against the OWASP Top 10 for LLM Applications and produces a severity-ranked finding list.",
+        "author": "OWASP HACTU8 Project",
+        "license": "Apache-2.0",
+        "category": "assurance-testing",
+        "tags": [
+          "owasp",
+          "llm",
+          "review",
+          "top10"
+        ],
+        "allowedTools": [
+          "grep_search",
+          "read_file",
+          "semantic_search"
+        ],
+        "minHostVersion": "0.1.0",
+        "resultSchema": "assurance-test-run"
+      },
+      "content": "---\nname: OWASP LLM Top 10 Review\ndescription: Use when reviewing an AI application's architecture or code against the OWASP Top 10 for LLM Applications, to systematically flag risks like prompt injection, insecure output handling, and excessive agency.\n---\n\n# OWASP LLM Top 10 Review\n\n## Instructions\n\n1. Identify the LLM application's trust boundaries: where user input enters, where the model output is consumed, and what tools/plugins the model can invoke.\n2. Walk through each OWASP LLM Top 10 category (LLM01-LLM10) and note whether it applies to the reviewed system.\n3. For each applicable risk, cite the specific code path or configuration and describe the concrete exploit scenario.\n4. Recommend a mitigation for each finding, referencing the relevant Assurance Center testing extension when one exists (e.g. Prompt Injection Tester, Insecure Output Filter, Excessive Agency Validator).\n5. Summarize findings as a severity-ranked list suitable for the Assurance Results view.\n\n## Resources\n\n- `reference/owasp-llm-top10.md` - category descriptions and example attack patterns\n",
+      "signature": {
+        "algorithm": "sha256",
+        "digest": "f47eecc5176f48af14b66be4746443cda093fc9305130481c4f2c5f2731622cc",
+        "curatedBy": "OWASP HACTU8 Skills Board",
+        "signedAt": "2026-01-01T00:00:00Z",
+        "verified": true
+      },
+      "publishedAt": "2026-01-01T00:00:00Z",
+      "updatedAt": "2026-01-01T00:00:00Z"
+    },
+    {
+      "manifest": {
+        "id": "iac-remediation-playbook",
+        "name": "IAC Remediation Playbook",
+        "version": "0.1.0",
+        "description": "Turns Assurance Center test failures into a prioritized, actionable remediation plan.",
+        "author": "OWASP HACTU8 Project",
+        "license": "Apache-2.0",
+        "category": "remediation",
+        "tags": [
+          "remediation",
+          "assurance",
+          "triage"
+        ],
+        "allowedTools": [
+          "read_file",
+          "grep_search"
+        ],
+        "minHostVersion": "0.1.0",
+        "resultSchema": "remediation-plan"
+      },
+      "content": "---\nname: IAC Remediation Playbook\ndescription: Use after an Assurance Center test run reports failures, to turn raw findings into a prioritized, actionable remediation plan.\n---\n\n# IAC Remediation Playbook\n\n## Instructions\n\n1. Read the TestRunResult summary and per-test results from the Assurance Results view (or exported JSON).\n2. Group failed/error results by root cause rather than by test name.\n3. For each root cause, propose the smallest safe code or configuration change that resolves it.\n4. Flag any finding that requires a follow-up test run (e.g. re-run Prompt Injection Tester) once the fix lands.\n5. Produce a short remediation plan ordered by severity, with owners left as TODO placeholders.\n\n## Resources\n\n- `reference/remediation-template.md` - the output template used for the final plan\n",
+      "signature": {
+        "algorithm": "sha256",
+        "digest": "fb2a87e1216830fd4751b105066712b291aa59bd2b9656c2c732db50b0b58284",
+        "curatedBy": "OWASP HACTU8 Skills Board",
+        "signedAt": "2026-01-01T00:00:00Z",
+        "verified": true
+      },
+      "publishedAt": "2026-01-01T00:00:00Z",
+      "updatedAt": "2026-01-01T00:00:00Z"
+    }
+  ]
+}
