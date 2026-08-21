@@ -3,5 +3,4 @@
 
 ### Core Team
 
-* [Keith Rambo](keithrambo)
 * [Mr. H](Mr-H)
