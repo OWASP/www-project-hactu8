@@ -1,7 +1,6 @@
 """FastAPI router for IAC agent engagement endpoints."""
 
 import json
-import os
 from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, Optional
@@ -18,11 +17,11 @@ from agents.models import (
 )
 from agents.phase1_planning import KickOffAgent, ReconAgent, RiskAssessmentAgent
 from skills.registry import skill_registry
+from iac_paths import IAC_HOME
 
 router = APIRouter(prefix="/agents", tags=["agents"])
 
 # Engagement state storage directory
-IAC_HOME = Path(os.path.expanduser("~/.iac"))
 ENGAGEMENTS_DIR = IAC_HOME / "engagements"
 
 # In-memory approval events: engagement_id -> asyncio.Event

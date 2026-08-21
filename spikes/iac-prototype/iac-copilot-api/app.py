@@ -19,6 +19,7 @@ from services.rag_service import RAGService
 from services.owasp_fetcher import OwaspFetcher
 from services.url_fetcher import URLFetcher
 from agents.router import router as agents_router
+from skill_packages.router import router as skill_packages_router
 
 
 # In-memory document store (replace with database in production)
@@ -70,6 +71,7 @@ app.add_middleware(
 )
 
 app.include_router(agents_router, prefix="/api")
+app.include_router(skill_packages_router, prefix="/api")
 
 
 class URLAddRequest(BaseModel):

@@ -12,6 +12,7 @@ import { CopilotProvider } from './contexts/CopilotContext';
 import { ModelProviderProvider } from './contexts/ModelProviderContext';
 import { ExtensionProvider } from './contexts/ExtensionContext';
 import { SkillProvider } from './contexts/SkillContext';
+import { SkillPackageProvider } from './contexts/SkillPackageContext';
 import { AgentProvider } from './contexts/AgentContext';
 import { AgentCatalogProvider } from './contexts/AgentCatalogContext';
 import { RegistryProvider } from './contexts/RegistryContext';
@@ -162,15 +163,17 @@ function App() {
           <CopilotProvider>
             <ExtensionProvider>
               <SkillProvider>
-                <AgentProvider>
-                  <AgentCatalogProvider>
-                    <RegistryProvider>
-                      <ThemeProvider>
-                        <AppContent />
-                      </ThemeProvider>
-                    </RegistryProvider>
-                  </AgentCatalogProvider>
-                </AgentProvider>
+                <SkillPackageProvider>
+                  <AgentProvider>
+                    <AgentCatalogProvider>
+                      <RegistryProvider>
+                        <ThemeProvider>
+                          <AppContent />
+                        </ThemeProvider>
+                      </RegistryProvider>
+                    </AgentCatalogProvider>
+                  </AgentProvider>
+                </SkillPackageProvider>
               </SkillProvider>
             </ExtensionProvider>
           </CopilotProvider>

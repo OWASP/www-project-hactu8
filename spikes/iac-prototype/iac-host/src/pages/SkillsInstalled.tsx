@@ -4,12 +4,15 @@
 // from the Explorer, and local drafts saved from the Skills Creator.
 import React, { useCallback, useState } from 'react';
 import { useSkills } from '../contexts/SkillContext';
+import { useFeatureFlags } from '../contexts/FeatureFlagContext';
 import skillService from '../services/skillService';
 import type { InstalledSkill } from '../types/skills';
+import AgentSkillPackagesPanel from '../components/Skills/AgentSkillPackagesPanel';
 import {
   Badge,
   SignatureBadge,
   InfoField,
+  TabButton,
   CATEGORY_LABELS,
   sidebarStyle,
   mainStyle,
@@ -20,8 +23,66 @@ import {
 
 const SkillsInstalled: React.FC = () => {
   const { installed, uninstallSkill } = useSkills();
+  const { flags } = useFeatureFlags();
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
+  const [activeTab, setActiveTab] = useState<'legacy' | 'agentSkills'>('legacy');
+
+  if (flags.skills.agentPackages) {
+    return (
+      <div style={{ padding: '1.5rem 2rem', height: '100%', overflowY: 'auto' }}>
+        <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1rem', maxWidth: 400 }}>
+          <TabButton label="Legacy Skills" active={activeTab === 'legacy'} onClick={() => setActiveTab('legacy')} />
+          <TabButton label="Agent Skills" active={activeTab === 'agentSkills'} onClick={() => setActiveTab('agentSkills')} />
+        </div>
+        <p style={{ color: 'var(--iac-muted)', fontSize: '0.75rem', marginBottom: '1.25rem' }}>
+          These are two independent systems — installing or uninstalling in one has no effect on the other.
+        </p>
+        {activeTab === 'agentSkills' ? (
+          <AgentSkillPackagesPanel />
+        ) : (
+          <LegacySkillsInstalled
+            installed={installed}
+            uninstallSkill={uninstallSkill}
+            selectedId={selectedId}
+            setSelectedId={setSelectedId}
+            copied={copied}
+            setCopied={setCopied}
+          />
+        )}
+      </div>
+    );
+  }
+
+  return (
+    <LegacySkillsInstalled
+      installed={installed}
+      uninstallSkill={uninstallSkill}
+      selectedId={selectedId}
+      setSelectedId={setSelectedId}
+      copied={copied}
+      setCopied={setCopied}
+    />
+  );
+};
+
+interface LegacySkillsInstalledProps {
+  installed: InstalledSkill[];
+  uninstallSkill: (id: string) => void;
+  selectedId: string | null;
+  setSelectedId: (id: string | null) => void;
+  copied: boolean;
+  setCopied: (copied: boolean) => void;
+}
+
+const LegacySkillsInstalled: React.FC<LegacySkillsInstalledProps> = ({
+  installed,
+  uninstallSkill,
+  selectedId,
+  setSelectedId,
+  copied,
+  setCopied,
+}) => {
 
   const selected = installed.find((s) => s.manifest.id === selectedId) ?? null;
 

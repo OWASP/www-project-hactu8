@@ -55,6 +55,7 @@ export const fullAccessPreset: FeatureFlags = {
     creator: true,
     installed: true,
     explorer: true,
+    agentPackages: true,
   },
   agents: {
     enabled: true,
@@ -132,6 +133,7 @@ export const minimalPreset: FeatureFlags = {
     creator: false,
     installed: false,
     explorer: false,
+    agentPackages: false,
   },
   agents: {
     enabled: false,
@@ -209,6 +211,7 @@ export const testingFocusPreset: FeatureFlags = {
     creator: true,
     installed: true,
     explorer: true,
+    agentPackages: true,
   },
   agents: {
     enabled: false,
@@ -286,6 +289,7 @@ export const developerPreset: FeatureFlags = {
     creator: true,
     installed: true,
     explorer: true,
+    agentPackages: true,
   },
   agents: {
     enabled: true,
@@ -363,6 +367,7 @@ export const securityFocusPreset: FeatureFlags = {
     creator: false,
     installed: true,
     explorer: true,
+    agentPackages: true,
   },
   agents: {
     enabled: true,

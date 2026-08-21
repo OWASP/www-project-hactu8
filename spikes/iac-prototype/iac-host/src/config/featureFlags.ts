@@ -51,6 +51,9 @@ export interface FeatureFlags {
     creator: boolean;
     installed: boolean;
     explorer: boolean;
+    // Real, filesystem-backed Skill Packages (agentskills.io spec) tab on
+    // the Installed page — distinct from the legacy skills above.
+    agentPackages: boolean;
   };
   agents: {
     enabled: boolean;
@@ -136,6 +139,7 @@ export const defaultFeatureFlags: FeatureFlags = {
     creator: true,
     installed: true,
     explorer: true,
+    agentPackages: true,
   },
   agents: {
     enabled: true,
