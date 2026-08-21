@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
+import { getCannedProject } from '../data/cannedProjects';
+import { useModelProvider } from '../contexts/ModelProviderContext';
 
 const mockProjects: Record<string, any> = {
   'red-team': {
@@ -131,10 +133,150 @@ function FeaturePanel({ project, feature }: { project: any, feature: string }) {
   }
 }
 
+// ---------------------------------------------------------------------------
+// Canned Projects — the 10 original point-solution testers, reframed as
+// pre-scoped starter Projects. See src/data/cannedProjects.tsx for the
+// metadata and the underlying tester component/route each one wraps.
+// ---------------------------------------------------------------------------
+
+const CANNED_TABS = [
+  { key: 'overview', label: 'Overview' },
+  { key: 'target', label: 'Target' },
+  { key: 'run', label: 'Run' },
+] as const;
+
+type CannedTabKey = typeof CANNED_TABS[number]['key'];
+
+function CannedProjectView({ cannedId }: { cannedId: string }) {
+  const project = getCannedProject(cannedId)!;
+  const [selected, setSelected] = useState<CannedTabKey>('overview');
+  // Target selection: this codebase doesn't yet have the Registry inventory
+  // (types/registry.ts / RegistryContext / useRegistry()) checked into this
+  // branch, so a canned Project's "target" is backed by the model provider
+  // configs that already exist (ModelProviderContext). Swap this for
+  // useRegistry() once the Registry inventory lands — the Target tab below
+  // is the integration point.
+  const { configs, defaultConfigId, setDefaultConfig } = useModelProvider();
+  const [targetId, setTargetId] = useState<string | undefined>(defaultConfigId);
+  const selectedTarget = configs.find((c) => c.id === targetId);
+
+  return (
+    <div style={{ display: 'flex', padding: 32, minHeight: '60vh', borderRadius: 8, boxShadow: '0 2px 8px rgba(0,0,0,0.07)' }}>
+      <aside style={{ width: 300, borderRight: '1px solid var(--iac-border)', padding: '1rem 1rem' }}>
+        <h3 style={{ marginBottom: 4 }}>{project.name}</h3>
+        <div style={{ fontSize: 12, color: 'var(--iac-text-secondary)', marginBottom: '1rem' }}>
+          Starter Project &middot; {project.category}
+        </div>
+        <nav>
+          <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
+            {CANNED_TABS.map((t) => (
+              <li key={t.key}>
+                <button
+                  style={{
+                    width: '100%',
+                    padding: '1rem 2rem',
+                    background: selected === t.key ? 'var(--iac-surface-elevated)' : 'none',
+                    border: 'none',
+                    textAlign: 'left',
+                    fontWeight: selected === t.key ? 600 : 400,
+                    cursor: 'pointer',
+                    outline: 'none',
+                    transition: 'background 0.2s, border-left 0.2s',
+                  }}
+                  onClick={() => setSelected(t.key)}
+                >
+                  {t.label}
+                </button>
+              </li>
+            ))}
+          </ul>
+        </nav>
+        <div style={{ marginTop: '2rem', fontSize: 12 }}>
+          <Link to={project.route} style={{ color: 'var(--iac-link, var(--iac-accent))' }}>
+            Open standalone page &rarr;
+          </Link>
+        </div>
+      </aside>
+      <main style={{ flex: 1, padding: '2rem 3rem' }}>
+        {selected === 'overview' && (
+          <div>
+            <h3>Overview</h3>
+            <p>{project.description}</p>
+            <ul>
+              <li><b>Category:</b> {project.category}</li>
+              <li><b>Standalone route:</b> <code>{project.route}</code></li>
+              <li><b>Target:</b> {selectedTarget ? `${selectedTarget.providerId} / ${selectedTarget.model}` : 'None selected'}</li>
+            </ul>
+            <p style={{ color: 'var(--iac-text-secondary)' }}>
+              This is a pre-scoped starter Project: it bundles a fixed test script with the tester below, so you can
+              run it immediately. Pick a target on the Target tab, then switch to Run to execute the test.
+            </p>
+          </div>
+        )}
+        {selected === 'target' && (
+          <div>
+            <h3>Target</h3>
+            {configs.length === 0 ? (
+              <p style={{ color: 'var(--iac-text-secondary)' }}>
+                No model provider targets are configured yet. Add one from Settings to point this starter Project at
+                a specific model/provider.
+              </p>
+            ) : (
+              <>
+                <p style={{ color: 'var(--iac-text-secondary)' }}>
+                  Optional: choose which configured target this Project's tests should run against.
+                </p>
+                <ul style={{ listStyle: 'none', padding: 0 }}>
+                  {configs.map((c) => (
+                    <li key={c.id} style={{ marginBottom: 8 }}>
+                      <label style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer' }}>
+                        <input
+                          type="radio"
+                          name="canned-project-target"
+                          checked={targetId === c.id}
+                          onChange={() => {
+                            setTargetId(c.id);
+                            setDefaultConfig(c.id);
+                          }}
+                        />
+                        <span>{c.providerId} / {c.model}</span>
+                      </label>
+                    </li>
+                  ))}
+                </ul>
+              </>
+            )}
+          </div>
+        )}
+        {selected === 'run' && (
+          <div>
+            <h3>Run</h3>
+            <div
+              style={{
+                border: '1px solid var(--iac-border)',
+                borderRadius: 8,
+                padding: '1rem',
+                background: 'var(--iac-surface)',
+              }}
+            >
+              <project.Component />
+            </div>
+          </div>
+        )}
+      </main>
+    </div>
+  );
+}
+
 const Project = () => {
   const { projectId } = useParams();
   const project = projectId && mockProjects[projectId] ? mockProjects[projectId] : null;
+  const cannedProject = !project && projectId ? getCannedProject(projectId) : undefined;
   const [selected, setSelected] = useState(project?.features[0]?.key || 'prompts');
+
+  if (cannedProject) {
+    return <CannedProjectView cannedId={cannedProject.id} />;
+  }
 
   if (!project) {
     return <div style={{ padding: 32 }}><h3>Project not found</h3></div>;

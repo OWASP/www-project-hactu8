@@ -50,11 +50,23 @@ export const fullAccessPreset: FeatureFlags = {
     assuranceResults: true,
     reports: true,
   },
+  skills: {
+    enabled: true,
+    creator: true,
+    installed: true,
+    explorer: true,
+  },
   agents: {
     enabled: true,
     phases: true,
     skills: true,
     mcpClients: false,
+    catalog: {
+      enabled: true,
+      creator: true,
+      installed: true,
+      explorer: true,
+    },
   },
   other: {
     users: true,
@@ -114,11 +126,23 @@ export const minimalPreset: FeatureFlags = {
     assuranceResults: false,
     reports: false,
   },
+  skills: {
+    enabled: false,
+    creator: false,
+    installed: false,
+    explorer: false,
+  },
   agents: {
     enabled: false,
     phases: false,
     skills: false,
     mcpClients: false,
+    catalog: {
+      enabled: false,
+      creator: false,
+      installed: false,
+      explorer: false,
+    },
   },
   other: {
     users: false,
@@ -178,11 +202,23 @@ export const testingFocusPreset: FeatureFlags = {
     assuranceResults: true,
     reports: true,
   },
+  skills: {
+    enabled: true,
+    creator: true,
+    installed: true,
+    explorer: true,
+  },
   agents: {
     enabled: false,
     phases: false,
     skills: false,
     mcpClients: false,
+    catalog: {
+      enabled: false,
+      creator: false,
+      installed: false,
+      explorer: false,
+    },
   },
   other: {
     users: false,
@@ -242,11 +278,23 @@ export const developerPreset: FeatureFlags = {
     assuranceResults: false,
     reports: false,
   },
+  skills: {
+    enabled: true,
+    creator: true,
+    installed: true,
+    explorer: true,
+  },
   agents: {
     enabled: true,
     phases: true,
     skills: true,
     mcpClients: false,
+    catalog: {
+      enabled: true,
+      creator: true,
+      installed: true,
+      explorer: true,
+    },
   },
   other: {
     users: true,
@@ -306,11 +354,23 @@ export const securityFocusPreset: FeatureFlags = {
     assuranceResults: true,
     reports: true,
   },
+  skills: {
+    enabled: true,
+    creator: false,
+    installed: true,
+    explorer: true,
+  },
   agents: {
     enabled: true,
     phases: true,
     skills: false,
     mcpClients: false,
+    catalog: {
+      enabled: true,
+      creator: false,
+      installed: true,
+      explorer: true,
+    },
   },
   other: {
     users: true,

@@ -124,6 +124,33 @@ class BaseAgent:
 
                 # Approval gate for dangerous skills
                 if skill_registry.is_approval_required(tool_name):
+                    # Integrity check first: a "protected" skill (see
+                    # skills/registry.py) whose recomputed digest no longer
+                    # matches what was recorded/signed at registration is
+                    # treated as tampered and halts immediately, with a
+                    # distinct event/message from the generic approval-gate
+                    # halt below — this is a different failure mode (content
+                    # can't be trusted at all) from "content is trusted but
+                    # needs a human to say go ahead."
+                    integrity = skill_registry.verify_integrity(tool_name)
+                    if integrity["protected"] and not integrity["passed"]:
+                        yield {
+                            "type": "integrity_failure",
+                            "tool_name": tool_name,
+                            "expected_digest": integrity.get("expected_digest"),
+                            "actual_digest": integrity.get("actual_digest"),
+                            "message": integrity["message"],
+                        }
+                        yield {
+                            "type": "error",
+                            "message": (
+                                f"Integrity verification failed for protected skill '{tool_name}' — "
+                                "its content does not match the digest recorded when it was registered. "
+                                "Refusing to execute a possibly-tampered skill. Halting run."
+                            ),
+                        }
+                        return
+
                     approval_ctx = ApprovalContext(
                         level="tool",
                         tool_name=tool_name,

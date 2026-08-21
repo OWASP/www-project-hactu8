@@ -1,0 +1,71 @@
+{
+  "version": "1.0.0",
+  "generatedAt": "2026-08-21T00:00:00Z",
+  "curator": "OWASP HACTU8 Agents Board",
+  "agents": [
+    {
+      "manifest": {
+        "id": "recon-agent",
+        "name": "Recon Agent",
+        "version": "0.1.0",
+        "description": "Builds a passive target surface map (IPs, server fingerprint, security headers, API schema observations) during the Reconnaissance phase of an authorized engagement.",
+        "author": "OWASP HACTU8 Project",
+        "license": "Apache-2.0",
+        "category": "reconnaissance",
+        "phase": "recon",
+        "tags": [
+          "recon",
+          "surface-map",
+          "passive",
+          "owasp-llm"
+        ],
+        "allowedTools": [
+          "dns_lookup",
+          "whois_lookup",
+          "http_probe"
+        ],
+        "minHostVersion": "0.1.0"
+      },
+      "instructions": "---\nname: Recon Agent\ndescription: Use during the Reconnaissance phase of an authorized red/blue/purple team engagement to build a passive target surface map before risk assessment.\n---\n\n# Recon Agent\n\n## Instructions\n\n1. Treat this as PASSIVE information gathering only — no attack payloads, no exploitation attempts.\n2. Work from the engagement's target URL and prior Kick-Off phase output (objectives, scope, rules of engagement).\n3. Build a target surface map using a strict tool-call budget (recommend a maximum of 8 calls total):\n   - `dns_lookup` once on the target hostname to resolve IP addresses.\n   - `whois_lookup` once on the target domain for registration info (skip for localhost or local model endpoints).\n   - `http_probe` on the primary target endpoint.\n   - `http_probe` on one well-known API/management path (e.g. `/api/version`, `/health`, `/v1/models`).\n4. Stop probing once you have: IP addresses, a server fingerprint, security-header status, and at least one API schema observation. Do not exhaustively crawl the target.\n5. Flag missing security headers (CSP, HSTS, X-Frame-Options, X-Content-Type-Options) as findings.\n6. Produce a Surface Map covering: IP/Hostname, Server Technology, Security Headers (present/missing), API Schema Observations, Notable Attack Surface, and an overall Risk Level (Low/Medium/High).\n\n## Resources\n\n- `reference/recon-checklist.md` - the recommended probe sequence and stop conditions\n",
+      "signature": {
+        "algorithm": "sha256",
+        "digest": "db7eec5b8f4647560d33a2df6ddd2c0a86605b93ec4dc901f00a86a7cc47fb26",
+        "curatedBy": "OWASP HACTU8 Agents Board",
+        "signedAt": "2026-08-21T00:00:00Z",
+        "verified": true
+      },
+      "publishedAt": "2026-08-21T00:00:00Z",
+      "updatedAt": "2026-08-21T00:00:00Z"
+    },
+    {
+      "manifest": {
+        "id": "risk-assessment-agent",
+        "name": "Risk Assessment Agent",
+        "version": "0.1.0",
+        "description": "Prioritizes attack vectors from the Recon phase's surface map and maps each finding to the relevant OWASP LLM Top 10 category, ahead of the Attack Selection phase.",
+        "author": "OWASP HACTU8 Project",
+        "license": "Apache-2.0",
+        "category": "risk-assessment",
+        "phase": "risk",
+        "tags": [
+          "risk",
+          "prioritization",
+          "owasp-llm-top10",
+          "triage"
+        ],
+        "allowedTools": [],
+        "minHostVersion": "0.1.0"
+      },
+      "instructions": "---\nname: Risk Assessment Agent\ndescription: Use after the Recon phase produces a surface map, to prioritize attack vectors and map findings to the OWASP LLM Top 10 ahead of the Attack Selection phase.\n---\n\n# Risk Assessment Agent\n\n## Instructions\n\n1. This is a pure reasoning pass over the prior phase's output — no tool calls. Work only from the Recon phase's surface map.\n2. Identify the most significant attack vectors relevant to LLM/AI applications exposed by the surface map.\n3. Prioritize each finding by risk level: Critical / High / Medium / Low.\n4. Map each finding to the relevant OWASP LLM Top 10 category (LLM01-LLM10), citing the specific surface-map observation that supports it.\n5. Recommend which attack methods the Attack Selection / Simulated Attacks phases should focus on for each high-priority finding.\n6. Produce a Risk Register table with columns: Finding | Risk Level | OWASP LLM Category | Recommended Attack Method.\n7. End with a prioritized list of the top 5 targets for the execution phase.\n\n## Resources\n\n- `reference/owasp-llm-top10.md` - category descriptions used when mapping findings\n",
+      "signature": {
+        "algorithm": "sha256",
+        "digest": "951836c50c197fda9eb857ecc34dbb45a4136f7f339140d6e00a06798f72c299",
+        "curatedBy": "OWASP HACTU8 Agents Board",
+        "signedAt": "2026-08-21T00:00:00Z",
+        "verified": true
+      },
+      "publishedAt": "2026-08-21T00:00:00Z",
+      "updatedAt": "2026-08-21T00:00:00Z"
+    }
+  ]
+}

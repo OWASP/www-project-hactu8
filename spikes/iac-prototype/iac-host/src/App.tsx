@@ -11,7 +11,10 @@ import { SystemMessageProvider, useSystemMessage } from './contexts/SystemMessag
 import { CopilotProvider } from './contexts/CopilotContext';
 import { ModelProviderProvider } from './contexts/ModelProviderContext';
 import { ExtensionProvider } from './contexts/ExtensionContext';
+import { SkillProvider } from './contexts/SkillContext';
 import { AgentProvider } from './contexts/AgentContext';
+import { AgentCatalogProvider } from './contexts/AgentCatalogContext';
+import { RegistryProvider } from './contexts/RegistryContext';
 import { getEffectiveConfig } from './config/environmentConfig';
 import { ThemeProvider, useTheme } from './contexts/ThemeContext';
 
@@ -40,6 +43,12 @@ import Settings from './pages/Settings';
 import Profile from './pages/Profile';
 import Extensions from './pages/Extensions';
 import ExtensionView from './pages/ExtensionView';
+import SkillsCreator from './pages/SkillsCreator';
+import SkillsInstalled from './pages/SkillsInstalled';
+import SkillsExplorer from './pages/SkillsExplorer';
+import AgentsCreator from './pages/AgentsCreator';
+import AgentsInstalled from './pages/AgentsInstalled';
+import AgentsExplorer from './pages/AgentsExplorer';
 import CreateNewResource from './pages/CreateNewResource';
 import Library from './pages/Library';
 import LibraryArticles from './pages/LibraryArticles';
@@ -126,6 +135,12 @@ const AppContent: React.FC = () => {
                 <Route path="/profile" element={<Profile />} />
                 <Route path="/extensions" element={<Extensions />} />
                 <Route path="/ext/:extensionId" element={<ExtensionView />} />
+                <Route path="/skills/creator" element={<SkillsCreator />} />
+                <Route path="/skills/installed" element={<SkillsInstalled />} />
+                <Route path="/skills/explorer" element={<SkillsExplorer />} />
+                <Route path="/agents/catalog/creator" element={<AgentsCreator />} />
+                <Route path="/agents/catalog/installed" element={<AgentsInstalled />} />
+                <Route path="/agents/catalog/explorer" element={<AgentsExplorer />} />
                 <Route path="/create-new-resource" element={<CreateNewResource />} />
               </Routes>
             </div>
@@ -144,11 +159,17 @@ function App() {
         <ModelProviderProvider>
           <CopilotProvider>
             <ExtensionProvider>
-              <AgentProvider>
-                <ThemeProvider>
-                  <AppContent />
-                </ThemeProvider>
-              </AgentProvider>
+              <SkillProvider>
+                <AgentProvider>
+                  <AgentCatalogProvider>
+                    <RegistryProvider>
+                      <ThemeProvider>
+                        <AppContent />
+                      </ThemeProvider>
+                    </RegistryProvider>
+                  </AgentCatalogProvider>
+                </AgentProvider>
+              </SkillProvider>
             </ExtensionProvider>
           </CopilotProvider>
         </ModelProviderProvider>

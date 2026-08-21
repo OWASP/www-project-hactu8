@@ -5,6 +5,7 @@ import './Sidebar.css'; // optional styling
 import { useFeatureFlags } from '../contexts/FeatureFlagContext';
 import { useExtensions } from '../contexts/ExtensionContext';
 import type { ExtensionCategory } from '../types/extensions';
+import { cannedProjects } from '../data/cannedProjects';
 
 // Placeholder SVG icons for demonstration
 const icons = {
@@ -24,6 +25,11 @@ const icons = {
   events: (
     <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
       <path d="M11 2L4 12h5l-1 6 7-10h-5l1-6z" fill="currentColor"/>
+    </svg>
+  ),
+  skills: (
+    <svg width="20" height="20" fill="none" viewBox="0 0 20 20" stroke="currentColor" strokeWidth="1.5">
+      <path d="M10 2l2.2 4.6 5 .7-3.6 3.5.9 5-4.5-2.4-4.5 2.4.9-5L2.8 7.3l5-.7z" strokeLinejoin="round"/>
     </svg>
   ),
 };
@@ -102,6 +108,15 @@ const Sidebar = () => {
       heading: 'Agents',
       items: [
         { path: '/agents', label: 'OWASP Test Orchestrator', icon: icons.agents },
+        ...(flags.agents.catalog?.enabled && flags.agents.catalog.creator
+          ? [{ path: '/agents/catalog/creator', label: 'Creator', icon: icons.agents }]
+          : []),
+        ...(flags.agents.catalog?.enabled && flags.agents.catalog.installed
+          ? [{ path: '/agents/catalog/installed', label: 'Installed', icon: icons.agents }]
+          : []),
+        ...(flags.agents.catalog?.enabled && flags.agents.catalog.explorer
+          ? [{ path: '/agents/catalog/explorer', label: 'Explorer', icon: icons.agents }]
+          : []),
       ],
     }] : []),
     {
@@ -138,18 +153,17 @@ const Sidebar = () => {
 
   const restGroups = [
     {
-      heading: 'Testing',
+      // The 10 original point-solution testers are now presented as pre-scoped
+      // "starter Projects" — each links to its canned Project view
+      // (/projects/:id) instead of its old standalone route. The standalone
+      // routes still exist and still work; this just changes where the
+      // sidebar sends you. Source of truth for these items lives in
+      // src/data/cannedProjects.tsx so Sidebar and Project.tsx stay in sync.
+      heading: 'Testing Projects',
       items: [
-        ...(flags.testing.promptInjection ? [{ path: '/prompt-injection', label: 'Prompt Injection Tester', icon: icons.assurance }] : []),
-        ...(flags.testing.trainingLeak ? [{ path: '/training-leak', label: 'Training Data Leak Detector', icon: icons.assurance }] : []),
-        ...(flags.testing.misbehaviorMonitor ? [{ path: '/misbehavior-monitor', label: 'Model Misbehavior Monitor', icon: icons.assurance }] : []),
-        ...(flags.testing.overrelianceRisk ? [{ path: '/overreliance-risk', label: 'Overreliance Risk Analyzer', icon: icons.assurance }] : []),
-        ...(flags.testing.agencyValidator ? [{ path: '/agency-validator', label: 'Excessive Agency Validator', icon: icons.assurance }] : []),
-        ...(flags.testing.insecureOutput ? [{ path: '/insecure-output', label: 'Insecure Output Filter', icon: icons.assurance }] : []),
-        ...(flags.testing.supplyChain ? [{ path: '/supply-chain', label: 'Supply Chain Trust Checker', icon: icons.assurance }] : []),
-        ...(flags.testing.modelIdentity ? [{ path: '/model-identity', label: 'Model Identity & Version Tracker', icon: icons.assurance }] : []),
-        ...(flags.testing.authContextAudit ? [{ path: '/auth-context-audit', label: 'Authorization & Context Audit', icon: icons.assurance }] : []),
-        ...(flags.testing.privacyCompliance ? [{ path: '/privacy-compliance', label: 'Model Privacy Compliance Scanner', icon: icons.assurance }] : []),
+        ...cannedProjects
+          .filter((p) => flags.testing[p.flagKey])
+          .map((p) => ({ path: `/projects/${p.id}`, label: p.name, icon: icons.assurance })),
         ...(extensionNavByGroup['Testing'] ?? []),
       ],
     },
@@ -157,6 +171,15 @@ const Sidebar = () => {
     ...((extensionNavByGroup['Tools'] ?? []).length > 0 ? [{
       heading: 'Tools',
       items: extensionNavByGroup['Tools'],
+    }] : []),
+    // Skills group — create, install, and browse curated Assurance Center skills
+    ...(flags.skills?.enabled ? [{
+      heading: 'Skills',
+      items: [
+        ...(flags.skills.creator ? [{ path: '/skills/creator', label: 'Creator', icon: icons.skills }] : []),
+        ...(flags.skills.installed ? [{ path: '/skills/installed', label: 'Installed', icon: icons.skills }] : []),
+        ...(flags.skills.explorer ? [{ path: '/skills/explorer', label: 'Explorer', icon: icons.skills }] : []),
+      ],
     }] : []),
     {
       heading: 'Reporting',
@@ -167,7 +190,7 @@ const Sidebar = () => {
       ],
     },
     {
-      heading: 'Other',
+      heading: 'Admin',
       items: [
         ...(flags.other.users ? [{ path: '/users', label: 'Users & Access', icon: icons.users }] : []),
         ...(extensionNavByGroup['Other'] ?? []),

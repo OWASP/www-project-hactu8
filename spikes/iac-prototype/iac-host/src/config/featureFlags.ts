@@ -46,11 +46,25 @@ export interface FeatureFlags {
     assuranceResults: boolean;
     reports: boolean;
   };
+  skills: {
+    enabled: boolean;
+    creator: boolean;
+    installed: boolean;
+    explorer: boolean;
+  };
   agents: {
     enabled: boolean;
     phases: boolean;
     skills: boolean;
     mcpClients: boolean;
+    // Agent Catalog sub-pages (Explorer/Installed/Creator) — distinct from
+    // the engagement-phase `skills` flag above. Mirrors `skills` below.
+    catalog: {
+      enabled: boolean;
+      creator: boolean;
+      installed: boolean;
+      explorer: boolean;
+    };
   };
   other: {
     users: boolean;
@@ -112,11 +126,23 @@ export const defaultFeatureFlags: FeatureFlags = {
     assuranceResults: true,
     reports: true,
   },
+  skills: {
+    enabled: true,
+    creator: true,
+    installed: true,
+    explorer: true,
+  },
   agents: {
     enabled: true,
     phases: true,
     skills: true,
     mcpClients: false,
+    catalog: {
+      enabled: true,
+      creator: true,
+      installed: true,
+      explorer: true,
+    },
   },
   other: {
     users: true,
@@ -141,7 +167,7 @@ export const isFeatureEnabled = (
   return categoryFlags?.[feature] ?? false;
 };
 
-const FLAGS_SCHEMA_VERSION = 3; // Increment when flag shape changes to bust stale localStorage
+const FLAGS_SCHEMA_VERSION = 4; // Increment when flag shape changes to bust stale localStorage
 
 // Helper to load feature flags from localStorage or environment
 export const loadFeatureFlags = (): FeatureFlags => {
@@ -174,11 +200,18 @@ export const loadFeatureFlags = (): FeatureFlags => {
         copilot:    { ...defaultFeatureFlags.copilot,    ...p.copilot },
         testing:    { ...defaultFeatureFlags.testing,    ...p.testing },
         reporting:  { ...defaultFeatureFlags.reporting,  ...p.reporting },
+        skills:     { ...defaultFeatureFlags.skills,     ...p.skills },
         agents: {
           enabled:    p.agents?.enabled    ?? defaultFeatureFlags.agents.enabled,
           phases:     p.agents?.phases     ?? defaultFeatureFlags.agents.phases,
           skills:     p.agents?.skills     ?? defaultFeatureFlags.agents.skills,
           mcpClients: p.agents?.mcpClients ?? defaultFeatureFlags.agents.mcpClients,
+          catalog: {
+            enabled:   p.agents?.catalog?.enabled   ?? defaultFeatureFlags.agents.catalog.enabled,
+            creator:   p.agents?.catalog?.creator   ?? defaultFeatureFlags.agents.catalog.creator,
+            installed: p.agents?.catalog?.installed ?? defaultFeatureFlags.agents.catalog.installed,
+            explorer:  p.agents?.catalog?.explorer  ?? defaultFeatureFlags.agents.catalog.explorer,
+          },
         },
         other: {
           users: p.other?.users ?? defaultFeatureFlags.other.users,
