@@ -2,9 +2,9 @@
 
 import os
 from typing import List, Dict, Any, Optional
-import httpx
 import openai
 from .vector_store import VectorStoreService
+from .llm_dispatch import call_model
 
 
 class RAGService:
@@ -45,70 +45,6 @@ Help users understand the HACTU8 project, its components, and how to work with i
     def __init__(self, vector_store: Optional[VectorStoreService] = None):
         self.vector_store = vector_store or VectorStoreService()
         self.openai_client = openai.OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
-
-    def _resolve_model(self, provider_id: Optional[str], model_id: Optional[str]) -> str:
-        if model_id:
-            return model_id
-
-        if provider_id in ("ollama", "foundry", "custom"):
-            return os.getenv("OPENAI_MODEL", "gpt-4o-mini")
-
-        if provider_id == "anthropic":
-            return os.getenv("ANTHROPIC_MODEL", "claude-3.5-sonnet")
-
-        return os.getenv("OPENAI_MODEL", "gpt-4o-mini")
-
-    def _get_openai_client(self, api_key: Optional[str], base_url: Optional[str]) -> openai.OpenAI:
-        resolved_key = api_key or os.getenv("OPENAI_API_KEY") or ""
-        if base_url:
-            return openai.OpenAI(api_key=resolved_key or "local", base_url=base_url)
-
-        return openai.OpenAI(api_key=resolved_key)
-
-    def _get_ollama_client(self, base_url: Optional[str]) -> openai.OpenAI:
-        resolved_base = (base_url or os.getenv("OLLAMA_BASE_URL") or "").strip()
-        if not resolved_base:
-            return openai.OpenAI(api_key="local")
-
-        if not resolved_base.endswith("/v1"):
-            resolved_base = f"{resolved_base.rstrip('/')}/v1"
-
-        return openai.OpenAI(api_key="local", base_url=resolved_base)
-
-    async def _call_anthropic(self, messages: List[Dict[str, str]], model: str, api_key: Optional[str]) -> str:
-        resolved_key = api_key or os.getenv("ANTHROPIC_API_KEY")
-        if not resolved_key:
-            raise ValueError("Anthropic API key is not configured")
-
-        system_parts = [m["content"] for m in messages if m["role"] == "system"]
-        system_prompt = "\n\n".join(system_parts).strip()
-        user_messages = [m for m in messages if m["role"] in ("user", "assistant")]
-
-        payload = {
-            "model": model,
-            "max_tokens": 1024,
-            "temperature": 0.7,
-            "messages": user_messages,
-        }
-        if system_prompt:
-            payload["system"] = system_prompt
-
-        headers = {
-            "x-api-key": resolved_key,
-            "anthropic-version": "2023-06-01",
-            "content-type": "application/json",
-        }
-
-        async with httpx.AsyncClient(timeout=60.0) as client:
-            response = await client.post("https://api.anthropic.com/v1/messages", json=payload, headers=headers)
-            response.raise_for_status()
-            data = response.json()
-
-        content_blocks = data.get("content", [])
-        if not content_blocks:
-            return "(No response from model)"
-
-        return "".join(block.get("text", "") for block in content_blocks if block.get("type") == "text")
 
     def get_relevant_context(
         self,
@@ -200,42 +136,24 @@ Help users understand the HACTU8 project, its components, and how to work with i
         )
 
         context = self.build_context_prompt(chunks)
-        system_prompt = self.SYSTEM_PROMPTS.get(mode, self.SYSTEM_PROMPTS["assist"])
+        system_prompt = f"{self.SYSTEM_PROMPTS.get(mode, self.SYSTEM_PROMPTS['assist'])}\n\n{context}"
 
-        messages = [
-            {"role": "system", "content": system_prompt},
-            {"role": "system", "content": context}
-        ]
-
+        messages: List[Dict[str, Any]] = []
         if conversation_history:
             for msg in conversation_history[-10:]:
                 messages.append({"role": msg["role"], "content": msg["content"]})
-
         messages.append({"role": "user", "content": message})
 
-        resolved_provider = (provider_id or "openai").lower()
-        resolved_model = self._resolve_model(resolved_provider, model_id)
-
         try:
-            if resolved_provider in ("openai", "ollama", "foundry", "custom"):
-                if resolved_provider in ("foundry", "custom") and not base_url:
-                    raise ValueError("Base URL is required for the selected provider")
-
-                if resolved_provider == "ollama":
-                    client = self._get_ollama_client(base_url)
-                else:
-                    client = self._get_openai_client(api_key, base_url)
-                response = client.chat.completions.create(
-                    model=resolved_model,
-                    messages=messages,
-                    temperature=0.7,
-                    max_tokens=1024
-                )
-                reply = response.choices[0].message.content or "(No response from model)"
-            elif resolved_provider == "anthropic":
-                reply = await self._call_anthropic(messages, resolved_model, api_key)
-            else:
-                raise ValueError(f"Unsupported model provider: {resolved_provider}")
+            result = await call_model(
+                messages,
+                provider_id=provider_id,
+                model_id=model_id,
+                api_key=api_key,
+                base_url=base_url,
+                system_prompt=system_prompt,
+            )
+            reply = "".join(result.text_blocks) or "(No response from model)"
         except Exception as e:
             reply = f"I apologize, but I encountered an error processing your request: {str(e)}"
 

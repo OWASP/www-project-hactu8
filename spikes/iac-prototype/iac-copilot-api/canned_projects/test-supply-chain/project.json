@@ -1,0 +1,12 @@
+{
+  "id": "test-supply-chain",
+  "name": "Supply Chain Trust Checker",
+  "category": "Supply Chain",
+  "summary": "Audit model, plugin, and dependency provenance for supply chain risk.",
+  "resources": [],
+  "default_skill_names": [
+    "http-probe"
+  ],
+  "legacy_route": "/supply-chain",
+  "version": "1.0.0"
+}

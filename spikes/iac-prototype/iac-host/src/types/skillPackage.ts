@@ -25,7 +25,7 @@ export interface InstalledSkillPackage {
   name: string;
   install_path: string;
   installed_at: string;
-  source: 'upload';
+  source: 'upload' | 'host';
   source_filename?: string;
   sha256?: string;
   manifest: SkillPackageManifest;

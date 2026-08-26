@@ -1,0 +1,12 @@
+{
+  "id": "test-training-leak",
+  "name": "Training Data Leak Detector",
+  "category": "Data Privacy",
+  "summary": "Check whether the model exposes memorized training data or secrets.",
+  "resources": [],
+  "default_skill_names": [
+    "http-probe"
+  ],
+  "legacy_route": "/training-leak",
+  "version": "1.0.0"
+}

@@ -1,0 +1,12 @@
+{
+  "id": "test-agency-validator",
+  "name": "Excessive Agency Validator",
+  "category": "Agency & Autonomy",
+  "summary": "Validate that agentic actions stay within their intended permissions and scope.",
+  "resources": [],
+  "default_skill_names": [
+    "http-probe"
+  ],
+  "legacy_route": "/agency-validator",
+  "version": "1.0.0"
+}

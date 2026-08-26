@@ -73,6 +73,20 @@ export async function listSkillPackages(): Promise<InstalledSkillPackage[]> {
   return data.skills;
 }
 
+/** User-installed AND host-shipped skills together (source: 'upload' | 'host').
+ * Used by the Project Run tab's skill selector — deliberately NOT routed
+ * through SkillPackageContext, whose `installed` state means
+ * user-installed-only for the existing Skills pages and shouldn't change
+ * meaning underneath them. Not cached like listSkillPackages(). */
+export async function listAllSkills(): Promise<InstalledSkillPackage[]> {
+  const response = await fetch(`${API_BASE}/api/skill-packages?include_host=true`);
+  if (!response.ok) {
+    throw new Error(`List failed (${response.status}): ${await response.text()}`);
+  }
+  const data: SkillPackageListResponse = await response.json();
+  return data.skills;
+}
+
 export async function uninstallSkillPackage(name: string): Promise<void> {
   const response = await fetch(`${API_BASE}/api/skill-packages/${encodeURIComponent(name)}`, {
     method: 'DELETE',
@@ -87,5 +101,6 @@ export default {
   loadCached,
   uploadSkillPackage,
   listSkillPackages,
+  listAllSkills,
   uninstallSkillPackage,
 };

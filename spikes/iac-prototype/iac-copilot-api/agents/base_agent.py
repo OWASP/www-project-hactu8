@@ -12,10 +12,10 @@ from agents.models import AgentResult, PhaseEnum
 from skill_packages.runner import (
     SKILL_RUNNER_TOOLS,
     SkillRunnerError,
-    discover_phase_skills,
-    list_skills_in_scope,
-    read_skill_body,
-    run_skill_script,
+    discover_skills,
+    list_skills,
+    read_skill,
+    run_skill,
 )
 
 ANTHROPIC_API_URL = "https://api.anthropic.com/v1/messages"
@@ -85,10 +85,10 @@ class BaseAgent:
 
         effective_system_prompt = self.system_prompt
         if phase_tag:
-            discovered = await asyncio.to_thread(discover_phase_skills, phase_tag)
+            discovered = await asyncio.to_thread(discover_skills, phase_tag)
             if discovered:
                 sections = "\n\n".join(
-                    f"## Skill: {s.name}\n\n{read_skill_body(phase_tag, s.name)}" for s in discovered
+                    f"## Skill: {s.name}\n\n{read_skill(phase_tag, s.name)}" for s in discovered
                 )
                 effective_system_prompt = (
                     f"{self.system_prompt}\n\n"
@@ -156,11 +156,11 @@ class BaseAgent:
                 # needs gating (e.g. an eventual active-exploitation phase).
                 try:
                     if tool_name == "list_skills":
-                        result_content = list_skills_in_scope(phase_tag)
+                        result_content = list_skills(phase_tag)
                     elif tool_name == "read_skill":
-                        result_content = {"body": read_skill_body(phase_tag, tool_input.get("name", ""))}
+                        result_content = {"body": read_skill(phase_tag, tool_input.get("name", ""))}
                     elif tool_name == "run_skill_script":
-                        result_content = await run_skill_script(
+                        result_content = await run_skill(
                             phase_tag,
                             tool_input.get("name", ""),
                             tool_input.get("script", ""),

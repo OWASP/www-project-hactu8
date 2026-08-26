@@ -1,11 +1,11 @@
 // src/pages/Agents.tsx
-import React, { useEffect, useRef, useState } from 'react';
-import ReactMarkdown from 'react-markdown';
-import remarkGfm from 'remark-gfm';
+import React, { useState } from 'react';
 
 import { useAgents } from '../contexts/AgentContext';
 import type { AgentStreamEvent, EngagementScope, PhaseEnum } from '../types/agents';
 import { PHASE_CHAIN, PHASE_LABELS } from '../types/agents';
+import { StreamEventLog, isToolResultOk, toolResultData } from '../components/shared/StreamEventLog';
+import type { StreamLogBlock } from '../components/shared/StreamEventLog';
 
 // --------------------------------------------------------------------------- //
 // Phase stepper
@@ -40,60 +40,39 @@ const PhaseStepper: React.FC<{ phasesComplete: string[]; currentPhase: PhaseEnum
 );
 
 // --------------------------------------------------------------------------- //
-// Markdown prose styles (injected once)
+// Agent-stream events -> shared StreamLogBlock vocabulary. Phase headers and
+// the "awaiting approval" banner are Agents-page-specific (Project runs have
+// neither), so they're built here as 'custom'/'info' blocks rather than
+// living in the shared renderer.
 // --------------------------------------------------------------------------- //
 
-const MD_STYLES = `
-.agent-md h1,.agent-md h2,.agent-md h3 { color:var(--iac-info-text); margin:12px 0 6px; }
-.agent-md h1 { font-size:17px; border-bottom:1px solid var(--iac-badge-bg); padding-bottom:4px; }
-.agent-md h2 { font-size:15px; }
-.agent-md h3 { font-size:13px; color:var(--iac-link); }
-.agent-md p  { color:var(--iac-text); margin:4px 0; line-height:1.6; }
-.agent-md ul,.agent-md ol { color:var(--iac-text); padding-left:20px; margin:4px 0; }
-.agent-md li { margin:2px 0; line-height:1.5; }
-.agent-md code { background:var(--iac-surface); color:var(--iac-code-text); padding:1px 5px; border-radius:3px; font-size:12px; }
-.agent-md pre  { background:var(--iac-code-bg); border:1px solid var(--iac-badge-bg); border-radius:6px; padding:10px 12px; overflow-x:auto; margin:8px 0; }
-.agent-md pre code { background:none; color:var(--iac-code-text); padding:0; }
-.agent-md table { width:100%; border-collapse:collapse; margin:8px 0; font-size:12px; }
-.agent-md th { background:var(--iac-badge-bg); color:var(--iac-info-text); padding:5px 10px; text-align:left; border:1px solid var(--iac-badge-bg); }
-.agent-md td { padding:4px 10px; border:1px solid var(--iac-surface); color:var(--iac-text-secondary); }
-.agent-md tr:nth-child(even) td { background:var(--iac-bg); }
-.agent-md blockquote { border-left:3px solid var(--iac-info); margin:6px 0; padding:4px 12px; color:var(--iac-text-secondary); font-style:italic; }
-.agent-md strong { color:var(--iac-text); }
-.agent-md hr { border:none; border-top:1px solid var(--iac-surface); margin:10px 0; }
-.agent-md a { color:var(--iac-link); }
-`;
-
-// --------------------------------------------------------------------------- //
-// Stream event log — markdown-rendered, auto-scrolling
-// --------------------------------------------------------------------------- //
-
-const EventLog: React.FC<{ events: AgentStreamEvent[] }> = ({ events }) => {
-  const containerRef = useRef<HTMLDivElement>(null);
-
-  // Auto-scroll to bottom whenever events change
-  useEffect(() => {
-    if (containerRef.current) {
-      containerRef.current.scrollTop = containerRef.current.scrollHeight;
-    }
-  }, [events.length]);
-
-  if (events.length === 0) return null;
-
-  // Concatenate consecutive text events from the same phase into a single block
-  // so markdown renders as one coherent document instead of fragment-per-chunk.
-  type Block =
-    | { kind: 'phase_start'; phase: PhaseEnum }
-    | { kind: 'prose'; content: string }
-    | { kind: 'tool_call'; name: string; input: Record<string, unknown> }
-    | { kind: 'tool_result'; name: string; ok: boolean; data?: string }
-    | { kind: 'info'; text: string; color: string }
-    | { kind: 'error'; message: string };
-
-  const blocks: Block[] = [];
-  for (const event of events) {
+function buildAgentBlocks(events: AgentStreamEvent[]): StreamLogBlock[] {
+  const blocks: StreamLogBlock[] = [];
+  for (const [i, event] of events.entries()) {
     if (event.type === 'phase_start') {
-      blocks.push({ kind: 'phase_start', phase: event.phase });
+      blocks.push({
+        kind: 'custom',
+        key: `phase-${i}`,
+        render: (
+          <div
+            style={{
+              color: 'var(--iac-info)',
+              fontSize: 11,
+              fontWeight: 700,
+              letterSpacing: '0.1em',
+              textTransform: 'uppercase',
+              marginBottom: 12,
+              display: 'flex',
+              alignItems: 'center',
+              gap: 8,
+            }}
+          >
+            <span style={{ flex: 1, borderBottom: '1px solid var(--iac-badge-bg)' }} />
+            {PHASE_LABELS[event.phase]}
+            <span style={{ flex: 1, borderBottom: '1px solid var(--iac-badge-bg)' }} />
+          </div>
+        ),
+      });
     } else if (event.type === 'text') {
       const last = blocks[blocks.length - 1];
       if (last?.kind === 'prose') {
@@ -104,148 +83,20 @@ const EventLog: React.FC<{ events: AgentStreamEvent[] }> = ({ events }) => {
     } else if (event.type === 'tool_call') {
       blocks.push({ kind: 'tool_call', name: event.name, input: event.input });
     } else if (event.type === 'tool_result') {
-      const ok = !!(event.result as any)?.success;
-      const data = (event.result as any)?.data;
-      blocks.push({ kind: 'tool_result', name: event.name, ok, data: data ? JSON.stringify(data, null, 2) : undefined });
+      blocks.push({
+        kind: 'tool_result',
+        name: event.name,
+        ok: isToolResultOk(event.result as Record<string, unknown>),
+        data: toolResultData(event.result as Record<string, unknown>),
+      });
     } else if (event.type === 'awaiting_approval') {
       blocks.push({ kind: 'info', text: `⏸  Phase complete — awaiting approval to continue`, color: '#fbbf24' });
     } else if (event.type === 'error') {
       blocks.push({ kind: 'error', message: event.message });
     }
   }
-
-  return (
-    <>
-      <style>{MD_STYLES}</style>
-      <div
-        ref={containerRef}
-        style={{
-          background: 'var(--iac-bg)',
-          border: '1px solid var(--iac-border)',
-          borderRadius: 8,
-          padding: '16px 20px',
-          maxHeight: 520,
-          overflowY: 'auto',
-          marginTop: 16,
-        }}
-      >
-        {blocks.map((block, i) => {
-          if (block.kind === 'phase_start') {
-            return (
-              <div
-                key={i}
-                style={{
-                  color: 'var(--iac-info)',
-                  fontSize: 11,
-                  fontWeight: 700,
-                  letterSpacing: '0.1em',
-                  textTransform: 'uppercase',
-                  marginBottom: 12,
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 8,
-                }}
-              >
-                <span style={{ flex: 1, borderBottom: '1px solid var(--iac-badge-bg)' }} />
-                {PHASE_LABELS[block.phase]}
-                <span style={{ flex: 1, borderBottom: '1px solid var(--iac-badge-bg)' }} />
-              </div>
-            );
-          }
-
-          if (block.kind === 'prose') {
-            return (
-              <div key={i} className="agent-md" style={{ marginBottom: 8 }}>
-                <ReactMarkdown remarkPlugins={[remarkGfm]}>{block.content}</ReactMarkdown>
-              </div>
-            );
-          }
-
-          if (block.kind === 'tool_call') {
-            return (
-              <div
-                key={i}
-                style={{
-                  background: 'var(--iac-surface)',
-                  border: '1px solid var(--iac-border)',
-                  borderRadius: 6,
-                  padding: '6px 12px',
-                  marginBottom: 6,
-                  fontFamily: 'monospace',
-                  fontSize: 12,
-                  color: 'var(--iac-info-text)',
-                }}
-              >
-                <span style={{ opacity: 0.6 }}>⚙ skill: </span>
-                <strong>{block.name}</strong>
-                <span style={{ opacity: 0.6 }}>(</span>
-                {Object.entries(block.input).map(([k, v]) => (
-                  <span key={k}> {k}=<em style={{ color: '#a5f3fc' }}>{String(v)}</em></span>
-                ))}
-                <span style={{ opacity: 0.6 }}>)</span>
-              </div>
-            );
-          }
-
-          if (block.kind === 'tool_result') {
-            return (
-              <div
-                key={i}
-                style={{
-                  background: block.ok ? 'var(--iac-success-bg)' : 'var(--iac-error-bg)',
-                  border: `1px solid ${block.ok ? 'var(--iac-success)' : 'var(--iac-error)'}`,
-                  borderRadius: 6,
-                  padding: '6px 12px',
-                  marginBottom: 10,
-                  fontFamily: 'monospace',
-                  fontSize: 12,
-                }}
-              >
-                <div style={{ color: block.ok ? 'var(--iac-success)' : 'var(--iac-error)', marginBottom: block.data ? 4 : 0 }}>
-                  {block.ok ? '✓' : '✕'} {block.name}
-                </div>
-                {block.data && (
-                  <pre style={{ margin: 0, color: 'var(--iac-text-secondary)', fontSize: 11, whiteSpace: 'pre-wrap', overflowX: 'auto' }}>
-                    {block.data.length > 600 ? block.data.slice(0, 600) + '\n…' : block.data}
-                  </pre>
-                )}
-              </div>
-            );
-          }
-
-          if (block.kind === 'info') {
-            return (
-              <div key={i} style={{ color: block.color, fontSize: 12, fontStyle: 'italic', marginTop: 8 }}>
-                {block.text}
-              </div>
-            );
-          }
-
-          if (block.kind === 'error') {
-            return (
-              <div
-                key={i}
-                style={{
-                  color: 'var(--iac-error)',
-                  background: 'var(--iac-error-bg)',
-                  border: '1px solid var(--iac-error)',
-                  borderRadius: 6,
-                  padding: '6px 12px',
-                  fontSize: 13,
-                  fontFamily: 'monospace',
-                }}
-              >
-                ✕ {block.message}
-              </div>
-            );
-          }
-
-          return null;
-        })}
-      </div>
-    </>
-  );
-};
+  return blocks;
+}
 
 // --------------------------------------------------------------------------- //
 // Approval gate banner
@@ -570,7 +421,7 @@ const Agents: React.FC = () => {
             </div>
           )}
 
-          <EventLog events={streamEvents} />
+          <StreamEventLog blocks={buildAgentBlocks(streamEvents)} />
         </div>
       )}
     </div>

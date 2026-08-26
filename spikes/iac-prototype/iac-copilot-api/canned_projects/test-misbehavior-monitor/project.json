@@ -1,0 +1,12 @@
+{
+  "id": "test-misbehavior-monitor",
+  "name": "Model Misbehavior Monitor",
+  "category": "Model Behavior",
+  "summary": "Watch for unexpected or unsafe model behavior over the course of a session.",
+  "resources": [],
+  "default_skill_names": [
+    "http-probe"
+  ],
+  "legacy_route": "/misbehavior-monitor",
+  "version": "1.0.0"
+}

@@ -1,0 +1,12 @@
+{
+  "id": "test-privacy-compliance",
+  "name": "Model Privacy Compliance Scanner",
+  "category": "Compliance",
+  "summary": "Scan model interactions for privacy and regulatory compliance issues.",
+  "resources": [],
+  "default_skill_names": [
+    "http-probe"
+  ],
+  "legacy_route": "/privacy-compliance",
+  "version": "1.0.0"
+}

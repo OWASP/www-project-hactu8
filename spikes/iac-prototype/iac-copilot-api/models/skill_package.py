@@ -28,7 +28,7 @@ class InstalledSkillPackage(BaseModel):
     name: str
     install_path: str
     installed_at: datetime
-    source: Literal["upload"] = "upload"
+    source: Literal["upload", "host"] = "upload"
     source_filename: Optional[str] = None
     sha256: Optional[str] = None
     manifest: SkillPackageManifest

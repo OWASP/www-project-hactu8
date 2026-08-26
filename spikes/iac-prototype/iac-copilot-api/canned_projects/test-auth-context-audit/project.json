@@ -1,0 +1,12 @@
+{
+  "id": "test-auth-context-audit",
+  "name": "Authorization & Context Audit",
+  "category": "Identity & Access",
+  "summary": "Audit authorization boundaries and context handling across requests.",
+  "resources": [],
+  "default_skill_names": [
+    "http-probe"
+  ],
+  "legacy_route": "/auth-context-audit",
+  "version": "1.0.0"
+}

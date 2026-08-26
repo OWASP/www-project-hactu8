@@ -20,7 +20,7 @@ from typing import List, Tuple
 
 import yaml
 
-from iac_paths import SKILLS_DIR
+from iac_paths import HOST_SKILLS_DIR, SKILLS_DIR
 from models.skill_package import InstalledSkillPackage, SkillPackageManifest
 
 MAX_ZIP_BYTES = 10 * 1024 * 1024
@@ -273,41 +273,78 @@ def install_skill_package(zip_path: Path, *, source_filename: str, overwrite: bo
 # List / uninstall
 # --------------------------------------------------------------------------- #
 
-def list_skill_packages() -> List[InstalledSkillPackage]:
-    if not SKILLS_DIR.is_dir():
-        return []
-
+def list_skill_packages(*, include_host: bool = False) -> List[InstalledSkillPackage]:
     records: List[InstalledSkillPackage] = []
-    for entry in sorted(SKILLS_DIR.iterdir()):
-        if not entry.is_dir():
-            continue
-        skill_md = entry / "SKILL.md"
-        if not skill_md.is_file():
-            continue
-        try:
-            manifest = _parse_skill_md_frontmatter(skill_md)
-        except SkillInstallError:
-            continue
 
-        meta = _read_sidecar_meta(entry)
-        installed_at = meta.get("installedAt")
-        try:
-            installed_at_dt = datetime.fromisoformat(installed_at) if installed_at else datetime.utcnow()
-        except ValueError:
-            installed_at_dt = datetime.utcnow()
+    if SKILLS_DIR.is_dir():
+        for entry in sorted(SKILLS_DIR.iterdir()):
+            if not entry.is_dir():
+                continue
+            skill_md = entry / "SKILL.md"
+            if not skill_md.is_file():
+                continue
+            try:
+                manifest = _parse_skill_md_frontmatter(skill_md)
+            except SkillInstallError:
+                continue
 
-        records.append(
-            InstalledSkillPackage(
-                name=manifest.name,
-                install_path=str(entry),
-                installed_at=installed_at_dt,
-                source="upload",
-                source_filename=meta.get("sourceFilename"),
-                sha256=meta.get("sha256"),
-                manifest=manifest,
-                files=_collect_files(entry),
+            meta = _read_sidecar_meta(entry)
+            installed_at = meta.get("installedAt")
+            try:
+                installed_at_dt = datetime.fromisoformat(installed_at) if installed_at else datetime.utcnow()
+            except ValueError:
+                installed_at_dt = datetime.utcnow()
+
+            records.append(
+                InstalledSkillPackage(
+                    name=manifest.name,
+                    install_path=str(entry),
+                    installed_at=installed_at_dt,
+                    source="upload",
+                    source_filename=meta.get("sourceFilename"),
+                    sha256=meta.get("sha256"),
+                    manifest=manifest,
+                    files=_collect_files(entry),
+                )
             )
-        )
+
+    if include_host and HOST_SKILLS_DIR.is_dir():
+        host_records: List[InstalledSkillPackage] = []
+        for entry in sorted(HOST_SKILLS_DIR.iterdir()):
+            if not entry.is_dir():
+                continue
+            skill_md = entry / "SKILL.md"
+            if not skill_md.is_file():
+                continue
+            try:
+                manifest = _parse_skill_md_frontmatter(skill_md)
+            except SkillInstallError:
+                continue
+
+            # No .iac-meta.json sidecar for host-shipped skills — the
+            # SKILL.md's own mtime is the closest honest stand-in for
+            # "installed at".
+            installed_at_dt = datetime.utcfromtimestamp(skill_md.stat().st_mtime)
+
+            host_records.append(
+                InstalledSkillPackage(
+                    name=manifest.name,
+                    install_path=str(entry),
+                    installed_at=installed_at_dt,
+                    source="host",
+                    source_filename=None,
+                    sha256=None,
+                    manifest=manifest,
+                    files=_collect_files(entry),
+                )
+            )
+
+        # Host wins on a name collision with a user upload — matches
+        # skill_packages/runner.py's actual resolution order, so this
+        # listing doesn't show a shadowed skill the runner would never use.
+        host_names = {r.name for r in host_records}
+        records = [r for r in records if r.name not in host_names] + host_records
+
     return records
 
 

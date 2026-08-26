@@ -1,0 +1,12 @@
+{
+  "id": "test-insecure-output",
+  "name": "Insecure Output Filter",
+  "category": "Output Safety",
+  "summary": "Test downstream handling of model output for injection- and XSS-style risks.",
+  "resources": [],
+  "default_skill_names": [
+    "http-probe"
+  ],
+  "legacy_route": "/insecure-output",
+  "version": "1.0.0"
+}

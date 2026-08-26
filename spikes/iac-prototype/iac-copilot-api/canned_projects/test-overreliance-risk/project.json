@@ -1,0 +1,12 @@
+{
+  "id": "test-overreliance-risk",
+  "name": "Overreliance Risk Analyzer",
+  "category": "Model Behavior",
+  "summary": "Assess how much users may over-trust model output without independent verification.",
+  "resources": [],
+  "default_skill_names": [
+    "http-probe"
+  ],
+  "legacy_route": "/overreliance-risk",
+  "version": "1.0.0"
+}

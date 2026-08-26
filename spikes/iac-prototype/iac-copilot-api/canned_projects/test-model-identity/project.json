@@ -1,0 +1,12 @@
+{
+  "id": "test-model-identity",
+  "name": "Model Identity & Version Tracker",
+  "category": "Model Governance",
+  "summary": "Track and verify which model and version is actually serving requests.",
+  "resources": [],
+  "default_skill_names": [
+    "http-probe"
+  ],
+  "legacy_route": "/model-identity",
+  "version": "1.0.0"
+}

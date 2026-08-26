@@ -54,8 +54,8 @@ async def install_skill(
 
 
 @router.get("", response_model=SkillPackageListResponse)
-async def list_skills() -> SkillPackageListResponse:
-    skills = list_skill_packages()
+async def list_skills(include_host: bool = False) -> SkillPackageListResponse:
+    skills = list_skill_packages(include_host=include_host)
     return SkillPackageListResponse(skills=skills, total=len(skills))
 
 

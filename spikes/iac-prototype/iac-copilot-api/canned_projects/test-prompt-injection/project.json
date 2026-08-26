@@ -1,0 +1,12 @@
+{
+  "id": "test-prompt-injection",
+  "name": "Prompt Injection Tester",
+  "category": "Prompt Security",
+  "summary": "Probe the target for direct and indirect prompt injection vulnerabilities.",
+  "resources": [],
+  "default_skill_names": [
+    "http-probe"
+  ],
+  "legacy_route": "/prompt-injection",
+  "version": "1.0.0"
+}

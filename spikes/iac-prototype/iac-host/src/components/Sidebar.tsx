@@ -6,6 +6,7 @@ import { useFeatureFlags } from '../contexts/FeatureFlagContext';
 import { useExtensions } from '../contexts/ExtensionContext';
 import type { ExtensionCategory } from '../types/extensions';
 import { cannedProjects } from '../data/cannedProjects';
+import { listCannedProjects } from '../services/cannedProjectService';
 
 // Placeholder SVG icons for demonstration
 const icons = {
@@ -35,19 +36,25 @@ const icons = {
 };
 
 
-// Sidebar now loads Projects group dynamically after Monitoring
+// Sidebar now loads the Projects group dynamically after Monitoring —
+// sourced from the real curated Projects list on the backend
+// (GET /api/canned-projects), not mock data.
 
-function useMockProjects() {
-  const [projects, setProjects] = React.useState<any[]>([]);
+function useCannedProjectsNav() {
+  const [projects, setProjects] = React.useState<{ id: string; name: string; path: string }[]>([]);
   React.useEffect(() => {
-    // Simulate API call
-    setTimeout(() => {
-      setProjects([
-        { id: 'proj-1', name: 'Red Team Demo', path: '/projects/red-team' },
-        { id: 'proj-2', name: 'Blue Team Demo', path: '/projects/blue-team' },
-        { id: 'proj-3', name: 'Purple Team Demo', path: '/projects/purple-team' },
-      ]);
-    }, 600);
+    let cancelled = false;
+    listCannedProjects()
+      .then((list) => {
+        if (cancelled) return;
+        setProjects(list.map((p) => ({ id: p.id, name: p.name, path: `/projects/${p.id}` })));
+      })
+      .catch(() => {
+        // Sidebar nav is non-critical — fail silently, group just stays empty.
+      });
+    return () => {
+      cancelled = true;
+    };
   }, []);
   return projects;
 }
@@ -78,7 +85,7 @@ const Sidebar = () => {
     return state;
   });
 
-  const projects = useMockProjects();
+  const projects = useCannedProjectsNav();
 
   // Build extension nav items from installed extensions (persisted in localStorage)
   const extensionNavByGroup: Record<string, { path: string; label: string; icon: JSX.Element }[]> = {};
