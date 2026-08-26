@@ -1,40 +1,26 @@
 // src/pages/SkillsCreator.tsx
 //
-// Author new skills (Anthropic Agent Skills style: YAML frontmatter + a
-// markdown SKILL.md body). Drafts are saved locally as unsigned skills;
-// "Prepare Registry Submission" produces the exact signed JSON entry a
-// HACTU8 maintainer would review and merge into skills/registry.json.
+// Scaffold a real, agentskills.io-spec-compliant skill directory
+// (SKILL.md + optional scripts/references/assets), zip it entirely in the
+// browser, and install it through the same pipeline a manually-uploaded
+// .skill file goes through (POST /api/skill-packages) — zip-slip-safe
+// extraction, frontmatter validation, the works. This page produces real
+// Skill Packages now, not the old localStorage-only draft format; created
+// skills show up in the "Agent Skills" tab on the Installed page, not
+// "Legacy Skills".
 import React, { useMemo, useState } from 'react';
-import type { SkillCategory, SkillManifest, SkillRegistryEntry, SkillResource } from '../types/skills';
-import { useSkills } from '../contexts/SkillContext';
-import skillService from '../services/skillService';
-import { CATEGORY_LABELS, primaryButtonStyle, secondaryButtonStyle, codeBlockStyle } from '../components/Skills/shared';
+import { zipSync, strToU8 } from 'fflate';
+import { Link } from 'react-router-dom';
+import skillPackageService from '../services/skillPackageService';
+import { primaryButtonStyle, secondaryButtonStyle, codeBlockStyle } from '../components/Skills/shared';
 
-const DEFAULT_CONTENT = `---
-name: My New Skill
-description: One sentence describing when Copilot should use this skill.
----
+type PlaceholderFolder = 'scripts' | 'references' | 'assets';
 
-# My New Skill
-
-## Instructions
-
-Describe the step-by-step approach to follow when this skill applies.
-
-## Resources
-
-- \`reference/checklist.md\` — supporting reference material
-`;
-
-const CATEGORIES: SkillCategory[] = [
-  'assurance-testing',
-  'remediation',
-  'reporting',
-  'governance',
-  'research',
-  'automation',
-  'utility',
-];
+interface PlaceholderFile {
+  folder: PlaceholderFolder;
+  filename: string;
+  content: string;
+}
 
 const inputStyle: React.CSSProperties = {
   width: '100%',
@@ -56,93 +42,105 @@ const labelStyle: React.CSSProperties = {
 
 const fieldWrapStyle: React.CSSProperties = { marginBottom: '1rem' };
 
+const DEFAULT_BODY = `# Instructions
+
+Describe the step-by-step approach to follow when this skill applies.
+`;
+
+// Matches skill_packages/installer.py's _is_valid_skill_name exactly.
+function isValidSkillName(name: string): boolean {
+  if (!name || name.length > 64) return false;
+  if (name.includes('--') || name.startsWith('-') || name.endsWith('-')) return false;
+  return /^[a-z0-9-]+$/.test(name);
+}
+
+function buildFrontmatter(fields: {
+  name: string;
+  description: string;
+  license: string;
+  compatibility: string;
+  metadata: { key: string; value: string }[];
+  allowedTools: string;
+}): string {
+  const lines = ['---', `name: ${fields.name}`, `description: ${fields.description}`];
+  if (fields.license.trim()) lines.push(`license: ${fields.license.trim()}`);
+  if (fields.compatibility.trim()) lines.push(`compatibility: ${fields.compatibility.trim()}`);
+  const meta = fields.metadata.filter((m) => m.key.trim());
+  if (meta.length > 0) {
+    lines.push('metadata:');
+    meta.forEach((m) => lines.push(`  ${m.key.trim()}: ${m.value.trim()}`));
+  }
+  if (fields.allowedTools.trim()) lines.push(`allowed-tools: ${fields.allowedTools.trim()}`);
+  lines.push('---', '');
+  return lines.join('\n');
+}
+
 const SkillsCreator: React.FC = () => {
-  const { saveDraft } = useSkills();
-
-  const [id, setId] = useState('');
   const [name, setName] = useState('');
-  const [version, setVersion] = useState('0.1.0');
   const [description, setDescription] = useState('');
-  const [author, setAuthor] = useState('');
-  const [license, setLicense] = useState('Apache-2.0');
-  const [category, setCategory] = useState<SkillCategory>('assurance-testing');
-  const [tagsInput, setTagsInput] = useState('');
-  const [allowedToolsInput, setAllowedToolsInput] = useState('');
-  const [resultSchema, setResultSchema] = useState('');
-  const [resources, setResources] = useState<SkillResource[]>([]);
-  const [content, setContent] = useState(DEFAULT_CONTENT);
+  const [license, setLicense] = useState('');
+  const [compatibility, setCompatibility] = useState('');
+  const [metadata, setMetadata] = useState<{ key: string; value: string }[]>([]);
+  const [allowedTools, setAllowedTools] = useState('');
+  const [body, setBody] = useState(DEFAULT_BODY);
+  const [files, setFiles] = useState<PlaceholderFile[]>([]);
 
-  const [saveMessage, setSaveMessage] = useState<string | null>(null);
-  const [submission, setSubmission] = useState<SkillRegistryEntry | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [successName, setSuccessName] = useState<string | null>(null);
 
-  const manifest: SkillManifest = useMemo(
-    () => ({
-      id: id.trim(),
-      name: name.trim(),
-      version: version.trim(),
-      description: description.trim(),
-      author: author.trim(),
-      license: license.trim(),
-      category,
-      tags: tagsInput.split(',').map((t) => t.trim()).filter(Boolean),
-      allowedTools: allowedToolsInput.split(',').map((t) => t.trim()).filter(Boolean),
-      resources,
-      resultSchema: resultSchema.trim() || undefined,
-    }),
-    [id, name, version, description, author, license, category, tagsInput, allowedToolsInput, resources, resultSchema]
+  const nameError = name.length > 0 && !isValidSkillName(name)
+    ? 'Must be 1-64 lowercase alphanumeric characters and hyphens, no leading/trailing/consecutive hyphens.'
+    : null;
+  const descriptionError = description.length > 1024 ? 'Must be 1024 characters or fewer.' : null;
+
+  const isValid =
+    isValidSkillName(name) &&
+    description.trim().length > 0 &&
+    description.length <= 1024 &&
+    body.trim().length > 0;
+
+  const frontmatter = useMemo(
+    () => buildFrontmatter({ name, description, license, compatibility, metadata, allowedTools }),
+    [name, description, license, compatibility, metadata, allowedTools]
   );
+  const skillMdPreview = frontmatter + body;
 
-  const isValid = manifest.id.length > 0 && manifest.name.length > 0 && manifest.description.length > 0 && content.trim().length > 0;
+  const addFile = () => setFiles((f) => [...f, { folder: 'scripts', filename: '', content: '' }]);
+  const updateFile = (idx: number, patch: Partial<PlaceholderFile>) =>
+    setFiles((f) => f.map((file, i) => (i === idx ? { ...file, ...patch } : file)));
+  const removeFile = (idx: number) => setFiles((f) => f.filter((_, i) => i !== idx));
 
-  const addResource = () => setResources((r) => [...r, { path: '', description: '' }]);
-  const updateResource = (idx: number, field: keyof SkillResource, value: string) =>
-    setResources((r) => r.map((res, i) => (i === idx ? { ...res, [field]: value } : res)));
-  const removeResource = (idx: number) => setResources((r) => r.filter((_, i) => i !== idx));
-
-  const handleSaveDraft = () => {
+  const handleCreateAndInstall = async () => {
     setError(null);
-    setSaveMessage(null);
-    setSubmission(null);
+    setSuccessName(null);
     if (!isValid) {
-      setError('Skill id, name, description, and SKILL.md content are required.');
+      setError('Skill name, description, and SKILL.md body are required (and must pass validation above).');
       return;
     }
-    saveDraft(manifest, content)
-      .then(() => setSaveMessage(`Draft "${manifest.id}" saved to Installed Skills.`))
-      .catch((err) => setError(err instanceof Error ? err.message : 'Failed to save draft'));
-  };
 
-  const handleExport = () => {
-    if (!isValid) {
-      setError('Skill id, name, description, and SKILL.md content are required.');
-      return;
-    }
-    skillService.downloadSkillPackage({
-      manifest,
-      content,
-      signature: { algorithm: 'sha256', digest: '', curatedBy: 'Unsigned local draft', signedAt: new Date().toISOString(), verified: false },
-      status: 'installed',
-      source: 'local-draft',
-      installedAt: new Date().toISOString(),
-    });
-  };
+    setIsSubmitting(true);
+    try {
+      const fileMap: Record<string, Uint8Array> = {
+        [`${name}/SKILL.md`]: strToU8(skillMdPreview),
+      };
+      for (const file of files) {
+        if (!file.filename.trim()) continue;
+        fileMap[`${name}/${file.folder}/${file.filename.trim()}`] = strToU8(
+          file.content || `# Placeholder for ${file.filename.trim()}\n`
+        );
+      }
 
-  const handlePrepareSubmission = async () => {
-    setError(null);
-    if (!isValid) {
-      setError('Skill id, name, description, and SKILL.md content are required.');
-      return;
+      const zipBytes = zipSync(fileMap);
+      const zipFile = new File([zipBytes], `${name}.skill`, { type: 'application/zip' });
+
+      await skillPackageService.uploadSkillPackage(zipFile);
+      setSuccessName(name);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to create and install skill');
+    } finally {
+      setIsSubmitting(false);
     }
-    const entry = await skillService.buildRegistrySubmission({
-      manifest,
-      content,
-      signature: { algorithm: 'sha256', digest: '', curatedBy: '', signedAt: '', verified: false },
-      status: 'installed',
-      source: 'local-draft',
-      installedAt: new Date().toISOString(),
-    });
-    setSubmission(entry);
   };
 
   return (
@@ -151,24 +149,14 @@ const SkillsCreator: React.FC = () => {
       <div style={{ flex: '1 1 420px', minWidth: 360 }}>
         <h3 style={{ color: 'var(--iac-text)', marginBottom: '0.25rem' }}>Skills Creator</h3>
         <p style={{ color: 'var(--iac-muted)', fontSize: '0.8rem', marginTop: 0, marginBottom: '1.25rem' }}>
-          Author a new skill package. Save a local draft, export it as a portable file, or prepare a signed
-          submission for the curated HACTU8 registry.
+          Scaffold a real Skill Package (SKILL.md + optional files) and install it directly — no separate export
+          or submission step. It's droppable into Claude Code or any agentskills.io-compliant tool afterward.
         </p>
-
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
-          <div style={fieldWrapStyle}>
-            <label style={labelStyle}>Skill ID</label>
-            <input style={inputStyle} value={id} onChange={(e) => setId(e.target.value)} placeholder="owasp-llm-top10-review" />
-          </div>
-          <div style={fieldWrapStyle}>
-            <label style={labelStyle}>Version</label>
-            <input style={inputStyle} value={version} onChange={(e) => setVersion(e.target.value)} placeholder="0.1.0" />
-          </div>
-        </div>
 
         <div style={fieldWrapStyle}>
           <label style={labelStyle}>Name</label>
-          <input style={inputStyle} value={name} onChange={(e) => setName(e.target.value)} placeholder="OWASP LLM Top 10 Review" />
+          <input style={inputStyle} value={name} onChange={(e) => setName(e.target.value)} placeholder="owasp-llm-top10-review" />
+          {nameError && <p style={{ color: 'var(--iac-error)', fontSize: '0.75rem', marginTop: '0.25rem' }}>{nameError}</p>}
         </div>
 
         <div style={fieldWrapStyle}>
@@ -177,117 +165,139 @@ const SkillsCreator: React.FC = () => {
             style={inputStyle}
             value={description}
             onChange={(e) => setDescription(e.target.value)}
-            placeholder="One sentence describing when this skill should be used."
+            placeholder="Describes what the skill does and when to use it."
           />
+          {descriptionError && (
+            <p style={{ color: 'var(--iac-error)', fontSize: '0.75rem', marginTop: '0.25rem' }}>{descriptionError}</p>
+          )}
         </div>
 
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
           <div style={fieldWrapStyle}>
-            <label style={labelStyle}>Author</label>
-            <input style={inputStyle} value={author} onChange={(e) => setAuthor(e.target.value)} />
+            <label style={labelStyle}>License (optional)</label>
+            <input style={inputStyle} value={license} onChange={(e) => setLicense(e.target.value)} placeholder="Apache-2.0" />
           </div>
           <div style={fieldWrapStyle}>
-            <label style={labelStyle}>License</label>
-            <input style={inputStyle} value={license} onChange={(e) => setLicense(e.target.value)} />
+            <label style={labelStyle}>Compatibility (optional)</label>
+            <input
+              style={inputStyle}
+              value={compatibility}
+              onChange={(e) => setCompatibility(e.target.value)}
+              placeholder="Requires network access"
+            />
           </div>
         </div>
 
         <div style={fieldWrapStyle}>
-          <label style={labelStyle}>Category</label>
-          <select style={inputStyle} value={category} onChange={(e) => setCategory(e.target.value as SkillCategory)}>
-            {CATEGORIES.map((c) => (
-              <option key={c} value={c}>{CATEGORY_LABELS[c]}</option>
-            ))}
-          </select>
-        </div>
-
-        <div style={fieldWrapStyle}>
-          <label style={labelStyle}>Tags (comma-separated)</label>
-          <input style={inputStyle} value={tagsInput} onChange={(e) => setTagsInput(e.target.value)} placeholder="owasp, llm, review" />
-        </div>
-
-        <div style={fieldWrapStyle}>
-          <label style={labelStyle}>Allowed Tools (comma-separated)</label>
+          <label style={labelStyle}>Allowed Tools (optional)</label>
           <input
             style={inputStyle}
-            value={allowedToolsInput}
-            onChange={(e) => setAllowedToolsInput(e.target.value)}
-            placeholder="grep_search, read_file"
-          />
-        </div>
-
-        <div style={fieldWrapStyle}>
-          <label style={labelStyle}>Result Schema (optional)</label>
-          <input
-            style={inputStyle}
-            value={resultSchema}
-            onChange={(e) => setResultSchema(e.target.value)}
-            placeholder="assurance-test-run"
+            value={allowedTools}
+            onChange={(e) => setAllowedTools(e.target.value)}
+            placeholder="Bash(git:*) Read"
           />
           <p style={{ color: 'var(--iac-muted)', fontSize: '0.75rem', marginTop: '0.25rem', marginBottom: 0 }}>
-            Names the shape of structured result data this skill produces, e.g. <code>assurance-test-run</code>{' '}
-            for output that conforms to <code>TestRunResult</code>. Leave blank if this skill only produces
-            freeform text.
+            Space-separated tool patterns, per the spec — not a comma-separated list.
           </p>
         </div>
 
         <div style={fieldWrapStyle}>
-          <label style={labelStyle}>Resources</label>
-          {resources.map((res, idx) => (
+          <label style={labelStyle}>Metadata (optional)</label>
+          {metadata.map((m, idx) => (
             <div key={idx} style={{ display: 'flex', gap: '0.5rem', marginBottom: '0.5rem' }}>
               <input
                 style={inputStyle}
-                value={res.path}
-                onChange={(e) => updateResource(idx, 'path', e.target.value)}
-                placeholder="reference/checklist.md"
+                value={m.key}
+                onChange={(e) => setMetadata((cur) => cur.map((x, i) => (i === idx ? { ...x, key: e.target.value } : x)))}
+                placeholder="key"
               />
               <input
                 style={inputStyle}
-                value={res.description ?? ''}
-                onChange={(e) => updateResource(idx, 'description', e.target.value)}
-                placeholder="Description"
+                value={m.value}
+                onChange={(e) => setMetadata((cur) => cur.map((x, i) => (i === idx ? { ...x, value: e.target.value } : x)))}
+                placeholder="value"
               />
-              <button onClick={() => removeResource(idx)} style={secondaryButtonStyle}>✕</button>
+              <button onClick={() => setMetadata((cur) => cur.filter((_, i) => i !== idx))} style={secondaryButtonStyle}>✕</button>
             </div>
           ))}
-          <button onClick={addResource} style={secondaryButtonStyle}>+ Add Resource</button>
+          <button onClick={() => setMetadata((cur) => [...cur, { key: '', value: '' }])} style={secondaryButtonStyle}>
+            + Add Metadata
+          </button>
         </div>
 
         <div style={fieldWrapStyle}>
-          <label style={labelStyle}>SKILL.md Content</label>
+          <label style={labelStyle}>SKILL.md Body</label>
           <textarea
-            style={{ ...inputStyle, minHeight: 260, fontFamily: 'monospace', resize: 'vertical' }}
-            value={content}
-            onChange={(e) => setContent(e.target.value)}
+            style={{ ...inputStyle, minHeight: 200, fontFamily: 'monospace', resize: 'vertical' }}
+            value={body}
+            onChange={(e) => setBody(e.target.value)}
           />
         </div>
 
-        {error && <p style={{ color: 'var(--iac-error)', fontSize: '0.85rem' }}>{error}</p>}
-        {saveMessage && <p style={{ color: 'var(--iac-success)', fontSize: '0.85rem' }}>{saveMessage}</p>}
+        <div style={fieldWrapStyle}>
+          <label style={labelStyle}>Files (scripts / references / assets)</label>
+          {files.map((file, idx) => (
+            <div key={idx} style={{ marginBottom: '0.75rem', padding: '0.5rem', border: '1px solid var(--iac-border)', borderRadius: '4px' }}>
+              <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '0.5rem' }}>
+                <select
+                  style={inputStyle}
+                  value={file.folder}
+                  onChange={(e) => updateFile(idx, { folder: e.target.value as PlaceholderFolder })}
+                >
+                  <option value="scripts">scripts/</option>
+                  <option value="references">references/</option>
+                  <option value="assets">assets/</option>
+                </select>
+                <input
+                  style={inputStyle}
+                  value={file.filename}
+                  onChange={(e) => updateFile(idx, { filename: e.target.value })}
+                  placeholder="check.py"
+                />
+                <button onClick={() => removeFile(idx)} style={secondaryButtonStyle}>✕</button>
+              </div>
+              <textarea
+                style={{ ...inputStyle, minHeight: 80, fontFamily: 'monospace', resize: 'vertical' }}
+                value={file.content}
+                onChange={(e) => updateFile(idx, { content: e.target.value })}
+                placeholder="Leave blank for a placeholder stub"
+              />
+            </div>
+          ))}
+          <button onClick={addFile} style={secondaryButtonStyle}>+ Add File</button>
+        </div>
 
-        <div style={{ display: 'flex', gap: '0.5rem', marginTop: '1rem', flexWrap: 'wrap' }}>
-          <button onClick={handleSaveDraft} style={primaryButtonStyle}>Save Draft</button>
-          <button onClick={handleExport} style={secondaryButtonStyle}>Export Package</button>
-          <button onClick={handlePrepareSubmission} style={secondaryButtonStyle}>Prepare Registry Submission</button>
+        {error && <p style={{ color: 'var(--iac-error)', fontSize: '0.85rem' }}>{error}</p>}
+        {successName && (
+          <p style={{ color: 'var(--iac-success)', fontSize: '0.85rem' }}>
+            Installed "{successName}". View it in{' '}
+            <Link to="/skills/installed" style={{ color: 'var(--iac-link, var(--iac-accent))' }}>
+              Installed Skills → Agent Skills
+            </Link>.
+          </p>
+        )}
+
+        <div style={{ display: 'flex', gap: '0.5rem', marginTop: '1rem' }}>
+          <button onClick={handleCreateAndInstall} style={primaryButtonStyle} disabled={isSubmitting}>
+            {isSubmitting ? 'Creating…' : 'Create & Install'}
+          </button>
         </div>
       </div>
 
-      {/* Preview / submission */}
+      {/* Preview */}
       <div style={{ flex: '1 1 420px', minWidth: 360 }}>
-        <h4 style={{ color: 'var(--iac-text)', marginBottom: '0.5rem' }}>Preview</h4>
-        <pre style={{ ...codeBlockStyle, minHeight: 200 }}>{content}</pre>
+        <h4 style={{ color: 'var(--iac-text)', marginBottom: '0.5rem' }}>SKILL.md Preview</h4>
+        <pre style={{ ...codeBlockStyle, minHeight: 200 }}>{skillMdPreview}</pre>
 
-        {submission && (
+        {files.length > 0 && (
           <div style={{ marginTop: '1.5rem' }}>
-            <h4 style={{ color: 'var(--iac-text)', marginBottom: '0.25rem' }}>Registry Submission</h4>
-            <p style={{ color: 'var(--iac-text-secondary)', fontSize: '0.85rem', marginTop: 0 }}>
-              Open a pull request against{' '}
-              <code>OWASP/www-project-hactu8</code> adding this entry to{' '}
-              <code>spikes/iac-prototype/skills/registry.json</code>. Once reviewed, the HACTU8 skills board signs
-              the entry (<code>signature.verified: true</code>) and merges it — it will then appear in the Skills
-              Explorer for everyone.
-            </p>
-            <pre style={{ ...codeBlockStyle, maxHeight: 320 }}>{JSON.stringify(submission, null, 2)}</pre>
+            <h4 style={{ color: 'var(--iac-text)', marginBottom: '0.5rem' }}>Directory Structure</h4>
+            <pre style={codeBlockStyle}>
+              {`${name || '<name>'}/\n  SKILL.md\n${files
+                .filter((f) => f.filename.trim())
+                .map((f) => `  ${f.folder}/${f.filename}`)
+                .join('\n')}`}
+            </pre>
           </div>
         )}
       </div>
