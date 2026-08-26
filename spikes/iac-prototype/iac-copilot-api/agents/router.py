@@ -16,7 +16,6 @@ from agents.models import (
     PhaseEnum,
 )
 from agents.phase1_planning import KickOffAgent, ReconAgent, RiskAssessmentAgent
-from skills.registry import skill_registry
 from iac_paths import IAC_HOME
 
 router = APIRouter(prefix="/agents", tags=["agents"])
@@ -229,9 +228,3 @@ async def reject(engagement_id: str) -> Dict[str, Any]:
     state.status = EngagementStatus.REJECTED
     _save_state(state)
     return {"engagement_id": engagement_id, "status": state.status}
-
-
-@router.get("/skills")
-async def list_skills() -> Dict[str, Any]:
-    """Return all registered skills and their schemas."""
-    return {"skills": skill_registry.list_skills()}

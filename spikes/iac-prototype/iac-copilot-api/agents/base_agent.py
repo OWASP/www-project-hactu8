@@ -1,5 +1,6 @@
 """BaseAgent — Claude tool_use loop for IAC engagement agents."""
 
+import asyncio
 import json
 import os
 from datetime import datetime
@@ -7,8 +8,15 @@ from typing import Any, AsyncGenerator, Dict, List, Optional
 
 import httpx
 
-from agents.models import AgentResult, ApprovalContext, PhaseEnum
-from skills.registry import skill_registry
+from agents.models import AgentResult, PhaseEnum
+from skill_packages.runner import (
+    SKILL_RUNNER_TOOLS,
+    SkillRunnerError,
+    discover_phase_skills,
+    list_skills_in_scope,
+    read_skill_body,
+    run_skill_script,
+)
 
 ANTHROPIC_API_URL = "https://api.anthropic.com/v1/messages"
 ANTHROPIC_VERSION = "2023-06-01"
@@ -30,7 +38,6 @@ class BaseAgent:
       {"type": "text",         "content": "..."}
       {"type": "tool_call",    "name": "...", "input": {...}}
       {"type": "tool_result",  "name": "...", "result": {...}}
-      {"type": "approval_required", "context": ApprovalContext}
       {"type": "complete",     "result": AgentResult}
       {"type": "error",        "message": "..."}
     """
@@ -69,7 +76,29 @@ class BaseAgent:
             yield {"type": "error", "message": "ANTHROPIC_API_KEY is not configured"}
             return
 
-        tools = skill_registry.get_tools(categories=self.skill_categories)
+        # skill_categories is used as a single phase tag (e.g. "recon") to
+        # scope which Skill Packages this agent can see/run — a real
+        # server-side boundary, not just a prompt instruction. Agents with
+        # no phase (KickOffAgent, RiskAssessmentAgent) stay tool-free.
+        phase_tag = self.skill_categories[0] if self.skill_categories else None
+        tools = SKILL_RUNNER_TOOLS if phase_tag else []
+
+        effective_system_prompt = self.system_prompt
+        if phase_tag:
+            discovered = await asyncio.to_thread(discover_phase_skills, phase_tag)
+            if discovered:
+                sections = "\n\n".join(
+                    f"## Skill: {s.name}\n\n{read_skill_body(phase_tag, s.name)}" for s in discovered
+                )
+                effective_system_prompt = (
+                    f"{self.system_prompt}\n\n"
+                    f"# Available Skills\n\n"
+                    f"The following skills are available to you now — their full instructions are "
+                    f"included below so you don't need to call list_skills/read_skill for these. "
+                    f"Use run_skill_script to execute them. If you need a skill not listed here, "
+                    f"call list_skills to check for anything else installed.\n\n{sections}"
+                )
+
         messages: List[Dict[str, Any]] = [
             {"role": "user", "content": self._build_initial_message(scope_summary, prior_context)}
         ]
@@ -78,7 +107,7 @@ class BaseAgent:
         tool_calls_log: List[Dict[str, Any]] = []
 
         for iteration in range(MAX_TOOL_ITERATIONS):
-            response_data = await self._call_claude(messages, tools)
+            response_data = await self._call_claude(messages, tools, effective_system_prompt)
             if response_data is None:
                 yield {"type": "error", "message": "Empty response from Claude API"}
                 return
@@ -122,57 +151,44 @@ class BaseAgent:
 
                 yield {"type": "tool_call", "name": tool_name, "input": tool_input}
 
-                # Approval gate for dangerous skills
-                if skill_registry.is_approval_required(tool_name):
-                    # Integrity check first: a "protected" skill (see
-                    # skills/registry.py) whose recomputed digest no longer
-                    # matches what was recorded/signed at registration is
-                    # treated as tampered and halts immediately, with a
-                    # distinct event/message from the generic approval-gate
-                    # halt below — this is a different failure mode (content
-                    # can't be trusted at all) from "content is trusted but
-                    # needs a human to say go ahead."
-                    integrity = skill_registry.verify_integrity(tool_name)
-                    if integrity["protected"] and not integrity["passed"]:
-                        yield {
-                            "type": "integrity_failure",
-                            "tool_name": tool_name,
-                            "expected_digest": integrity.get("expected_digest"),
-                            "actual_digest": integrity.get("actual_digest"),
-                            "message": integrity["message"],
-                        }
-                        yield {
-                            "type": "error",
-                            "message": (
-                                f"Integrity verification failed for protected skill '{tool_name}' — "
-                                "its content does not match the digest recorded when it was registered. "
-                                "Refusing to execute a possibly-tampered skill. Halting run."
-                            ),
-                        }
-                        return
-
-                    approval_ctx = ApprovalContext(
-                        level="tool",
-                        tool_name=tool_name,
-                        tool_input=tool_input,
-                        risk="high",
-                        description=f"Agent wants to execute attack skill: {tool_name}",
-                    )
-                    yield {"type": "approval_required", "context": approval_ctx.model_dump()}
-                    # In Phase A we halt — approval gates are wired in Phase B
-                    yield {"type": "error", "message": f"Approval required for {tool_name}. Implement approval gate."}
-                    return
-
+                # TODO: no approval/protection mechanism exists yet for Skill
+                # Packages. Design one before adding any skill category that
+                # needs gating (e.g. an eventual active-exploitation phase).
                 try:
-                    skill_result = await skill_registry.execute(tool_name, tool_input)
-                    result_content = skill_result.model_dump() if hasattr(skill_result, "model_dump") else str(skill_result)
+                    if tool_name == "list_skills":
+                        result_content = list_skills_in_scope(phase_tag)
+                    elif tool_name == "read_skill":
+                        result_content = {"body": read_skill_body(phase_tag, tool_input.get("name", ""))}
+                    elif tool_name == "run_skill_script":
+                        result_content = await run_skill_script(
+                            phase_tag,
+                            tool_input.get("name", ""),
+                            tool_input.get("script", ""),
+                            tool_input.get("args"),
+                        )
+                    else:
+                        result_content = {"success": False, "error": f"Unknown tool: {tool_name}"}
+                except SkillRunnerError as exc:
+                    result_content = {"success": False, "error": str(exc)}
                 except Exception as exc:
                     result_content = {"success": False, "error": str(exc)}
 
                 yield {"type": "tool_result", "name": tool_name, "result": result_content}
 
                 tool_calls_log.append({"tool": tool_name, "input": tool_input, "result": result_content})
-                if isinstance(result_content, dict) and result_content.get("success"):
+                # run_skill_script's result shape ({exit_code, stdout, stderr,
+                # timed_out}) has no top-level "success" key — the runner
+                # deliberately doesn't parse a script's stdout (see
+                # skill_packages/runner.py), so a finding is recorded as the
+                # raw stdout text whenever the script actually ran.
+                if (
+                    tool_name == "run_skill_script"
+                    and isinstance(result_content, dict)
+                    and result_content.get("exit_code") == 0
+                    and not result_content.get("timed_out")
+                ):
+                    findings.append({"tool": tool_name, "data": result_content.get("stdout")})
+                elif isinstance(result_content, dict) and result_content.get("success"):
                     findings.append({"tool": tool_name, "data": result_content.get("data")})
 
                 tool_results.append({
@@ -191,6 +207,7 @@ class BaseAgent:
         self,
         messages: List[Dict[str, Any]],
         tools: List[Dict[str, Any]],
+        system_prompt: str,
     ) -> Optional[Dict[str, Any]]:
         headers = {
             "x-api-key": self._api_key,
@@ -200,7 +217,7 @@ class BaseAgent:
         payload: Dict[str, Any] = {
             "model": DEFAULT_MODEL,
             "max_tokens": MAX_TOKENS,
-            "system": self.system_prompt,
+            "system": system_prompt,
             "messages": messages,
         }
         if tools:

@@ -3,9 +3,6 @@
 from agents.base_agent import BaseAgent
 from agents.models import PhaseEnum
 
-# Import skills to ensure they are registered
-import skills.recon  # noqa: F401
-
 
 class KickOffAgent(BaseAgent):
     """
@@ -45,19 +42,19 @@ Your task is to build a target surface map using a MAXIMUM of 8 tool calls total
 
 ## Recommended probe sequence (adjust based on target type)
 
-1. dns_lookup — one call on the target hostname to get IPs
-2. whois_lookup — one call on the target domain for registration info
-3. http_probe — probe the PRIMARY endpoint (the exact target URL given)
-4. http_probe — probe ONE well-known API/management path (e.g. /api/version, /health, /v1/models)
-5. STOP probing and synthesize — do not chain more than 4-5 http_probe calls
+1. dns-lookup — one call on the target hostname to get IPs
+2. whois-lookup — one call on the target domain for registration info
+3. http-probe — probe the PRIMARY endpoint (the exact target URL given)
+4. http-probe — probe ONE well-known API/management path (e.g. /api/version, /health, /v1/models)
+5. STOP probing and synthesize — do not chain more than 4-5 http-probe calls
 
 ## Stop condition
 Once you have: IP addresses, server fingerprint, security header status, and at least one API schema observation — STOP calling tools and write your surface map report. Do not probe every possible path.
 
 ## Rules
 - Passive only — no attack payloads
-- Max 8 tool calls total across all three tools
-- If a target is localhost or a local LLM (Ollama, LM Studio), skip whois_lookup and dns_lookup — go straight to http_probe on the key endpoints
+- Max 8 tool calls total across all three skills
+- If a target is localhost or a local LLM (Ollama, LM Studio), skip whois-lookup and dns-lookup — go straight to http-probe on the key endpoints
 - Flag missing security headers (CSP, HSTS, X-Frame-Options, X-Content-Type-Options) as findings
 
 ## Output format

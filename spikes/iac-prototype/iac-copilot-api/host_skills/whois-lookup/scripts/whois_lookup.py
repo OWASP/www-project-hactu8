@@ -1,11 +1,17 @@
-"""WHOIS lookup skill — passive domain registration info via subprocess whois."""
+#!/usr/bin/env python3
+"""WHOIS lookup — passive domain registration info via subprocess whois.
+Standalone script (requires the `whois` binary on PATH). Runnable outside
+IAC by any tool that can execute a script.
 
+Usage: whois_lookup.py <domain-or-url>
+Prints one JSON object to stdout: {"success": bool, "data": ..., "error": ...}
+"""
 import asyncio
+import json
 import re
 import shutil
+import sys
 from urllib.parse import urlparse
-
-from skills.registry import SkillResult, skill
 
 
 def _extract_domain(target: str) -> str:
@@ -34,22 +40,13 @@ def _parse_whois_output(raw: str) -> dict:
     return fields
 
 
-@skill(
-    name="whois_lookup",
-    description=(
-        "Perform a WHOIS lookup on a domain or URL to retrieve registration "
-        "information: registrar, creation/expiry dates, name servers, and status."
-    ),
-    category="recon",
-    requires_approval=False,
-)
-async def whois_lookup(target: str) -> SkillResult:
-    """Look up WHOIS information for the given domain or URL."""
+async def whois_lookup(target: str) -> dict:
     if not shutil.which("whois"):
-        return SkillResult(
-            success=False,
-            error="'whois' command not found. Install it (e.g. brew install whois).",
-        )
+        return {
+            "success": False,
+            "data": None,
+            "error": "'whois' command not found. Install it (e.g. brew install whois).",
+        }
 
     domain = _extract_domain(target)
     try:
@@ -58,18 +55,26 @@ async def whois_lookup(target: str) -> SkillResult:
             stdout=asyncio.subprocess.PIPE,
             stderr=asyncio.subprocess.PIPE,
         )
-        stdout, stderr = await asyncio.wait_for(proc.communicate(), timeout=15.0)
+        stdout, _stderr = await asyncio.wait_for(proc.communicate(), timeout=15.0)
         raw = stdout.decode(errors="replace")
 
         if not raw.strip():
-            return SkillResult(success=False, error=f"No WHOIS data returned for {domain!r}")
+            return {"success": False, "data": None, "error": f"No WHOIS data returned for {domain!r}"}
 
         parsed = _parse_whois_output(raw)
-        return SkillResult(
-            success=True,
-            data={"domain": domain, "parsed": parsed, "raw": raw[:2000]},
-        )
+        return {"success": True, "data": {"domain": domain, "parsed": parsed, "raw": raw[:2000]}, "error": None}
     except asyncio.TimeoutError:
-        return SkillResult(success=False, error=f"WHOIS lookup timed out for {domain!r}")
+        return {"success": False, "data": None, "error": f"WHOIS lookup timed out for {domain!r}"}
     except Exception as exc:
-        return SkillResult(success=False, error=str(exc))
+        return {"success": False, "data": None, "error": str(exc)}
+
+
+def main() -> None:
+    if len(sys.argv) != 2:
+        print(json.dumps({"success": False, "data": None, "error": "Usage: whois_lookup.py <domain-or-url>"}))
+        sys.exit(0)
+    print(json.dumps(asyncio.run(whois_lookup(sys.argv[1]))))
+
+
+if __name__ == "__main__":
+    main()
