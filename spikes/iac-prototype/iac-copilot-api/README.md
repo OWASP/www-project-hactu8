@@ -13,8 +13,17 @@ pip install -r requirements.txt
 ## Run
 
 ```bash
-uvicorn app:app --reload --port 8000
+uvicorn app:app --reload --reload-exclude 'data/*' --port 8000
 ```
+
+Note: `--reload-exclude 'data/*'` keeps the auto-reloader from watching the
+ChromaDB persistence directory. Without it, every document upload/chat write
+touches `data/chroma/chroma.sqlite3`, which the file watcher treats as a code
+change and restarts the server mid-write — interrupting ChromaDB before it
+flushes the updated HNSW vector index to disk. The SQLite metadata table
+still shows the new document (so `/documents` and `/stats` look correct),
+but semantic search (`/chat`) never finds it because the on-disk vector index
+was never updated, resulting in the same "not enough information" response.
 
 ## Environment
 

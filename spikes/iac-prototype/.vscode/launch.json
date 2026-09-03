@@ -204,7 +204,7 @@
       "console": "integratedTerminal",
       "cwd": "${workspaceFolder}/iac-console",
       "env": {
-        "PYTHONPATH": "${workspaceFolder}/iac-console",
+        "PYTHONPATH": "${workspaceFolder}/iac-console"
       },
       "python": "${workspaceFolder}/iac-console/.venv/bin/python",
       "justMyCode": true,
@@ -229,7 +229,7 @@
       "console": "integratedTerminal",
       "cwd": "${workspaceFolder}/iac-console",
       "env": {
-        "PYTHONPATH": "${workspaceFolder}/iac-console",
+        "PYTHONPATH": "${workspaceFolder}/iac-console"
       },
       "python": "${workspaceFolder}/iac-console/.venv/bin/python",
       "justMyCode": true,
@@ -244,6 +244,8 @@
       "args": [
         "app:app",
         "--reload",
+        "--reload-exclude",
+        "data/*",
         "--port",
         "8000"
       ],

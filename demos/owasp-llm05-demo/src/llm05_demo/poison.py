@@ -33,7 +33,7 @@ def inject_in_process(
 
 
 def inject_over_http(
-    base_url: str = "http://127.0.0.1:5100", docs: Optional[List[str]] = None
+    base_url: str = "http://127.0.0.1:5101", docs: Optional[List[str]] = None
 ) -> List[str]:
     """Inject via the vulnerable server's unauthenticated ingestion endpoint."""
     import requests  # optional dependency; only needed for the HTTP path

@@ -18,9 +18,10 @@ class VectorStoreService:
     """Service for managing document embeddings in ChromaDB."""
 
     def __init__(self, persist_directory: Optional[str] = None):
-        self.persist_directory = persist_directory or os.getenv(
-            "CHROMA_PERSIST_DIR",
-            os.path.join(os.path.dirname(__file__), "..", "data", "chroma")
+        self.persist_directory = (
+            persist_directory
+            or os.getenv("CHROMA_PERSIST_DIR")
+            or os.path.join(os.path.dirname(__file__), "..", "data", "chroma")
         )
 
         os.makedirs(self.persist_directory, exist_ok=True)
@@ -103,6 +104,42 @@ class VectorStoreService:
                 })
 
         return formatted_results
+
+    def get_document_chunks(
+        self,
+        document_id: str,
+        collection_key: str = "assist"
+    ) -> List[Dict[str, Any]]:
+        collection = self._get_collection(collection_key)
+        results = collection.get(
+            where={"document_id": document_id},
+            include=["documents", "metadatas"]
+        )
+
+        chunks = []
+        if results and results.get("ids"):
+            for i, chunk_id in enumerate(results["ids"]):
+                chunks.append({
+                    "id": chunk_id,
+                    "content": results["documents"][i] if results.get("documents") else "",
+                    "metadata": results["metadatas"][i] if results.get("metadatas") else {},
+                })
+
+        chunks.sort(key=lambda c: c["metadata"].get("chunk_index", 0))
+        return chunks
+
+    def get_indexed_document_metadata(self) -> Dict[str, Dict[str, Any]]:
+        """Return one metadata record per document represented in Chroma."""
+        documents: Dict[str, Dict[str, Any]] = {}
+
+        for collection in self.collections.values():
+            results = collection.get(include=["metadatas"])
+            for metadata in results.get("metadatas") or []:
+                document_id = metadata.get("document_id") if metadata else None
+                if document_id and document_id not in documents:
+                    documents[document_id] = dict(metadata)
+
+        return documents
 
     def delete_document(self, document_id: str, collection_key: str = "assist") -> int:
         collection = self._get_collection(collection_key)

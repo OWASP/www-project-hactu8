@@ -10,6 +10,11 @@ from .llm_dispatch import call_model
 class RAGService:
     """Service for RAG-enhanced chat with document context."""
 
+    # Cap on how much full-document text to stuff into context when specific
+    # documents are in scope (see get_full_document_context). Keeps a handful
+    # of large documents from blowing past the model's context window.
+    MAX_FULL_DOCUMENT_CHARS = 60000
+
     SYSTEM_PROMPTS = {
         "assist": """You are an IAC (Intelligence Assurance Copilot) assistant helping users with research, planning, and summarization tasks.
 
@@ -85,6 +90,39 @@ Help users understand the HACTU8 project, its components, and how to work with i
 
         return results[:n_results]
 
+    def get_full_document_context(
+        self,
+        document_ids: List[str],
+        mode: str = "assist"
+    ) -> List[Dict[str, Any]]:
+        """Fetch the complete text of specific documents, in chunk order.
+
+        Top-k semantic search over chunks works well for narrow, specific
+        questions but fails on broad asks like "summarize this document" -
+        no single 1000-char chunk is "about" a whole-document summary, so it
+        can lose to unrelated chunks or return nothing. When the caller
+        already knows which documents are in scope, skip similarity search
+        entirely and hand the model the real document text instead.
+        """
+        collection_key = {"owasp": "owasp", "project": "project"}.get(mode, "assist")
+
+        all_chunks: List[Dict[str, Any]] = []
+        for document_id in document_ids:
+            all_chunks.extend(
+                self.vector_store.get_document_chunks(document_id, collection_key=collection_key)
+            )
+
+        selected_chunks = []
+        total_chars = 0
+        for chunk in all_chunks:
+            content_len = len(chunk["content"])
+            if selected_chunks and total_chars + content_len > self.MAX_FULL_DOCUMENT_CHARS:
+                break
+            selected_chunks.append(chunk)
+            total_chars += content_len
+
+        return selected_chunks
+
     def build_context_prompt(self, chunks: List[Dict[str, Any]]) -> str:
         if not chunks:
             return "No relevant documents found in the knowledge base."
@@ -129,11 +167,18 @@ Help users understand the HACTU8 project, its components, and how to work with i
         api_key: Optional[str] = None,
         base_url: Optional[str] = None
     ) -> Dict[str, Any]:
-        chunks = self.get_relevant_context(
-            query=message,
-            mode=mode,
-            document_ids=document_ids
-        )
+        if document_ids:
+            chunks = self.get_full_document_context(document_ids, mode=mode)
+            if not chunks:
+                # Documents were specified but nothing came back (e.g. stale
+                # ids) - fall back to semantic search rather than going empty.
+                chunks = self.get_relevant_context(
+                    query=message,
+                    mode=mode,
+                    document_ids=document_ids
+                )
+        else:
+            chunks = self.get_relevant_context(query=message, mode=mode)
 
         context = self.build_context_prompt(chunks)
         system_prompt = f"{self.SYSTEM_PROMPTS.get(mode, self.SYSTEM_PROMPTS['assist'])}\n\n{context}"

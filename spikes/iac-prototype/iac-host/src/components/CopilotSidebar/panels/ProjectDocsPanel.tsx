@@ -4,6 +4,7 @@
 
 import React from 'react';
 import { useCopilot } from '../../../contexts/CopilotContext';
+import copilotService from '../../../services/copilotService';
 
 // HACTU8 Wiki and documentation links
 const HACTU8_RESOURCES = [
@@ -54,9 +55,24 @@ const HACTU8_RESOURCES = [
 const ProjectDocsPanel: React.FC = () => {
   const { documents, refreshDocuments, isLoading } = useCopilot();
   const [isSourcesExpanded, setIsSourcesExpanded] = React.useState(false);
+  const [isSyncing, setIsSyncing] = React.useState(false);
+  const [syncError, setSyncError] = React.useState<string | null>(null);
 
   // Filter to show only project documents
   const projectDocs = documents.filter(d => d.sourceType === 'project');
+
+  const handleRefresh = async () => {
+    setIsSyncing(true);
+    setSyncError(null);
+    try {
+      await copilotService.syncProjectDocuments();
+      await refreshDocuments();
+    } catch (error) {
+      setSyncError(error instanceof Error ? error.message : 'Failed to sync project documentation');
+    } finally {
+      setIsSyncing(false);
+    }
+  };
 
   return (
     <div className="project-panel">
@@ -80,12 +96,14 @@ const ProjectDocsPanel: React.FC = () => {
             <span className="copilot-section-title">HACTU8 Project</span>
             <button
               className="copilot-section-action"
-              onClick={refreshDocuments}
-              disabled={isLoading}
+              onClick={handleRefresh}
+              disabled={isLoading || isSyncing}
             >
-              Refresh
+              {isSyncing ? 'Syncing...' : 'Refresh'}
             </button>
           </div>
+
+          {syncError && <p role="alert" style={{ color: '#ff8a80', fontSize: '12px' }}>{syncError}</p>}
 
           {/* Quick Links */}
           <div style={{ marginBottom: '16px' }}>

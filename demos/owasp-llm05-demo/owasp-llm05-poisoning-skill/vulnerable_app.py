@@ -204,7 +204,7 @@ def query_system():
 def main() -> None:
     _seed_ground_truth()
     # Port is configurable; macOS reserves 5000 for AirPlay Receiver.
-    port = int(os.getenv("LLM05_PORT", "5000"))
+    port = int(os.getenv("LLM05_PORT", "5101"))
     app.run(host="127.0.0.1", port=port)
 
 

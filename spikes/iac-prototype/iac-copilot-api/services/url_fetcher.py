@@ -118,7 +118,9 @@ class URLFetcher:
         url: str,
         vector_store,
         document_store: Dict[str, Document],
-        custom_title: Optional[str] = None
+        custom_title: Optional[str] = None,
+        collection_key: str = "assist",
+        source_type: SourceType = SourceType.URL
     ) -> Optional[Document]:
         result = await self.fetch_url(url)
         if not result:
@@ -145,7 +147,7 @@ class URLFetcher:
         doc = Document(
             id=doc_id,
             title=title,
-            source_type=SourceType.URL,
+            source_type=source_type,
             source_url=final_url,
             content_hash=content_hash
         )
@@ -156,9 +158,9 @@ class URLFetcher:
             document_id=doc_id,
             metadata={
                 "title": title,
-                "source_type": SourceType.URL.value,
+                "source_type": source_type.value,
             },
-            collection_key="assist"
+            collection_key=collection_key
         )
 
         document_store[doc_id] = doc

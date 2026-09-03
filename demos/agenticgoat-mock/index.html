@@ -1,0 +1,415 @@
+<title>AgenticGoat Mock — HACTU8 Lessons</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<style>
+  :root {
+    color-scheme: dark;
+    --bg: #0f1417;
+    --panel: #171d21;
+    --border: #2a3339;
+    --text: #e6edf0;
+    --muted: #8b9aa3;
+    --accent: #5fd3a3;
+    --danger: #e5787a;
+    --gold: #d0b95f;
+    --mono: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  }
+  header {
+    padding: 18px 28px;
+    border-bottom: 1px solid var(--border);
+  }
+  header h1 { margin: 0 0 4px; font-size: 20px; }
+  header p { margin: 0; color: var(--muted); font-size: 13px; }
+  header .badge {
+    display: inline-block;
+    margin-top: 8px;
+    padding: 3px 8px;
+    border: 1px solid var(--danger);
+    color: var(--danger);
+    border-radius: 4px;
+    font-size: 11px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  main {
+    display: grid;
+    grid-template-columns: 280px 1fr 360px;
+    gap: 1px;
+    background: var(--border);
+    min-height: calc(100vh - 88px);
+  }
+  section { background: var(--bg); padding: 18px; overflow: auto; }
+  h2 { font-size: 13px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); margin: 0 0 12px; }
+  .progress { font-size: 12px; color: var(--muted); margin-bottom: 12px; }
+  .progress-bar { height: 4px; background: var(--panel); border-radius: 2px; margin-top: 6px; overflow: hidden; }
+  .progress-bar > div { height: 100%; background: var(--accent); }
+
+  .lesson {
+    padding: 9px 10px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    margin-bottom: 6px;
+    cursor: pointer;
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  .lesson:hover { border-color: var(--accent); }
+  .lesson.active { border-color: var(--accent); background: #142019; }
+  .lesson .check {
+    flex: 0 0 auto;
+    width: 16px; height: 16px;
+    border-radius: 50%;
+    border: 1px solid var(--border);
+    margin-top: 2px;
+    font-size: 10px;
+    line-height: 14px;
+    text-align: center;
+    color: transparent;
+  }
+  .lesson.solved .check { background: var(--accent); border-color: var(--accent); color: #06231a; }
+  .lesson .code { font-family: var(--mono); font-size: 10px; color: var(--muted); }
+  .lesson .title { font-weight: 600; font-size: 13px; margin-top: 1px; }
+
+  .llm-badge {
+    display: inline-block;
+    font-family: var(--mono);
+    font-size: 11px;
+    padding: 2px 7px;
+    border-radius: 4px;
+    border: 1px solid var(--gold);
+    color: var(--gold);
+    margin-bottom: 8px;
+  }
+  #lesson-title { margin: 0 0 12px; font-size: 19px; }
+  .objective {
+    border-left: 3px solid var(--accent);
+    padding: 8px 12px;
+    background: #12241c33;
+    font-size: 13px;
+    margin-bottom: 14px;
+  }
+  .objective strong { color: var(--accent); }
+  .description { font-size: 13px; color: var(--muted); line-height: 1.5; margin-bottom: 16px; }
+
+  .hints { margin-bottom: 18px; }
+  .hint-list { margin: 8px 0 0; padding: 0; list-style: none; }
+  .hint-list li {
+    font-size: 12px;
+    color: var(--text);
+    border-left: 2px solid var(--gold);
+    padding: 6px 10px;
+    margin-bottom: 6px;
+    background: #1c1a1233;
+  }
+
+  .field { margin-bottom: 14px; }
+  .field label { display: block; font-size: 12px; color: var(--muted); margin-bottom: 6px; }
+  textarea, select, input[type=text] {
+    width: 100%;
+    background: var(--panel);
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 8px 10px;
+    font-family: var(--mono);
+    font-size: 13px;
+  }
+  textarea { min-height: 70px; resize: vertical; }
+  .profile-toggle { display: flex; gap: 8px; }
+  .profile-toggle button {
+    flex: 1;
+    padding: 8px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: var(--panel);
+    color: var(--text);
+    cursor: pointer;
+    font-size: 13px;
+  }
+  .profile-toggle button.selected.vulnerable { border-color: var(--danger); color: var(--danger); }
+  .profile-toggle button.selected.hardened { border-color: var(--accent); color: var(--accent); }
+  .row { display: flex; gap: 8px; }
+  button.primary, button.hint-btn {
+    padding: 9px 14px;
+    border-radius: 6px;
+    border: none;
+    background: var(--accent);
+    color: #06231a;
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 13px;
+  }
+  button.secondary {
+    padding: 9px 14px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--text);
+    cursor: pointer;
+    font-size: 13px;
+  }
+  button.hint-btn { background: transparent; border: 1px solid var(--gold); color: var(--gold); }
+  button:disabled { opacity: 0.5; cursor: not-allowed; }
+  .run-info { font-family: var(--mono); font-size: 11px; color: var(--muted); margin-top: 10px; }
+
+  .mitigation {
+    margin-top: 18px;
+    padding: 12px 14px;
+    border: 1px solid var(--accent);
+    border-radius: 6px;
+    background: #12241c;
+    font-size: 13px;
+  }
+  .mitigation h3 { margin: 0 0 6px; font-size: 13px; color: var(--accent); }
+
+  .event {
+    border-left: 2px solid var(--border);
+    padding: 6px 0 6px 12px;
+    margin-bottom: 2px;
+    font-family: var(--mono);
+    font-size: 12px;
+  }
+  .event .t { color: var(--muted); }
+  .event.reset { border-color: var(--muted); }
+  .event.attempt { border-color: #7aa7e5; }
+  .event.tool_call, .event.disclosure { border-color: var(--danger); }
+  .event.guardrail_block { border-color: var(--accent); }
+  .event.no_effect { border-color: var(--muted); }
+  .event.result { border-color: var(--gold); font-weight: 600; }
+  .result-banner {
+    padding: 10px 12px;
+    border-radius: 6px;
+    margin-bottom: 12px;
+    font-size: 13px;
+    font-weight: 600;
+  }
+  .result-banner.success { background: #2a1416; color: var(--danger); border: 1px solid var(--danger); }
+  .result-banner.blocked { background: #12241c; color: var(--accent); border: 1px solid var(--accent); }
+  .empty { color: var(--muted); font-size: 13px; }
+</style>
+
+<header>
+  <h1>AgenticGoat Mock — HACTU8 Lessons</h1>
+  <p>WebGoat-style walkthroughs for the OWASP Top 10 for LLM Applications (2026), exercised through the proposed HACTU8 testing interface.</p>
+  <span class="badge">Not the real AgenticGoat — mock for demo purposes</span>
+</header>
+
+<main>
+  <section>
+    <h2>Lessons</h2>
+    <div class="progress">
+      <span id="progress-text">0 / 10 solved</span>
+      <div class="progress-bar"><div id="progress-fill" style="width:0%"></div></div>
+    </div>
+    <div id="lesson-list"></div>
+  </section>
+
+  <section>
+    <div id="lesson-empty" class="empty">Select a lesson to begin.</div>
+    <div id="lesson-body" style="display:none">
+      <span class="llm-badge" id="lesson-owasp"></span>
+      <h3 id="lesson-title"></h3>
+      <div class="objective"><strong>Objective:</strong> <span id="lesson-objective"></span></div>
+      <div class="description" id="lesson-description"></div>
+
+      <div class="hints">
+        <button class="hint-btn" id="btn-hint">Show hint</button>
+        <ul class="hint-list" id="hint-list"></ul>
+      </div>
+
+      <div class="field">
+        <label>Profile</label>
+        <div class="profile-toggle">
+          <button type="button" id="btn-vulnerable" class="vulnerable">vulnerable</button>
+          <button type="button" id="btn-hardened" class="hardened">hardened</button>
+        </div>
+      </div>
+      <div class="field">
+        <label>Payload</label>
+        <textarea id="payload"></textarea>
+      </div>
+      <div class="row">
+        <button class="secondary" id="btn-reset">Reset environment</button>
+        <button class="primary" id="btn-attempt">Send attempt</button>
+      </div>
+      <div class="run-info" id="run-info"></div>
+
+      <div class="mitigation" id="mitigation" style="display:none">
+        <h3>Solved — mitigation</h3>
+        <div id="mitigation-text"></div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Evidence</h2>
+    <div id="evidence" class="empty">No run yet.</div>
+  </section>
+</main>
+
+<script>
+  const SOLVED_KEY = "agenticgoat-solved";
+  const state = { scenarios: [], activeId: null, profile: "vulnerable", runId: null, hintsShown: 0 };
+
+  function loadSolved() {
+    try { return new Set(JSON.parse(localStorage.getItem(SOLVED_KEY) || "[]")); }
+    catch (e) { return new Set(); }
+  }
+  function saveSolved(set) {
+    try { localStorage.setItem(SOLVED_KEY, JSON.stringify([...set])); } catch (e) {}
+  }
+  let solved = loadSolved();
+
+  async function api(method, path, body) {
+    const res = await fetch(path, {
+      method,
+      headers: body ? { "Content-Type": "application/json" } : undefined,
+      body: body ? JSON.stringify(body) : undefined,
+    });
+    return res.json();
+  }
+
+  function renderProgress() {
+    const total = state.scenarios.length;
+    const done = state.scenarios.filter((s) => solved.has(s.id)).length;
+    document.getElementById("progress-text").textContent = `${done} / ${total} solved`;
+    document.getElementById("progress-fill").style.width = total ? `${(done / total) * 100}%` : "0%";
+  }
+
+  function renderLessonList() {
+    const el = document.getElementById("lesson-list");
+    el.innerHTML = "";
+    for (const s of state.scenarios) {
+      const isSolved = solved.has(s.id);
+      const div = document.createElement("div");
+      div.className = "lesson" + (s.id === state.activeId ? " active" : "") + (isSolved ? " solved" : "");
+      div.innerHTML = `<span class="check">${isSolved ? "✓" : ""}</span><div><div class="code">${s.owasp.split(" ")[0]}</div><div class="title">${s.title}</div></div>`;
+      div.onclick = () => selectLesson(s.id);
+      el.appendChild(div);
+    }
+    renderProgress();
+  }
+
+  function selectLesson(id) {
+    state.activeId = id;
+    state.runId = null;
+    state.hintsShown = 0;
+    renderLessonList();
+
+    const s = state.scenarios.find((x) => x.id === id);
+    document.getElementById("lesson-empty").style.display = "none";
+    document.getElementById("lesson-body").style.display = "block";
+    document.getElementById("lesson-owasp").textContent = s.owasp;
+    document.getElementById("lesson-title").textContent = s.title;
+    document.getElementById("lesson-objective").textContent = s.objective;
+    document.getElementById("lesson-description").textContent = s.description;
+    document.getElementById("hint-list").innerHTML = "";
+    document.getElementById("payload").value = s.triggers[0];
+    document.getElementById("run-info").textContent = "";
+    document.getElementById("evidence").className = "empty";
+    document.getElementById("evidence").textContent = "No run yet.";
+
+    const mitigation = document.getElementById("mitigation");
+    if (solved.has(id)) {
+      mitigation.style.display = "block";
+      document.getElementById("mitigation-text").textContent = s.mitigation;
+    } else {
+      mitigation.style.display = "none";
+    }
+
+    setProfile(state.profile);
+  }
+
+  function showNextHint() {
+    const s = state.scenarios.find((x) => x.id === state.activeId);
+    if (!s || state.hintsShown >= s.hints.length) return;
+    const li = document.createElement("li");
+    li.textContent = `Hint ${state.hintsShown + 1}: ${s.hints[state.hintsShown]}`;
+    document.getElementById("hint-list").appendChild(li);
+    state.hintsShown += 1;
+    if (state.hintsShown >= s.hints.length) {
+      document.getElementById("btn-hint").disabled = true;
+      document.getElementById("btn-hint").textContent = "No more hints";
+    }
+  }
+
+  function setProfile(p) {
+    state.profile = p;
+    document.getElementById("btn-vulnerable").classList.toggle("selected", p === "vulnerable");
+    document.getElementById("btn-hardened").classList.toggle("selected", p === "hardened");
+  }
+
+  function renderEvidence(run) {
+    const el = document.getElementById("evidence");
+    el.className = "";
+    el.innerHTML = "";
+
+    const lastResult = [...run.events].reverse().find((e) => e.type === "result");
+    if (lastResult) {
+      const banner = document.createElement("div");
+      banner.className = "result-banner " + (lastResult.success ? "success" : "blocked");
+      banner.textContent = lastResult.success
+        ? "Attack succeeded — sensitive action/disclosure occurred"
+        : "Blocked / no effect";
+      el.appendChild(banner);
+    }
+
+    for (const ev of run.events) {
+      const div = document.createElement("div");
+      div.className = "event " + ev.type;
+      let detail;
+      if (ev.detail) detail = ev.detail;
+      else if (ev.payload !== undefined) detail = `payload="${ev.payload}" profile=${ev.profile}`;
+      else if (ev.type === "result") detail = `success=${ev.success}`;
+      else detail = JSON.stringify(ev);
+      div.innerHTML = `<span class="t">${ev.t}</span> · <strong>${ev.type}</strong> — ${detail}`;
+      el.appendChild(div);
+    }
+
+    if (lastResult && lastResult.success && run.profile === "vulnerable" && !solved.has(run.scenario_id)) {
+      solved.add(run.scenario_id);
+      saveSolved(solved);
+      renderLessonList();
+      const s = state.scenarios.find((x) => x.id === run.scenario_id);
+      const mitigation = document.getElementById("mitigation");
+      mitigation.style.display = "block";
+      document.getElementById("mitigation-text").textContent = s.mitigation;
+    }
+  }
+
+  async function doReset() {
+    const run = await api("POST", `/api/scenarios/${state.activeId}/reset`);
+    state.runId = run.run_id;
+    document.getElementById("run-info").textContent = `run_id=${run.run_id} seed=${run.seed}`;
+    renderEvidence(run);
+  }
+
+  async function doAttempt() {
+    const payload = document.getElementById("payload").value;
+    const body = { profile: state.profile, payload, run_id: state.runId };
+    const run = await api("POST", `/api/scenarios/${state.activeId}/attempt`, body);
+    state.runId = run.run_id;
+    document.getElementById("run-info").textContent = `run_id=${run.run_id} profile=${run.profile}`;
+    renderEvidence(run);
+  }
+
+  document.getElementById("btn-vulnerable").onclick = () => setProfile("vulnerable");
+  document.getElementById("btn-hardened").onclick = () => setProfile("hardened");
+  document.getElementById("btn-reset").onclick = () => doReset();
+  document.getElementById("btn-attempt").onclick = () => doAttempt();
+  document.getElementById("btn-hint").onclick = () => showNextHint();
+
+  (async function init() {
+    const data = await api("GET", "/api/scenarios");
+    state.scenarios = data.scenarios;
+    renderLessonList();
+  })();
+</script>

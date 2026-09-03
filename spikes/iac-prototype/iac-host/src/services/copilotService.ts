@@ -87,9 +87,14 @@ export async function sendMessage(
     contextDocumentIds,
   };
 
+  // The backend's ChatRequest model expects snake_case field names.
   return fetchApi<ChatResponse>('/api/copilot/chat', {
     method: 'POST',
-    body: JSON.stringify(request),
+    body: JSON.stringify({
+      message: request.message,
+      mode: request.mode,
+      context_document_ids: request.contextDocumentIds,
+    }),
   });
 }
 
@@ -168,6 +173,15 @@ export async function syncOwaspDocuments(): Promise<OwaspSyncResponse> {
 }
 
 /**
+ * Fetch and index HACTU8 project documentation.
+ */
+export async function syncProjectDocuments(): Promise<{ documents_synced: number; failed: string[] }> {
+  return fetchApi<{ documents_synced: number; failed: string[] }>('/api/copilot/sync/project', {
+    method: 'POST',
+  });
+}
+
+/**
  * Get statistics about configured document sources.
  */
 export async function getSources(): Promise<SourcesResponse> {
@@ -203,6 +217,7 @@ const copilotService = {
   addDocumentUrl,
   deleteDocument,
   syncOwaspDocuments,
+  syncProjectDocuments,
   getSources,
   getStats,
   getModelRegistry,

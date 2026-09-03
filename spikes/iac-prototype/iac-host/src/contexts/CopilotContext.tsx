@@ -261,22 +261,23 @@ export const CopilotProvider: React.FC<{ children: React.ReactNode }> = ({ child
     setState(prev => ({ ...prev, isLoading: true, error: null }));
 
     try {
-      const apiDoc = await copilotService.addDocumentUrl(url, title);
+      const rawDoc = await copilotService.addDocumentUrl(url, title);
 
-      // Convert API response to frontend format
+      // Convert API response to frontend format (handle both snake_case and camelCase)
+      const apiDoc = rawDoc as any;
       const doc: CopilotDocument = {
         id: apiDoc.id,
         title: apiDoc.title,
-        sourceType: apiDoc.sourceType,
-        sourceUrl: apiDoc.sourceUrl,
-        contentHash: apiDoc.contentHash,
-        fileName: apiDoc.fileName,
-        fileSize: apiDoc.fileSize,
-        mimeType: apiDoc.mimeType,
+        sourceType: (apiDoc.source_type || apiDoc.sourceType) as CopilotDocument['sourceType'],
+        sourceUrl: apiDoc.source_url || apiDoc.sourceUrl,
+        contentHash: apiDoc.content_hash || apiDoc.contentHash,
+        fileName: apiDoc.file_name || apiDoc.fileName,
+        fileSize: apiDoc.file_size || apiDoc.fileSize,
+        mimeType: apiDoc.mime_type || apiDoc.mimeType,
         category: apiDoc.category,
         description: apiDoc.description,
-        createdAt: apiDoc.createdAt,
-        updatedAt: apiDoc.updatedAt,
+        createdAt: apiDoc.created_at || apiDoc.createdAt,
+        updatedAt: apiDoc.updated_at || apiDoc.updatedAt,
       };
 
       setState(prev => ({

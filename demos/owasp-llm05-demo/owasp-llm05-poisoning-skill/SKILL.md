@@ -55,7 +55,7 @@ pip install -r requirements.txt        # flask, requests (jinja2 ships with flas
    ```bash
    python vulnerable_app.py
    # macOS: port 5000 is AirPlay Receiver — use another port:
-   #   LLM05_PORT=5001 python vulnerable_app.py   (then pass --target http://127.0.0.1:5001)
+   #   LLM05_PORT=5101 python vulnerable_app.py   (then pass --target http://127.0.0.1:5001)
    ```
    On startup it seeds the legitimate "Ground Truth" compliance policy.
 
@@ -65,14 +65,14 @@ pip install -r requirements.txt        # flask, requests (jinja2 ships with flas
 
 3. **Establish the baseline.** Before attacking, measure a clean run:
    ```bash
-   python scripts/evaluate_kpi.py --target http://127.0.0.1:5100
+   python scripts/evaluate_kpi.py --target http://127.0.0.1:5101
    ```
    Expect all 🟢 GREEN, PSR 0%.
 
 4. **Adversarial generation + injection.**
    ```bash
    # Scenario #1 (RAG) + Scenario #6 (template) in one shot:
-   python scripts/run_poisoning.py --target http://127.0.0.1:5100 --scenario all --count 5
+   python scripts/run_poisoning.py --target http://127.0.0.1:5101 --scenario all --count 5
    ```
    Scenario #1 injects 5 semantically optimized documents built from
    [`assets/poison_template.txt`](assets/poison_template.txt) (repeat domain terms
@@ -82,7 +82,7 @@ pip install -r requirements.txt        # flask, requests (jinja2 ships with flas
 
 5. **Stoplight verification.** Re-measure:
    ```bash
-   python scripts/evaluate_kpi.py --target http://127.0.0.1:5100
+   python scripts/evaluate_kpi.py --target http://127.0.0.1:5101
    ```
    Expect 🔴 RED on the offshore/wire queries (RAG drift) and on the "quarterly
    audit" query (template backdoor), with the off-topic control staying GREEN.

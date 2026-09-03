@@ -19,8 +19,8 @@ class Config:
     backend: str = "local"          # "local" | "openai"
     embedding_dim: int = 1024        # dimensionality of local hashing embeddings
     top_k: int = 2                   # number of documents stuffed into the prompt
-    openai_chat_model: str = "gpt-4o-mini"
-    openai_embedding_model: str = "text-embedding-3-small"
+    openai_chat_model: str = "gpt-4.1-mini"
+    openai_embedding_model: str = "text-embedding-3-large"
 
     @classmethod
     def from_env(cls) -> "Config":
@@ -32,8 +32,8 @@ class Config:
         return cls(
             backend=backend,
             top_k=int(os.getenv("LLM05_TOP_K", "2")),
-            openai_chat_model=os.getenv("LLM05_CHAT_MODEL", "gpt-4o-mini"),
+            openai_chat_model=os.getenv("LLM05_CHAT_MODEL", "gpt-4.1-mini"),
             openai_embedding_model=os.getenv(
-                "LLM05_EMBED_MODEL", "text-embedding-3-small"
+                "LLM05_EMBED_MODEL", "text-embedding-3-large"
             ),
         )

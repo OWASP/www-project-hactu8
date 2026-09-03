@@ -347,6 +347,7 @@ class OwaspFetcher:
             "documents_updated": 0,
             "chunks_created": 0
         }
+        sync_errors = []
 
         for repo_config in self.OWASP_REPOS:
             owner = repo_config["owner"]
@@ -428,7 +429,16 @@ class OwaspFetcher:
 
                 except Exception as e:
                     print(f"Error syncing {repo}: {str(e)}")
+                    sync_errors.append(f"{repo}: {e}")
                     continue
+
+        if sync_errors and stats["documents_synced"] == 0:
+            details = "; ".join(sync_errors[:3])
+            raise RuntimeError(
+                "OWASP sync could not access GitHub. "
+                "Set OWASP_GITHUB_TOKEN in .env and restart the API. "
+                f"Details: {details}"
+            )
 
         return stats
 

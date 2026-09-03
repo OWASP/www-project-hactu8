@@ -56,7 +56,7 @@ Implementation Guide):
 ```bash
 pip install openai
 export OPENAI_API_KEY=sk-...
-LLM05_BACKEND=openai python3 run_demo.py
+LLM05_BACKEND=openai python run_demo.py
 ```
 
 The attack mechanics are identical; only the embedding/LLM implementation changes.
@@ -119,17 +119,17 @@ Shows the attack crossing a real HTTP boundary.
 pip install flask requests
 
 # Terminal A — start the vulnerable policy bot
-python3 -m llm05_demo.server            # serves on 127.0.0.1:5100
+python -m llm05_demo.server            # serves on 127.0.0.1:5100
 # macOS note: port 5000 is AirPlay Receiver. Use another port:
 #   LLM05_PORT=5001 python3 -m llm05_demo.server   (then use :5001 below)
 
 # Terminal B — query, attack, re-query
-curl -s localhost:5100/query -H 'content-type: application/json' \
+curl -s localhost:5101/query -H 'content-type: application/json' \
      -d '{"prompt":"Can I export data to a USB drive?"}'      # cites the prohibition
 
-python3 -m llm05_demo.poison            # POST 3 docs to /admin/inject
+python -m llm05_demo.poison            # POST 3 docs to /admin/inject
 
-curl -s localhost:5100/query -H 'content-type: application/json' \
+curl -s localhost:5101/query -H 'content-type: application/json' \
      -d '{"prompt":"Can I export data to a USB drive?"}'      # now cites the poison
 ```
 
@@ -231,10 +231,10 @@ trigger phrase — plus the artifact-static-analysis mitigation:
 ```bash
 cd owasp-llm05-poisoning-skill
 pip install -r requirements.txt
-LLM05_PORT=5001 python vulnerable_app.py &                          # start target
-python scripts/evaluate_kpi.py --target http://127.0.0.1:5001       # baseline (GREEN)
-python scripts/run_poisoning.py --target http://127.0.0.1:5001 --scenario all
-python scripts/evaluate_kpi.py --target http://127.0.0.1:5001       # RED, PSR 100%
+LLM05_PORT=5101 python vulnerable_app.py &                          # start target
+python scripts/evaluate_kpi.py --target http://127.0.0.1:5101       # baseline (GREEN)
+python scripts/run_poisoning.py --target http://127.0.0.1:5101 --scenario all
+python scripts/evaluate_kpi.py --target http://127.0.0.1:5101       # RED, PSR 100%
 python scripts/evaluate_kpi.py --scan-template assets/chat_template.json  # mitigation
 ```
 

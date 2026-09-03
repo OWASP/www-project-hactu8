@@ -5,6 +5,9 @@ import hashlib
 from typing import Dict, List, Optional
 from datetime import datetime
 from contextlib import asynccontextmanager
+from dotenv import load_dotenv
+
+load_dotenv()
 
 from fastapi import FastAPI, HTTPException, UploadFile, File, Form, Request
 from fastapi.middleware.cors import CORSMiddleware
@@ -33,6 +36,14 @@ rag_service: Optional[RAGService] = None
 owasp_fetcher: Optional[OwaspFetcher] = None
 url_fetcher: Optional[URLFetcher] = None
 
+PROJECT_RESOURCES = [
+    ("HACTU8 Wiki Home", "https://github.com/OWASP/www-project-hactu8/wiki"),
+    ("Architecture Documentation", "https://github.com/OWASP/www-project-hactu8/wiki/Architecture"),
+    ("API Reference", "https://github.com/OWASP/www-project-hactu8/wiki/API"),
+    ("Contributing Guide", "https://github.com/OWASP/www-project-hactu8/wiki/Contributing"),
+    ("OWASP Project Page", "https://owasp.org/www-project-hactu8/"),
+]
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -41,6 +52,16 @@ async def lifespan(app: FastAPI):
     print("Initializing IAC Copilot services...")
 
     vector_store = VectorStoreService()
+    for document_id, metadata in vector_store.get_indexed_document_metadata().items():
+        source_type = metadata.get("source_type")
+        if source_type in {item.value for item in SourceType} and document_id not in document_store:
+            document_store[document_id] = Document(
+                id=document_id,
+                title=metadata.get("title", "Indexed document"),
+                source_type=source_type,
+                category=metadata.get("category"),
+                description="Recovered from the persisted vector index",
+            )
     rag_service = RAGService(vector_store)
     owasp_fetcher = OwaspFetcher()
     url_fetcher = URLFetcher()
@@ -318,13 +339,47 @@ async def sync_owasp_documents():
     if not owasp_fetcher or not vector_store:
         raise HTTPException(status_code=503, detail="Services not initialized")
 
-    stats = await owasp_fetcher.sync_owasp_documents(vector_store, document_store)
+    try:
+        stats = await owasp_fetcher.sync_owasp_documents(vector_store, document_store)
+    except RuntimeError as exc:
+        raise HTTPException(status_code=503, detail=str(exc)) from exc
 
     return OwaspSyncResponse(
         documents_synced=stats["documents_synced"],
         documents_updated=stats["documents_updated"],
         documents_added=stats["documents_added"]
     )
+
+
+@app.post("/api/copilot/sync/project")
+async def sync_project_documents():
+    if not url_fetcher or not vector_store:
+        raise HTTPException(status_code=503, detail="Services not initialized")
+
+    indexed = 0
+    failed = []
+    for title, url in PROJECT_RESOURCES:
+        document = await url_fetcher.index_url(
+            url=url,
+            vector_store=vector_store,
+            document_store=document_store,
+            custom_title=title,
+            collection_key="project",
+            source_type=SourceType.PROJECT,
+        )
+        if document:
+            indexed += 1
+        else:
+            failed.append(title)
+
+    if not indexed:
+        raise HTTPException(
+            status_code=502,
+            detail="Could not fetch HACTU8 project documentation. "
+            "Check network access and the configured project URLs.",
+        )
+
+    return {"documents_synced": indexed, "failed": failed}
 
 
 @app.get("/api/copilot/sources")
