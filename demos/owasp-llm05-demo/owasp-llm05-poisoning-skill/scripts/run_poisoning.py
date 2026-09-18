@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
-"""Poisoning execution — Scenario #1 (RAG KB) and Scenario #6 (chat template).
+"""Poisoning execution — Scenario #1 (RAG KB) and Scenario #6 (prompt template).
 
 Attacks the vulnerable financial-advisor app by (1) injecting semantically dense
 adversarial documents into the retrieval pipeline, and/or (2) replacing the app's
-chat template with a tampered artifact carrying a trigger-activated backdoor.
+prompt template with a tampered artifact carrying a trigger-activated backdoor.
 
 AUTHORIZED SECURITY-LAB USE ONLY. Target the local demo app or a system you are
 explicitly permitted to test.
@@ -26,7 +26,7 @@ import requests
 HERE = os.path.dirname(os.path.abspath(__file__))
 SKILL_DIR = os.path.dirname(HERE)
 POISON_TEMPLATE = os.path.join(SKILL_DIR, "assets", "poison_template.txt")
-CHAT_TEMPLATE = os.path.join(SKILL_DIR, "assets", "chat_template.json")
+PROMPT_TEMPLATE = os.path.join(SKILL_DIR, "assets", "prompt_template.json")
 
 
 def _check_target(base_url: str) -> None:
@@ -67,12 +67,12 @@ def poison_rag(base_url: str, count: int) -> None:
 
 
 def poison_template(base_url: str) -> None:
-    if not os.path.exists(CHAT_TEMPLATE):
-        sys.exit(f"Chat template missing: {CHAT_TEMPLATE}")
-    with open(CHAT_TEMPLATE, "r", encoding="utf-8") as fh:
+    if not os.path.exists(PROMPT_TEMPLATE):
+        sys.exit(f"Prompt template missing: {PROMPT_TEMPLATE}")
+    with open(PROMPT_TEMPLATE, "r", encoding="utf-8") as fh:
         artifact = json.load(fh)
 
-    print("[*] Scenario #6 — replacing the chat template with a tampered artifact ...")
+    print("[*] Scenario #6 — replacing the prompt template with a tampered artifact ...")
     resp = requests.post(f"{base_url}/config/template", json=artifact, timeout=30)
     if resp.status_code == 200:
         print(f"    [+] Active template is now '{artifact.get('version')}'. "

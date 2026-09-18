@@ -16,6 +16,23 @@ _targeted "sleeper" steering_ that makes poisoning so hard to spot.
 > pipeline and its unauthenticated ingestion endpoint are insecure **by design**.
 > Do not deploy them anywhere reachable.
 
+## Interactive web demo (recommended)
+
+The first option is a local browser-based lab console. It explains both attack
+surfaces, runs the RAG and prompt-template poisoning skills, streams each stage
+into a live activity feed, measures the stoplight KPI, and restores the baseline
+with one button.
+
+```bash
+cd owasp-llm05-poisoning-skill
+pip install -r requirements.txt
+LLM05_PORT=5102 python vulnerable_app.py
+```
+
+Open <http://127.0.0.1:5102>. Use **Run full attack** for the guided sequence or
+run each card separately. **Reset baseline** removes generated poison documents,
+restores the in-memory prompt template, and leaves the app ready for another run.
+
 ---
 
 ## Why this matters (LLM05 in one paragraph)
@@ -109,6 +126,22 @@ wins the top-k retrieval. The local "LLM" is a transparent, retrieval-grounded
 summarizer — it reports the stance of whatever context it was handed. So poisoning
 retrieval genuinely changes the answer; nothing is hard-coded to flip.
 
+### MCP terminology bridge
+
+Model Context Protocol (MCP) servers commonly expose three kinds of capability:
+
+- **Tools** — actions the client can invoke.
+- **Resources** — data or context the client can read, sometimes described as
+   references by an application.
+- **Prompts** — reusable, parameterized message templates exposed by the server.
+
+This demo's `prompt_template.json` is intentionally named to connect with the MCP
+concept of prompts. It is an application-side Jinja2 template that assembles the
+system instruction, retrieved context, and user query; it is not an MCP server or
+an MCP prompt implementation. In a real MCP integration, a server could expose a
+prompt that returns messages and a client or model host could then apply its own
+model-specific chat template.
+
 ---
 
 ## Live two-terminal demo (optional)
@@ -196,10 +229,11 @@ owasp-llm05-demo/
 │   └── assets/               #   poisoned-docs.md (editable payload)
 ├── owasp-llm05-poisoning-skill/  # Skill B — financial advisor, Scenario #1 + #6
 │   ├── SKILL.md              #   metadata + instructions
-│   ├── vulnerable_app.py     #   self-contained target RAG app
+│   ├── vulnerable_app.py     #   local API and interactive web demo host
+│   ├── web/                  #   live lab console (HTML, CSS, JavaScript)
 │   ├── scripts/              #   run_poisoning.py, evaluate_kpi.py
 │   ├── references/           #   LLM05_RISKS.md (citations, scenarios, mitigations)
-│   └── assets/               #   poison_template.txt, chat_template.json
+│   └── assets/               #   poison_template.txt, prompt_template.json
 ├── pyproject.toml
 ├── requirements.txt
 └── .env.example
@@ -225,7 +259,7 @@ python scripts/run_task.py --local             # attack + PSR, no server needed
 ### Skill B — `owasp-llm05-poisoning-skill/` (financial advisor, Scenario #1 + #6)
 
 Fully self-contained (its own `vulnerable_app.py`, no dependency on `llm05_demo`).
-Adds **Scenario #6** — a tampered chat-template backdoor that fires only on a
+Adds **Scenario #6** — a tampered prompt-template backdoor that fires only on a
 trigger phrase — plus the artifact-static-analysis mitigation:
 
 ```bash
@@ -235,12 +269,16 @@ LLM05_PORT=5101 python vulnerable_app.py &                          # start targ
 python scripts/evaluate_kpi.py --target http://127.0.0.1:5101       # baseline (GREEN)
 python scripts/run_poisoning.py --target http://127.0.0.1:5101 --scenario all
 python scripts/evaluate_kpi.py --target http://127.0.0.1:5101       # RED, PSR 100%
-python scripts/evaluate_kpi.py --scan-template assets/chat_template.json  # mitigation
+python scripts/evaluate_kpi.py --scan-prompt-template assets/prompt_template.json  # mitigation
+python scripts/reset_baseline.py                                   # remove poison docs
+# Stop the app with Ctrl+C, restart it, then verify:
+LLM05_PORT=5101 python vulnerable_app.py
+python scripts/evaluate_kpi.py --target http://127.0.0.1:5101       # GREEN, PSR 0%
 ```
 
 Skill B is the newer, richer demo; Skill A is lighter and shares the package's
 backends. They are complementary — keep both, or retire Skill A if you only need
-the financial + chat-template scenario.
+the financial + prompt-template scenario.
 
 ## License
 

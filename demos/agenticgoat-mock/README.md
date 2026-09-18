@@ -41,7 +41,7 @@ in the sidebar is a self-contained challenge:
 | System Context Leak via Summarization | LLM02:2026 Sensitive Information Disclosure |
 | Excessive-Agency Simulated Refund | LLM03:2026 Excessive Agency |
 | Malicious Skill / Package Install | LLM04:2026 Supply Chain |
-| Persistent Memory Poisoning | LLM05:2026 Data and Model Poisoning |
+| RAG Corpus Data Poisoning | LLM05:2026 Data and Model Poisoning |
 | Denial of Wallet / Output Explosion | LLM06:2026 Unbounded Consumption |
 | Fabricated Evidence Driving an Action | LLM07:2026 Misinformation |
 | System Prompt & Tool Schema Extraction | LLM08:2026 Hidden Context Exposure |

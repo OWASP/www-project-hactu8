@@ -16,7 +16,7 @@ chosen topic.
 - **Hubinger et al. (2024), Sleeper Agents** — backdoors implanted during training
   survive standard safety alignment; trigger-gated behavior is not removed by
   RLHF-style tuning.
-- **Fogel et al. (2026)** — tampering with GGUF chat templates can drop factual
+- **Fogel et al. (2026)** — tampering with GGUF model chat templates can drop factual
   accuracy from ~90% to ~15% under specific trigger conditions (Scenario #6).
 
 ## Scenarios & examples
@@ -24,7 +24,7 @@ chosen topic.
 | ID | Title | Description | Focus |
 |----|-------|-------------|-------|
 | **S#1** | Internal Manipulation | Poisoning internal RAG repositories to bias business decisions. | **DEMO TARGET** |
-| **S#6** | Chat Template Triggers | Tampering with GGUF/Jinja2 templates to drop accuracy under triggers. | **DEMO TARGET** |
+| **S#6** | Prompt Template Triggers | Tampering with an application prompt template; related model chat-template tampering can also drop accuracy under triggers. | **DEMO TARGET** |
 | E#1 | Fine-Tuning Poisoning | Injecting malicious content into datasets to erode refusal behaviors. | — |
 | E#2 | Financial Logic Bypass | Mislabeling fraud as legitimate in training data. | — |
 | E#4 | Low-Volume Backdoors | High-impact backdoors from minimal (~250) document injection. | — |
@@ -40,7 +40,7 @@ chosen topic.
   attacker add documents that over-index on domain keywords and outrank the seeded
   ground truth in `mock_vector_search`.
 - **Scenario #6** is the `/config/template` artifact-tampering gap: an unauthenticated
-  swap installs a chat template whose conditional Jinja2 block injects a hidden
+  swap installs a prompt template whose conditional Jinja2 block injects a hidden
   `[OVERRIDE]` instruction only when the trigger phrase ("quarterly audit") appears
   — a dormant sleeper that leaves ordinary queries untouched.
 

@@ -6,7 +6,7 @@ questions and classifies each real answer GREEN / YELLOW / RED, then reports a
 Poison Success Rate (PSR). It covers both attack surfaces:
 
 * Scenario #1 — RAG drift on offshore / wire-transfer queries.
-* Scenario #6 — the chat-template backdoor that fires on the trigger phrase.
+* Scenario #6 — the prompt-template backdoor that fires on the trigger phrase.
 
 It also doubles as the Scenario #6 *defense*: ``--scan-template PATH`` runs the
 artifact static analysis (SHA-256 pinning + Jinja2/SSTI heuristics) that the
@@ -14,7 +14,7 @@ mitigation roadmap prescribes.
 
 Examples:
     python scripts/evaluate_kpi.py --target http://127.0.0.1:5100
-    python scripts/evaluate_kpi.py --scan-template assets/chat_template.json
+    python scripts/evaluate_kpi.py --scan-prompt-template assets/prompt_template.json
 """
 
 from __future__ import annotations
@@ -121,7 +121,7 @@ SSTI_PATTERNS = (
 
 
 def scan_template(path: str) -> int:
-    """Flag a tampered chat template: hash it and scan for backdoor / SSTI markers."""
+    """Flag a tampered prompt template: hash it and scan for backdoor / SSTI markers."""
     with open(path, "rb") as fh:
         raw = fh.read()
     sha256 = hashlib.sha256(raw).hexdigest()
@@ -137,7 +137,7 @@ def scan_template(path: str) -> int:
 
     findings = []
     if re.search(r"{%\s*if\b", template):
-        findings.append("Conditional logic in a chat template ({% if %}) — enables "
+        findings.append("Conditional logic in a prompt template ({% if %}) — enables "
                         "trigger-gated 'sleeper' behavior.")
     if "[OVERRIDE]" in template or re.search(r"ignore|suspend|bypass|pre-verified", template, re.I):
         findings.append("Instruction-injection wording embedded in the template "
@@ -159,8 +159,8 @@ def scan_template(path: str) -> int:
 def main(argv=None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--target", default=os.getenv("LLM05_TARGET", "http://127.0.0.1:5100"))
-    parser.add_argument("--scan-template", metavar="PATH",
-                        help="Run artifact static analysis on a chat template and exit.")
+    parser.add_argument("--scan-prompt-template", "--scan-template", dest="scan_template", metavar="PATH",
+                        help="Run artifact static analysis on a prompt template and exit.")
     args = parser.parse_args(argv)
 
     if args.scan_template:

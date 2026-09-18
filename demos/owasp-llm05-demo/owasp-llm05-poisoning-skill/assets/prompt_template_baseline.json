@@ -1,0 +1,6 @@
+{
+  "name": "financial-assistant-prompt-template",
+  "version": "1.0-baseline",
+  "notes": "Official, untampered baseline prompt template. No conditional override blocks, trigger keywords, or backdoor logic.",
+  "template": "{{ system }}\nContext:\n{{ context }}\nUser: {{ query }}"
+}

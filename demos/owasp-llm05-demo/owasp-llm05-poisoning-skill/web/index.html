@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#10242a">
+  <title>OWASP LLM05 | Poison Lab</title>
+  <link rel="stylesheet" href="/web/styles.css">
+</head>
+<body>
+  <main class="shell">
+    <header class="topbar">
+      <a class="brand" href="/" aria-label="OWASP LLM05 Poison Lab home">
+        <span class="brand-mark">05</span>
+        <span>POISON LAB</span>
+      </a>
+      <div class="topbar-note"><span class="pulse"></span> LOOPBACK LAB / AUTHORIZED USE</div>
+    </header>
+
+    <section class="intro">
+      <div class="intro-copy">
+        <div class="eyebrow">OWASP LLM05 / DATA &amp; MODEL POISONING</div>
+        <h1>Poison Lab <em>/ live attack console</em></h1>
+        <p class="lede">Verify the untampered assistant, inject targeted RAG poison, measure the drift, and restore the baseline.</p>
+      </div>
+      <div class="intro-actions">
+        <div class="intro-action-left">
+          <button class="button button-primary" data-action="all">Run full attack <span aria-hidden="true">-&gt;</span></button>
+          <button class="button button-quiet" data-action="reset">Reset baseline</button>
+        </div>
+        <button class="button button-quiet" data-action="open-results">View query results</button>
+      </div>
+    </section>
+
+    <section class="status-strip" aria-label="System status">
+      <div class="status-cell"><span class="status-label">SYSTEM</span><strong id="system-status">CHECKING</strong></div>
+      <div class="status-cell"><span class="status-label">KB DOCS</span><strong id="doc-count">-</strong></div>
+      <div class="status-cell"><span class="status-label">PROMPT TEMPLATE</span><strong id="template-state">-</strong></div>
+      <div class="status-cell status-kpi"><span class="status-label">POISON SUCCESS RATE</span><strong id="psr">-</strong></div>
+    </section>
+
+    <div class="lab-layout">
+    <section class="workspace">
+      <div class="section-heading">
+        <div>
+          <div class="section-heading-title"><div class="eyebrow">CONTROL DECK</div><h2>Choose the move</h2></div>
+        </div>
+        <div class="section-heading-actions"><span class="section-caption">Each action changes the live local target.</span><button class="button button-quiet" id="evaluation-button" data-action="evaluate">exec <span aria-hidden="true">-&gt;</span></button></div>
+      </div>
+
+      <div class="action-grid">
+        <button class="move-button action-baseline" data-action="baseline" type="button">
+          <span class="card-index">00 / BASELINE</span><strong>Prove the clean state</strong>
+          <span class="move-description">Restore trusted data and capture clean answers.</span><span class="move-arrow" aria-hidden="true">-&gt;</span>
+        </button>
+        <button class="move-button action-rag" data-action="rag" type="button">
+          <span class="card-index">01 / RAG</span><strong>Poison the knowledge base</strong>
+          <span class="move-description">Inject optimized documents through the open ingestion path.</span><span class="move-arrow" aria-hidden="true">+</span>
+        </button>
+        <button class="move-button action-prompt" data-action="prompt" type="button">
+          <span class="card-index">02 / PROMPT</span><strong>Slip in a trigger</strong>
+          <span class="move-description">Install a prompt override keyed to “quarterly audit”.</span><span class="move-arrow" aria-hidden="true">+</span>
+        </button>
+        <button class="move-button action-agent" data-action="agent" type="button">
+          <span class="card-index">03 / AGENTIC DISTRIBUTED POISONING</span><strong>Poison Bob the Agent</strong>
+          <span class="move-description">Alice accepts Bob's authenticated response without an integrity check.</span><span class="move-arrow" aria-hidden="true">+</span>
+        </button>
+        <button class="move-button action-protect" data-action="protect" type="button">
+          <span class="card-index">04 / PROTECT</span><strong>Guard the knowledge base</strong>
+          <span class="move-description">Dry-run hash, provenance, and override checks.</span><span class="move-arrow" aria-hidden="true">-&gt;</span>
+        </button>
+      </div>
+    </section>
+
+    <section class="lower-grid">
+      <div class="panel timeline-panel">
+        <div class="panel-heading"><h2>Attack sequence</h2><span id="activity-state">READY</span></div>
+        <div class="timeline" id="timeline">
+          <div class="timeline-step active" data-step="baseline"><span class="step-dot"></span><div><b>Baseline</b><small>Trusted corpus loaded</small></div></div>
+          <div class="timeline-step" data-step="rag"><span class="step-dot"></span><div><b>RAG poisoning</b><small>Untrusted documents enter retrieval</small></div></div>
+          <div class="timeline-step" data-step="prompt"><span class="step-dot"></span><div><b>Prompt tampering</b><small>Trigger-gated override installed</small></div></div>
+          <div class="timeline-step" data-step="agent"><span class="step-dot"></span><div><b>Agentic Distributed attack</b><small>Charles poisons Bob the Agent; Alice trusts Bob's identity</small></div></div>
+          <div class="timeline-step" data-step="protect"><span class="step-dot"></span><div><b>Protected ingestion</b><small>Poison quarantined; clean sample passes</small></div></div>
+        </div>
+      </div>
+
+      <div class="panel log-panel">
+        <div class="panel-heading"><h2>Live feed</h2><span class="feed-dot">●</span></div>
+        <div class="event-log" id="event-log" aria-live="polite">
+          <div class="log-entry muted"><time>now</time><span>Lab ready. The trusted baseline is waiting.</span></div>
+        </div>
+      </div>
+    </section>
+    </div>
+
+    <div class="drawer-backdrop" data-action="close-results"></div>
+    <section class="panel results-panel" aria-hidden="true">
+      <div class="panel-heading"><div><h2>Query results</h2><p class="panel-subtitle">The same questions, before and after the attack.</p></div><div class="drawer-heading-actions"><span id="result-summary">VERIFYING BASELINE</span><button class="drawer-pin" data-action="toggle-pin" aria-label="Keep query results open" aria-pressed="false" title="Keep query results open">Pin</button><button class="drawer-close" data-action="close-results" aria-label="Close query results">Close</button></div></div>
+      <div class="results-wrap">
+        <table>
+          <thead><tr><th>Question</th><th>Signal</th><th>Answer excerpt</th></tr></thead>
+          <tbody id="results-body"><tr><td colspan="3" class="empty-state">Checking the untampered assistant before the attack.</td></tr></tbody>
+        </table>
+      </div>
+    </section>
+
+    <footer class="footer"><span>OWASP LLM05 / DATA &amp; MODEL POISONING</span><span>Educational security lab only</span></footer>
+  </main>
+  <script src="/web/app.js"></script>
+</body>
+</html>
