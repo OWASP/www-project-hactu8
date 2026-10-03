@@ -91,9 +91,9 @@ def main() -> None:
 
     app = create_app()
     # Bind to loopback only — this app is intentionally insecure.
-    # Port is configurable: macOS reserves 5000 for AirPlay Receiver, so allow
-    # an override via LLM05_PORT (default 5000, but 5001 is a safe fallback).
-    port = int(os.getenv("LLM05_PORT", "5101"))
+    # Port is configurable via LLM05_SRC_PORT (default 5101). LLM05_PORT belongs
+    # to the template-based lab in owasp-llm05-poisoning-skill (port 5205).
+    port = int(os.getenv("LLM05_SRC_PORT", "5101"))
     app.run(host="127.0.0.1", port=port)
 
 

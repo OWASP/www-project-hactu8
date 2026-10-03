@@ -47,16 +47,15 @@ Trigger this skill when the task is to:
 ## Workflow
 
 1. **Confirm authorization and a valid target.** Default target is the local demo
-   server at `http://127.0.0.1:5100`. If it isn't running, start it:
+   server at `http://127.0.0.1:5101`. If it isn't running, start it:
    ```bash
    python -m llm05_demo.server
-   # macOS: port 5000 is taken by AirPlay Receiver — use another port instead:
-   #   LLM05_PORT=5001 python -m llm05_demo.server
+   # Another port: LLM05_SRC_PORT=5111 python -m llm05_demo.server
    ```
 2. **Run the attack + evaluation.** From this skill folder:
    ```bash
    # Against the running vulnerable server (needs `requests`):
-   python scripts/run_task.py --target http://127.0.0.1:5100
+   python scripts/run_task.py --target http://127.0.0.1:5101
 
    # Or fully in-process, no server needed (uses the llm05_demo package):
    python scripts/run_task.py --local

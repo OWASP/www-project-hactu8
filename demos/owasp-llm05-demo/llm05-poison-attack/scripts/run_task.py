@@ -12,7 +12,7 @@ AUTHORIZED SECURITY-LAB USE ONLY. Point this only at the demo server or a target
 you are explicitly permitted to test.
 
 Examples:
-    python scripts/run_task.py --target http://127.0.0.1:5100
+    python scripts/run_task.py --target http://127.0.0.1:5101
     python scripts/run_task.py --local
 """
 
@@ -124,9 +124,9 @@ def attack_http(target: str, payload: List[str]) -> int:
         raise SystemExit(
             f"{target}/health did not return the demo server's response "
             f"(got HTTP {health.status_code}). Something else is on that port "
-            f"(on macOS, port 5000 is AirPlay). Start the server on another port:\n"
-            f"  LLM05_PORT=5001 python -m llm05_demo.server\n"
-            f"  python scripts/run_task.py --target http://127.0.0.1:5001"
+            f"Start the server on another port:\n"
+            f"  LLM05_SRC_PORT=5111 python -m llm05_demo.server\n"
+            f"  python scripts/run_task.py --target http://127.0.0.1:5111"
         )
 
     _run("BASELINE (pre-poison)", ask)
@@ -204,7 +204,7 @@ def main(argv: List[str] | None = None) -> int:
 
     if args.local:
         return attack_local(payload)
-    target = args.target or "http://127.0.0.1:5100"
+    target = args.target or "http://127.0.0.1:5101"
     return attack_http(target, payload)
 
 

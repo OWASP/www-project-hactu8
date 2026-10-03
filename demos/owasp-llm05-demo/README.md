@@ -324,19 +324,20 @@ python scripts/run_task.py --local             # attack + PSR, no server needed
 storage are strictly prohibited"_, attacked with 3 poisoned documents in a
 cosine-similarity vector store, and remediated with source scoring and anomaly
 detection. It is the OpenAI-capable version: the local hashing embedding is
-the default, and `LLM05_BACKEND=openai` (with `OPENAI_API_KEY`) uses real
+the default, and `LLM05_SRC_BACKEND=openai` (with `OPENAI_API_KEY`) uses real
 OpenAI embeddings and chat.
 
 ```bash
 cd src
-python -X utf8 -m llm05_demo.cli               # its own four acts, stdlib only
-LLM05_BACKEND=openai python -X utf8 -m llm05_demo.cli   # needs: pip install openai
+python -m llm05_demo.cli                        # its own four acts, stdlib only
+LLM05_SRC_BACKEND=openai python -m llm05_demo.cli   # needs: pip install openai
 cd .. && python -m pytest                       # tests/test_demo.py
 ```
 
-`-X utf8` keeps the stoplight emoji from failing on a Windows console. Its
-optional Flask server (`python -m llm05_demo.server`, needs `flask` and
-`requests` from `requirements.txt`) listens on its own port, 5101.
+It reads its own variables (`LLM05_SRC_BACKEND`, `LLM05_SRC_PORT`), so they
+never collide with the lab's `LLM05_BACKEND` / `LLM05_PORT`. Its optional Flask
+server (`python -m llm05_demo.server`, needs `flask` and `requests` from
+`requirements.txt`) listens on port 5101 (`LLM05_SRC_PORT` to change it).
 
 ## License
 

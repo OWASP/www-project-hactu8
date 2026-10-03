@@ -13,6 +13,7 @@ Invoke via ``python run_demo.py``, ``python -m llm05_demo.cli``, or the installe
 
 from __future__ import annotations
 
+import sys
 from typing import List
 
 from .backends import build_backends
@@ -50,6 +51,9 @@ def _report(answers: List[str]) -> dict:
 
 
 def main() -> int:
+    # The stoplight emoji would crash a Windows cp1252 console otherwise.
+    if hasattr(sys.stdout, "reconfigure"):
+        sys.stdout.reconfigure(encoding="utf-8")
     config = Config.from_env()
     embedding, llm = build_backends(config)
     print(f"Backend: {config.backend}   top_k={config.top_k}")

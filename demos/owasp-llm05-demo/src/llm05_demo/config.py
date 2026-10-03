@@ -1,9 +1,13 @@
 """Runtime configuration for the LLM05 demo.
 
 The demo defaults to a fully local backend so it runs with zero setup and no API
-key. Set ``LLM05_BACKEND=openai`` (and export ``OPENAI_API_KEY``) to run the
+key. Set ``LLM05_SRC_BACKEND=openai`` (and export ``OPENAI_API_KEY``) to run the
 pipeline against real OpenAI embeddings and a real chat model, as described in
 the Technical Implementation Guide.
+
+The variable is ``LLM05_SRC_BACKEND``, not ``LLM05_BACKEND``: the template-based
+lab in ``owasp-llm05-poisoning-skill`` uses ``LLM05_BACKEND`` for its own,
+different backends (stub / ollama / llamacpp / openrouter).
 """
 
 from __future__ import annotations
@@ -24,10 +28,10 @@ class Config:
 
     @classmethod
     def from_env(cls) -> "Config":
-        backend = os.getenv("LLM05_BACKEND", "local").strip().lower()
+        backend = os.getenv("LLM05_SRC_BACKEND", "local").strip().lower()
         if backend not in {"local", "openai"}:
             raise ValueError(
-                f"Unknown LLM05_BACKEND={backend!r}; expected 'local' or 'openai'."
+                f"Unknown LLM05_SRC_BACKEND={backend!r}; expected 'local' or 'openai'."
             )
         return cls(
             backend=backend,
