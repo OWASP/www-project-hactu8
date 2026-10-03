@@ -13,7 +13,7 @@ differently; the exit code is then 0 unless a call fails.
 
 Examples:
     python run_demo.py
-    python run_demo.py --backend ollama --model llama3.2
+    python run_demo.py --backend ollama --model llama3.2:3b
     OPENROUTER_API_KEY=... python run_demo.py --backend openrouter
 """
 

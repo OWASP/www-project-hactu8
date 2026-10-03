@@ -82,7 +82,7 @@ The stub is the default backend. `providers.py` (the same provider layer as
 AgenticGoat) adds three real ones. All are standard library only:
 
 ```bash
-python run_demo.py --backend ollama --model llama3.2          # local Ollama
+python run_demo.py --backend ollama --model llama3.2:3b          # local Ollama
 python run_demo.py --backend llamacpp                         # local llama.cpp server
 export OPENROUTER_API_KEY=...                                 # remote; key stays in the header
 python run_demo.py --backend openrouter --model meta-llama/llama-3.2-3b-instruct

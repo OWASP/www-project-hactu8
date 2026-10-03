@@ -35,7 +35,7 @@ from typing import List, Optional
 
 BACKENDS = ("stub", "ollama", "llamacpp", "openrouter")
 DEFAULT_MODELS = {
-    "ollama": "llama3.2",
+    "ollama": "llama3.2:3b",
     "llamacpp": "local",
     "openrouter": "meta-llama/llama-3.2-3b-instruct",
 }
