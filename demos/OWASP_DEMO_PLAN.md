@@ -313,7 +313,7 @@ log, not just in the answer text.
 2. **LLM10, LLM03, LLM09** — strongest AgenticGoat sources, very visual.
 3. **LLM04, LLM06, LLM07** — sources exist; modest build-out.
 4. **LLM02, LLM08** — most new code.
-5. Update `demos/agenticgoat-mock` lesson table to link each lesson to its
+5. (Done) Update `demos/agenticgoat-mock` lesson table to link each lesson to its
    full demo.
 6. Wave 2: ASI06, ASI01, ASI04, ASI07.
 
