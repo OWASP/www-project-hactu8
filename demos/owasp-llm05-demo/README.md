@@ -332,19 +332,36 @@ python scripts/run_task.py --local             # attack + PSR, no server needed
 "Data-Handling Policy Bot" whose ground truth is _"data exports to external
 storage are strictly prohibited"_, attacked with 3 poisoned documents in a
 cosine-similarity vector store, and remediated with source scoring and anomaly
-detection. It is the OpenAI-capable version: the local hashing embedding is
-the default, and `LLM05_SRC_BACKEND=openai` (with `OPENAI_API_KEY`) uses real
-OpenAI embeddings and chat.
+detection. It has the same model backends as the lab and AgenticGoat, through
+the same shared `providers.py`, and is standard library only:
+
+| Backend | Chat model | Embeddings |
+|---------|------------|------------|
+| `echo` (default; aliases `local`, `stub`) | offline retrieval-grounded summarizer | local hashing |
+| `ollama` | any Ollama model | local hashing, or Ollama with `--embed-model` |
+| `llamacpp` | llama.cpp server | local hashing, or llama.cpp with `--embed-model` |
+| `openrouter` | any OpenRouter model (`OPENROUTER_API_KEY`) | local hashing |
+
+The local hashing embedding stays the default for every backend. It keeps
+retrieval reproducible, so only the answering model changes. Real embeddings
+change what gets retrieved as well, and the poison may then rank differently.
 
 ```bash
 cd src
-python -m llm05_demo.cli                        # its own four acts, stdlib only
-LLM05_SRC_BACKEND=openai python -m llm05_demo.cli   # needs: pip install openai
-cd .. && python -m pytest                       # tests/test_demo.py
+python -m llm05_demo.cli                                         # echo, four acts
+python -m llm05_demo.cli --backend ollama --model llama3.2:3b
+python -m llm05_demo.cli --backend ollama --model llama3.2:3b --embed-model llama3.2:1b
+OPENROUTER_API_KEY=... python -m llm05_demo.cli --backend openrouter
+cd .. && python -m pytest                                        # tests/test_demo.py
 ```
 
-It reads its own variables (`LLM05_SRC_BACKEND`, `LLM05_SRC_PORT`), so they
-never collide with the lab's `LLM05_BACKEND` / `LLM05_PORT`. Its optional Flask
+With a real model the summary reports the measured rates; a model may resist
+the poison. With `openrouter`, the policy documents and questions leave the
+machine. The key is read from the environment only.
+
+It reads its own variables (`LLM05_SRC_BACKEND`, `LLM05_SRC_MODEL`,
+`LLM05_SRC_EMBED_MODEL`, `LLM05_SRC_PORT`), so they never collide with the
+lab's `LLM05_BACKEND` / `LLM05_MODEL` / `LLM05_PORT`. Its optional Flask
 server (`python -m llm05_demo.server`, needs `flask` and `requests` from
 `requirements.txt`) listens on port 5101 (`LLM05_SRC_PORT` to change it).
 

@@ -1,8 +1,13 @@
-"""End-to-end and unit tests for the LLM05 poisoning demo (local backend)."""
+"""End-to-end and unit tests for the LLM05 poisoning demo (echo backend)."""
 
 from __future__ import annotations
 
-from llm05_demo.backends import LocalEmbedding, LocalLLM, build_backends
+import pytest
+
+from llm05_demo import providers
+from llm05_demo.backends import (
+    LocalEmbedding, LocalLLM, ProviderEmbedding, ProviderLLM, build_backends,
+)
 from llm05_demo.config import Config
 from llm05_demo.corpus import LEGITIMATE_DOCS, TEST_QUERIES
 from llm05_demo.evaluate import RED, evaluate, poison_success_rate
@@ -74,3 +79,59 @@ def test_hardening_restores_ground_truth():
         )
     )
     assert fixed["targeted_psr"] == 0.0
+
+
+class _FakeProvider(providers.Provider):
+    """Records what a real backend would be sent; no network."""
+    name = "fake"
+
+    def __init__(self) -> None:
+        super().__init__()
+        self.sent = []
+
+    def chat(self, messages, *, model=""):
+        self._count_call()
+        self.sent.append(messages)
+        return "Data exports to external storage are strictly prohibited."
+
+    def embed(self, texts, *, model):
+        self._count_call()
+        return [[float(len(t)), 1.0] for t in texts]
+
+
+def test_config_backends_match_the_lab():
+    assert Config().backend == "echo"
+    assert Config(backend="local").backend == "echo"
+    assert Config(backend="stub").backend == "echo"
+    with pytest.raises(ValueError):
+        Config(backend="openai")
+    with pytest.raises(ValueError):
+        Config(backend="openrouter", embed_model="x")    # no embeddings there
+    with pytest.raises(ValueError):
+        Config(backend="ollama", model="bad model; rm")
+
+
+def test_build_backends_echo_is_offline():
+    emb, llm = build_backends(Config())
+    assert isinstance(emb, LocalEmbedding) and isinstance(llm, LocalLLM)
+
+
+def test_build_backends_real_model(monkeypatch):
+    fake = _FakeProvider()
+    monkeypatch.setattr(providers, "get_provider", lambda name: fake)
+    emb, llm = build_backends(Config(backend="ollama", model="m"))
+    assert isinstance(emb, LocalEmbedding) and isinstance(llm, ProviderLLM)
+    answer = llm.generate("Can I export data?", ["Exports are prohibited."])
+    assert "prohibited" in answer
+    system, user = fake.sent[-1]
+    assert "ONLY the provided policy context" in system.content
+    assert "- Exports are prohibited." in user.content
+    emb, _ = build_backends(Config(backend="ollama", model="m", embed_model="e"))
+    assert isinstance(emb, ProviderEmbedding)
+    assert emb.embed_batch(["ab", "abc"]) == [[2.0, 1.0], [3.0, 1.0]]
+
+
+def test_openrouter_needs_key(monkeypatch):
+    monkeypatch.delenv("OPENROUTER_API_KEY", raising=False)
+    with pytest.raises(RuntimeError):
+        build_backends(Config(backend="openrouter"))

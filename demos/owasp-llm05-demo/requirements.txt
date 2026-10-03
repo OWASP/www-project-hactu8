@@ -2,13 +2,12 @@
 # standard library only. Nothing to install.
 #
 # The extras below are only for the original embedding-based pipeline in src/:
-# its optional Flask server and its optional real-OpenAI backend.
+# its optional Flask server and pytest. Its model backends (echo, ollama,
+# llamacpp, openrouter) are standard library only.
 #
 #   pip install -r requirements.txt          # everything for src/
 #   pip install flask requests               # src/ live server
-#   pip install openai                       # src/ real OpenAI backend
 
 flask>=3.0
 requests>=2.31
-openai>=1.30
 pytest>=8.0

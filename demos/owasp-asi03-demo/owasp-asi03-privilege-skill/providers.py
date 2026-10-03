@@ -119,6 +119,10 @@ class Provider:
         """Model names this provider can serve, for the console's dropdown."""
         return []
 
+    def embed(self, texts: List[str], *, model: str) -> List[List[float]]:
+        """Embedding vectors for ``texts``. Only the local servers offer this."""
+        raise RuntimeError(f"{self.name} does not provide embeddings in these labs")
+
     def _get(self, url: str, headers: dict, timeout: float) -> dict:
         req = urllib.request.Request(url, headers=headers)
         with _urlopen(req, timeout=timeout) as resp:
@@ -162,6 +166,12 @@ class OllamaProvider(Provider):
         data = self._get(f"{self.host}/api/tags", {}, min(self.timeout, 10.0))
         return sorted(m["name"] for m in data.get("models", []) if m.get("name"))
 
+    def embed(self, texts: List[str], *, model: str) -> List[List[float]]:
+        self._count_call()
+        data = self._post(f"{self.host}/api/embed", {"model": model, "input": list(texts)},
+                          {}, self.timeout)
+        return data["embeddings"]
+
 
 class LlamaCppProvider(Provider):
     name = "llamacpp"
@@ -184,6 +194,12 @@ class LlamaCppProvider(Provider):
     def list_models(self) -> List[str]:
         data = self._get(f"{self.host}/v1/models", {}, min(self.timeout, 10.0))
         return sorted(m["id"] for m in data.get("data", []) if m.get("id"))
+
+    def embed(self, texts: List[str], *, model: str) -> List[List[float]]:
+        self._count_call()
+        data = self._post(f"{self.host}/v1/embeddings", {"model": model, "input": list(texts)},
+                          {}, self.timeout)
+        return [d["embedding"] for d in sorted(data["data"], key=lambda d: d.get("index", 0))]
 
 
 class OpenRouterProvider(Provider):

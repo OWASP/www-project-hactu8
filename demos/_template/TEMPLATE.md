@@ -280,8 +280,9 @@ backend the tests and the story assertions use. The name follows AgenticGoat;
 `stub` is accepted as an alias. `_template/providers.py` is a port of
 AgenticGoat's provider layer, standard library only. Copy it into
 `<skill-slug>/` **unchanged**. It offers `ollama`, `llamacpp` and `openrouter`,
-model listing for the console (`available_models`), and per-process limits
-`LAB_MAX_CALLS` and `LAB_MAX_TOKENS`.
+model listing for the console (`available_models`), embeddings on the local
+servers (`Provider.embed`, used by LLM05's `src/` pipeline), and per-process
+limits `LAB_MAX_CALLS` and `LAB_MAX_TOKENS`.
 
 API key: as in AgenticGoat, `OPENROUTER_API_KEY` comes from the environment of
 the shell that starts the lab, and is sent only in the request header. It is
