@@ -62,7 +62,9 @@ Python 3.9+. Standard library only; nothing to install.
 
 Optional real model: set `LLM01_BACKEND` to `ollama`, `llamacpp` or
 `openrouter` (which needs `OPENROUTER_API_KEY`), and `LLM01_MODEL` to the
-model name, before starting the target. The default `stub` needs no network.
+model name, before starting the target, or pick them in the console's
+backend bar. The default `echo` (alias `stub`) needs no network. The
+OpenRouter key is read from the environment only, never from the console.
 With `openrouter`, prompts and payloads leave the machine.
 
 ## Execution instructions
@@ -138,7 +140,7 @@ lesson. To test the screen, extend `assets/screen_rules.json`.
 | `scripts/reset_baseline.py` | Restores the seeded wiki and vulnerable mode. |
 | `references/LLM01_RISKS.md` | Threat landscape, research, scenario table, mitigations. |
 | `assets/injected_page.md` | Adversarial page (placeholder payload; editable). |
-| `assets/injected_page.README.md` | How to write a payload for the stub and real-model backends. |
+| `assets/injected_page.README.md` | How to write a payload for the echo and real-model backends. |
 | `assets/kb_baseline.json` | Untampered wiki: the ground truth. |
 | `assets/screen_rules.json` | Tool-output screen rules (editable). |
 | `tests/test_lifecycle.py` | Asserts the four-act story in-process. |

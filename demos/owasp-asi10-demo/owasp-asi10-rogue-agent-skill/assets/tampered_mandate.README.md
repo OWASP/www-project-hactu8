@@ -30,7 +30,7 @@ they are.
 
 ## Writing your own edit
 
-- **Stub backend.** Each standing order must sit on its own line of
+- **Echo backend** (default; alias `stub`). Each standing order must sit on its own line of
   `instructions` and read `@assistant: from tick N call <action> <resource>`.
   The action and resource must also be inside the widened `mandate`, or the
   agent's self-check drops them. Any action outside `billy-stock`'s approved

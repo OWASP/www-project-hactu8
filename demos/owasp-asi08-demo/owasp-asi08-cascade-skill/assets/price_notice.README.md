@@ -23,7 +23,7 @@ not escape anything. Every payment it causes is simulated.
 
 ## Writing your own payload
 
-- **Stub backend.** Change the supplier or the value on the directive line.
+- **Echo backend** (default; alias `stub`). Change the supplier or the value on the directive line.
   A value that does not match the billed price (try 15.00) turns the attack's
   approvals back into holds: the cascade needs the wrong figure to *agree*
   with the invoices. Pointing it at `SUP-02` or `SUP-03` moves the blast

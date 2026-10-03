@@ -7,6 +7,10 @@
 //   POST /api/evaluate  run the suite -> {rows, targeted_rate, overall_rate, ...}
 //   POST /api/scan      static/dry-run check of the payload -> {decision, findings}
 //   POST /api/mode      {mode: "vulnerable" | "hardened"}
+//   GET  /api/models?backend=NAME   best-effort model list for the picker
+//   POST /api/backend   {backend, model} switch the model backend at runtime
+// /api/meta also carries {backends, default_models, openrouter_key_set}. The
+// OpenRouter key itself never touches the console: it comes from the env only.
 // Open /#run to play all four acts on page load.
 // All text is inserted with textContent, never innerHTML.
 "use strict";
@@ -43,10 +47,11 @@ async function refreshState() {
   try {
     const s = await api("/api/state");
     $("system-status").textContent = "ONLINE";
-    const backend = s.backend && s.backend !== "stub" ? ` / ${s.backend}` : "";
+    const backend = s.backend && s.backend !== "echo" && s.backend !== "stub" ? ` / ${s.backend}` : "";
     $("mode").textContent = `${(s.mode || "-").toUpperCase()}${backend}`;
     $("mode").title = s.backend ? `model backend: ${s.backend}` : "";
     $("state").textContent = s.baseline ? "BASELINE" : "ATTACKED";
+    currentBackend = s.backend || "echo";
   } catch (err) {
     $("system-status").textContent = "OFFLINE";
   }
@@ -153,6 +158,77 @@ async function run(name) {
   }
 }
 
+// ---- model backend picker ------------------------------------------------ //
+let currentBackend = "echo";
+
+function backendName(label) { return (label || "echo").split(":")[0]; }
+
+async function loadModels(name) {
+  const list = $("model-list");
+  list.replaceChildren();
+  const input = $("model-input");
+  input.disabled = name === "echo";
+  input.placeholder = name === "echo" ? "not used for echo"
+    : `(default) ${(meta.default_models || {})[name] || ""}`;
+  if (name === "echo") { input.value = ""; return; }
+  try {
+    const r = await api(`/api/models?backend=${encodeURIComponent(name)}`);
+    for (const m of r.models || []) {
+      const opt = document.createElement("option");
+      opt.value = m;
+      list.append(opt);
+    }
+    if (!(r.models || []).length) log("lab", `Could not list ${name} models; type an exact name.`);
+  } catch (err) {
+    log("error", `Model list for ${name}: ${err.message}`);
+  }
+}
+
+function backendNote(name) {
+  const note = $("backend-note");
+  note.classList.toggle("warn", name === "openrouter");
+  note.textContent = {
+    echo: "echo: the lab's deterministic offline model. No network, no key.",
+    ollama: "ollama: local model server (OLLAMA_HOST). Nothing leaves this machine.",
+    llamacpp: "llamacpp: local llama.cpp server (LLAMACPP_HOST). Nothing leaves this machine.",
+    openrouter: meta.openrouter_key_set
+      ? "openrouter: lab prompts and payloads leave this machine. Key read from OPENROUTER_API_KEY."
+      : "openrouter: set OPENROUTER_API_KEY in the shell that starts the lab, then restart it.",
+  }[name] || "";
+}
+
+function initBackendPicker() {
+  const select = $("backend-select");
+  for (const name of meta.backends || ["echo"]) {
+    const opt = document.createElement("option");
+    opt.value = name;
+    opt.textContent = name === "openrouter" && !meta.openrouter_key_set ? "openrouter (no key)" : name;
+    opt.disabled = name === "openrouter" && !meta.openrouter_key_set;
+    select.append(opt);
+  }
+  const name = backendName(currentBackend);
+  select.value = name;
+  $("model-input").value = currentBackend.includes(":") ? currentBackend.slice(name.length + 1) : "";
+  backendNote(name);
+  loadModels(name);
+  select.addEventListener("change", () => {
+    $("model-input").value = "";
+    backendNote(select.value);
+    loadModels(select.value);
+  });
+  $("backend-apply").addEventListener("click", async () => {
+    const backend = select.value;
+    const model = $("model-input").value.trim();
+    try {
+      const s = await api("/api/backend", { backend, model });
+      log("lab", `Model backend now ${s.backend}. Re-run the acts to measure it.`);
+    } catch (err) {
+      log("error", `Backend not changed: ${err.message}`);
+    }
+    refreshState();
+  });
+}
+
 async function init() {
   try {
     meta = await api("/api/meta");
@@ -175,6 +251,7 @@ async function init() {
   $("footer-id").textContent = `${meta.framework} / ${meta.id}`.toUpperCase();
   log("lab", "Console ready. Start with Act 1, or run the full sequence.");
   await refreshState();
+  initBackendPicker();
   // Presenter shortcut: open /#run to play all four acts on load.
   if (location.hash === "#run") run("sequence");
 }

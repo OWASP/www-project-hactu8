@@ -32,6 +32,16 @@
       <div class="status-cell status-kpi"><span class="status-label" id="metric-label">RATE</span><strong id="rate">-</strong></div>
     </section>
 
+    <section class="backend-bar" aria-label="Model backend">
+      <label class="backend-field"><span class="status-label">BACKEND</span>
+        <select id="backend-select"></select></label>
+      <label class="backend-field backend-model"><span class="status-label">MODEL</span>
+        <input id="model-input" list="model-list" autocomplete="off" spellcheck="false">
+        <datalist id="model-list"></datalist></label>
+      <button class="button button-quiet" id="backend-apply" type="button">Use backend</button>
+      <span class="backend-note" id="backend-note"></span>
+    </section>
+
     <section class="acts" aria-label="Four acts">
       <button class="act" data-action="baseline" type="button">
         <span class="act-index">ACT 1 / BASELINE</span><strong>Prove the clean state</strong>

@@ -79,8 +79,10 @@ Python 3.9+. Standard library only; nothing to install.
 
 Optional real model: set `ASI07_BACKEND` to `ollama`, `llamacpp` or
 `openrouter` (which needs `OPENROUTER_API_KEY`), and `ASI07_MODEL` to the
-model name, before starting the target. The backend replaces Billy Exec's
-model; the planner stays a stub. The default `stub` needs no network.
+model name, before starting the target, or pick them in the console's
+backend bar. The backend replaces Billy Exec's model; the planner stays a
+stub. The default `echo` (alias `stub`) needs no network. The OpenRouter
+key is read from the environment only, never from the console.
 With `openrouter`, prompts and payloads leave the machine.
 
 ## Execution instructions
@@ -165,7 +167,7 @@ verifier enforces, edit `assets/bus_policy.json`; turning off
 | `scripts/reset_baseline.py` | Restores records and bus, clears the action log, sets vulnerable mode. |
 | `references/ASI07_RISKS.md` | Threat landscape, research, scenario table, mitigations. |
 | `assets/forged_order.md` | Spoofed work order body (placeholder payload; editable). |
-| `assets/forged_order.README.md` | How to write a payload for the stub and real-model backends. |
+| `assets/forged_order.README.md` | How to write a payload for the echo and real-model backends. |
 | `assets/ops_baseline.json` | Items, invoices, orders and the old bus history as seeded. |
 | `assets/bus_policy.json` | Signature, sender allowlist and replay settings (editable). |
 | `tests/test_lifecycle.py` | Asserts the four-act story in-process. |

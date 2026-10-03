@@ -70,7 +70,9 @@ Python 3.9+. Standard library only; nothing to install.
 
 Optional real model: set `ASI06_BACKEND` to `ollama`, `llamacpp` or
 `openrouter` (which needs `OPENROUTER_API_KEY`), and `ASI06_MODEL` to the
-model name, before starting the target. The default `stub` needs no network.
+model name, before starting the target, or pick them in the console's
+backend bar. The default `echo` (alias `stub`) needs no network. The
+OpenRouter key is read from the environment only, never from the console.
 With `openrouter`, prompts and payloads leave the machine.
 
 ## Execution instructions
@@ -150,7 +152,7 @@ threshold is part of the lesson. To test the write screen, extend
 | `scripts/reset_baseline.py` | Restores the seeded memory store, clears the action log, vulnerable mode. |
 | `references/ASI06_RISKS.md` | Threat landscape, research, scenario table, mitigations. |
 | `assets/memory_note.md` | The memory to plant (placeholder payload; editable). |
-| `assets/memory_note.README.md` | How to write a payload for the stub and real-model backends. |
+| `assets/memory_note.README.md` | How to write a payload for the echo and real-model backends. |
 | `assets/memory_baseline.json` | KB ground truth and seeded user memories. |
 | `assets/screen_rules.json` | Memory-write screen rules (editable). |
 | `tests/test_lifecycle.py` | Asserts the four-act story in-process. |

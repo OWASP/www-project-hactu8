@@ -72,7 +72,9 @@ Python 3.9+. Standard library only; nothing to install.
 
 Optional real model: set `ASI09_BACKEND` to `ollama`, `llamacpp` or
 `openrouter` (which needs `OPENROUTER_API_KEY`), and `ASI09_MODEL` to the
-model name, before starting the target. The default `stub` needs no network.
+model name, before starting the target, or pick them in the console's
+backend bar. The default `echo` (alias `stub`) needs no network. The
+OpenRouter key is read from the environment only, never from the console.
 With `openrouter`, prompts and payloads leave the machine.
 
 ## Execution instructions
@@ -152,7 +154,7 @@ of a card the approver reads, edit `assets/approval_policy.json`.
 | `scripts/reset_baseline.py` | Restores the seeded vendors and requests, clears the action log, sets vulnerable mode. |
 | `references/ASI09_RISKS.md` | Threat landscape, research, scenario table, mitigations. |
 | `assets/vendor_amendment.md` | Adversarial amendment (placeholder payload; editable). |
-| `assets/vendor_amendment.README.md` | How to write a payload for the stub and real-model backends. |
+| `assets/vendor_amendment.README.md` | How to write a payload for the echo and real-model backends. |
 | `assets/vendor_baseline.json` | Vendors and open change requests as seeded. |
 | `assets/approval_policy.json` | Field tiers and the simulated approver rule (editable). |
 | `tests/test_lifecycle.py` | Asserts the four-act story in-process. |

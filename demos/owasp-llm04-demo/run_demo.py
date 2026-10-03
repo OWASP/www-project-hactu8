@@ -63,8 +63,8 @@ def _read(path: str) -> str:
 def main(argv=None) -> int:
     parser = argparse.ArgumentParser(description=__doc__,
                                      formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument("--backend", default="stub",
-                        help="stub (default) | ollama | llamacpp | openrouter")
+    parser.add_argument("--backend", default="echo",
+                        help="echo (default; alias stub) | ollama | llamacpp | openrouter")
     parser.add_argument("--model", default="", help="model name for the backend")
     args = parser.parse_args(argv)
     if hasattr(sys.stdout, "reconfigure"):
@@ -100,7 +100,7 @@ def main(argv=None) -> int:
     finally:
         lab.remove_registry()
 
-    if lab.backend != "stub":
+    if lab.backend != "echo":
         print(f"[*] Real model: Compromised Tool Rate {baseline:.0f}% -> {attacked:.0f}% -> "
               f"{remediated:.0f}% (reported, not asserted).")
         return 0

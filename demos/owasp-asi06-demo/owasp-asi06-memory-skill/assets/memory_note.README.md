@@ -29,7 +29,7 @@ The memory lives in RAM only and is cleared by `scripts/reset_baseline.py`.
   `remote`, `vpn`, `access`) unless you want to watch the controls go RED.
   If no question shares a keyword with the memory, it is never recalled and
   the PSR stays at 0. That threshold is part of the lesson.
-- **Stub backend.** Put your instruction on its own line starting with
+- **Echo backend** (default; alias `stub`). Put your instruction on its own line starting with
   `@assistant:`. Include the canary if you want the canary check to fire; the
   provenance check fires either way.
 - **Real-model backend.** Write the memory in natural language, phrased as a

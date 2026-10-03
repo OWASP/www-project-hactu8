@@ -73,7 +73,9 @@ Python 3.9+. Standard library only; nothing to install.
 
 Optional real model: set `ASI04_BACKEND` to `ollama`, `llamacpp` or
 `openrouter` (which needs `OPENROUTER_API_KEY`), and `ASI04_MODEL` to the
-model name, before starting the target. The default `stub` needs no network.
+model name, before starting the target, or pick them in the console's
+backend bar. The default `echo` (alias `stub`) needs no network. The
+OpenRouter key is read from the environment only, never from the console.
 With `openrouter`, prompts and payloads leave the machine.
 
 ## Execution instructions
@@ -155,6 +157,6 @@ never resolved and the UCLR stays at 0. That threshold is part of the lesson.
 | `assets/task_plans.json` | Approved multi-step task plans. |
 | `assets/skill_manifest.json` | Allowlisted manifest: publisher and SHA-256 pin per skill name. |
 | `assets/lookalike_skill.json` | Lookalike skill entry (placeholder payload; editable). |
-| `assets/lookalike_skill.README.md` | How to write a payload for the stub and real-model backends. |
+| `assets/lookalike_skill.README.md` | How to write a payload for the echo and real-model backends. |
 | `catalogue/` | Live catalogue file(s), written at runtime; git-ignored. |
 | `tests/test_lifecycle.py` | Asserts the four-act story in-process. |

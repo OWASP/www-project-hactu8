@@ -4,9 +4,11 @@ Shared by every demo and copied unchanged into each skill folder (like web/).
 Ported from AgenticGoat's providers.py, so the env vars match that repo.
 Standard library only.
 
-Backends (selected per demo with ``<PREFIX>_BACKEND``; model with ``<PREFIX>_MODEL``):
+Backends (selected per demo with ``<PREFIX>_BACKEND``; model with ``<PREFIX>_MODEL``;
+or switched at runtime from the web console through ``POST /api/backend``):
 
-  stub        default. The demo's own deterministic stub model. No network.
+  echo        default. The demo's own deterministic stand-in model. No network.
+              Named as in AgenticGoat; ``stub`` is accepted as an alias.
   ollama      local. OLLAMA_HOST (default http://localhost:11434).
   llamacpp    local llama.cpp server. LLAMACPP_HOST (default http://localhost:8080).
   openrouter  remote. OPENROUTER_API_KEY required. The key is sent only in the
@@ -19,21 +21,29 @@ Safety and cost limits, applied to every non-stub call:
   <PROVIDER>_TIMEOUT per-call HTTP timeout in seconds (default 120), with
                      LAB_HTTP_TIMEOUT as the shared fallback
 
+The OpenRouter key comes from the environment only, as in AgenticGoat. It is
+never accepted from the console, a file, or a request; the console is told only
+whether a key is set.
+
 Choosing a remote backend means lab prompts, including the demo's payloads,
-leave the machine. The stub and the local backends keep everything on the host.
+leave the machine. Echo and the local backends keep everything on the host.
 """
 
 from __future__ import annotations
 
 import json
 import os
+import re
 import threading
 import urllib.error
 import urllib.request
 from dataclasses import dataclass
 from typing import List, Optional
 
-BACKENDS = ("stub", "ollama", "llamacpp", "openrouter")
+BACKENDS = ("echo", "ollama", "llamacpp", "openrouter")
+OFFLINE = "echo"
+_ALIASES = {"stub": "echo"}
+MODEL_RE = re.compile(r"[A-Za-z0-9._:/@+-]{1,120}")
 DEFAULT_MODELS = {
     "ollama": "llama3.2:3b",
     "llamacpp": "local",
@@ -105,6 +115,15 @@ class Provider:
     def chat(self, messages: List[Message], *, model: str = "") -> str:
         raise NotImplementedError
 
+    def list_models(self) -> List[str]:
+        """Model names this provider can serve, for the console's dropdown."""
+        return []
+
+    def _get(self, url: str, headers: dict, timeout: float) -> dict:
+        req = urllib.request.Request(url, headers=headers)
+        with _urlopen(req, timeout=timeout) as resp:
+            return json.loads(resp.read())
+
     def _post(self, url: str, payload: dict, headers: dict, timeout: float) -> dict:
         req = urllib.request.Request(
             url, data=json.dumps(payload).encode("utf-8"),
@@ -139,6 +158,10 @@ class OllamaProvider(Provider):
             raise
         return data.get("message", {}).get("content", "")
 
+    def list_models(self) -> List[str]:
+        data = self._get(f"{self.host}/api/tags", {}, min(self.timeout, 10.0))
+        return sorted(m["name"] for m in data.get("models", []) if m.get("name"))
+
 
 class LlamaCppProvider(Provider):
     name = "llamacpp"
@@ -157,6 +180,10 @@ class LlamaCppProvider(Provider):
             "stream": False,
         }, {}, self.timeout)
         return data["choices"][0]["message"]["content"] or ""
+
+    def list_models(self) -> List[str]:
+        data = self._get(f"{self.host}/v1/models", {}, min(self.timeout, 10.0))
+        return sorted(m["id"] for m in data.get("data", []) if m.get("id"))
 
 
 class OpenRouterProvider(Provider):
@@ -186,11 +213,32 @@ class OpenRouterProvider(Provider):
                           {"Authorization": f"Bearer {self._key.reveal()}"}, self.timeout)
         return data["choices"][0]["message"]["content"] or ""
 
+    def list_models(self) -> List[str]:
+        # The key rides in the header only; never in a query or body.
+        data = self._get("https://openrouter.ai/api/v1/models",
+                         {"Authorization": f"Bearer {self._key.reveal()}"},
+                         min(self.timeout, 15.0))
+        return sorted(m["id"] for m in data.get("data", []) if m.get("id"))
+
+
+def normalize(name: str) -> str:
+    """Canonical backend name: lower-case, ``stub`` -> ``echo``, empty -> echo."""
+    name = (name or OFFLINE).strip().lower()
+    return _ALIASES.get(name, name)
+
+
+def check_model(model: str) -> str:
+    """Validate a model name from the environment or the console."""
+    model = (model or "").strip()
+    if model and not MODEL_RE.fullmatch(model):
+        raise ValueError("model name may use letters, digits and . _ : / @ + - only")
+    return model
+
 
 def get_provider(name: str) -> Optional[Provider]:
-    """Return the provider for ``name``, or None for the demo's own stub."""
-    name = (name or "stub").strip().lower()
-    if name == "stub":
+    """Return the provider for ``name``, or None for the demo's own echo model."""
+    name = normalize(name)
+    if name == OFFLINE:
         return None
     if name == "ollama":
         return OllamaProvider()
@@ -203,7 +251,26 @@ def get_provider(name: str) -> Optional[Provider]:
 
 def describe(name: str, model: str) -> str:
     """Short label for logs and the console, e.g. 'openrouter:meta-llama/...'."""
-    name = (name or "stub").lower()
-    if name == "stub":
-        return "stub"
+    name = normalize(name)
+    if name == OFFLINE:
+        return OFFLINE
     return f"{name}:{model or DEFAULT_MODELS.get(name, '')}"
+
+
+def available_models(name: str) -> List[str]:
+    """Best-effort model list for the console. Empty on any failure (provider
+    down, no key, network), so the console falls back to free text."""
+    try:
+        provider = get_provider(name)
+        return provider.list_models() if provider is not None else []
+    except Exception:  # noqa: BLE001 — a dropdown must never break the lab
+        return []
+
+
+def console_info() -> dict:
+    """What the console needs to draw its backend picker. Never the key itself."""
+    return {
+        "backends": list(BACKENDS),
+        "default_models": dict(DEFAULT_MODELS),
+        "openrouter_key_set": bool(os.environ.get("OPENROUTER_API_KEY", "").strip()),
+    }

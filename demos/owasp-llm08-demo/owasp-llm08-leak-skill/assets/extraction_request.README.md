@@ -22,7 +22,7 @@ Keep this file plain text. `run_extraction.py` does not escape anything.
 
 ## Writing your own payload
 
-- **Stub backend.** Your instruction must sit on a line that starts with
+- **Echo backend** (default; alias `stub`). Your instruction must sit on a line that starts with
   `@assistant:`. Whatever follows the marker is appended to Billy's reply;
   put `{system_prompt}` where the quoted prompt should go. Only the first
   directive line is used.

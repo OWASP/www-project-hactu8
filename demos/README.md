@@ -4,7 +4,7 @@ Self-contained vulnerability labs for the **OWASP Top 10 for LLM Applications**
 (2026 numbering) and the **OWASP Top 10 for Agentic Applications**. Each lab
 tells the same four-act story against a fixed verification suite:
 
-| Act | What happens | Expected (stub model) |
+| Act | What happens | Expected (echo model) |
 |-----|--------------|-----------------------|
 | 1 — Clean baseline | Run the suite against the untouched target | 🟢 all GREEN, rate 0% |
 | 2 — Attack | Apply one small, named adversarial change | target state changes |
@@ -67,17 +67,32 @@ Each skill folder also has the CLI acts: `scripts/run_<attack>.py`,
 See each lab's README and `SKILL.md`. Every skill folder can be copied into
 `.claude/skills/`.
 
-### Real-model backends
+### Model backends
 
-The deterministic stub model is the default and the only backend the tests
-use. `providers.py` (a port of AgenticGoat's provider layer) adds `ollama`,
-`llamacpp` and `openrouter`:
+The backend options match AgenticGoat's (`providers.py` is a port of its
+provider layer):
+
+| Backend | What it is | Key |
+|---------|------------|-----|
+| `echo` (default; alias `stub`) | the lab's deterministic offline model, used by every test | none |
+| `ollama` | local Ollama server (`OLLAMA_HOST`) | none |
+| `llamacpp` | local llama.cpp server (`LLAMACPP_HOST`) | none |
+| `openrouter` | remote, any OpenRouter model | `OPENROUTER_API_KEY` |
+
+Pick one in the web console's **BACKEND / MODEL** bar. The model list is fetched
+live from the provider, with free text as the fallback. Or set it from the
+command line:
 
 ```bash
 python run_demo.py --backend ollama --model llama3.2:3b
 OPENROUTER_API_KEY=... python run_demo.py --backend openrouter
 LLM01_BACKEND=openrouter LLM01_MODEL=... python owasp-llm01-injection-skill/vulnerable_app.py
 ```
+
+The API key works as in AgenticGoat. It is read only from `OPENROUTER_API_KEY`
+in the shell that starts the lab, and sent only in the request header. The
+console never asks for it, and is told only whether a key is set; without one,
+`openrouter` is greyed out.
 
 With a real model the numbers are reported, not asserted. Placeholder
 payloads are often ignored, so write real ones for meaningful runs. With

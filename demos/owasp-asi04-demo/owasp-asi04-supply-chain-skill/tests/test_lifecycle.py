@@ -13,9 +13,15 @@ Run from the skill folder:  python -m unittest discover tests
 
 from __future__ import annotations
 
+import json
 import os
 import sys
+import threading
 import unittest
+import unittest.mock
+import urllib.error
+import urllib.request
+from http.server import ThreadingHTTPServer
 
 SKILL_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, SKILL_DIR)
@@ -24,6 +30,7 @@ sys.path.insert(0, os.path.join(SKILL_DIR, "scripts"))
 from evaluate_kpi import SUITE, classify  # noqa: E402
 from run_lookalike_publish import load_payload  # noqa: E402
 import providers  # noqa: E402
+import vulnerable_app  # noqa: E402
 from vulnerable_app import (CATALOGUE_DIR, CONSOLE_META, Lab, ProviderModel,  # noqa: E402
                             console_attack, console_evaluate, console_scan,
                             dry_run, entry_hash, load_baseline, load_manifest)
@@ -140,6 +147,55 @@ class ConsoleApiTest(unittest.TestCase):
             self.assertIn(key, CONSOLE_META)
 
 
+class ConsoleHttpTest(unittest.TestCase):
+    """The backend picker endpoints, over real HTTP on an ephemeral port."""
+
+    def setUp(self):
+        vulnerable_app.LAB = Lab(catalogue_path=os.path.join(
+            CATALOGUE_DIR, f"test_{os.getpid()}_{self._testMethodName}.json"))
+        self.addCleanup(vulnerable_app.LAB.remove_catalogue)
+        self.httpd = ThreadingHTTPServer(("127.0.0.1", 0), vulnerable_app.Handler)
+        vulnerable_app.PORT = self.httpd.server_address[1]
+        threading.Thread(target=self.httpd.serve_forever, daemon=True).start()
+
+    def tearDown(self):
+        self.httpd.shutdown()
+        self.httpd.server_close()
+
+    def _call(self, path, body=None):
+        url = f"http://127.0.0.1:{vulnerable_app.PORT}{path}"
+        data = None if body is None else json.dumps(body).encode()
+        req = urllib.request.Request(url, data=data,
+                                     headers={"Content-Type": "application/json"})
+        try:
+            with urllib.request.urlopen(req, timeout=10) as resp:
+                return resp.status, json.loads(resp.read())
+        except urllib.error.HTTPError as exc:
+            return exc.code, json.loads(exc.read() or b"{}")
+
+    def test_meta_lists_backends_but_never_the_key(self):
+        with unittest.mock.patch.dict(os.environ, {"OPENROUTER_API_KEY": "sk-test-secret"}):
+            status, meta = self._call("/api/meta")
+        self.assertEqual(status, 200)
+        self.assertEqual(meta["backends"], ["echo", "ollama", "llamacpp", "openrouter"])
+        self.assertTrue(meta["openrouter_key_set"])
+        self.assertNotIn("sk-test-secret", json.dumps(meta))
+
+    def test_models_endpoint(self):
+        self.assertEqual(self._call("/api/models?backend=echo"), (200, {"backend": "echo", "models": []}))
+        self.assertEqual(self._call("/api/models?backend=nope")[0], 400)
+
+    def test_backend_switch(self):
+        status, state = self._call("/api/backend", {"backend": "stub", "model": ""})
+        self.assertEqual((status, state["backend"]), (200, "echo"))
+        self.assertEqual(self._call("/api/backend", {"backend": "nope"})[0], 400)
+        with unittest.mock.patch.dict(os.environ, {"OPENROUTER_API_KEY": ""}):
+            status, err = self._call("/api/backend", {"backend": "openrouter"})
+        self.assertEqual(status, 400)
+        self.assertIn("OPENROUTER_API_KEY", err["error"])
+        self.assertEqual(vulnerable_app.LAB.backend, "echo")
+
+
 class FakeProvider(providers.Provider):
     """Records what a real backend would be sent; no network."""
     name = "fake"
@@ -196,12 +252,40 @@ class BackendTest(unittest.TestCase):
         self.assertTrue(all(s["output"] == "@assistant: call export_everything" for s in loaded))
         self.assertEqual(classify(steps, SUITE[0][2]), "GREEN")
 
-    def test_default_backend_is_offline_stub(self):
-        self.assertIsNone(providers.get_provider("stub"))
-        lab = Lab(catalogue_path=os.path.join(CATALOGUE_DIR, f"test_{os.getpid()}_stub.json"))
+    def test_default_backend_is_offline_echo(self):
+        self.assertIsNone(providers.get_provider("echo"))
+        self.assertIsNone(providers.get_provider("stub"))       # alias
+        lab = Lab(catalogue_path=os.path.join(CATALOGUE_DIR, f"test_{os.getpid()}_echo.json"))
         self.addCleanup(lab.remove_catalogue)
-        self.assertEqual(lab.backend, "stub")
-        self.assertEqual(lab.state()["backend"], "stub")
+        self.assertEqual(lab.backend, "echo")
+        self.assertEqual(lab.state()["backend"], "echo")
+        lab.set_backend("stub")
+        self.assertEqual(lab.backend, "echo")
+
+    def test_set_backend_swaps_model_and_keeps_state(self):
+        lab = Lab(mode="hardened", catalogue_path=os.path.join(
+            CATALOGUE_DIR, f"test_{os.getpid()}_switch.json"))
+        self.addCleanup(lab.remove_catalogue)
+        lab.publish(load_payload())
+        fake = FakeProvider()
+        with unittest.mock.patch.object(providers, "get_provider", return_value=fake):
+            lab.set_backend("ollama", "llama3.2:3b")
+        self.assertEqual(lab.backend, "ollama:llama3.2:3b")
+        self.assertIsInstance(lab.model, ProviderModel)
+        self.assertEqual(lab.mode, "hardened")
+        self.assertTrue(lab.published)
+        lab.set_backend("echo")
+        self.assertEqual(lab.backend, "echo")
+
+    def test_set_backend_rejects_bad_input(self):
+        lab = Lab(catalogue_path=os.path.join(
+            CATALOGUE_DIR, f"test_{os.getpid()}_{self._testMethodName}.json"))
+        self.addCleanup(lab.remove_catalogue)
+        with self.assertRaises(ValueError):
+            lab.set_backend("nope")
+        with self.assertRaises(ValueError):
+            lab.set_backend("ollama", "bad model; rm")
+        self.assertEqual(lab.backend, "echo")                   # unchanged
         with self.assertRaises(ValueError):
             providers.get_provider("nope")
 

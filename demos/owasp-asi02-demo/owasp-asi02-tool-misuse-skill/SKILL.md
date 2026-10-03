@@ -71,7 +71,9 @@ Python 3.9+. Standard library only; nothing to install.
 
 Optional real model: set `ASI02_BACKEND` to `ollama`, `llamacpp` or
 `openrouter` (which needs `OPENROUTER_API_KEY`), and `ASI02_MODEL` to the
-model name, before starting the target. The default `stub` needs no network.
+model name, before starting the target, or pick them in the console's
+backend bar. The default `echo` (alias `stub`) needs no network. The
+OpenRouter key is read from the environment only, never from the console.
 With `openrouter`, prompts and payloads leave the machine.
 
 ## Execution instructions
@@ -156,7 +158,7 @@ inside the policy passes the gate by design.
 | `scripts/reset_baseline.py` | Restores the seeded requests, clears the action log and outbox, sets vulnerable mode. |
 | `references/ASI02_RISKS.md` | Threat landscape, research, scenario table, mitigations. |
 | `assets/request_note.md` | Adversarial requester note (placeholder payload; editable). |
-| `assets/request_note.README.md` | How to write a payload for the stub and real-model backends. |
+| `assets/request_note.README.md` | How to write a payload for the echo and real-model backends. |
 | `assets/finance_baseline.json` | Report requests and the ledger spec as seeded. |
 | `assets/tool_policy.json` | Parameter policy: destinations, row caps, call budgets (editable). |
 | `tests/test_lifecycle.py` | Asserts the four-act story in-process. |

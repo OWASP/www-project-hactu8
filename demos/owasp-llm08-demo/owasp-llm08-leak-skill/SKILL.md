@@ -69,7 +69,9 @@ Python 3.9+. Standard library only; nothing to install.
 
 Optional real model: set `LLM08_BACKEND` to `ollama`, `llamacpp` or
 `openrouter` (which needs `OPENROUTER_API_KEY`), and `LLM08_MODEL` to the
-model name, before starting the target. The default `stub` needs no network.
+model name, before starting the target, or pick them in the console's
+backend bar. The default `echo` (alias `stub`) needs no network. The
+OpenRouter key is read from the environment only, never from the console.
 With `openrouter`, prompts and payloads leave the machine, including the
 vulnerable prompt's fictional canary.
 
@@ -148,7 +150,7 @@ the PLR falls to 0. To test the filter, change `output.ngram` in
 | `scripts/reset_baseline.py` | Restores the seeded store and vulnerable mode. |
 | `references/LLM08_RISKS.md` | Threat landscape, research, scenario table, mitigations. |
 | `assets/extraction_request.md` | Attacker's reply preference (placeholder payload; editable). |
-| `assets/extraction_request.README.md` | How to write a payload for the stub and real-model backends. |
+| `assets/extraction_request.README.md` | How to write a payload for the echo and real-model backends. |
 | `assets/system_prompt_vulnerable.txt` | Deployed prompt with the embedded secret and tool schema. |
 | `assets/system_prompt_hardened.txt` | Secret-free prompt deployed in hardened mode. |
 | `assets/store_baseline.json` | Help centre and accounts: the ground truth. |

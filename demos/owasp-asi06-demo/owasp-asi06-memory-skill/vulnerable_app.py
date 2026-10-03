@@ -240,12 +240,10 @@ class ProviderModel:
 # The lab: KB, memory store, agent session, action log
 # --------------------------------------------------------------------------- #
 class Lab:
-    def __init__(self, mode: str = "vulnerable", backend: str = "stub",
+    def __init__(self, mode: str = "vulnerable", backend: str = "echo",
                  model: str = "") -> None:
         self.lock = threading.RLock()
-        provider = providers.get_provider(backend)
-        self.backend = providers.describe(backend, model)
-        self.model = StubModel() if provider is None else ProviderModel(provider, model)
+        self.set_backend(backend, model)
         self.rules = load_screen_rules()
         self.pages: Dict[str, str] = {}
         self.memories: List[Dict[str, Any]] = []
@@ -270,6 +268,14 @@ class Lab:
         if mode not in VALID_MODES:
             raise ValueError(f"mode must be one of {VALID_MODES}")
         self.mode = mode
+
+    def set_backend(self, backend: str, model: str = "") -> None:
+        """Swap the model behind the lab; pages, memories, action log and mode stay as they are."""
+        model = providers.check_model(model)
+        provider = providers.get_provider(backend)   # raises on unknown name / missing key
+        with self.lock:
+            self.backend = providers.describe(backend, model)
+            self.model = StubModel() if provider is None else ProviderModel(provider, model)
 
     # ---- tools ------------------------------------------------------------ #
     def recall_memory(self, user: str, query: str) -> List[Dict[str, Any]]:
@@ -530,7 +536,13 @@ class Handler(BaseHTTPRequestHandler):
         elif self.path.startswith("/web/") and self.path[5:] in WEB_FILES:
             self._static(self.path[5:])
         elif self.path == "/api/meta":
-            self._send(200, CONSOLE_META)
+            self._send(200, {**CONSOLE_META, **providers.console_info()})
+        elif self.path.startswith("/api/models?backend="):
+            name = providers.normalize(self.path.split("=", 1)[1])
+            if name not in providers.BACKENDS:
+                self._send(400, {"error": "unknown backend"})
+                return
+            self._send(200, {"backend": name, "models": providers.available_models(name)})
         elif self.path == "/health":
             self._send(200, {"status": "ok", "demo": "asi06", "mode": LAB.mode,
                              "backend": LAB.backend})
@@ -592,6 +604,14 @@ class Handler(BaseHTTPRequestHandler):
                 self._send(400, {"error": str(exc)})
                 return
             self._send(200, LAB.state())
+        elif self.path == "/api/backend":
+            # The key never comes from here: OpenRouter reads OPENROUTER_API_KEY.
+            try:
+                LAB.set_backend(str(body.get("backend", "")), str(body.get("model", "")))
+            except (ValueError, RuntimeError) as exc:
+                self._send(400, {"error": str(exc)})
+                return
+            self._send(200, LAB.state())
         else:
             self._send(404, {"error": "not found"})
 
@@ -599,7 +619,7 @@ class Handler(BaseHTTPRequestHandler):
 def main() -> None:
     global LAB, PORT
     LAB = Lab(mode=os.getenv("ASI06_MODE", "vulnerable"),
-              backend=os.getenv("ASI06_BACKEND", "stub"),
+              backend=os.getenv("ASI06_BACKEND", "echo"),
               model=os.getenv("ASI06_MODEL", ""))
     PORT = int(os.getenv("ASI06_PORT", "5306"))
     httpd = ThreadingHTTPServer(("127.0.0.1", PORT), Handler)

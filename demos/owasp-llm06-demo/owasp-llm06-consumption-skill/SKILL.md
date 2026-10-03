@@ -69,7 +69,9 @@ Python 3.9+. Standard library only; nothing to install.
 
 Optional real model: set `LLM06_BACKEND` to `ollama`, `llamacpp` or
 `openrouter` (which needs `OPENROUTER_API_KEY`), and `LLM06_MODEL` to the
-model name, before starting the target. The default `stub` needs no network.
+model name, before starting the target, or pick them in the console's
+backend bar. The default `echo` (alias `stub`) needs no network. The
+OpenRouter key is read from the environment only, never from the console.
 With `openrouter`, prompts and payloads leave the machine, and every agent
 step is a billed call (capped by `LAB_MAX_CALLS`).
 
@@ -149,7 +151,7 @@ lint.
 | `assets/runaway_output.md` | Runaway-output page (placeholder payload; editable). |
 | `assets/tool_storm.md` | Tool-storm page (placeholder payload; editable). |
 | `assets/recursive_loop.md` | Recursive-loop page (placeholder payload; editable). |
-| `assets/*.README.md` | How to write each payload for the stub and real-model backends. |
+| `assets/*.README.md` | How to write each payload for the echo and real-model backends. |
 | `assets/kb_baseline.json` | Untampered wiki: the ground truth. |
 | `assets/budget.json` | Per-request caps, per-client quota, simulated prices, lint rules (editable). |
 | `tests/test_lifecycle.py` | Asserts the four-act story in-process. |

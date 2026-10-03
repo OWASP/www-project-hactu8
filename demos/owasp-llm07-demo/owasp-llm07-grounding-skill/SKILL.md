@@ -69,7 +69,9 @@ Python 3.9+. Standard library only; nothing to install.
 
 Optional real model: set `LLM07_BACKEND` to `ollama`, `llamacpp` or
 `openrouter` (which needs `OPENROUTER_API_KEY`), and `LLM07_MODEL` to the
-model name, before starting the target. The default `stub` needs no network.
+model name, before starting the target, or pick them in the console's
+backend bar. The default `echo` (alias `stub`) needs no network. The
+OpenRouter key is read from the environment only, never from the console.
 With `openrouter`, prompts and payloads leave the machine.
 
 ## Execution instructions
@@ -150,7 +152,7 @@ change what counts as known-good, edit `assets/approved_registry.json`.
 | `scripts/reset_baseline.py` | Restores the seeded docs and vulnerable mode. |
 | `references/LLM07_RISKS.md` | Threat landscape, research, scenario table, mitigations. |
 | `assets/poisoned_doc.md` | Adversarial community page (placeholder payload; editable). |
-| `assets/poisoned_doc.README.md` | How to write a payload for the stub and real-model backends. |
+| `assets/poisoned_doc.README.md` | How to write a payload for the echo and real-model backends. |
 | `assets/docs_baseline.json` | Untampered developer docs: the ground truth. |
 | `assets/approved_registry.json` | Approved packages and trusted doc hosts (editable). |
 | `tests/test_lifecycle.py` | Asserts the four-act story in-process. |

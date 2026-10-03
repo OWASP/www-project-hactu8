@@ -56,6 +56,13 @@ button:disabled { cursor: wait; opacity: 0.55; transform: none; box-shadow: none
 .status-strip { display: grid; grid-template-columns: repeat(4, 1fr); border: 1px solid var(--ink); background: var(--ink); color: var(--white); }
 .status-cell { min-width: 0; padding: 12px 14px; border-right: 1px solid #3c555b; }
 .status-cell:last-child { border-right: 0; }
+.backend-bar { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 10px 14px; padding: 12px 14px; border: 1px solid var(--line); border-top: 0; background: var(--white); }
+.backend-bar .status-label { color: var(--ink-soft); }
+.backend-field { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.backend-field select, .backend-field input { min-width: 0; padding: 7px 8px; border: 1px solid var(--ink); background: var(--paper); color: var(--ink); font: 13px var(--mono); }
+.backend-model { flex: 1 1 220px; }
+.backend-note { flex: 1 1 100%; color: var(--ink-soft); font: 12px var(--mono); }
+.backend-note.warn { color: var(--red-fg); }
 .status-label { display: block; margin-bottom: 6px; color: #9db0ad; }
 .status-cell strong { display: block; overflow: hidden; font: 700 16px var(--mono); text-overflow: ellipsis; white-space: nowrap; }
 .status-kpi strong { color: var(--acid); }

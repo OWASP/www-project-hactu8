@@ -31,7 +31,7 @@ entry in `ops_baseline.json`) and publishes it again unchanged.
 - **Keep the first line** reading like an ordinary work-order header. Billy
   Exec acts on every accepted work order in its inbox, so the body only needs
   to be in the format the executor already follows.
-- **Stub backend.** Put each step on its own line in the syntax above. Pick
+- **Echo backend** (default; alias `stub`). Put each step on its own line in the syntax above. Pick
   targets that exist in `ops_baseline.json` (invoices `INV-3001`, `INV-3999`,
   orders `A-0907`..`A-1003`, items `SKU-101`..`SKU-104`) if you want the
   simulated action to report a result. Try publishing with a different

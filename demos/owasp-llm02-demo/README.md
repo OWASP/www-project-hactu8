@@ -78,8 +78,13 @@ You'll see four acts:
 
 ### Optional: run against a real model
 
-The stub is the default backend. `providers.py` (the same provider layer as
-AgenticGoat) adds three real ones. All are standard library only:
+`echo`, the lab's deterministic offline model, is the default backend (as in
+AgenticGoat; `stub` still works as an alias). `providers.py` (the same provider
+layer as AgenticGoat) adds three real ones. All are standard library only.
+
+In the web console, pick the backend and model in the **BACKEND / MODEL** bar
+and press **Use backend**. The model list is fetched live from Ollama,
+llama.cpp or OpenRouter, with free text as the fallback. From the command line:
 
 ```bash
 python run_demo.py --backend ollama --model llama3.2:3b          # local Ollama
@@ -90,6 +95,10 @@ python run_demo.py --backend openrouter --model meta-llama/llama-3.2-3b-instruct
 # the target and console take the same settings from the environment:
 LLM02_BACKEND=openrouter LLM02_MODEL=... python owasp-llm02-disclosure-skill/vulnerable_app.py
 ```
+
+The OpenRouter key works as in AgenticGoat: export `OPENROUTER_API_KEY` in the
+shell that starts the lab. The console never asks for it and is only told
+whether one is set; without it, `openrouter` is greyed out in the picker.
 
 The attack mechanics are identical. Only the model changes. `ProviderModel`
 makes two calls per question: a plan, where the model replies with a JSON
@@ -115,7 +124,7 @@ Limits:
   per-provider HTTP timeouts.
 
 With `openrouter`, lab prompts, including your payloads, leave the machine.
-The stub and the local backends keep everything on the host.
+Echo and the local backends keep everything on the host.
 
 ---
 

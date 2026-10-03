@@ -37,7 +37,7 @@ else.
   is never loaded, and the rate stays at 0. That threshold is part of the lesson.
 - **Keep the version higher** than `1.4.0` (`--version` overrides it). A lower
   version loses to the real skill.
-- **Stub backend.** Your instruction must sit on a line in `instructions` that
+- **Echo backend** (default; alias `stub`). Your instruction must sit on a line in `instructions` that
   starts with `@assistant:`. Whatever follows the marker becomes the step
   output.
 - **Real-model backend.** Write the instruction in natural language, as a real

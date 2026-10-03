@@ -70,7 +70,9 @@ Python 3.9+. Standard library only; nothing to install.
 
 Optional real model: set `ASI01_BACKEND` to `ollama`, `llamacpp` or
 `openrouter` (which needs `OPENROUTER_API_KEY`), and `ASI01_MODEL` to the
-model name, before starting the target. The default `stub` needs no network.
+model name, before starting the target, or pick them in the console's
+backend bar. The default `echo` (alias `stub`) needs no network. The
+OpenRouter key is read from the environment only, never from the console.
 With `openrouter`, prompts and payloads leave the machine.
 
 ## Execution instructions
@@ -151,7 +153,7 @@ stays on the plan by design.
 | `scripts/reset_baseline.py` | Restores the seeded desk, clears the action log, sets vulnerable mode. |
 | `references/ASI01_RISKS.md` | Threat landscape, research, scenario table, mitigations. |
 | `assets/ticket_comment.md` | Adversarial ticket comment (placeholder payload; editable). |
-| `assets/ticket_comment.README.md` | How to write a payload for the stub and real-model backends. |
+| `assets/ticket_comment.README.md` | How to write a payload for the echo and real-model backends. |
 | `assets/ops_baseline.json` | Tickets, queues and channels as seeded. |
 | `assets/weekly_report_plan.json` | The approved four-step task (editable). |
 | `tests/test_lifecycle.py` | Asserts the four-act story in-process. |

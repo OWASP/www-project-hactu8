@@ -22,7 +22,7 @@ description.
   a tool by keyword overlap with its name and description. If you drop the real
   text, expense questions stop routing to this tool and the attack never
   reaches the model.
-- **Stub backend.** Your instruction must sit on a line that starts with
+- **Echo backend** (default; alias `stub`). Your instruction must sit on a line that starts with
   `@assistant:`. Whatever follows the marker becomes the answer. Include the
   canary if you want the evaluator to score RED without editing it.
 - **Real-model backend.** Optional (`LLM04_BACKEND`, see the README). For a

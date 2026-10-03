@@ -72,7 +72,9 @@ Python 3.9+. Standard library only; nothing to install.
 
 Optional real model: set `LLM02_BACKEND` to `ollama`, `llamacpp` or
 `openrouter` (which needs `OPENROUTER_API_KEY`), and `LLM02_MODEL` to the
-model name, before starting the target. The default `stub` needs no network.
+model name, before starting the target, or pick them in the console's
+backend bar. The default `echo` (alias `stub`) needs no network. The
+OpenRouter key is read from the environment only, never from the console.
 With `openrouter`, prompts and payloads leave the machine.
 
 ## Execution instructions
@@ -152,7 +154,7 @@ a new secret format, put it in `assets/system_prompt.txt` and extend
 | `scripts/reset_baseline.py` | Restores the seeded records and vulnerable mode. |
 | `references/LLM02_RISKS.md` | Threat landscape, research, scenario table, mitigations. |
 | `assets/pivot_note.md` | Attacker's notes (placeholder payload; editable). |
-| `assets/pivot_note.README.md` | How to write a payload for the stub and real-model backends. |
+| `assets/pivot_note.README.md` | How to write a payload for the echo and real-model backends. |
 | `assets/customers_baseline.json` | Fictional customer records: the ground truth. |
 | `assets/system_prompt.txt` | Deployed prompt with the embedded CRM key (the scan target). |
 | `assets/redaction_rules.json` | Output redaction and secret-scan rules (editable). |

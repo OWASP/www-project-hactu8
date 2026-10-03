@@ -23,7 +23,7 @@ away because of two things:
 
 ## Writing your own requests
 
-- **Stub backend.** Name the document ids in the request text. Any id in
+- **Echo backend** (default; alias `stub`). Name the document ids in the request text. Any id in
   `assets/hr_baseline.json` works. Pick ones the attacker is not entitled to
   (see each document's `readers` and `roles`). To try another attacker, change
   `attacker` to any user in that file.

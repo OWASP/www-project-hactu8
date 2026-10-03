@@ -53,8 +53,8 @@ def act(lab: Lab, title: str) -> float:
 def main(argv=None) -> int:
     parser = argparse.ArgumentParser(description=__doc__,
                                      formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument("--backend", default="stub",
-                        help="stub (default) | ollama | llamacpp | openrouter")
+    parser.add_argument("--backend", default="echo",
+                        help="echo (default; alias stub) | ollama | llamacpp | openrouter")
     parser.add_argument("--model", default="", help="model name for the backend")
     args = parser.parse_args(argv)
     if hasattr(sys.stdout, "reconfigure"):
@@ -86,7 +86,7 @@ def main(argv=None) -> int:
     lab.set_mode("vulnerable")
     print("\n[+] Reset to baseline.")
 
-    if lab.backend != "stub":
+    if lab.backend != "echo":
         print(f"[*] Real model: PLR {baseline:.0f}% -> {attacked:.0f}% -> {remediated:.0f}% "
               "(reported, not asserted).")
         return 0

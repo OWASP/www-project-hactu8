@@ -28,7 +28,7 @@ any turn and at most 3 turns per session.
   being targeted. Check with
   `python scripts/evaluate_kpi.py --scan assets/crafted_query.txt`, which lists
   the ranking with no tenant filter.
-- **Stub backend.** The stub answers from the top passage, so the only thing
+- **Echo backend** (default; alias `stub`). The stub answers from the top passage, so the only thing
   that matters is the ranking. The vectors are bag-of-words counts compared by
   cosine (`embed` and `cosine` in `vulnerable_app.py`). Repeating a term
   increases its weight; extra unrelated words reduce it.

@@ -65,7 +65,9 @@ Python 3.9+. Standard library only; nothing to install.
 
 Optional real model: set `LLM09_BACKEND` to `ollama`, `llamacpp` or
 `openrouter` (which needs `OPENROUTER_API_KEY`), and `LLM09_MODEL` to the
-model name, before starting the target. The default `stub` needs no network.
+model name, before starting the target, or pick them in the console's
+backend bar. The default `echo` (alias `stub`) needs no network. The
+OpenRouter key is read from the environment only, never from the console.
 With `openrouter`, prompts and payloads leave the machine.
 
 ## Execution instructions
@@ -141,6 +143,6 @@ longer targeted.
 | `scripts/reset_baseline.py` | Restores the store, clears session memory, vulnerable mode. |
 | `references/LLM09_RISKS.md` | Threat landscape, research, scenario table, mitigations. |
 | `assets/crafted_query.txt` | Crafted turn (placeholder payload; editable). |
-| `assets/crafted_query.README.md` | How to write a payload for the stub and real-model backends. |
+| `assets/crafted_query.README.md` | How to write a payload for the echo and real-model backends. |
 | `assets/vector_store.json` | Tenants, sessions and the shared store: the ground truth. |
 | `tests/test_lifecycle.py` | Asserts the four-act story in-process. |

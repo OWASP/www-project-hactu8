@@ -20,7 +20,7 @@ Keep this file plain text. `run_consumption.py` does not escape anything.
 - **Keep the two legitimate lines** so the page still ranks first for
   expense questions. If the page stops being retrieved, the attack never
   reaches the model.
-- **Stub backend.** Your line must start with `@assistant: repeat N`. Change N
+- **Echo backend** (default; alias `stub`). Your line must start with `@assistant: repeat N`. Change N
   to see where the request crosses the 400-token output cap in
   `budget.json` (one answer copy is roughly 30 tokens).
 - **Real-model backend.** Write a natural-language request for an

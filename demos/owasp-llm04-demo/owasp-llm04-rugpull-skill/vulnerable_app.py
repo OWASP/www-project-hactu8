@@ -305,11 +305,9 @@ def _words(text: str) -> List[str]:
 
 class Lab:
     def __init__(self, mode: str = "vulnerable", registry_path: str = DEFAULT_REGISTRY,
-                 backend: str = "stub", model: str = "") -> None:
+                 backend: str = "echo", model: str = "") -> None:
         self.lock = threading.RLock()
-        provider = providers.get_provider(backend)
-        self.backend = providers.describe(backend, model)
-        self.model: Any = StubModel() if provider is None else ProviderModel(provider, model)
+        self.set_backend(backend, model)
         self.registry_path = confine(registry_path)
         self.baseline = load_baseline()
         self.approved = {e["definition"]["name"]: e for e in self.baseline["tools"]}
@@ -327,6 +325,19 @@ class Lab:
             write_registry(self.registry_path, self.baseline)
             self.installed, self._seen, self.admission_log = {}, None, []
             self.sync()
+
+    def set_backend(self, backend: str, model: str = "") -> None:
+        """Swap the model behind the lab; lab state, mode and controls stay as they are."""
+        model = providers.check_model(model)
+        provider = providers.get_provider(backend)   # raises on unknown name / missing key
+        with self.lock:
+            self.backend = providers.describe(backend, model)
+            if provider is None:
+                self.model: Any = StubModel()
+            else:
+                # Keep spotlighting in step with the current mode.
+                hardened = getattr(self, "mode", "vulnerable") == "hardened"
+                self.model = ProviderModel(provider, model, trusted=not hardened)
 
     def set_mode(self, mode: str, sync: bool = True) -> None:
         if mode not in VALID_MODES:
@@ -581,7 +592,13 @@ class Handler(BaseHTTPRequestHandler):
         elif self.path.startswith("/web/") and self.path[5:] in WEB_FILES:
             self._static(self.path[5:])
         elif self.path == "/api/meta":
-            self._send(200, CONSOLE_META)
+            self._send(200, {**CONSOLE_META, **providers.console_info()})
+        elif self.path.startswith("/api/models?backend="):
+            name = providers.normalize(self.path.split("=", 1)[1])
+            if name not in providers.BACKENDS:
+                self._send(400, {"error": "unknown backend"})
+                return
+            self._send(200, {"backend": name, "models": providers.available_models(name)})
         elif self.path == "/health":
             self._send(200, {"status": "ok", "demo": "llm04", "mode": LAB.mode,
                              "backend": LAB.backend})
@@ -637,6 +654,14 @@ class Handler(BaseHTTPRequestHandler):
                 self._send(400, {"error": str(exc)})
                 return
             self._send(200, LAB.state())
+        elif self.path == "/api/backend":
+            # The key never comes from here: OpenRouter reads OPENROUTER_API_KEY.
+            try:
+                LAB.set_backend(str(body.get("backend", "")), str(body.get("model", "")))
+            except (ValueError, RuntimeError) as exc:
+                self._send(400, {"error": str(exc)})
+                return
+            self._send(200, LAB.state())
         else:
             self._send(404, {"error": "not found"})
 
@@ -644,7 +669,7 @@ class Handler(BaseHTTPRequestHandler):
 def main() -> None:
     global LAB, PORT
     LAB = Lab(mode=os.getenv("LLM04_MODE", "vulnerable"),
-              backend=os.getenv("LLM04_BACKEND", "stub"),
+              backend=os.getenv("LLM04_BACKEND", "echo"),
               model=os.getenv("LLM04_MODEL", ""))
     PORT = int(os.getenv("LLM04_PORT", "5204"))
     httpd = ThreadingHTTPServer(("127.0.0.1", PORT), Handler)

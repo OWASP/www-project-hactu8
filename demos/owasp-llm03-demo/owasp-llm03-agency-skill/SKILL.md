@@ -66,7 +66,9 @@ Python 3.9+. Standard library only; nothing to install.
 
 Optional real model: set `LLM03_BACKEND` to `ollama`, `llamacpp` or
 `openrouter` (which needs `OPENROUTER_API_KEY`), and `LLM03_MODEL` to the
-model name, before starting the target. The default `stub` needs no network.
+model name, before starting the target, or pick them in the console's
+backend bar. The default `echo` (alias `stub`) needs no network. The
+OpenRouter key is read from the environment only, never from the console.
 With `openrouter`, prompts and payloads leave the machine.
 
 ## Execution instructions
@@ -147,7 +149,7 @@ task already allows passes the gate by design.
 | `scripts/reset_baseline.py` | Restores the seeded desk, clears the action log, sets vulnerable mode. |
 | `references/LLM03_RISKS.md` | Threat landscape, research, scenario table, mitigations. |
 | `assets/ticket_note.md` | Adversarial customer note (placeholder payload; editable). |
-| `assets/ticket_note.README.md` | How to write a payload for the stub and real-model backends. |
+| `assets/ticket_note.README.md` | How to write a payload for the echo and real-model backends. |
 | `assets/support_baseline.json` | Customers, orders and tickets as seeded. |
 | `assets/task_policy.json` | Per-task tool allowlist and irreversible tools (editable). |
 | `tests/test_lifecycle.py` | Asserts the four-act story in-process. |

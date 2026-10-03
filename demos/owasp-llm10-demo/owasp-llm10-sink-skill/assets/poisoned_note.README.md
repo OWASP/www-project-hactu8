@@ -28,7 +28,7 @@ Keep this file plain text. `run_sink_poison.py` does not escape anything.
 - **Keep the marker line.** The stub only emits text that follows
   `@assistant:`. Without it, the model summarises the first note and the sinks
   receive harmless text.
-- **Stub backend.** Put the text you want the model to emit after the marker.
+- **Echo backend** (default; alias `stub`). Put the text you want the model to emit after the marker.
   Any tag outside the sink templates' own set (`TEMPLATE_TAGS` in
   `scripts/evaluate_kpi.py`) is scored RED when it renders raw. Any quote that
   breaks the statement, or a stored value that differs from the model's text,

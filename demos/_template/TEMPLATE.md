@@ -235,7 +235,7 @@ notes below describe its original version.)
 - [ ] References cite sources and mark DEMO TARGET rows
 - [ ] Ports, flags and exit codes consistent everywhere
 - [ ] `web/` copied unchanged; console API (§12) implemented and tested
-- [ ] `providers.py` copied unchanged; `ProviderModel` + `--backend` (§13) implemented and tested
+- [ ] `providers.py` copied unchanged; `ProviderModel`, `set_backend`, `/api/models`, `/api/backend` + `--backend` (§13) implemented and tested
 
 ## 12. Lab console (web/)
 
@@ -247,13 +247,15 @@ the target's console API:
 | Method + path | Body | Returns |
 |---|---|---|
 | `GET /` and `GET /web/<file>` | — | the three static files only (allowlist, no path joining) |
-| `GET /api/meta` | — | `id`, `framework`, `risk`, `title`, `short_title`, `scenario`, `ground_truth`, `metric_name`, `metric_abbr`, `attack_label`, `attack_description`, `scan_label`, `harden_label`, `harden_description` |
+| `GET /api/meta` | — | `id`, `framework`, `risk`, `title`, `short_title`, `scenario`, `ground_truth`, `metric_name`, `metric_abbr`, `attack_label`, `attack_description`, `scan_label`, `harden_label`, `harden_description`, plus `providers.console_info()` (`backends`, `default_models`, `openrouter_key_set`) |
 | `GET /api/state` | — | at least `mode` and `baseline` (bool) |
 | `POST /api/reset` | `{}` | restores the baseline **and** vulnerable mode, then returns the state |
 | `POST /api/attack` | `{}` | runs the same attack as `run_<attack>.py`, from the same `assets/` payload → `{"events": [str, ...]}` |
 | `POST /api/evaluate` | `{}` | runs the same suite as `evaluate_kpi.py` → `{"rows": [{"item","targeted","status","detail"}], "targeted_rate", "overall_rate", "red_targeted", "targeted", "red_overall", "total"}`, rates in percent |
 | `POST /api/scan` | `{}` | the same check as `evaluate_kpi.py --scan` on the shipped payload → `{"subject", "decision": "REJECT"\|"PASS", "findings": [str]}` |
 | `POST /api/mode` | `{"mode": ...}` | `vulnerable` or `hardened` |
+| `GET /api/models?backend=NAME` | — | `{"backend", "models": [str]}` from `providers.available_models` (empty on any failure); 400 for an unknown backend |
+| `POST /api/backend` | `{"backend", "model"}` | `Lab.set_backend(...)`, then the state; 400 on an unknown backend, a bad model name, or openrouter without a key |
 
 Keep the logic in plain functions (`console_attack`, `console_evaluate`,
 `console_scan`, `summarize`) next to `CONSOLE_META`. The suite and classifier
@@ -273,17 +275,27 @@ Reference implementation: `owasp-llm01-demo/owasp-llm01-injection-skill/vulnerab
 
 ## 13. Real-model backend (providers.py)
 
-The stub is the default and the only backend the tests and the story
-assertions use. `_template/providers.py` is a port of AgenticGoat's provider
-layer, standard library only. Copy it into `<skill-slug>/` **unchanged**. It
-offers `ollama`, `llamacpp` and `openrouter` (`OPENROUTER_API_KEY`, sent in the
-header only), with per-process limits `LAB_MAX_CALLS` and `LAB_MAX_TOKENS`.
+`echo`, the demo's own deterministic model, is the default and the only
+backend the tests and the story assertions use. The name follows AgenticGoat;
+`stub` is accepted as an alias. `_template/providers.py` is a port of
+AgenticGoat's provider layer, standard library only. Copy it into
+`<skill-slug>/` **unchanged**. It offers `ollama`, `llamacpp` and `openrouter`,
+model listing for the console (`available_models`), and per-process limits
+`LAB_MAX_CALLS` and `LAB_MAX_TOKENS`.
+
+API key: as in AgenticGoat, `OPENROUTER_API_KEY` comes from the environment of
+the shell that starts the lab, and is sent only in the request header. It is
+never accepted from the console, a request body or a file. The console is told
+only whether one is set (`openrouter_key_set`).
 
 Per demo:
-- `Lab(..., backend="stub", model="")`. `main()` reads `<PREFIX>_BACKEND` and
+- `Lab(..., backend="echo", model="")` and `Lab.set_backend(backend, model)`,
+  which validates the model name (`providers.check_model`), builds the
+  provider, and swaps the model under the lock without touching the lab's
+  state or mode. `__init__` calls it. `main()` reads `<PREFIX>_BACKEND` and
   `<PREFIX>_MODEL`, and `Lab.backend` holds `providers.describe(...)`.
   `/health` and `/api/state` include `backend`, which the console shows next to
-  the mode.
+  the mode and in its backend picker.
 - A `ProviderModel` class with the **same interface as the demo's stub**,
   built on `provider.chat(...)`. The prompt differs by mode exactly as the
   lesson says: vulnerable passes untrusted content as ordinary text, and
@@ -295,8 +307,10 @@ Per demo:
 - `run_demo.py --backend X --model Y`: with a real backend it reports the
   numbers instead of asserting them.
 - Tests: a `FakeProvider` (subclass of `providers.Provider`, no network)
-  checks what each mode sends, that the default backend is the stub, that
-  openrouter needs a key, and that the call cap holds.
+  checks what each mode sends, that the default backend is echo (and `stub`
+  maps to it), that openrouter needs a key, and that the call cap holds.
+  `set_backend` swaps the model and keeps state; `ConsoleHttpTest` covers
+  `/api/meta` (never the key), `/api/models` and `/api/backend` over HTTP.
 - Docs: README "Optional: run against a real model" and the SKILL.md
   prerequisites, including the note that `openrouter` sends prompts off the
   machine.

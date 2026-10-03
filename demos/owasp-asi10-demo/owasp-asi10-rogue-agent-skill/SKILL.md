@@ -73,7 +73,9 @@ Python 3.9+. Standard library only; nothing to install.
 
 Optional real model: set `ASI10_BACKEND` to `ollama`, `llamacpp` or
 `openrouter` (which needs `OPENROUTER_API_KEY`), and `ASI10_MODEL` to the
-model name, before starting the target. The default `stub` needs no network.
+model name, before starting the target, or pick them in the console's
+backend bar. The default `echo` (alias `stub`) needs no network. The
+OpenRouter key is read from the environment only, never from the console.
 With `openrouter`, prompts and payloads leave the machine.
 
 ## Execution instructions
@@ -153,6 +155,6 @@ an attacker who forgets to edit it.
 | `scripts/reset_baseline.py` | Restores the signed baseline configs and vulnerable mode. |
 | `references/ASI10_RISKS.md` | Threat landscape, research, scenario table, mitigations. |
 | `assets/tampered_mandate.json` | The config edit (placeholder payload; editable). |
-| `assets/tampered_mandate.README.md` | How to write an edit for the stub and real-model backends. |
+| `assets/tampered_mandate.README.md` | How to write an edit for the echo and real-model backends. |
 | `assets/fleet_baseline.json` | Approved mandates and scheduled work: the ground truth. |
 | `tests/test_lifecycle.py` | Asserts the four-act story in-process. |

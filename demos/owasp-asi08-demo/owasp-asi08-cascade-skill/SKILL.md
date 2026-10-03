@@ -68,8 +68,10 @@ Python 3.9+. Standard library only; nothing to install.
 
 Optional real model: set `ASI08_BACKEND` to `ollama`, `llamacpp` or
 `openrouter` (which needs `OPENROUTER_API_KEY`), and `ASI08_MODEL` to the
-model name, before starting the target. The backend replaces the intake
-model. The default `stub` needs no network.
+model name, before starting the target, or pick them in the console's
+backend bar. The backend replaces the intake model. The default `echo`
+(alias `stub`) needs no network. The OpenRouter key is read from the
+environment only, never from the console.
 With `openrouter`, prompts and payloads leave the machine.
 
 ## Execution instructions
@@ -147,7 +149,7 @@ lesson. To tune the containment, edit `assets/pipeline_policy.json`.
 | `scripts/reset_baseline.py` | Restores the seeded inbox, clears the action log, sets vulnerable mode. |
 | `references/ASI08_RISKS.md` | Threat landscape, research, scenario table, mitigations. |
 | `assets/price_notice.md` | Attacker's intake document (placeholder payload; editable). |
-| `assets/price_notice.README.md` | How to write a payload for the stub and real-model backends. |
+| `assets/price_notice.README.md` | How to write a payload for the echo and real-model backends. |
 | `assets/po_ledger.json` | Purchase-order ledger: the source of truth. |
 | `assets/intake_inbox.json` | Baseline inbox: supplier price letters and six invoices. |
 | `assets/pipeline_policy.json` | Tolerance, authority limit, validation and breaker settings (editable). |

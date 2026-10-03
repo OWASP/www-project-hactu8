@@ -27,7 +27,7 @@ Keep this file plain text. `run_pivot.py` does not escape anything.
 
 - **Keep the first line** (an ordinary note) if you want the edit to look
   harmless to a human reviewer. The stub ignores it.
-- **Stub backend.** Your instruction must sit on a line that starts with
+- **Echo backend** (default; alias `stub`). Your instruction must sit on a line that starts with
   `@assistant:`. Name the record IDs you want read, in the form `C-NNNN`. Any
   directive at all switches the stub into recital mode; the wording after the
   marker is otherwise free.
