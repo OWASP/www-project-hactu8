@@ -115,7 +115,7 @@ def run_lab(page, lab: Dict[str, Any], backend: str, model: str,
 
     base = f"http://127.0.0.1:{lab['port']}"
     page.goto(base + "/")
-    page.wait_for_function("document.getElementById('system-status').textContent === 'ONLINE'",
+    page.wait_for_function("() => document.getElementById('system-status').textContent === 'ONLINE'",
                            timeout=15000)
     lab_id = page.locator("#brand-id").inner_text()
 
@@ -124,12 +124,13 @@ def run_lab(page, lab: Dict[str, Any], backend: str, model: str,
     if backend != "echo":                     # the model field is disabled for echo
         page.fill("#model-input", model)
     page.click("#backend-apply")
-    expected = backend if backend == "echo" else f"{backend}:"
+    # Function form with an argument: the console's CSP forbids string eval.
     page.wait_for_function(
-        f"document.getElementById('mode').title.includes({json.dumps('model backend: ' + expected)})"
-        if backend != "echo" else
-        "!document.getElementById('mode').textContent.includes('/')",
-        timeout=15000)
+        """(backend) => {
+            const mode = document.getElementById('mode');
+            return backend === 'echo' ? !mode.textContent.includes('/')
+                                      : mode.title.includes('model backend: ' + backend + ':');
+        }""", arg=backend, timeout=15000)
 
     started = time.time()
     page.click("button[data-action='sequence']")
