@@ -34,8 +34,8 @@ Billy gives them then quotes its hidden context.
   guards are built in and do not weaken the lesson:
   - Store state lives in memory only, so nothing touches the filesystem.
   - Preferences and replies are length-capped.
-  - The model is a deterministic stub, so the lab cannot reach a real model
-    or the network.
+  - The model is a deterministic stub by default, so the lab cannot reach
+    the network unless you opt into a real-model backend.
   - The server rejects foreign `Host` headers (DNS rebinding) and non-JSON
     POSTs (cross-site forms).
 - The "secret" is a fictional canary, `LLM08-CANARY-5e1d`, and the internal
@@ -66,6 +66,12 @@ services.
 ## Prerequisites
 
 Python 3.9+. Standard library only; nothing to install.
+
+Optional real model: set `LLM08_BACKEND` to `ollama`, `llamacpp` or
+`openrouter` (which needs `OPENROUTER_API_KEY`), and `LLM08_MODEL` to the
+model name, before starting the target. The default `stub` needs no network.
+With `openrouter`, prompts and payloads leave the machine, including the
+vulnerable prompt's fictional canary.
 
 ## Execution instructions
 
@@ -135,6 +141,7 @@ the PLR falls to 0. To test the filter, change `output.ngram` in
 | Path | Purpose |
 |------|---------|
 | `vulnerable_app.py` | Target store assistant (`/chat`, `/profile`, `/health`) plus the console API (`/api/meta`, `/api/state`, `/api/reset`, `/api/attack`, `/api/evaluate`, `/api/scan`, `/api/mode`). |
+| `providers.py` | Optional real-model backends: Ollama, llama.cpp, OpenRouter. Shared and copied unchanged. |
 | `web/` | Shared HACTU8 lab console, served at `/`. |
 | `scripts/run_extraction.py` | Attack: save the extraction request as one account's reply preference. |
 | `scripts/evaluate_kpi.py` | Stoplight KPI + PLR against the live app; `--harden` and `--scan` mitigations. |

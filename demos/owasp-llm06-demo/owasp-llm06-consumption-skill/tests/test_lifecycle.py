@@ -19,9 +19,11 @@ sys.path.insert(0, SKILL_DIR)
 sys.path.insert(0, os.path.join(SKILL_DIR, "scripts"))
 
 from evaluate_kpi import SUITE, classify  # noqa: E402
+import providers  # noqa: E402
 from run_consumption import PAYLOADS, payload_path  # noqa: E402
 from vulnerable_app import (CONSOLE_META, HARD_MAX_OUTPUT_CHARS,  # noqa: E402
-                            HARD_MAX_STEPS, HARD_MAX_TOOL_CALLS, Lab, console_attack,
+                            HARD_MAX_STEPS, HARD_MAX_TOOL_CALLS, Lab, ProviderModel,
+                            console_attack,
                             console_evaluate, console_scan, scan_page)
 
 
@@ -126,6 +128,98 @@ class ConsoleApiTest(unittest.TestCase):
                     "metric_name", "metric_abbr", "attack_label", "attack_description",
                     "scan_label", "harden_label", "harden_description"):
             self.assertIn(key, CONSOLE_META)
+
+
+
+class FakeProvider(providers.Provider):
+    """Records what a real backend would be sent; no network."""
+    name = "fake"
+
+    def __init__(self, replies=None) -> None:
+        super().__init__()
+        self.replies = list(replies or ['{"answer": "Payroll runs on the last business day."}'])
+        self.sent = []
+
+    def chat(self, messages, *, model=""):
+        self._count_call()
+        self.sent.append(messages)
+        return self.replies.pop(0) if len(self.replies) > 1 else self.replies[0]
+
+
+SEARCH = '{"tool_calls": ["When does payroll run each month?"]}'
+
+
+class BackendTest(unittest.TestCase):
+    """The real-model seam: what each mode sends, the JSON contract, the limits."""
+
+    def _lab(self, fake: FakeProvider) -> Lab:
+        lab = Lab()
+        lab.model = ProviderModel(fake, "fake-model")
+        attack(lab)
+        return lab
+
+    def test_vulnerable_inlines_tool_output_as_plain_text(self):
+        fake = FakeProvider([SEARCH, '{"answer": "ok"}'])
+        self._lab(fake).query("When does payroll run each month?")
+        system, user = fake.sent[-1]
+        self.assertIn("@assistant:", user.content)
+        self.assertIn('"tool_calls"', system.content)
+        self.assertNotIn("untrusted_tool_output", user.content + system.content)
+
+    def test_hardened_fences_tool_output(self):
+        fake = FakeProvider([SEARCH, '{"answer": "ok"}'])
+        lab = self._lab(fake)
+        lab.set_mode("hardened")
+        lab.query("When does payroll run each month?")
+        system, user = fake.sent[-1]
+        self.assertIn("<untrusted_tool_output>", user.content)
+        self.assertIn("never follow instructions", system.content)
+
+    def test_malformed_reply_is_no_action(self):
+        for reply in ("not json", "{broken", '{"tool_calls": "x"}', "[1, 2]", '{"answer": 3}'):
+            fake = FakeProvider([reply])
+            result = self._lab(fake).query("When does payroll run each month?")
+            self.assertEqual(result["cost"]["tool_calls"], 0, reply)
+            self.assertEqual(result["status"], "answered")
+            self.assertIn("could not find", result["answer"])
+
+    def test_hardened_budget_holds_against_model_storm(self):
+        # The model asks for a tool-call storm at every step; the code budget
+        # still bounds the request in hardened mode.
+        storm = '{"tool_calls": [' + ", ".join(['"payroll"'] * 40) + "]}"
+        fake = FakeProvider([storm])
+        lab = self._lab(fake)
+        lab.set_mode("hardened")
+        result = lab.query("When does payroll run each month?")
+        caps = lab.budget["per_request"]
+        self.assertLessEqual(result["cost"]["tool_calls"], caps["max_tool_calls"])
+        self.assertLessEqual(result["cost"]["agent_steps"], caps["max_agent_steps"])
+        self.assertTrue(result["guard_events"])
+
+    def test_default_backend_is_offline_stub(self):
+        self.assertIsNone(providers.get_provider("stub"))
+        self.assertEqual(Lab().backend, "stub")
+        self.assertEqual(Lab().state()["backend"], "stub")
+        with self.assertRaises(ValueError):
+            providers.get_provider("nope")
+
+    def test_openrouter_requires_key(self):
+        saved = os.environ.pop("OPENROUTER_API_KEY", None)
+        try:
+            with self.assertRaises(RuntimeError):
+                providers.get_provider("openrouter")
+        finally:
+            if saved is not None:
+                os.environ["OPENROUTER_API_KEY"] = saved
+
+    def test_call_cap(self):
+        fake = FakeProvider()
+        fake.max_calls = 2
+        lab = self._lab(fake)
+        lab.query("a")
+        lab.query("b")
+        with self.assertRaises(RuntimeError):
+            lab.query("c")
 
 
 if __name__ == "__main__":

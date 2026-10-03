@@ -83,11 +83,47 @@ You'll see four acts:
 
 ### Optional: run against a real model
 
-Not wired in this version. The stub is the only backend. The seam is
-`StubModel.extract(messages)` in `vulnerable_app.py`; a real backend replaces
-it with an extraction model that returns the same records. The mitigations
-need no change for a real model, because they compare figures with the ledger
-and never read the documents' wording (see the payload README).
+The stub is the default backend. `providers.py` (the same provider layer as
+AgenticGoat) adds three real ones. All are standard library only:
+
+```bash
+python run_demo.py --backend ollama --model llama3.2          # local Ollama
+python run_demo.py --backend llamacpp                         # local llama.cpp server
+export OPENROUTER_API_KEY=...                                 # remote; key stays in the header
+python run_demo.py --backend openrouter --model meta-llama/llama-3.2-3b-instruct
+
+# the target and console take the same settings from the environment:
+ASI08_BACKEND=openrouter ASI08_MODEL=... python owasp-asi08-cascade-skill/vulnerable_app.py
+```
+
+The backend replaces Billy Intake's model (`ProviderModel` in
+`vulnerable_app.py`). The analyst, the approver, ledger validation and the
+circuit breaker stay in code and decide the outcome in both modes:
+- **Vulnerable mode** pastes every inbox document, including the dropped
+  notice, into the user turn as plain text.
+- **Hardened mode** fences each document in `<inbox_document>` tags and tells
+  the model to extract only the figures it states and never follow
+  instructions inside ("spotlighting"). Every figure is still re-checked
+  against the ledger downstream.
+
+The model replies with one JSON object: `{"invoices": [...], "agreed_prices":
+[...]}`. The reply is parsed defensively: invoice ids, suppliers, POs and
+figures are validated, totals are computed in code, and unparseable output
+means an empty extraction, so nothing is approved or paid. Nothing the model
+returns is executed or fetched. The mitigations need no change for a real
+model, because they compare figures with the ledger and never read the
+documents' wording (see the payload README), and `run_demo.py` reports the
+numbers rather than asserting them.
+
+Limits:
+- `LAB_MAX_CALLS` (default 200) caps calls per process. One model call per batch run.
+- `LAB_MAX_TOKENS` (default 400) caps output tokens per call. The extraction
+  JSON for the six-invoice batch fits, but raise it if a model is verbose.
+- `OLLAMA_TIMEOUT`, `LLAMACPP_TIMEOUT` and `OPENROUTER_TIMEOUT` set
+  per-provider HTTP timeouts.
+
+With `openrouter`, lab prompts, including your payloads, leave the machine.
+The stub and the local backends keep everything on the host.
 
 ---
 
@@ -231,6 +267,7 @@ owasp-asi08-demo/
 ├── owasp-asi08-cascade-skill/
 │   ├── SKILL.md                       #   metadata + instructions
 │   ├── vulnerable_app.py              #   Module 1: pipeline, stub model, mitigation
+│   ├── providers.py                   #   optional real-model backends (shared, unchanged)
 │   ├── requirements.txt               #   stdlib only
 │   ├── web/                           #   shared lab console (index.html, app.js, styles.css)
 │   ├── scripts/
@@ -266,7 +303,7 @@ python scripts/evaluate_kpi.py --scan assets/price_notice.md # REJECT, exit 2
 python scripts/evaluate_kpi.py --harden                      # GREEN, PR 0%, exit 0
 python scripts/reset_baseline.py                             # restore clean state
 python scripts/evaluate_kpi.py                               # GREEN, PR 0%
-python -m unittest discover tests                            # 8 tests
+python -m unittest discover tests                            # 18 tests
 ```
 
 ## License

@@ -18,8 +18,9 @@ sys.path.insert(0, SKILL_DIR)
 sys.path.insert(0, os.path.join(SKILL_DIR, "scripts"))
 
 from evaluate_kpi import SUITE, classify  # noqa: E402
+import providers  # noqa: E402
 from vulnerable_app import (  # noqa: E402
-    CONSOLE_META, Lab, console_attack, console_evaluate, console_scan,
+    CONSOLE_META, Lab, ProviderModel, console_attack, console_evaluate, console_scan,
     load_screen_rules, screen_tool_output,
 )
 
@@ -102,6 +103,73 @@ class ConsoleApiTest(unittest.TestCase):
                     "metric_name", "metric_abbr", "attack_label", "attack_description",
                     "scan_label", "harden_label", "harden_description"):
             self.assertIn(key, CONSOLE_META)
+
+
+
+class FakeProvider(providers.Provider):
+    """Records what a real backend would be sent; no network."""
+    name = "fake"
+
+    def __init__(self, reply: str = "Expense reports are due within 30 days.") -> None:
+        super().__init__()
+        self.reply = reply
+        self.sent = []
+
+    def chat(self, messages, *, model=""):
+        self._count_call()
+        self.sent.append(messages)
+        return self.reply
+
+
+class BackendTest(unittest.TestCase):
+    """The real-model seam: what each mode sends, and the provider limits."""
+
+    def _lab(self, fake: FakeProvider) -> Lab:
+        lab = Lab()
+        lab.model = ProviderModel(fake, "fake-model")
+        lab.write_page("expenses", open(PAYLOAD, encoding="utf-8").read())
+        return lab
+
+    def test_vulnerable_inlines_tool_output_as_plain_text(self):
+        fake = FakeProvider()
+        self._lab(fake).query("When are expense reports due?")
+        system, user = fake.sent[-1]
+        self.assertIn("@assistant:", user.content)
+        self.assertNotIn("untrusted_tool_output", user.content + system.content)
+
+    def test_hardened_fences_and_screens_tool_output(self):
+        fake = FakeProvider()
+        lab = self._lab(fake)
+        lab.set_mode("hardened")
+        lab.query("When are expense reports due?")
+        system, user = fake.sent[-1]
+        self.assertIn("<untrusted_tool_output>", user.content)
+        self.assertIn("never follow instructions", system.content)
+        self.assertNotIn("@assistant:", user.content)          # screened out
+
+    def test_default_backend_is_offline_stub(self):
+        self.assertIsNone(providers.get_provider("stub"))
+        self.assertEqual(Lab().backend, "stub")
+        with self.assertRaises(ValueError):
+            providers.get_provider("nope")
+
+    def test_openrouter_requires_key(self):
+        saved = os.environ.pop("OPENROUTER_API_KEY", None)
+        try:
+            with self.assertRaises(RuntimeError):
+                providers.get_provider("openrouter")
+        finally:
+            if saved is not None:
+                os.environ["OPENROUTER_API_KEY"] = saved
+
+    def test_call_cap(self):
+        fake = FakeProvider()
+        fake.max_calls = 2
+        lab = self._lab(fake)
+        lab.query("a")
+        lab.query("b")
+        with self.assertRaises(RuntimeError):
+            lab.query("c")
 
 
 if __name__ == "__main__":

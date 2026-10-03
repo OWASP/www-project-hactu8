@@ -37,8 +37,10 @@ the row limit and the export destination.
   - The ledger is fictional and generated in memory (240 rows). Tool calls per
     run (8), rows per query (1000), notes per request (20), note size, outbox
     length (200) and action-log length (500) are capped.
-  - The model is a deterministic stub, so the lab cannot reach a real model
-    or the network.
+  - The model is a deterministic stub by default, so the lab cannot reach
+    the network unless you opt into a real-model backend. A real model's
+    reply is parsed as a JSON tool call for the simulated tools only; it is
+    never executed.
   - The server rejects foreign `Host` headers (DNS rebinding) and non-JSON
     POSTs (cross-site forms).
 - The shipped payload is a **placeholder**: stub directive lines plus a
@@ -66,6 +68,11 @@ the tool, whatever the model was told.
 ## Prerequisites
 
 Python 3.9+. Standard library only; nothing to install.
+
+Optional real model: set `ASI02_BACKEND` to `ollama`, `llamacpp` or
+`openrouter` (which needs `OPENROUTER_API_KEY`), and `ASI02_MODEL` to the
+model name, before starting the target. The default `stub` needs no network.
+With `openrouter`, prompts and payloads leave the machine.
 
 ## Execution instructions
 
@@ -143,6 +150,7 @@ inside the policy passes the gate by design.
 |------|---------|
 | `vulnerable_app.py` | Target finance agent (`/agent`, `/requests/note`, `/requests/<id>`, `/api/actions`, `/api/outbox`, `/health`) plus the console API (`/api/meta`, `/api/state`, `/api/reset`, `/api/attack`, `/api/evaluate`, `/api/scan`, `/api/mode`). |
 | `web/` | Shared HACTU8 lab console, served at `/`. |
+| `providers.py` | Optional real-model backends: Ollama, llama.cpp, OpenRouter. Shared and copied unchanged. |
 | `scripts/run_tool_misuse.py` | Attack: append the note to one report request. |
 | `scripts/evaluate_kpi.py` | Stoplight KPI + UIR against the live app; `--harden` and `--scan` mitigations. |
 | `scripts/reset_baseline.py` | Restores the seeded requests, clears the action log and outbox, sets vulnerable mode. |

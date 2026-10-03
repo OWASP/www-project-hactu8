@@ -81,11 +81,42 @@ You'll see four acts:
 
 ### Optional: run against a real model
 
-Not wired in this version. The stub and the bag-of-words embedding are the
-only backends. The seams are `StubModel.generate` and `embed` in
-`vulnerable_app.py`. A dense embedding model ranks by meaning, so paraphrases
+The stub is the default backend. `providers.py` (the same provider layer as
+AgenticGoat) adds three real ones. All are standard library only:
+
+```bash
+python run_demo.py --backend ollama --model llama3.2          # local Ollama
+python run_demo.py --backend llamacpp                         # local llama.cpp server
+export OPENROUTER_API_KEY=...                                 # remote; key stays in the header
+python run_demo.py --backend openrouter --model meta-llama/llama-3.2-3b-instruct
+
+# the target and console take the same settings from the environment:
+LLM09_BACKEND=openrouter LLM09_MODEL=... python owasp-llm09-tenant-skill/vulnerable_app.py
+```
+
+The real model only writes the answer. Retrieval, the session-to-tenant map
+and the tenant filter stay in code and decide which passages it sees:
+- **Vulnerable mode** pastes the top passages into the user turn as bare
+  text with no tenant label, so the prompt's tenant rule cannot be applied.
+- **Hardened mode** filters by tenant before ranking (unchanged), then fences
+  the remaining passages in `<retrieved_passages>` tags and tells the model to
+  treat them as reference data only (spotlighting).
+
+A real model may phrase answers differently from the stub, so `run_demo.py`
+reports the numbers rather than asserting them. The bag-of-words `embed`
+stays the retriever. A dense embedding model ranks by meaning, so paraphrases
 of the other tenant's subject matter would work as well as its name. The
 tenant filter does not look at the text, so it holds either way.
+
+Limits:
+- `LAB_MAX_CALLS` (default 200) caps calls per process.
+- `LAB_MAX_TOKENS` (default 400) caps output tokens per call.
+- `OLLAMA_TIMEOUT`, `LLAMACPP_TIMEOUT` and `OPENROUTER_TIMEOUT` set
+  per-provider HTTP timeouts.
+
+With `openrouter`, lab prompts, including both tenants' fictional documents
+and your payloads, leave the machine. The stub and the local backends keep
+everything on the host.
 
 ---
 
@@ -216,6 +247,7 @@ owasp-llm09-demo/
 ├── owasp-llm09-tenant-skill/
 │   ├── SKILL.md                       #   metadata + instructions
 │   ├── vulnerable_app.py              #   Module 1: target, store, stub model, mitigation
+│   ├── providers.py                   #   optional real-model backends (shared, unchanged)
 │   ├── requirements.txt               #   stdlib only
 │   ├── web/                           #   shared lab console (index.html, app.js, styles.css)
 │   ├── scripts/
@@ -249,7 +281,7 @@ python scripts/evaluate_kpi.py --scan assets/crafted_query.txt # REJECT, exit 2
 python scripts/evaluate_kpi.py --harden                        # GREEN, CTLR 0%, exit 0
 python scripts/reset_baseline.py                               # restore clean state
 python scripts/evaluate_kpi.py                                 # GREEN, CTLR 0%
-python -m unittest discover tests                              # 8 tests
+python -m unittest discover tests                              # 13 tests
 ```
 
 ## License

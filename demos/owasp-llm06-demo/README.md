@@ -86,11 +86,48 @@ about 10,000 tokens.
 
 ### Optional: run against a real model
 
-Not wired in this version. The stub is the only backend, and that is
-deliberate: a real backend would spend real money. The seam is
-`StubModel.step(messages, allow_tools)` in the skill's `vulnerable_app.py`; a
-real backend replaces it and reports token usage from the provider's response.
-A real model would need natural-language payloads (see the payload READMEs).
+The stub is the default backend. `providers.py` (the same provider layer as
+AgenticGoat) adds three real ones. All are standard library only:
+
+```bash
+python run_demo.py --backend ollama --model llama3.2          # local Ollama
+python run_demo.py --backend llamacpp                         # local llama.cpp server
+export OPENROUTER_API_KEY=...                                 # remote; key stays in the header
+python run_demo.py --backend openrouter --model meta-llama/llama-3.2-3b-instruct
+
+# the target and console take the same settings from the environment:
+LLM06_BACKEND=openrouter LLM06_MODEL=... python owasp-llm06-consumption-skill/vulnerable_app.py
+```
+
+The real model replaces `StubModel.step(messages, allow_tools)`. Each step
+it replies with a small JSON object, `{"tool_calls": [...]}` or
+`{"answer": "..."}`. The reply is parsed defensively, and anything malformed
+becomes a plain "not found" answer with no tool call. Tool-call strings are
+only ever used as `search_kb` queries. The agent loop, metering and every cap
+stay in code:
+- **Vulnerable mode** pastes each tool result into the prompt as plain text,
+  and only the host-safety caps bound the loop.
+- **Hardened mode** fences tool results in `<untrusted_tool_output>` tags and
+  tells the model never to follow instructions inside them (spotlighting).
+  The per-request budget, loop depth cap and per-client quota apply whatever
+  the model asks for.
+
+Cost stays simulated: the lab meters the prompt and reply text with the same
+four-characters-per-token counter, not the provider's billing. A real model
+may ignore the placeholder payloads. Write natural-language payloads (see the
+payload READMEs), and `run_demo.py` reports the numbers rather than asserting
+them.
+
+Limits:
+- `LAB_MAX_CALLS` (default 200) caps calls per process. One run of
+  `run_demo.py` makes dozens of calls, because every agent step is one call.
+- `LAB_MAX_TOKENS` (default 400) caps output tokens per call.
+- `OLLAMA_TIMEOUT`, `LLAMACPP_TIMEOUT` and `OPENROUTER_TIMEOUT` set
+  per-provider HTTP timeouts.
+
+With `openrouter`, lab prompts, including your payloads, leave the machine,
+and the calls are billed to your key. The stub and the local backends keep
+everything on the host.
 
 ---
 
@@ -226,6 +263,7 @@ owasp-llm06-demo/
 ├── owasp-llm06-consumption-skill/
 │   ├── SKILL.md                       #   metadata + instructions
 │   ├── vulnerable_app.py              #   Module 1: target, agent loop, stub model, mitigation
+│   ├── providers.py                   #   optional real-model backends (shared, unchanged)
 │   ├── requirements.txt               #   stdlib only
 │   ├── web/                           #   shared lab console (index.html, app.js, styles.css)
 │   ├── scripts/
@@ -263,7 +301,7 @@ python scripts/evaluate_kpi.py --harden                        # GREEN, BBR 0%, 
 python scripts/run_consumption.py --flood 40                   # quota refuses the attacker
 python scripts/reset_baseline.py                               # restore clean state
 python scripts/evaluate_kpi.py                                 # GREEN, BBR 0%
-python -m unittest discover tests                              # 7 tests
+python -m unittest discover tests                              # 16 tests
 ```
 
 ## License

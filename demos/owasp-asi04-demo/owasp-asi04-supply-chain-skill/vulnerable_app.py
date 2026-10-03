@@ -40,8 +40,8 @@ loaded.
 Host-safety guards (do not weaken the lesson): skills are data, never code;
 the catalogue file must live in this skill's ``catalogue/`` folder and is
 size-capped on read; skill count, entry size, steps per task and action-log
-length are capped; the model is a stub, so the lab never reaches a real model
-or the network.
+length are capped; the model is a stub by default, so the lab never reaches
+the network unless a real-model backend is chosen (``ASI04_BACKEND``).
 """
 
 from __future__ import annotations
@@ -53,6 +53,8 @@ import re
 import threading
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from typing import Any, Dict, List, Optional, Tuple
+
+import providers
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ASSETS = os.path.join(HERE, "assets")
@@ -281,13 +283,47 @@ class StubModel:
         return skill["content"].strip().splitlines()[0]
 
 
+class ProviderModel:
+    """Real-model backend with the same interface as ``StubModel``.
+
+    The step's output is plain text that is only written to the simulated
+    action log; nothing the model returns is executed. The loaded skill's
+    instructions go into the system turn in both modes, because a skill is
+    meant to be followed: that is what loading one means. The mitigation is
+    which skill reaches that turn (exact names and the pinned manifest, both in
+    code), so hardened mode adds no spotlighting here; it changes the context
+    by keeping the lookalike out of it.
+    """
+
+    def __init__(self, provider: "providers.Provider", model: str) -> None:
+        self.provider = provider
+        self.model = model
+
+    def run_step(self, messages: List[Dict[str, str]]) -> str:
+        system = " ".join(m["content"] for m in messages
+                          if m["role"] == "system" and m.get("name") != "skill")
+        skill = "\n".join(m["content"] for m in messages if m.get("name") == "skill")
+        if skill:
+            system += f"\n\nLoaded skill instructions:\n{skill}"
+        user = "\n".join(m["content"] for m in messages if m["role"] == "user")
+        user += "\nReply with one short line describing what this step did."
+        text = self.provider.chat(
+            [providers.Message("system", system), providers.Message("user", user)],
+            model=self.model,
+        ).strip()
+        return text.splitlines()[0][:500] if text else "No output for this step."
+
+
 # --------------------------------------------------------------------------- #
 # The lab: catalogue, resolver, agent loop, action log
 # --------------------------------------------------------------------------- #
 class Lab:
-    def __init__(self, mode: str = "vulnerable", catalogue_path: str = DEFAULT_CATALOGUE) -> None:
+    def __init__(self, mode: str = "vulnerable", catalogue_path: str = DEFAULT_CATALOGUE,
+                 backend: str = "stub", model: str = "") -> None:
         self.lock = threading.RLock()
-        self.model = StubModel()
+        provider = providers.get_provider(backend)
+        self.backend = providers.describe(backend, model)
+        self.model = StubModel() if provider is None else ProviderModel(provider, model)
         self.catalogue_path = confine(catalogue_path)
         self.baseline = load_baseline()
         self.manifest = load_manifest()
@@ -393,6 +429,7 @@ class Lab:
             catalogue = read_catalogue(self.catalogue_path)
             return {
                 "mode": self.mode,
+                "backend": self.backend,
                 "catalogue_file": os.path.relpath(self.catalogue_path, HERE).replace(os.sep, "/"),
                 "catalogue": [f"{s.get('name')}@{s.get('publisher')} {s.get('version')}"
                               for s in catalogue.get("skills", [])[:MAX_SKILLS]],
@@ -539,7 +576,8 @@ class Handler(BaseHTTPRequestHandler):
         elif self.path == "/api/meta":
             self._send(200, CONSOLE_META)
         elif self.path == "/health":
-            self._send(200, {"status": "ok", "demo": "asi04", "mode": LAB.mode})
+            self._send(200, {"status": "ok", "demo": "asi04", "mode": LAB.mode,
+                             "backend": LAB.backend})
         elif self.path == "/api/state":
             self._send(200, LAB.state())
         elif self.path == "/api/actions":
@@ -552,6 +590,14 @@ class Handler(BaseHTTPRequestHandler):
             self._send(404, {"error": "not found"})
 
     def do_POST(self) -> None:
+        try:
+            self._do_post()
+        except (OSError, RuntimeError, KeyError, ValueError) as exc:
+            # Real-model backend failures (network, quota, LAB_MAX_CALLS, bad
+            # response) surface as 502 instead of a dropped connection.
+            self._send(502, {"error": f"backend error: {exc}"})
+
+    def _do_post(self) -> None:
         assert LAB is not None
         if not self._host_ok():
             self._send(403, {"error": "bad host"})
@@ -602,10 +648,13 @@ class Handler(BaseHTTPRequestHandler):
 
 def main() -> None:
     global LAB, PORT
-    LAB = Lab(mode=os.getenv("ASI04_MODE", "vulnerable"))
+    LAB = Lab(mode=os.getenv("ASI04_MODE", "vulnerable"),
+              backend=os.getenv("ASI04_BACKEND", "stub"),
+              model=os.getenv("ASI04_MODEL", ""))
     PORT = int(os.getenv("ASI04_PORT", "5304"))
     httpd = ThreadingHTTPServer(("127.0.0.1", PORT), Handler)
-    print(f"[*] ASI04 lab target on http://127.0.0.1:{PORT} (mode={LAB.mode})")
+    print(f"[*] ASI04 lab target on http://127.0.0.1:{PORT} "
+          f"(mode={LAB.mode}, backend={LAB.backend})")
     print(f"[*] Lab console: http://127.0.0.1:{PORT}/")
     print(f"[*] Skill catalogue: {LAB.catalogue_path}")
     print("[*] Insecure by design. Loopback only. Skills are data, never code. Ctrl+C to stop.")

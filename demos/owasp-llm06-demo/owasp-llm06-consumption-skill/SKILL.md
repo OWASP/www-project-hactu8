@@ -33,7 +33,8 @@ budget it meters.
 - The vulnerable app is insecure **by design**; do not expose it. Host-safety
   guards are built in and do not weaken the lesson:
   - All cost is **simulated** token and dollar accounting. The model is a
-    deterministic stub, so nothing is billed and no network is reached.
+    deterministic stub by default, so nothing is billed and the lab cannot
+    reach the network unless you opt into a real-model backend.
   - Even vulnerable mode stops at 50 agent steps, 200 tool calls and 64,000
     output characters, and the stub clamps its own repeat and fan-out counts.
     Real CPU and memory use stays trivial.
@@ -65,6 +66,12 @@ model cannot talk its way past.
 ## Prerequisites
 
 Python 3.9+. Standard library only; nothing to install.
+
+Optional real model: set `LLM06_BACKEND` to `ollama`, `llamacpp` or
+`openrouter` (which needs `OPENROUTER_API_KEY`), and `LLM06_MODEL` to the
+model name, before starting the target. The default `stub` needs no network.
+With `openrouter`, prompts and payloads leave the machine, and every agent
+step is a billed call (capped by `LAB_MAX_CALLS`).
 
 ## Execution instructions
 
@@ -133,6 +140,7 @@ lint.
 | Path | Purpose |
 |------|---------|
 | `vulnerable_app.py` | Target agentic KB assistant (`/query`, `/kb/page`, `/health`) plus the console API (`/api/meta`, `/api/state`, `/api/reset`, `/api/attack`, `/api/evaluate`, `/api/scan`, `/api/mode`). |
+| `providers.py` | Optional real-model backends: Ollama, llama.cpp, OpenRouter. Shared and copied unchanged. |
 | `web/` | Shared HACTU8 lab console, served at `/`. |
 | `scripts/run_consumption.py` | Attack: overwrite three wiki pages; `--flood N` for denial of wallet. |
 | `scripts/evaluate_kpi.py` | Stoplight KPI + BBR + simulated spend against the live app; `--harden` and `--scan` mitigations. |

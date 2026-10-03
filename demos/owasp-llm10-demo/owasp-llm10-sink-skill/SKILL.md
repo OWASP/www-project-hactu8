@@ -38,6 +38,8 @@ a SQL audit log, and in vulnerable mode each sink treats it as code.
   - The server rejects foreign `Host` headers (DNS rebinding) and non-JSON
     POSTs (cross-site forms).
   - Nothing fetches images or URLs, runs a shell, or writes files.
+  - The model is a deterministic stub by default, so the lab cannot reach
+    the network unless you opt into a real-model backend.
 - The shipped payload is a **placeholder**: a marker line, a harmless `<mark>`
   tag, an apostrophe and a fictional canary. See
   [`assets/poisoned_note.README.md`](assets/poisoned_note.README.md).
@@ -64,6 +66,11 @@ completion: treat it as untrusted user input at every sink.
 ## Prerequisites
 
 Python 3.9+. Standard library only; nothing to install.
+
+Optional real model: set `LLM10_BACKEND` to `ollama`, `llamacpp` or
+`openrouter` (which needs `OPENROUTER_API_KEY`), and `LLM10_MODEL` to the
+model name, before starting the target. The default `stub` needs no network.
+With `openrouter`, prompts and payloads leave the machine.
 
 ## Execution instructions
 
@@ -133,6 +140,7 @@ extend `assets/sink_rules.json`.
 |------|---------|
 | `vulnerable_app.py` | Target assistant and sinks (`/render`, `/status/<account>`, `/tickets/note`, `/tickets/<account>`, `/health`) plus the console API (`/api/meta`, `/api/state`, `/api/reset`, `/api/attack`, `/api/evaluate`, `/api/scan`, `/api/mode`). |
 | `web/` | Shared HACTU8 lab console, served at `/`. |
+| `providers.py` | Optional real-model backends: Ollama, llama.cpp, OpenRouter. Shared and copied unchanged. |
 | `scripts/run_sink_poison.py` | Attack: file one poisoned ticket note. |
 | `scripts/evaluate_kpi.py` | Stoplight KPI + USR against the live app; `--harden` and `--scan` mitigations. |
 | `scripts/reset_baseline.py` | Restores the seeded tickets, an empty log, and vulnerable mode. |

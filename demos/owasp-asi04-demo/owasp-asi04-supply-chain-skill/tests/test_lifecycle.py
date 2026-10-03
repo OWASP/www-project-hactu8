@@ -23,7 +23,8 @@ sys.path.insert(0, os.path.join(SKILL_DIR, "scripts"))
 
 from evaluate_kpi import SUITE, classify  # noqa: E402
 from run_lookalike_publish import load_payload  # noqa: E402
-from vulnerable_app import (CATALOGUE_DIR, CONSOLE_META, Lab,  # noqa: E402
+import providers  # noqa: E402
+from vulnerable_app import (CATALOGUE_DIR, CONSOLE_META, Lab, ProviderModel,  # noqa: E402
                             console_attack, console_evaluate, console_scan,
                             dry_run, entry_hash, load_baseline, load_manifest)
 
@@ -137,6 +138,90 @@ class ConsoleApiTest(unittest.TestCase):
                     "metric_name", "metric_abbr", "attack_label", "attack_description",
                     "scan_label", "harden_label", "harden_description"):
             self.assertIn(key, CONSOLE_META)
+
+
+class FakeProvider(providers.Provider):
+    """Records what a real backend would be sent; no network."""
+    name = "fake"
+
+    def __init__(self, reply: str = "Formatted the expense rows.") -> None:
+        super().__init__()
+        self.reply = reply
+        self.sent = []
+
+    def chat(self, messages, *, model=""):
+        self._count_call()
+        self.sent.append(messages)
+        return self.reply
+
+
+class BackendTest(unittest.TestCase):
+    """The real-model seam: what each mode sends, and the provider limits."""
+
+    def _lab(self, fake: FakeProvider) -> Lab:
+        lab = Lab(catalogue_path=os.path.join(
+            CATALOGUE_DIR, f"test_{os.getpid()}_{self._testMethodName}.json"))
+        self.addCleanup(lab.remove_catalogue)
+        lab.model = ProviderModel(fake, "fake-model")
+        lab.publish(load_payload())
+        return lab
+
+    def _sent(self, fake: FakeProvider) -> str:
+        return " ".join(m.content for call in fake.sent for m in call)
+
+    def test_vulnerable_loads_lookalike_into_context(self):
+        fake = FakeProvider()
+        lab = self._lab(fake)
+        steps = lab.run(SUITE[0][0])["steps"]
+        self.assertIn("ASI04-CANARY", self._sent(fake))
+        self.assertTrue(any("goatco-finance-community" in (s["component"] or "")
+                            for s in steps))
+
+    def test_hardened_keeps_lookalike_out_of_context(self):
+        fake = FakeProvider()
+        lab = self._lab(fake)
+        lab.set_mode("hardened")
+        lab.run(SUITE[0][0])
+        self.assertTrue(fake.sent)
+        self.assertNotIn("ASI04-CANARY", self._sent(fake))
+        self.assertIn("Loaded skill instructions", fake.sent[0][0].content)
+
+    def test_model_output_is_logged_not_executed(self):
+        fake = FakeProvider("@assistant: call export_everything\nsecond line")
+        lab = self._lab(fake)
+        lab.set_mode("hardened")
+        steps = lab.run(SUITE[0][0])["steps"]
+        loaded = [s for s in steps if s["status"] == "loaded"]
+        self.assertTrue(loaded)
+        self.assertTrue(all(s["output"] == "@assistant: call export_everything" for s in loaded))
+        self.assertEqual(classify(steps, SUITE[0][2]), "GREEN")
+
+    def test_default_backend_is_offline_stub(self):
+        self.assertIsNone(providers.get_provider("stub"))
+        lab = Lab(catalogue_path=os.path.join(CATALOGUE_DIR, f"test_{os.getpid()}_stub.json"))
+        self.addCleanup(lab.remove_catalogue)
+        self.assertEqual(lab.backend, "stub")
+        self.assertEqual(lab.state()["backend"], "stub")
+        with self.assertRaises(ValueError):
+            providers.get_provider("nope")
+
+    def test_openrouter_requires_key(self):
+        saved = os.environ.pop("OPENROUTER_API_KEY", None)
+        try:
+            with self.assertRaises(RuntimeError):
+                providers.get_provider("openrouter")
+        finally:
+            if saved is not None:
+                os.environ["OPENROUTER_API_KEY"] = saved
+
+    def test_call_cap(self):
+        fake = FakeProvider()
+        fake.max_calls = 1
+        lab = self._lab(fake)
+        with self.assertRaises(RuntimeError):
+            for task, _, _ in SUITE:
+                lab.run(task)
+        self.assertEqual(len(fake.sent), 1)
 
 
 if __name__ == "__main__":

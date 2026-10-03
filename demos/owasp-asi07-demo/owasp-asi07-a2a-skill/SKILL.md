@@ -43,8 +43,10 @@ field, carries them out.
   - State lives in memory only. Work orders per job (6), tool calls per job
     (8), inbox size (20), retained messages per topic (10), message size, bus
     log, action log and nonce cache are capped.
-  - The models are deterministic stubs, so the lab cannot reach a real model
-    or the network.
+  - The models are deterministic stubs by default, so the lab cannot reach
+    the network unless you opt into a real-model backend. A real model's
+    reply is parsed as JSON and only selects simulated tools; nothing it
+    returns is executed or fetched.
   - The server rejects foreign `Host` headers (DNS rebinding) and non-JSON
     POSTs (cross-site forms).
 - The shipped payload is a **placeholder**: stub directive lines plus a
@@ -74,6 +76,12 @@ of it reaches the model.
 ## Prerequisites
 
 Python 3.9+. Standard library only; nothing to install.
+
+Optional real model: set `ASI07_BACKEND` to `ollama`, `llamacpp` or
+`openrouter` (which needs `OPENROUTER_API_KEY`), and `ASI07_MODEL` to the
+model name, before starting the target. The backend replaces Billy Exec's
+model; the planner stays a stub. The default `stub` needs no network.
+With `openrouter`, prompts and payloads leave the machine.
 
 ## Execution instructions
 
@@ -150,6 +158,7 @@ verifier enforces, edit `assets/bus_policy.json`; turning off
 | Path | Purpose |
 |------|---------|
 | `vulnerable_app.py` | Target planner + executor (`/jobs`, `/bus/publish`, `/bus/log`, `/api/actions`, `/health`) plus the console API (`/api/meta`, `/api/state`, `/api/reset`, `/api/attack`, `/api/evaluate`, `/api/scan`, `/api/mode`). |
+| `providers.py` | Optional real-model backends: Ollama, llama.cpp, OpenRouter. Shared and copied unchanged. |
 | `web/` | Shared HACTU8 lab console, served at `/`. |
 | `scripts/run_bus_forgery.py` | Attack: spoof the planner on two topics, replay one old order. |
 | `scripts/evaluate_kpi.py` | Stoplight KPI + FMAR against the live app; `--harden` and `--scan` mitigations. |

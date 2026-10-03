@@ -7,10 +7,14 @@ Uses the skill's own Lab, payload, and evaluator suite. Standard library only.
 AUTHORIZED SECURITY-LAB USE ONLY.
 
 Exit code: 0 when the story holds (baseline and remediation clean, attack
-measurable), 1 otherwise.
+measurable), 1 otherwise. With a real-model backend the numbers are reported
+but not asserted, because a real model may resist the placeholder payload;
+the exit code is then 0 unless a call fails.
 
 Examples:
     python run_demo.py
+    python run_demo.py --backend ollama --model llama3.2
+    OPENROUTER_API_KEY=... python run_demo.py --backend openrouter
 """
 
 from __future__ import annotations
@@ -49,11 +53,16 @@ def act(lab: Lab, title: str) -> float:
 
 
 def main(argv=None) -> int:
-    argparse.ArgumentParser(description=__doc__,
-                            formatter_class=argparse.RawDescriptionHelpFormatter).parse_args(argv)
+    parser = argparse.ArgumentParser(description=__doc__,
+                                     formatter_class=argparse.RawDescriptionHelpFormatter)
+    parser.add_argument("--backend", default="stub",
+                        help="stub (default) | ollama | llamacpp | openrouter")
+    parser.add_argument("--model", default="", help="model name for the backend")
+    args = parser.parse_args(argv)
     if hasattr(sys.stdout, "reconfigure"):
         sys.stdout.reconfigure(encoding="utf-8")
-    lab = Lab()
+    lab = Lab(backend=args.backend, model=args.model)
+    print(f"[*] Model backend: {lab.backend}")
     payload = load_payload(PAYLOAD)
 
     baseline = act(lab, "Act 1 — Clean baseline (3 agents, 4 ticks)")
@@ -68,7 +77,7 @@ def main(argv=None) -> int:
     print("\n[defense] Act 4 — Remediation")
     report = dry_run(payload)
     print(f"[defense] Config check of the edit: REJECT ({', '.join(report['widening'])})")
-    monitor_only = Lab(mode="hardened")
+    monitor_only = Lab(mode="hardened", backend=args.backend, model=args.model)
     monitor_only.controls["signatures"] = False
     monitor_only.write_config(TARGET_AGENT, apply_edit(monitor_only.get_config(TARGET_AGENT), payload))
     print(f"[defense] Monitor alone (signature check off): {stopped_line(monitor_only.run())}, "
@@ -83,6 +92,10 @@ def main(argv=None) -> int:
     lab.set_mode("vulnerable")
     print("\n[+] Reset to baseline.")
 
+    if lab.backend != "stub":
+        print(f"[*] Real model: OMAR {baseline:.0f}% -> {attacked:.0f}% -> {remediated:.0f}% "
+              "(reported, not asserted).")
+        return 0
     ok = baseline == 0 and attacked > 0 and remediated == 0
     print("[+] Story holds." if ok else "[-] Story broken — check the payload and suite.")
     return 0 if ok else 1

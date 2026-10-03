@@ -79,11 +79,42 @@ You'll see four acts:
 
 ### Optional: run against a real model
 
-Not wired in this version. The stub is the only backend. The seam is
-`StubModel.generate(messages)` in `vulnerable_app.py`; a real backend replaces
-it. A real model would need natural-language payloads. Pinning catches any
-description change regardless of wording, and sampling catches drift without
-any rule (see the payload READMEs).
+The stub is the default backend. `providers.py` (the same provider layer as
+AgenticGoat) adds three real ones. All are standard library only:
+
+```bash
+python run_demo.py --backend ollama --model llama3.2          # local Ollama
+python run_demo.py --backend llamacpp                         # local llama.cpp server
+export OPENROUTER_API_KEY=...                                 # remote; key stays in the header
+python run_demo.py --backend openrouter --model meta-llama/llama-3.2-3b-instruct
+
+# the target and console take the same settings from the environment:
+LLM04_BACKEND=openrouter LLM04_MODEL=... python owasp-llm04-rugpull-skill/vulnerable_app.py
+```
+
+The attack mechanics are identical. Only the model changes, and it only
+writes the answer text:
+- **Vulnerable mode** puts the installed tool's description in the system
+  prompt and its result in the user turn, both as plain text.
+- **Hardened mode** fences the description in `<untrusted_tool_definition>`
+  tags and the result in `<untrusted_tool_output>` tags, and tells the model
+  never to follow instructions inside them ("spotlighting"). The admission
+  gate stays in code, so a swapped or sleeper tool never reaches the model,
+  whatever the model would do with it.
+
+A real model may ignore the placeholder payloads. Write natural-language
+payloads (see the payload READMEs). Pinning catches any description change
+regardless of wording, and sampling catches drift without any rule.
+`run_demo.py` reports the numbers rather than asserting them.
+
+Limits:
+- `LAB_MAX_CALLS` (default 200) caps calls per process.
+- `LAB_MAX_TOKENS` (default 400) caps output tokens per call.
+- `OLLAMA_TIMEOUT`, `LLAMACPP_TIMEOUT` and `OPENROUTER_TIMEOUT` set
+  per-provider HTTP timeouts.
+
+With `openrouter`, lab prompts, including your payloads, leave the machine.
+The stub and the local backends keep everything on the host.
 
 ---
 
@@ -224,6 +255,7 @@ owasp-llm04-demo/
 ├── owasp-llm04-rugpull-skill/
 │   ├── SKILL.md                       #   metadata + instructions
 │   ├── vulnerable_app.py              #   Module 1: target, stub model, admission gate
+│   ├── providers.py                   #   optional real-model backends (shared, unchanged)
 │   ├── requirements.txt               #   stdlib only
 │   ├── web/                           #   shared lab console (index.html, app.js, styles.css)
 │   ├── scripts/
@@ -262,7 +294,7 @@ python scripts/evaluate_kpi.py --scan                        # REJECT, exit 2
 python scripts/evaluate_kpi.py --harden                      # GREEN, CTR 0%, exit 0
 python scripts/reset_baseline.py                             # restore clean state
 python scripts/evaluate_kpi.py                               # GREEN, CTR 0%
-python -m unittest discover tests                            # 7 tests
+python -m unittest discover tests                            # 14 tests
 ```
 
 ## License

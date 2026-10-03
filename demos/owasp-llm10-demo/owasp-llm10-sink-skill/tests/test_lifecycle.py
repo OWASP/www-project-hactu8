@@ -19,8 +19,10 @@ sys.path.insert(0, SKILL_DIR)
 sys.path.insert(0, os.path.join(SKILL_DIR, "scripts"))
 
 from evaluate_kpi import SUITE, classify  # noqa: E402
-from vulnerable_app import (CONSOLE_META, Lab, console_attack, console_evaluate,  # noqa: E402
-                            console_scan, load_sink_rules, screen_output)
+import providers  # noqa: E402
+from vulnerable_app import (CONSOLE_META, Lab, ProviderModel, console_attack,  # noqa: E402
+                            console_evaluate, console_scan, load_sink_rules,
+                            screen_output)
 
 PAYLOAD = os.path.join(SKILL_DIR, "assets", "poisoned_note.md")
 
@@ -111,6 +113,87 @@ class ConsoleApiTest(unittest.TestCase):
                     "metric_name", "metric_abbr", "attack_label", "attack_description",
                     "scan_label", "harden_label", "harden_description"):
             self.assertIn(key, CONSOLE_META)
+
+
+class FakeProvider(providers.Provider):
+    """Records what a real backend would be sent; no network."""
+    name = "fake"
+
+    def __init__(self, reply: str = "Ridgeview printer queue restored.") -> None:
+        super().__init__()
+        self.reply = reply
+        self.sent = []
+
+    def chat(self, messages, *, model=""):
+        self._count_call()
+        self.sent.append(messages)
+        return self.reply
+
+
+# A reply that a sink would interpret: markup plus a quote that ends a SQL literal.
+UNSAFE_REPLY = "Queue O'Reilly <mark class=\"x\">restored</mark>"
+
+
+class BackendTest(unittest.TestCase):
+    """The real-model seam: what each mode sends, and the provider limits."""
+
+    def _lab(self, fake: FakeProvider) -> Lab:
+        lab = Lab()
+        lab.model = ProviderModel(fake, "fake-model")
+        with open(PAYLOAD, encoding="utf-8") as fh:
+            lab.add_note("ridgeview", fh.read())
+        return lab
+
+    def test_notes_reach_the_model_as_plain_text_in_both_modes(self):
+        fake = FakeProvider()
+        lab = self._lab(fake)
+        lab.render("ridgeview", "html")
+        lab.set_mode("hardened")
+        lab.render("ridgeview", "html")
+        vulnerable, hardened = fake.sent
+        self.assertIn("@assistant:", vulnerable[1].content)
+        # LLM10's fix is at the sink, so the prompt is identical in both modes.
+        self.assertEqual([m.content for m in vulnerable], [m.content for m in hardened])
+
+    def test_vulnerable_sinks_run_model_output_as_code(self):
+        lab = self._lab(FakeProvider(UNSAFE_REPLY))
+        self.assertIn("<mark", lab.render("ridgeview", "html")["output"])
+        self.assertIsNotNone(lab.render("ridgeview", "sql")["error"])
+
+    def test_hardened_sinks_hold_whatever_the_model_writes(self):
+        lab = self._lab(FakeProvider(UNSAFE_REPLY))
+        lab.set_mode("hardened")
+        for sink in ("html", "markdown"):
+            out = lab.render("ridgeview", sink)
+            self.assertNotIn("<mark", out["output"])
+            self.assertIn("&lt;mark", out["output"])
+        row = lab.render("ridgeview", "sql")
+        self.assertIsNone(row["error"])
+        self.assertIn("O'Reilly", row["output"])
+
+    def test_default_backend_is_offline_stub(self):
+        self.assertIsNone(providers.get_provider("stub"))
+        self.assertEqual(Lab().backend, "stub")
+        with self.assertRaises(ValueError):
+            providers.get_provider("nope")
+
+    def test_openrouter_requires_key(self):
+        saved = os.environ.pop("OPENROUTER_API_KEY", None)
+        try:
+            with self.assertRaises(RuntimeError):
+                providers.get_provider("openrouter")
+        finally:
+            if saved is not None:
+                os.environ["OPENROUTER_API_KEY"] = saved
+
+    def test_call_cap(self):
+        fake = FakeProvider()
+        fake.max_calls = 2
+        lab = self._lab(fake)
+        lab.render("ridgeview", "html")
+        lab.render("ridgeview", "sql")
+        with self.assertRaises(RuntimeError):
+            lab.render("ridgeview", "markdown")
 
 
 if __name__ == "__main__":

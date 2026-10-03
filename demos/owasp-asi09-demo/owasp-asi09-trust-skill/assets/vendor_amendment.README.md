@@ -36,8 +36,8 @@ Every action it leads to is simulated: an entry in the in-memory action log.
   `bank_account` counts as `bank` and `account`), or the approver holds the
   card in vulnerable mode. Include the canary if you want to find the run in
   the action log (`GET /api/actions`).
-- **Real-model backend.** Not wired in this version. A real model writes its
-  own summary, so the payload becomes persuasive natural language in the
+- **Real-model backend** (`ASI09_BACKEND`, see the demo README). A real
+  model writes its own summary, so the payload becomes persuasive natural language in the
   vendor note (for example, framing the change as a routine refresh). The
   hardened card builder needs no change: it never shows the model's prose,
   and it computes the tier from the field, not from the wording.

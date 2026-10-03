@@ -82,10 +82,39 @@ You'll see four acts:
 
 ### Optional: run against a real model
 
-Not wired in this version. The stub is the only backend. The seam is
-`StubModel.generate(messages)` in `vulnerable_app.py`; a real backend
-replaces it. The sink fixes do not depend on the model, so hardened mode
-holds whatever a real model writes.
+The stub is the default backend. `providers.py` (the same provider layer as
+AgenticGoat) adds three real ones. All are standard library only:
+
+```bash
+python run_demo.py --backend ollama --model llama3.2          # local Ollama
+python run_demo.py --backend llamacpp                         # local llama.cpp server
+export OPENROUTER_API_KEY=...                                 # remote; key stays in the header
+python run_demo.py --backend openrouter --model meta-llama/llama-3.2-3b-instruct
+
+# the target and console take the same settings from the environment:
+LLM10_BACKEND=openrouter LLM10_MODEL=... python owasp-llm10-sink-skill/vulnerable_app.py
+```
+
+The real model only writes the summary. The ticket notes reach it as plain
+text in the user turn, and the prompt is the **same in both modes**: LLM10 is
+about what the application does with the output, so there is no
+spotlighting to add here. The summary flows into the same three sinks as the
+stub's text. Hardened mode escapes it for HTML and binds it as a SQL
+parameter, so it holds whatever a real model writes. Nothing the model
+returns is fetched or executed.
+
+A real model may not echo the placeholder payload. Write your own test
+output (see `assets/poisoned_note.README.md`), and `run_demo.py` reports the
+numbers rather than asserting them.
+
+Limits:
+- `LAB_MAX_CALLS` (default 200) caps calls per process.
+- `LAB_MAX_TOKENS` (default 400) caps output tokens per call.
+- `OLLAMA_TIMEOUT`, `LLAMACPP_TIMEOUT` and `OPENROUTER_TIMEOUT` set
+  per-provider HTTP timeouts.
+
+With `openrouter`, lab prompts, including your payloads, leave the machine.
+The stub and the local backends keep everything on the host.
 
 ---
 
@@ -229,6 +258,7 @@ owasp-llm10-demo/
 ├── owasp-llm10-sink-skill/
 │   ├── SKILL.md                       #   metadata + instructions
 │   ├── vulnerable_app.py              #   Module 1: target, stub model, sinks, mitigation
+│   ├── providers.py                   #   optional real-model backends (shared, unchanged)
 │   ├── requirements.txt               #   stdlib only
 │   ├── web/                           #   shared lab console (index.html, app.js, styles.css)
 │   ├── scripts/
@@ -263,7 +293,7 @@ python scripts/evaluate_kpi.py --scan assets/poisoned_note.md   # REJECT, exit 2
 python scripts/evaluate_kpi.py --harden                      # GREEN, USR 0%, exit 0
 python scripts/reset_baseline.py                             # restore clean state
 python scripts/evaluate_kpi.py                               # GREEN, USR 0%
-python -m unittest discover tests                            # 9 tests
+python -m unittest discover tests                            # 15 tests
 ```
 
 ## License

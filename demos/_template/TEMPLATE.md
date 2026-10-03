@@ -232,6 +232,7 @@ The reference demo has a few inconsistencies. New demos should not copy them:
 - [ ] References cite sources and mark DEMO TARGET rows
 - [ ] Ports, flags and exit codes consistent everywhere
 - [ ] `web/` copied unchanged; console API (§12) implemented and tested
+- [ ] `providers.py` copied unchanged; `ProviderModel` + `--backend` (§13) implemented and tested
 
 ## 12. Lab console (web/)
 
@@ -266,3 +267,36 @@ Server guards (host safety, applied to every request):
 
 To play all four acts on page load, for a presentation, open `/#run`.
 Reference implementation: `owasp-llm01-demo/owasp-llm01-injection-skill/vulnerable_app.py`.
+
+## 13. Real-model backend (providers.py)
+
+The stub is the default and the only backend the tests and the story
+assertions use. `_template/providers.py` is a port of AgenticGoat's provider
+layer, standard library only. Copy it into `<skill-slug>/` **unchanged**. It
+offers `ollama`, `llamacpp` and `openrouter` (`OPENROUTER_API_KEY`, sent in the
+header only), with per-process limits `LAB_MAX_CALLS` and `LAB_MAX_TOKENS`.
+
+Per demo:
+- `Lab(..., backend="stub", model="")`. `main()` reads `<PREFIX>_BACKEND` and
+  `<PREFIX>_MODEL`, and `Lab.backend` holds `providers.describe(...)`.
+  `/health` and `/api/state` include `backend`, which the console shows next to
+  the mode.
+- A `ProviderModel` class with the **same interface as the demo's stub**,
+  built on `provider.chat(...)`. The prompt differs by mode exactly as the
+  lesson says: vulnerable passes untrusted content as ordinary text, and
+  hardened fences it (spotlighting) and applies the demo's mitigation. Where
+  the stub returns structured decisions (tool calls, plans, actions), ask the
+  model for a small JSON object, parse it defensively, and fall back to "no
+  action" on bad output. Never execute anything the model returns.
+- Backend failures become HTTP 502 `{"error": "backend error: ..."}`.
+- `run_demo.py --backend X --model Y`: with a real backend it reports the
+  numbers instead of asserting them.
+- Tests: a `FakeProvider` (subclass of `providers.Provider`, no network)
+  checks what each mode sends, that the default backend is the stub, that
+  openrouter needs a key, and that the call cap holds.
+- Docs: README "Optional: run against a real model" and the SKILL.md
+  prerequisites, including the note that `openrouter` sends prompts off the
+  machine.
+
+Reference implementation: `owasp-llm01-demo` (`ProviderModel` in `vulnerable_app.py`, `BackendTest`).
+

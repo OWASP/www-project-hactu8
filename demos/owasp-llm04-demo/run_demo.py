@@ -9,10 +9,14 @@ Standard library only. Uses its own registry file under the skill's
 AUTHORIZED SECURITY-LAB USE ONLY.
 
 Exit code: 0 when the story holds (baseline and remediation clean, attack
-measurable), 1 otherwise.
+measurable), 1 otherwise. With a real-model backend the numbers are reported
+but not asserted, because a real model may resist the placeholder payloads;
+the exit code is then 0 unless a call fails.
 
 Examples:
     python run_demo.py
+    python run_demo.py --backend ollama --model llama3.2
+    OPENROUTER_API_KEY=... python run_demo.py --backend openrouter
 """
 
 from __future__ import annotations
@@ -57,11 +61,16 @@ def _read(path: str) -> str:
 
 
 def main(argv=None) -> int:
-    argparse.ArgumentParser(description=__doc__,
-                            formatter_class=argparse.RawDescriptionHelpFormatter).parse_args(argv)
+    parser = argparse.ArgumentParser(description=__doc__,
+                                     formatter_class=argparse.RawDescriptionHelpFormatter)
+    parser.add_argument("--backend", default="stub",
+                        help="stub (default) | ollama | llamacpp | openrouter")
+    parser.add_argument("--model", default="", help="model name for the backend")
+    args = parser.parse_args(argv)
     if hasattr(sys.stdout, "reconfigure"):
         sys.stdout.reconfigure(encoding="utf-8")
-    lab = Lab(registry_path=REGISTRY)
+    lab = Lab(registry_path=REGISTRY, backend=args.backend, model=args.model)
+    print(f"[*] Model backend: {lab.backend}")
     try:
         baseline = act(lab, "Act 1 — Clean baseline")
 
@@ -91,6 +100,10 @@ def main(argv=None) -> int:
     finally:
         lab.remove_registry()
 
+    if lab.backend != "stub":
+        print(f"[*] Real model: Compromised Tool Rate {baseline:.0f}% -> {attacked:.0f}% -> "
+              f"{remediated:.0f}% (reported, not asserted).")
+        return 0
     ok = baseline == 0 and attacked > 0 and remediated == 0
     print("[+] Story holds." if ok else "[-] Story broken — check the payloads and suite.")
     return 0 if ok else 1

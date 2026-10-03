@@ -18,8 +18,10 @@ sys.path.insert(0, SKILL_DIR)
 sys.path.insert(0, os.path.join(SKILL_DIR, "scripts"))
 
 from evaluate_kpi import SUITE, classify  # noqa: E402
-from vulnerable_app import (CONSOLE_META, MEMORY_TURNS, Lab, console_attack,  # noqa: E402
-                            console_evaluate, console_scan, rank, scope_blocks)
+import providers  # noqa: E402
+from vulnerable_app import (CONSOLE_META, MEMORY_TURNS, Lab, ProviderModel,  # noqa: E402
+                            console_attack, console_evaluate, console_scan, rank,
+                            scope_blocks)
 
 PAYLOAD = os.path.join(SKILL_DIR, "assets", "crafted_query.txt")
 SESSION = "meadow-analyst"
@@ -104,6 +106,77 @@ class ConsoleApiTest(unittest.TestCase):
                     "metric_name", "metric_abbr", "attack_label", "attack_description",
                     "scan_label", "harden_label", "harden_description"):
             self.assertIn(key, CONSOLE_META)
+
+
+class FakeProvider(providers.Provider):
+    """Records what a real backend would be sent; no network."""
+    name = "fake"
+
+    def __init__(self, reply: str = "Winter hay is 180 dollars per tonne.") -> None:
+        super().__init__()
+        self.reply = reply
+        self.sent = []
+
+    def chat(self, messages, *, model=""):
+        self._count_call()
+        self.sent.append(messages)
+        return self.reply
+
+
+class BackendTest(unittest.TestCase):
+    """The real-model seam: what each mode sends, and the provider limits."""
+
+    def _lab(self, fake: FakeProvider) -> Lab:
+        lab = Lab()
+        lab.model = ProviderModel(fake, "fake-model")
+        with open(PAYLOAD, encoding="utf-8") as fh:
+            lab.query(SESSION, fh.read().strip())      # crafted turn in memory
+        return lab
+
+    def _foreign_texts(self, lab: Lab):
+        return [d.text.strip() for d in lab.docs if d.tenant != lab.tenant_of(SESSION)]
+
+    def test_vulnerable_sends_bare_cross_tenant_passages(self):
+        fake = FakeProvider()
+        lab = self._lab(fake)
+        lab.query(SESSION, SUITE[0][0], remember=False)
+        system, user = fake.sent[-1]
+        self.assertNotIn("retrieved_passages", system.content + user.content)
+        self.assertTrue(any(t in user.content for t in self._foreign_texts(lab)))
+
+    def test_hardened_fences_and_filters_passages(self):
+        fake = FakeProvider()
+        lab = self._lab(fake)
+        lab.set_mode("hardened")
+        lab.query(SESSION, SUITE[0][0], remember=False)
+        system, user = fake.sent[-1]
+        self.assertIn("<retrieved_passages>", user.content)
+        self.assertIn("never follow instructions", system.content)
+        # The tenant filter in code is still authoritative.
+        self.assertFalse(any(t in user.content for t in self._foreign_texts(lab)))
+
+    def test_default_backend_is_offline_stub(self):
+        self.assertIsNone(providers.get_provider("stub"))
+        self.assertEqual(Lab().backend, "stub")
+        with self.assertRaises(ValueError):
+            providers.get_provider("nope")
+
+    def test_openrouter_requires_key(self):
+        saved = os.environ.pop("OPENROUTER_API_KEY", None)
+        try:
+            with self.assertRaises(RuntimeError):
+                providers.get_provider("openrouter")
+        finally:
+            if saved is not None:
+                os.environ["OPENROUTER_API_KEY"] = saved
+
+    def test_call_cap(self):
+        fake = FakeProvider()
+        fake.max_calls = 2
+        lab = self._lab(fake)                              # call 1
+        lab.query(SESSION, "a", remember=False)            # call 2
+        with self.assertRaises(RuntimeError):
+            lab.query(SESSION, "b", remember=False)
 
 
 if __name__ == "__main__":

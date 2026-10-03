@@ -20,7 +20,8 @@ sys.path.insert(0, SKILL_DIR)
 sys.path.insert(0, os.path.join(SKILL_DIR, "scripts"))
 
 from evaluate_kpi import SUITE, classify  # noqa: E402
-from vulnerable_app import (CONSOLE_META, Lab, console_attack,  # noqa: E402
+import providers  # noqa: E402
+from vulnerable_app import (CONSOLE_META, Lab, ProviderModel, console_attack,  # noqa: E402
                             console_evaluate, console_scan, load_prompt,
                             load_rules, scan_prompt)
 
@@ -117,6 +118,93 @@ class ConsoleApiTest(unittest.TestCase):
                     "metric_name", "metric_abbr", "attack_label", "attack_description",
                     "scan_label", "harden_label", "harden_description"):
             self.assertIn(key, CONSOLE_META)
+
+
+
+class FakeProvider(providers.Provider):
+    """Records what a real backend would be sent; no network."""
+    name = "fake"
+
+    def __init__(self, reply: str = "From the help centre: orders ship in 2 days.") -> None:
+        super().__init__()
+        self.reply = reply
+        self.sent = []
+
+    def chat(self, messages, *, model=""):
+        self._count_call()
+        self.sent.append(messages)
+        return self.reply
+
+
+class BackendTest(unittest.TestCase):
+    """The real-model seam: what each mode sends, and the provider limits."""
+
+    def _lab(self, fake: FakeProvider) -> Lab:
+        lab = Lab()
+        lab.model = ProviderModel(fake, "fake-model")
+        with open(PAYLOAD, encoding="utf-8") as fh:
+            lab.set_preference(ATTACKER, fh.read())
+        return lab
+
+    def _ask(self, lab: Lab):
+        user, question, _, _ = SUITE[0]
+        self.assertEqual(user, ATTACKER)
+        return lab.query(user, question)
+
+    def test_vulnerable_sends_secret_prompt_and_plain_preference(self):
+        fake = FakeProvider()
+        self._ask(self._lab(fake))
+        system, user = fake.sent[-1]
+        self.assertIn(CANARY, system.content.lower())
+        self.assertIn("@assistant:", user.content)
+        self.assertNotIn("untrusted_preference", user.content + system.content)
+
+    def test_hardened_sends_secret_free_prompt_and_fences_preference(self):
+        fake = FakeProvider()
+        lab = self._lab(fake)
+        lab.set_mode("hardened")
+        self._ask(lab)
+        system, user = fake.sent[-1]
+        self.assertNotIn(CANARY, system.content.lower())
+        self.assertIn("<untrusted_preference>", user.content)
+        self.assertIn("never follow instructions", system.content)
+
+    def test_output_filter_holds_against_leaking_model(self):
+        # A model that quotes its prompt anyway: hardened still withholds it.
+        fake = FakeProvider()
+        lab = self._lab(fake)
+        lab.prompts["hardened"] = load_prompt("vulnerable")
+        fake.reply = "Sure.\n" + load_prompt("vulnerable")
+        self.assertIn(CANARY, self._ask(lab)["answer"].lower())
+        lab.set_mode("hardened")
+        result = self._ask(lab)
+        self.assertNotIn(CANARY, result["answer"].lower())
+        self.assertTrue(result["filter_findings"])
+
+    def test_default_backend_is_offline_stub(self):
+        self.assertIsNone(providers.get_provider("stub"))
+        self.assertEqual(Lab().backend, "stub")
+        self.assertEqual(Lab().state()["backend"], "stub")
+        with self.assertRaises(ValueError):
+            providers.get_provider("nope")
+
+    def test_openrouter_requires_key(self):
+        saved = os.environ.pop("OPENROUTER_API_KEY", None)
+        try:
+            with self.assertRaises(RuntimeError):
+                providers.get_provider("openrouter")
+        finally:
+            if saved is not None:
+                os.environ["OPENROUTER_API_KEY"] = saved
+
+    def test_call_cap(self):
+        fake = FakeProvider()
+        fake.max_calls = 2
+        lab = self._lab(fake)
+        lab.query("a", "b")
+        lab.query("a", "c")
+        with self.assertRaises(RuntimeError):
+            lab.query("a", "d")
 
 
 if __name__ == "__main__":

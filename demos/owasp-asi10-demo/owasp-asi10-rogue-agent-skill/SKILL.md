@@ -37,6 +37,9 @@ untouched.
     Nothing is read, sent or exported.
   - State lives in memory only. Ticks per run, actions per tick, config size
     and action-log length are capped.
+  - The model is a deterministic stub by default, so the lab cannot reach
+    the network unless you opt into a real-model backend. The signature
+    check and the monitor stay in code either way.
   - The signing key is demo-only, generated in memory at startup with
     `secrets`, and never written anywhere.
   - The server rejects foreign `Host` headers (DNS rebinding) and non-JSON
@@ -67,6 +70,11 @@ configs, verifies them on load, and enforces permissions outside the agent.
 ## Prerequisites
 
 Python 3.9+. Standard library only; nothing to install.
+
+Optional real model: set `ASI10_BACKEND` to `ollama`, `llamacpp` or
+`openrouter` (which needs `OPENROUTER_API_KEY`), and `ASI10_MODEL` to the
+model name, before starting the target. The default `stub` needs no network.
+With `openrouter`, prompts and payloads leave the machine.
 
 ## Execution instructions
 
@@ -139,6 +147,7 @@ an attacker who forgets to edit it.
 |------|---------|
 | `vulnerable_app.py` | Target fleet (`/api/run`, `/config`, `/config/<agent>`, `/api/actions`, `/health`) plus the console API (`/api/meta`, `/api/state`, `/api/reset`, `/api/attack`, `/api/evaluate`, `/api/scan`, `/api/mode`). |
 | `web/` | Shared HACTU8 lab console, served at `/`. |
+| `providers.py` | Optional real-model backends: Ollama, llama.cpp, OpenRouter. Shared and copied unchanged. |
 | `scripts/run_mandate_tamper.py` | Attack: rewrite one agent's mandate config. |
 | `scripts/evaluate_kpi.py` | Stoplight KPI + OMAR + ticks until stopped; `--harden` and `--scan` mitigations. |
 | `scripts/reset_baseline.py` | Restores the signed baseline configs and vulnerable mode. |

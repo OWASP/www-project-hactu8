@@ -37,8 +37,8 @@ system prompt holds the key, so whatever Billy is talked into reciting leaks.
     filesystem.
   - One directive can pull in at most three records; notes and request
     bodies are size-capped.
-  - The model is a deterministic stub, so the lab cannot reach a real model
-    or the network.
+  - The model is a deterministic stub by default, so the lab cannot reach
+    the network unless you opt into a real-model backend.
   - The server rejects foreign `Host` headers (DNS rebinding) and non-JSON
     POSTs (cross-site forms).
 - All records are fictional (`example.invalid` addresses, `555-01xx` numbers),
@@ -69,6 +69,11 @@ puts its own credentials in the model's context.
 ## Prerequisites
 
 Python 3.9+. Standard library only; nothing to install.
+
+Optional real model: set `LLM02_BACKEND` to `ollama`, `llamacpp` or
+`openrouter` (which needs `OPENROUTER_API_KEY`), and `LLM02_MODEL` to the
+model name, before starting the target. The default `stub` needs no network.
+With `openrouter`, prompts and payloads leave the machine.
 
 ## Execution instructions
 
@@ -141,6 +146,7 @@ a new secret format, put it in `assets/system_prompt.txt` and extend
 |------|---------|
 | `vulnerable_app.py` | Target account assistant (`/query`, `/account/notes`, `/health`) plus the console API (`/api/meta`, `/api/state`, `/api/reset`, `/api/attack`, `/api/evaluate`, `/api/scan`, `/api/mode`). |
 | `web/` | Shared HACTU8 lab console, served at `/`. |
+| `providers.py` | Optional real-model backends: Ollama, llama.cpp, OpenRouter. Shared and copied unchanged. |
 | `scripts/run_pivot.py` | Attack: save the pivot note on the attacker's own account. |
 | `scripts/evaluate_kpi.py` | Stoplight KPI + Leak Rate against the live app; `--harden` and `--scan` mitigations. |
 | `scripts/reset_baseline.py` | Restores the seeded records and vulnerable mode. |

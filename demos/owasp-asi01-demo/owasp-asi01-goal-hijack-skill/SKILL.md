@@ -37,8 +37,8 @@ new steps.
     in-memory action log; nothing leaves the process.
   - State lives in memory only. Steps per run (8), comments per ticket (20),
     comment size and action-log length are capped.
-  - The model is a deterministic stub, so the lab cannot reach a real model
-    or the network.
+  - The model is a deterministic stub by default, so the lab cannot reach
+    the network unless you opt into a real-model backend.
   - The server rejects foreign `Host` headers (DNS rebinding) and non-JSON
     POSTs (cross-site forms).
 - The shipped payload is a **placeholder**: stub directive lines plus a
@@ -67,6 +67,11 @@ for human re-approval, and never plans from tool results.
 ## Prerequisites
 
 Python 3.9+. Standard library only; nothing to install.
+
+Optional real model: set `ASI01_BACKEND` to `ollama`, `llamacpp` or
+`openrouter` (which needs `OPENROUTER_API_KEY`), and `ASI01_MODEL` to the
+model name, before starting the target. The default `stub` needs no network.
+With `openrouter`, prompts and payloads leave the machine.
 
 ## Execution instructions
 
@@ -140,6 +145,7 @@ stays on the plan by design.
 |------|---------|
 | `vulnerable_app.py` | Target ops agent (`/agent`, `/tickets/comment`, `/tickets/<id>`, `/api/actions`, `/health`) plus the console API (`/api/meta`, `/api/state`, `/api/reset`, `/api/attack`, `/api/evaluate`, `/api/scan`, `/api/mode`). |
 | `web/` | Shared HACTU8 lab console, served at `/`. |
+| `providers.py` | Optional real-model backends: Ollama, llama.cpp, OpenRouter. Shared and copied unchanged. |
 | `scripts/run_goal_hijack.py` | Attack: append the comment to one ticket. |
 | `scripts/evaluate_kpi.py` | Stoplight KPI + GDR against the live app; `--harden` and `--scan` mitigations. |
 | `scripts/reset_baseline.py` | Restores the seeded desk, clears the action log, sets vulnerable mode. |

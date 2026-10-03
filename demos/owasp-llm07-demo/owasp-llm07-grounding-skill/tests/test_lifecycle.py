@@ -19,7 +19,8 @@ sys.path.insert(0, SKILL_DIR)
 sys.path.insert(0, os.path.join(SKILL_DIR, "scripts"))
 
 from evaluate_kpi import SUITE, classify  # noqa: E402
-from vulnerable_app import (CONSOLE_META, Lab, check_grounding,  # noqa: E402
+import providers  # noqa: E402
+from vulnerable_app import (CONSOLE_META, Lab, ProviderModel, check_grounding,  # noqa: E402
                             console_attack, console_evaluate, console_scan,
                             load_registry)
 
@@ -118,6 +119,88 @@ class ConsoleApiTest(unittest.TestCase):
                     "metric_name", "metric_abbr", "attack_label", "attack_description",
                     "scan_label", "harden_label", "harden_description"):
             self.assertIn(key, CONSOLE_META)
+
+
+
+class FakeProvider(providers.Provider):
+    """Records what a real backend would be sent; no network."""
+    name = "fake"
+
+    def __init__(self, reply: str = "Use goat-http: pip install goat-http.") -> None:
+        super().__init__()
+        self.reply = reply
+        self.sent = []
+
+    def chat(self, messages, *, model=""):
+        self._count_call()
+        self.sent.append(messages)
+        return self.reply
+
+
+QUESTION = "Which package should I use for HTTP requests?"
+
+
+class BackendTest(unittest.TestCase):
+    """The real-model seam: what each mode sends, and the provider limits."""
+
+    def _lab(self, fake: FakeProvider) -> Lab:
+        lab = Lab()
+        lab.model = ProviderModel(fake, "fake-model")
+        with open(PAYLOAD, encoding="utf-8") as fh:
+            lab.write_page(PAGE, fh.read())
+        return lab
+
+    def test_vulnerable_passes_doc_as_plain_text(self):
+        fake = FakeProvider()
+        self._lab(fake).query(QUESTION)
+        system, user = fake.sent[-1]
+        self.assertIn("goathttp", user.content)
+        self.assertNotIn("untrusted_doc", user.content + system.content)
+
+    def test_hardened_fences_doc(self):
+        fake = FakeProvider()
+        lab = self._lab(fake)
+        lab.set_mode("hardened")
+        lab.query(QUESTION)
+        system, user = fake.sent[-1]
+        self.assertIn("<untrusted_doc>", user.content)
+        self.assertIn("never follow instructions", system.content)
+
+    def test_hardened_grounding_blocks_ungrounded_model_answer(self):
+        # Whatever the model says, an unregistered package never reaches the user.
+        fake = FakeProvider("Use goathttp: pip install goathttp.")
+        lab = self._lab(fake)
+        result = lab.query(QUESTION)
+        self.assertIn("goathttp", result["answer"])          # vulnerable passes it on
+        lab.set_mode("hardened")
+        result = lab.query(QUESTION)
+        self.assertNotIn("pip install goathttp", result["answer"])
+        self.assertTrue(result["grounding_findings"])
+
+    def test_default_backend_is_offline_stub(self):
+        self.assertIsNone(providers.get_provider("stub"))
+        self.assertEqual(Lab().backend, "stub")
+        self.assertEqual(Lab().state()["backend"], "stub")
+        with self.assertRaises(ValueError):
+            providers.get_provider("nope")
+
+    def test_openrouter_requires_key(self):
+        saved = os.environ.pop("OPENROUTER_API_KEY", None)
+        try:
+            with self.assertRaises(RuntimeError):
+                providers.get_provider("openrouter")
+        finally:
+            if saved is not None:
+                os.environ["OPENROUTER_API_KEY"] = saved
+
+    def test_call_cap(self):
+        fake = FakeProvider()
+        fake.max_calls = 2
+        lab = self._lab(fake)
+        lab.query("a")
+        lab.query("b")
+        with self.assertRaises(RuntimeError):
+            lab.query("c")
 
 
 if __name__ == "__main__":

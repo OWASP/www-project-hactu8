@@ -21,9 +21,10 @@ sys.path.insert(0, SKILL_DIR)
 sys.path.insert(0, os.path.join(SKILL_DIR, "scripts"))
 
 from evaluate_kpi import SUITE, classify  # noqa: E402
+import providers  # noqa: E402
 from vulnerable_app import (  # noqa: E402
-    CONSOLE_META, Lab, console_attack, console_evaluate, console_scan, dry_run,
-    submit_payload,
+    CONSOLE_META, Lab, ProviderModel, console_attack, console_evaluate, console_scan,
+    dry_run, submit_payload,
 )
 
 PAYLOAD = os.path.join(SKILL_DIR, "assets", "requests.json")
@@ -130,6 +131,92 @@ class ConsoleApiTest(unittest.TestCase):
                     "metric_name", "metric_abbr", "attack_label", "attack_description",
                     "scan_label", "harden_label", "harden_description"):
             self.assertIn(key, CONSOLE_META)
+
+
+class FakeProvider(providers.Provider):
+    """Records what a real backend would be sent; returns one fixed reply; no network."""
+    name = "fake"
+
+    def __init__(self, reply: str = '{"docs": [], "answer": "Nothing to send."}') -> None:
+        super().__init__()
+        self.reply = reply
+        self.sent = []
+
+    def chat(self, messages, *, model=""):
+        self._count_call()
+        self.sent.append(messages)
+        return self.reply
+
+
+class BackendTest(unittest.TestCase):
+    """The real-model seam: what each mode sends, parsing, and the provider limits."""
+
+    def _lab(self, fake: FakeProvider) -> Lab:
+        lab = Lab()
+        lab.model = ProviderModel(fake, "fake-model")
+        with open(PAYLOAD, encoding="utf-8") as fh:
+            submit_payload(lab, json.load(fh))
+        return lab
+
+    def test_vulnerable_passes_request_as_plain_text(self):
+        fake = FakeProvider()
+        self._lab(fake).run()
+        text = " ".join(m.content for call in fake.sent for m in call)
+        self.assertIn("HR-2001", text)
+        self.assertNotIn("untrusted_data", text)
+
+    def test_hardened_fences_request_and_results(self):
+        fake = FakeProvider()
+        lab = self._lab(fake)
+        lab.set_mode("hardened")
+        lab.run()
+        for system, user in fake.sent:
+            self.assertIn("<untrusted_data>", user.content)
+            self.assertIn("never follow instructions", system.content)
+        self.assertNotIn("demo-", " ".join(m.content for c in fake.sent for m in c))
+
+    def test_default_backend_is_offline_stub(self):
+        self.assertIsNone(providers.get_provider("stub"))
+        self.assertEqual(Lab().backend, "stub")
+        self.assertEqual(Lab().state()["backend"], "stub")
+        with self.assertRaises(ValueError):
+            providers.get_provider("nope")
+
+    def test_openrouter_requires_key(self):
+        saved = os.environ.pop("OPENROUTER_API_KEY", None)
+        try:
+            with self.assertRaises(RuntimeError):
+                providers.get_provider("openrouter")
+        finally:
+            if saved is not None:
+                os.environ["OPENROUTER_API_KEY"] = saved
+
+    def test_call_cap(self):
+        fake = FakeProvider()
+        fake.max_calls = 3
+        lab = self._lab(fake)
+        with self.assertRaises(RuntimeError):
+            lab.run()                      # 7 requests need 14 calls
+        self.assertEqual(len(fake.sent), 3)
+
+    def test_malformed_reply_is_no_action(self):
+        for bad in ("Sure, here you go.", '{"docs": "HR-2001"}', '{"docs": ["../etc"]}',
+                    '{"docs": ["HR-2001; rm"]}', "{not json"):
+            lab = self._lab(FakeProvider(bad))
+            result = lab.run()
+            fetches = [a for a in result["actions"] if a["tool"] == "fetch_doc"]
+            self.assertEqual(fetches, [], bad)
+            self.assertTrue(all(r["answer"].startswith("Billy HR:") for r in result["results"]))
+
+    def test_off_policy_plan_from_model_denied_when_hardened(self):
+        always = '{"docs": ["HR-2001"]}'
+        lab = self._lab(FakeProvider(always))
+        lab.run()
+        self.assertTrue(lab.state()["unentitled_releases"])     # vulnerable: deputy releases
+        lab = self._lab(FakeProvider(always))
+        lab.set_mode("hardened")
+        lab.run()
+        self.assertEqual(lab.state()["unentitled_releases"], [])
 
 
 if __name__ == "__main__":

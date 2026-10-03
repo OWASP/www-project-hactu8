@@ -37,8 +37,9 @@ own prose, and the risky line is batched below what the human reads.
     in-memory action log and a field in an in-memory dict; nothing is paid.
   - State lives in memory only. Actions per run (20), notes per request (20),
     note size, card lines and action-log length are capped.
-  - The model and the human approver are deterministic stubs, so the lab
-    cannot reach a real model or the network.
+  - The model and the human approver are deterministic stubs by default, so
+    the lab cannot reach the network unless you opt into a real-model
+    backend. The approver and the card builder stay in code either way.
   - The server rejects foreign `Host` headers (DNS rebinding) and non-JSON
     POSTs (cross-site forms).
 - The shipped payload is a **placeholder**: one field line with a fictional
@@ -68,6 +69,11 @@ risk in code, and asks about each high-risk call on its own.
 ## Prerequisites
 
 Python 3.9+. Standard library only; nothing to install.
+
+Optional real model: set `ASI09_BACKEND` to `ollama`, `llamacpp` or
+`openrouter` (which needs `OPENROUTER_API_KEY`), and `ASI09_MODEL` to the
+model name, before starting the target. The default `stub` needs no network.
+With `openrouter`, prompts and payloads leave the machine.
 
 ## Execution instructions
 
@@ -140,6 +146,7 @@ of a card the approver reads, edit `assets/approval_policy.json`.
 |------|---------|
 | `vulnerable_app.py` | Target agent (`/agent`, `/portal/amend`, `/requests/<id>`, `/api/actions`, `/health`) plus the console API (`/api/meta`, `/api/state`, `/api/reset`, `/api/attack`, `/api/evaluate`, `/api/scan`, `/api/mode`). |
 | `web/` | Shared HACTU8 lab console, served at `/`. |
+| `providers.py` | Optional real-model backends: Ollama, llama.cpp, OpenRouter. Shared and copied unchanged. |
 | `scripts/run_trust_exploit.py` | Attack: amend one change request. |
 | `scripts/evaluate_kpi.py` | Stoplight KPI + MAR against the live app; `--harden` and `--scan` mitigations. |
 | `scripts/reset_baseline.py` | Restores the seeded vendors and requests, clears the action log, sets vulnerable mode. |

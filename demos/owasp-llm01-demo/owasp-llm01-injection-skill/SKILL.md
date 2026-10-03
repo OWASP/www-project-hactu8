@@ -31,8 +31,8 @@ instruction it finds there.
 - The vulnerable app is insecure **by design**; do not expose it. Three
   host-safety guards are built in. None of them weakens the lesson:
   - Wiki state lives in memory only, so page edits never touch the filesystem.
-  - The model is a deterministic stub, so the lab cannot reach a real model
-    or the network.
+  - The model is a deterministic stub by default, so the lab cannot reach
+    the network unless you opt into a real-model backend.
   - The server rejects foreign `Host` headers (DNS rebinding) and non-JSON
     POSTs (cross-site forms).
 - The shipped payload is a **placeholder**: a marker line plus a fictional
@@ -59,6 +59,11 @@ them before use.
 ## Prerequisites
 
 Python 3.9+. Standard library only; nothing to install.
+
+Optional real model: set `LLM01_BACKEND` to `ollama`, `llamacpp` or
+`openrouter` (which needs `OPENROUTER_API_KEY`), and `LLM01_MODEL` to the
+model name, before starting the target. The default `stub` needs no network.
+With `openrouter`, prompts and payloads leave the machine.
 
 ## Execution instructions
 
@@ -127,6 +132,7 @@ lesson. To test the screen, extend `assets/screen_rules.json`.
 |------|---------|
 | `vulnerable_app.py` | Target KB assistant (`/query`, `/kb/page`, `/health`) plus the console API (`/api/meta`, `/api/state`, `/api/reset`, `/api/attack`, `/api/evaluate`, `/api/scan`, `/api/mode`). |
 | `web/` | Shared HACTU8 lab console, served at `/`. |
+| `providers.py` | Optional real-model backends: Ollama, llama.cpp, OpenRouter. Shared and copied unchanged. |
 | `scripts/run_injection.py` | Attack: overwrite one wiki page with the injected page. |
 | `scripts/evaluate_kpi.py` | Stoplight KPI + ISR against the live app; `--harden` and `--scan` mitigations. |
 | `scripts/reset_baseline.py` | Restores the seeded wiki and vulnerable mode. |

@@ -25,8 +25,8 @@ description.
 - **Stub backend.** Your instruction must sit on a line that starts with
   `@assistant:`. Whatever follows the marker becomes the answer. Include the
   canary if you want the evaluator to score RED without editing it.
-- **Real-model backend.** Not wired in this version (see the README). For a real
-  model, write the instruction in natural language, as tool-poisoning payloads
+- **Real-model backend.** Optional (`LLM04_BACKEND`, see the README). For a
+  real model, write the instruction in natural language, as tool-poisoning payloads
   do. Pinning still catches it: any change to the description changes its
   SHA-256, whatever the wording. That is the point of the control.
 - **Re-approving.** If you change the description on purpose, re-hash it into

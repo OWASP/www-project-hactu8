@@ -87,11 +87,47 @@ You'll see four acts:
 
 ### Optional: run against a real model
 
-Not wired in this version. The stubs are the only backend. The seams are
-`StubPlanner.plan(request)` and `StubModel.next_call(messages, made)` in
-`vulnerable_app.py`; a real backend replaces them with a planning model and a
-tool-calling model. The verifier needs no change for a real model, because it
-never reads a message's wording (see the payload README).
+The stub is the default backend. `providers.py` (the same provider layer as
+AgenticGoat) adds three real ones. All are standard library only:
+
+```bash
+python run_demo.py --backend ollama --model llama3.2          # local Ollama
+python run_demo.py --backend llamacpp                         # local llama.cpp server
+export OPENROUTER_API_KEY=...                                 # remote; key stays in the header
+python run_demo.py --backend openrouter --model meta-llama/llama-3.2-3b-instruct
+
+# the target and console take the same settings from the environment:
+ASI07_BACKEND=openrouter ASI07_MODEL=... python owasp-asi07-a2a-skill/vulnerable_app.py
+```
+
+The backend replaces Billy Exec's model (`ProviderModel` in
+`vulnerable_app.py`); Billy Planner stays a deterministic stub, so genuine
+work orders are the same on every backend. The bus, the attack and the
+verifier are unchanged. Which work orders reach the model is still decided in
+code, in both modes:
+- **Vulnerable mode** pastes every order whose `sender` field says `planner`
+  into the user turn as plain text.
+- **Hardened mode** runs `verify_message` first (signature, sender allowlist,
+  replay), then fences each verified order in `<work_order>` tags and tells the
+  model to take only the requested tool steps from it ("spotlighting").
+
+The model replies with one JSON object, `{"calls": [{"tool": ..., "args":
+{...}}]}`. The reply is parsed defensively: unknown tools, bad arguments and
+any call whose target is not named in an accepted work order are dropped, and
+unparseable output means no calls. Accepted calls go through the same
+simulated tools and action log as the stub's; nothing the model returns is
+executed or fetched. The verifier needs no change for a real model, because it
+never reads a message's wording (see the payload README), and `run_demo.py`
+reports the numbers rather than asserting them.
+
+Limits:
+- `LAB_MAX_CALLS` (default 200) caps calls per process. One model call per job.
+- `LAB_MAX_TOKENS` (default 400) caps output tokens per call.
+- `OLLAMA_TIMEOUT`, `LLAMACPP_TIMEOUT` and `OPENROUTER_TIMEOUT` set
+  per-provider HTTP timeouts.
+
+With `openrouter`, lab prompts, including your payloads, leave the machine.
+The stub and the local backends keep everything on the host.
 
 ---
 
@@ -240,6 +276,7 @@ owasp-asi07-demo/
 ├── owasp-asi07-a2a-skill/
 │   ├── SKILL.md                       #   metadata + instructions
 │   ├── vulnerable_app.py              #   Module 1: target, bus, stub agents, verifier
+│   ├── providers.py                   #   optional real-model backends (shared, unchanged)
 │   ├── requirements.txt               #   stdlib only
 │   ├── web/                           #   shared lab console (index.html, app.js, styles.css)
 │   ├── scripts/
@@ -274,7 +311,7 @@ python scripts/evaluate_kpi.py --scan assets/forged_order.md   # REJECT, exit 2
 python scripts/evaluate_kpi.py --harden                        # GREEN, FMAR 0%, exit 0
 python scripts/reset_baseline.py                               # restore clean state
 python scripts/evaluate_kpi.py                                 # GREEN, FMAR 0%
-python -m unittest discover tests                              # 8 tests
+python -m unittest discover tests                              # 18 tests
 ```
 
 ## License

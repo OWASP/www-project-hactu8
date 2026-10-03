@@ -38,6 +38,10 @@ session's transcript.
   - People and documents are fictional; state lives in memory only.
   - Sessions, tokens, queued requests, documents per request and the action
     log are all capped.
+  - The model is a deterministic stub by default, so the lab cannot reach
+    the network unless you opt into a real-model backend. A real model only
+    returns document ids and an answer as JSON; it never sees a token, and
+    nothing it returns is executed.
   - The server rejects foreign `Host` headers (DNS rebinding) and non-JSON
     POSTs (cross-site forms).
 - The shipped payload is a **placeholder**: plain requests for fictional
@@ -57,6 +61,11 @@ session's transcript.
 ## Prerequisites
 
 Python 3.9+. Standard library only; nothing to install.
+
+Optional real model: set `ASI03_BACKEND` to `ollama`, `llamacpp` or
+`openrouter` (which needs `OPENROUTER_API_KEY`), and `ASI03_MODEL` to the
+model name, before starting the target. The default `stub` needs no network.
+With `openrouter`, prompts and payloads leave the machine.
 
 ## Execution instructions
 
@@ -126,6 +135,7 @@ to `false` in `assets/identity_policy.json`.
 |------|---------|
 | `vulnerable_app.py` | Target HR agent (`/login`, `/requests`, `/agent/run`, `/api/history`, `/api/queue`, `/api/actions`, `/health`) plus the console API (`/api/meta`, `/api/state`, `/api/reset`, `/api/attack`, `/api/evaluate`, `/api/scan`, `/api/mode`). |
 | `web/` | Shared HACTU8 lab console, served at `/`. |
+| `providers.py` | Optional real-model backends: Ollama, llama.cpp, OpenRouter. Shared and copied unchanged. |
 | `scripts/run_privilege_abuse.py` | Attack: log in as the intern and file the requests. |
 | `scripts/evaluate_kpi.py` | Stoplight KPI + PER from the action log; `--harden` and `--scan` mitigations. |
 | `scripts/reset_baseline.py` | Restores the seeded desk, fresh tokens and vulnerable mode. |

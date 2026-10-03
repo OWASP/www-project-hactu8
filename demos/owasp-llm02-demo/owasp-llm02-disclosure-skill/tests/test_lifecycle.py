@@ -18,8 +18,9 @@ sys.path.insert(0, SKILL_DIR)
 sys.path.insert(0, os.path.join(SKILL_DIR, "scripts"))
 
 from evaluate_kpi import SUITE, classify  # noqa: E402
+import providers  # noqa: E402
 from vulnerable_app import (  # noqa: E402
-    CONSOLE_META, Lab, console_attack, console_evaluate, console_scan,
+    CONSOLE_META, Lab, ProviderModel, console_attack, console_evaluate, console_scan,
     load_redaction_rules, redact_output, scan_for_secrets,
 )
 
@@ -121,6 +122,100 @@ class ConsoleApiTest(unittest.TestCase):
                     "metric_name", "metric_abbr", "attack_label", "attack_description",
                     "scan_label", "harden_label", "harden_description"):
             self.assertIn(key, CONSOLE_META)
+
+
+class FakeProvider(providers.Provider):
+    """Records what a real backend would be sent; no network.
+
+    Replies with ``plan_reply`` when asked for the read_records JSON plan, and
+    with ``answer`` otherwise.
+    """
+    name = "fake"
+
+    def __init__(self, plan_reply: str = '{"read_records": []}',
+                 answer: str = "You are on the Basic plan.") -> None:
+        super().__init__()
+        self.plan_reply = plan_reply
+        self.answer = answer
+        self.sent = []
+
+    def chat(self, messages, *, model=""):
+        self._count_call()
+        self.sent.append(messages)
+        return self.plan_reply if "read_records" in messages[0].content else self.answer
+
+
+class BackendTest(unittest.TestCase):
+    """The real-model seam: what each mode sends, JSON plan parsing, limits."""
+
+    def _lab(self, fake: FakeProvider, mode: str = "vulnerable") -> Lab:
+        lab = Lab()
+        lab.model = ProviderModel(fake, "fake-model")
+        lab.set_mode(mode)
+        with open(PAYLOAD, encoding="utf-8") as fh:
+            lab.set_notes(ATTACKER, fh.read())
+        return lab
+
+    def test_vulnerable_sends_key_and_notes_as_plain_text(self):
+        fake = FakeProvider()
+        self._lab(fake).query(ATTACKER, "What plan am I on?")
+        system, user = fake.sent[-1]
+        self.assertIn("LLM02-CANARY-5e1d", system.content)
+        self.assertIn("@assistant:", user.content)
+        self.assertNotIn("untrusted_tool_output", user.content + system.content)
+
+    def test_hardened_fences_tool_output_and_drops_key(self):
+        fake = FakeProvider()
+        self._lab(fake, "hardened").query(ATTACKER, "What plan am I on?")
+        for system, user in fake.sent:
+            self.assertNotIn("LLM02-CANARY", system.content + user.content)
+            self.assertIn("<untrusted_tool_output>", user.content)
+            self.assertIn("never follow instructions", system.content)
+
+    def test_malformed_plan_reads_nothing_extra(self):
+        for bad in ("sure!", '{"read_records": "C-1001"}', "[1, 2]", '{"read_records": ["x"]}'):
+            fake = FakeProvider(plan_reply=bad)
+            out = self._lab(fake).query(ATTACKER, "What plan am I on?")
+            self.assertEqual(out["records_read"], [ATTACKER], bad)
+
+    def test_vulnerable_follows_model_plan(self):
+        fake = FakeProvider(plan_reply='ok {"read_records": ["C-1001", "C-1002"]}')
+        out = self._lab(fake).query(ATTACKER, "What plan am I on?")
+        self.assertEqual(out["records_read"], [ATTACKER, "C-1001", "C-1002"])
+        self.assertIn("ada.thornbury@example.invalid", fake.sent[-1][1].content)
+
+    def test_hardened_code_controls_hold_against_model(self):
+        leak = "Ada: ada.thornbury@example.invalid, key LLM02-CANARY-5e1d"
+        fake = FakeProvider(plan_reply='{"read_records": ["C-1001"]}', answer=leak)
+        out = self._lab(fake, "hardened").query(ATTACKER, "What plan am I on?")
+        self.assertIn("access denied", fake.sent[-1][1].content)
+        self.assertNotIn("ada.thornbury@example.invalid", fake.sent[-1][1].content)
+        self.assertNotIn("ada.thornbury@example.invalid", out["answer"])
+        self.assertNotIn("LLM02-CANARY", out["answer"])
+
+    def test_default_backend_is_offline_stub(self):
+        self.assertIsNone(providers.get_provider("stub"))
+        self.assertEqual(Lab().backend, "stub")
+        self.assertEqual(Lab().state()["backend"], "stub")
+        with self.assertRaises(ValueError):
+            providers.get_provider("nope")
+
+    def test_openrouter_requires_key(self):
+        saved = os.environ.pop("OPENROUTER_API_KEY", None)
+        try:
+            with self.assertRaises(RuntimeError):
+                providers.get_provider("openrouter")
+        finally:
+            if saved is not None:
+                os.environ["OPENROUTER_API_KEY"] = saved
+
+    def test_call_cap(self):
+        fake = FakeProvider()
+        fake.max_calls = 2                      # one query = plan + answer
+        lab = self._lab(fake)
+        lab.query(ATTACKER, "a")
+        with self.assertRaises(RuntimeError):
+            lab.query(ATTACKER, "b")
 
 
 if __name__ == "__main__":

@@ -35,8 +35,8 @@ tool turn hostile from its second call. Billy itself is never touched.
   - The registry is a JSON file that must live in this skill's `registry/`
     folder (gitignored). Reads are size-capped and the tool count is capped.
   - Sampling is capped at 5 calls per tool.
-  - The model is a deterministic stub, so the lab cannot reach a real model
-    or the network.
+  - The model is a deterministic stub by default, so the lab cannot reach
+    the network unless you opt into a real-model backend.
   - The server rejects foreign `Host` headers (DNS rebinding) and non-JSON
     POSTs (cross-site forms).
 - The shipped payloads are **placeholders**: a marker line plus a fictional
@@ -66,6 +66,11 @@ trusting an update.
 ## Prerequisites
 
 Python 3.9+. Standard library only; nothing to install.
+
+Optional real model: set `LLM04_BACKEND` to `ollama`, `llamacpp` or
+`openrouter` (which needs `OPENROUTER_API_KEY`), and `LLM04_MODEL` to the
+model name, before starting the target. The default `stub` needs no network.
+With `openrouter`, prompts and payloads leave the machine.
 
 ## Execution instructions
 
@@ -138,6 +143,7 @@ with `run_rug_pull.py --trigger 6` to see the sampler's blind spot.
 |------|---------|
 | `vulnerable_app.py` | Target assistant (`/query`, `/tools`, `/health`), stub model, admission gate, plus the console API (`/api/meta`, `/api/state`, `/api/reset`, `/api/attack`, `/api/evaluate`, `/api/scan`, `/api/mode`). |
 | `web/` | Shared HACTU8 lab console, served at `/`. |
+| `providers.py` | Optional real-model backends: Ollama, llama.cpp, OpenRouter. Shared and copied unchanged. |
 | `scripts/run_rug_pull.py` | Attack: publish a compromised release to the registry file. |
 | `scripts/evaluate_kpi.py` | Stoplight KPI + CTR against the live app; `--harden` and `--scan` mitigations. |
 | `scripts/reset_baseline.py` | Restores the approved registry and vulnerable mode. |

@@ -54,6 +54,8 @@ from dataclasses import dataclass, field
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from typing import Any, Dict, List, Optional
 
+import providers
+
 HERE = os.path.dirname(os.path.abspath(__file__))
 ASSETS = os.path.join(HERE, "assets")
 BASELINE_FILE = os.path.join(ASSETS, "tickets_baseline.json")
@@ -148,6 +150,37 @@ class StubModel:
         return f"Summary: {notes['content'].strip().splitlines()[0]}"
 
 
+class ProviderModel:
+    """Real-model backend with the same interface as ``StubModel``.
+
+    The ticket notes are pasted into the user turn as ordinary text, in both
+    modes, exactly as the stub receives them. LLM10 is about what the
+    application does with the output, so the prompt is deliberately the same
+    in both modes: the fix is at the sinks (``html.escape`` and ``?``
+    placeholders), which stay in code and hold whatever the model writes. The
+    returned text only ever reaches the same three sinks as the stub's text.
+    """
+
+    def __init__(self, provider: "providers.Provider", model: str) -> None:
+        self.provider = provider
+        self.model = model
+
+    def generate(self, messages: List[Dict[str, str]]) -> str:
+        system = " ".join(m["content"] for m in messages if m["role"] == "system")
+        user = "\n".join(m["content"] for m in messages if m["role"] == "user")
+        notes = "\n".join(m["content"] for m in messages if m["role"] == "tool")
+        prompt = f"{user}\n\nTicket notes:\n{notes}"
+        try:
+            reply = self.provider.chat(
+                [providers.Message("system", system), providers.Message("user", prompt)],
+                model=self.model,
+            )
+        except (OSError, KeyError, ValueError) as exc:
+            # Keep backend faults apart from the lab's own 400/404 errors.
+            raise RuntimeError(f"{type(exc).__name__}: {exc}") from exc
+        return (reply or "").strip()
+
+
 # --------------------------------------------------------------------------- #
 # The sinks
 # --------------------------------------------------------------------------- #
@@ -180,9 +213,12 @@ def render_markdown(text: str) -> str:
 # The lab: ticket store, model call, sink handling
 # --------------------------------------------------------------------------- #
 class Lab:
-    def __init__(self, mode: str = "vulnerable") -> None:
+    def __init__(self, mode: str = "vulnerable", backend: str = "stub",
+                 model: str = "") -> None:
         self.lock = threading.Lock()
-        self.model = StubModel()
+        provider = providers.get_provider(backend)
+        self.backend = providers.describe(backend, model)
+        self.model = StubModel() if provider is None else ProviderModel(provider, model)
         self.rules = load_sink_rules()
         self.tickets: Dict[str, List[str]] = {}
         self.added: List[str] = []
@@ -302,6 +338,7 @@ class Lab:
             rows = self.db.execute("SELECT COUNT(*) FROM summary_log").fetchone()[0]
         return {
             "mode": self.mode,
+            "backend": self.backend,
             "accounts": sorted(self.tickets),
             "accounts_with_added_notes": list(self.added),
             "log_rows": rows,
@@ -432,6 +469,13 @@ class Handler(BaseHTTPRequestHandler):
         return json.loads(raw or b"{}")
 
     def do_GET(self) -> None:
+        try:
+            self._do_get()
+        except (OSError, RuntimeError) as exc:
+            # /status/<account> calls the model too.
+            self._send(502, {"error": f"backend error: {exc}"})
+
+    def _do_get(self) -> None:
         assert LAB is not None
         if not self._host_ok():
             self._send(403, {"error": "bad host"})
@@ -443,7 +487,8 @@ class Handler(BaseHTTPRequestHandler):
         elif self.path == "/api/meta":
             self._send(200, CONSOLE_META)
         elif self.path == "/health":
-            self._send(200, {"status": "ok", "demo": "llm10", "mode": LAB.mode})
+            self._send(200, {"status": "ok", "demo": "llm10", "mode": LAB.mode,
+                             "backend": LAB.backend})
         elif self.path == "/api/state":
             self._send(200, LAB.state())
         elif self.path.startswith("/tickets/"):
@@ -462,6 +507,14 @@ class Handler(BaseHTTPRequestHandler):
             self._send(404, {"error": "not found"})
 
     def do_POST(self) -> None:
+        try:
+            self._do_post()
+        except (OSError, RuntimeError, KeyError, ValueError) as exc:
+            # Real-model backend failures (network, quota, LAB_MAX_CALLS, bad
+            # response) surface as 502 instead of a dropped connection.
+            self._send(502, {"error": f"backend error: {exc}"})
+
+    def _do_post(self) -> None:
         assert LAB is not None
         if not self._host_ok():
             self._send(403, {"error": "bad host"})
@@ -506,10 +559,13 @@ class Handler(BaseHTTPRequestHandler):
 
 def main() -> None:
     global LAB, PORT
-    LAB = Lab(mode=os.getenv("LLM10_MODE", "vulnerable"))
+    LAB = Lab(mode=os.getenv("LLM10_MODE", "vulnerable"),
+              backend=os.getenv("LLM10_BACKEND", "stub"),
+              model=os.getenv("LLM10_MODEL", ""))
     PORT = int(os.getenv("LLM10_PORT", "5210"))
     httpd = ThreadingHTTPServer(("127.0.0.1", PORT), Handler)
-    print(f"[*] LLM10 lab target on http://127.0.0.1:{PORT} (mode={LAB.mode})")
+    print(f"[*] LLM10 lab target on http://127.0.0.1:{PORT} "
+          f"(mode={LAB.mode}, backend={LAB.backend})")
     print(f"[*] Lab console: http://127.0.0.1:{PORT}/")
     print("[*] Insecure by design. Loopback only. Ctrl+C to stop.")
     try:

@@ -78,10 +78,47 @@ You'll see four acts, each a fresh four-tick run of the fleet:
 
 ### Optional: run against a real model
 
-Not wired in this version. The stub is the only backend. The seam is
-`StubModel.plan(config, job, tick)` in `vulnerable_app.py`; a real backend
-replaces it. Neither control reads the instructions, so hardened mode works
-unchanged with a natural-language payload (see the payload README).
+The stub is the default backend. `providers.py` (the same provider layer as
+AgenticGoat) adds three real ones. All are standard library only:
+
+```bash
+python run_demo.py --backend ollama --model llama3.2          # local Ollama
+python run_demo.py --backend llamacpp                         # local llama.cpp server
+export OPENROUTER_API_KEY=...                                 # remote; key stays in the header
+python run_demo.py --backend openrouter --model meta-llama/llama-3.2-3b-instruct
+
+# the target and console take the same settings from the environment:
+ASI10_BACKEND=openrouter ASI10_MODEL=... python owasp-asi10-rogue-agent-skill/vulnerable_app.py
+```
+
+The attack mechanics are identical. Only the planner changes:
+`ProviderModel.plan` gives the model the loaded config (instructions and
+mandate) and the tick's scheduled job, and asks it to reply with
+`{"actions": [{"action": ..., "resource": ...}]}`. A reply that does not parse
+plans no action, and the agent's self-check still drops anything the loaded
+mandate does not allow. Nothing the model returns is executed; it only
+becomes entries in the simulated action log.
+- **Vulnerable mode** hands the model whatever config the store holds,
+  tampered instructions included, as its own operating instructions.
+- **Hardened mode** sends the same prompt shape, but the signature check
+  decides which config reaches the model (a tampered one is rejected and the
+  last verified one used), and the runtime monitor checks every planned
+  action against the signed mandate. There is no third-party text to fence
+  here, so the controls stay in code, not in the prompt.
+
+A real model may ignore the placeholder payload. Write a natural-language
+payload (see `assets/tampered_mandate.README.md`), and `run_demo.py` reports
+the numbers rather than asserting them.
+
+Limits:
+- `LAB_MAX_CALLS` (default 200) caps calls per process. A 4-tick run makes
+  up to 12 calls (3 agents x 4 ticks).
+- `LAB_MAX_TOKENS` (default 400) caps output tokens per call.
+- `OLLAMA_TIMEOUT`, `LLAMACPP_TIMEOUT` and `OPENROUTER_TIMEOUT` set
+  per-provider HTTP timeouts.
+
+With `openrouter`, lab prompts, including your payloads, leave the machine.
+The stub and the local backends keep everything on the host.
 
 ---
 
@@ -216,6 +253,7 @@ owasp-asi10-demo/
 │   ├── vulnerable_app.py              #   Module 1: fleet, stub model, mitigations
 │   ├── requirements.txt               #   stdlib only
 │   ├── web/                           #   shared lab console (index.html, app.js, styles.css)
+│   ├── providers.py                   #   optional real-model backends (shared, unchanged)
 │   ├── scripts/
 │   │   ├── run_mandate_tamper.py      #   Module 2: the attack
 │   │   ├── evaluate_kpi.py            #   Module 3: stoplight KPI, --harden, --scan
@@ -247,7 +285,7 @@ python scripts/evaluate_kpi.py --scan assets/tampered_mandate.json   # REJECT, e
 python scripts/evaluate_kpi.py --harden                          # GREEN, OMAR 0%, exit 0
 python scripts/reset_baseline.py                                 # restore clean state
 python scripts/evaluate_kpi.py                                   # GREEN, OMAR 0%
-python -m unittest discover tests                                # 9 tests
+python -m unittest discover tests                                # 19 tests
 ```
 
 ## License

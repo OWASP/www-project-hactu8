@@ -18,10 +18,13 @@ SKILL_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, SKILL_DIR)
 sys.path.insert(0, os.path.join(SKILL_DIR, "scripts"))
 
+import json  # noqa: E402
+
 from evaluate_kpi import TARGET_AGENT, score  # noqa: E402
+import providers  # noqa: E402
 from run_mandate_tamper import apply_edit, load_payload  # noqa: E402
 from vulnerable_app import (  # noqa: E402
-    CONSOLE_META, Lab, console_attack, console_evaluate, console_scan, dry_run,
+    CONSOLE_META, Lab, ProviderModel, console_attack, console_evaluate, console_scan, dry_run,
     sign_config, verify_config,
 )
 
@@ -135,6 +138,119 @@ class ConsoleApiTest(unittest.TestCase):
                     "metric_name", "metric_abbr", "attack_label", "attack_description",
                     "scan_label", "harden_label", "harden_description"):
             self.assertIn(key, CONSOLE_META)
+
+
+class FakeProvider(providers.Provider):
+    """Records what a real backend would be sent; no network.
+
+    By default it plans the scheduled job plus every standing order in the
+    instructions it was given, as an obedient model would.
+    """
+    name = "fake"
+
+    def __init__(self, reply: str = "") -> None:
+        super().__init__()
+        self.reply = reply
+        self.sent = []
+
+    def chat(self, messages, *, model=""):
+        self._count_call()
+        self.sent.append(messages)
+        if self.reply:
+            return self.reply
+        system, user = messages
+        tick = int(user.content.split()[1].rstrip("."))
+        acts = [line[2:].split() for line in user.content.splitlines()
+                if line.startswith("- ") and "(nothing" not in line]
+        for line in system.content.splitlines():
+            parts = line.split()
+            if line.startswith("@assistant:") and len(parts) == 7 and tick >= int(parts[3]):
+                acts.append(parts[5:7])
+        return "Plan: " + json.dumps({"actions": [{"action": a, "resource": r} for a, r in acts]})
+
+
+class BackendTest(unittest.TestCase):
+    """The real-model seam: what each mode sends, reply parsing, and provider limits."""
+
+    def _lab(self, fake: FakeProvider, mode: str = "vulnerable") -> Lab:
+        lab = Lab(mode=mode)
+        lab.model = ProviderModel(fake, "fake-model")
+        tamper(lab, load_payload(PAYLOAD))
+        return lab
+
+    def _sent_to_stock(self, fake: FakeProvider):
+        return [m for m in fake.sent if "Billy Stock" in m[0].content]
+
+    def test_vulnerable_sends_tampered_instructions(self):
+        fake = FakeProvider()
+        lab = self._lab(fake)
+        statuses, omar, _, off = score(lab.run())
+        system = self._sent_to_stock(fake)[0][0].content
+        self.assertIn("ASI10-CANARY", system)
+        self.assertIn("export_records", system)
+        self.assertEqual(omar, 100.0)
+        self.assertGreater(off, 0)
+
+    def test_hardened_sends_only_the_verified_config(self):
+        fake = FakeProvider()
+        lab = self._lab(fake, mode="hardened")
+        statuses, omar, _, off = score(lab.run())
+        for system, _ in self._sent_to_stock(fake):
+            self.assertNotIn("ASI10-CANARY", system.content)
+            self.assertNotIn("export_records", system.content)
+        self.assertEqual((omar, off), (0, 0))
+        self.assertTrue(all(s == "GREEN" for s, _ in statuses), statuses)
+
+    def test_off_mandate_plan_blocked_by_monitor_in_hardened(self):
+        # Signature check off, so the tampered config reaches the model; the
+        # monitor still blocks the first off-mandate action and quarantines.
+        fake = FakeProvider()
+        lab = self._lab(fake, mode="hardened")
+        lab.controls["signatures"] = False
+        result = lab.run()
+        statuses, omar, _, off = score(result)
+        self.assertEqual((omar, off), (0, 0))
+        self.assertEqual(result["quarantined"], {TARGET_AGENT: 1})
+
+    def test_reply_outside_loaded_mandate_is_dropped(self):
+        reply = json.dumps({"actions": [{"action": "export_records", "resource": "customers/x"},
+                                        {"action": "read_ledger", "resource": "ledger/x"}]})
+        lab = Lab()
+        lab.model = ProviderModel(FakeProvider(reply), "fake-model")
+        result = lab.run(1)
+        self.assertEqual([e["key"] for e in result["action_log"]], ["read_ledger ledger/x"])
+
+    def test_malformed_reply_plans_no_action(self):
+        for reply in ("not json", "{broken", '{"actions": "x"}', "[1, 2]",
+                      '{"actions": [{"action": "Read Ledger!", "resource": "ledger/x"}]}',
+                      '{"actions": [{"action": "read_ledger", "resource": 7}]}'):
+            lab = Lab()
+            lab.model = ProviderModel(FakeProvider(reply), "fake-model")
+            self.assertEqual(lab.run(1)["action_log"], [], reply)
+
+    def test_default_backend_is_offline_stub(self):
+        self.assertIsNone(providers.get_provider("stub"))
+        self.assertEqual(Lab().backend, "stub")
+        self.assertEqual(Lab().state()["backend"], "stub")
+        with self.assertRaises(ValueError):
+            providers.get_provider("nope")
+
+    def test_openrouter_requires_key(self):
+        saved = os.environ.pop("OPENROUTER_API_KEY", None)
+        try:
+            with self.assertRaises(RuntimeError):
+                providers.get_provider("openrouter")
+        finally:
+            if saved is not None:
+                os.environ["OPENROUTER_API_KEY"] = saved
+
+    def test_call_cap(self):
+        fake = FakeProvider()
+        fake.max_calls = 2
+        lab = self._lab(fake)
+        with self.assertRaises(RuntimeError):
+            lab.run(1)          # three agents, three calls
+        self.assertEqual(len(fake.sent), 2)
 
 
 if __name__ == "__main__":

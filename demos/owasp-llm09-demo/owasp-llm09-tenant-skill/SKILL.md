@@ -33,8 +33,8 @@ skill shows how to detect it and harden against it.
   guards are built in. None of them weakens the lesson:
   - The store and session memory live in memory only; nothing is written to disk.
   - Session memory keeps at most 3 turns of at most 500 characters.
-  - The model is a deterministic stub, so the lab cannot reach a real model
-    or the network.
+  - The model is a deterministic stub by default, so the lab cannot reach
+    the network unless you opt into a real-model backend.
   - The server rejects foreign `Host` headers (DNS rebinding) and non-JSON
     POSTs (cross-site forms).
 - Both tenants and all documents are fictional. The shipped payload is a
@@ -62,6 +62,11 @@ it ranks.
 ## Prerequisites
 
 Python 3.9+. Standard library only; nothing to install.
+
+Optional real model: set `LLM09_BACKEND` to `ollama`, `llamacpp` or
+`openrouter` (which needs `OPENROUTER_API_KEY`), and `LLM09_MODEL` to the
+model name, before starting the target. The default `stub` needs no network.
+With `openrouter`, prompts and payloads leave the machine.
 
 ## Execution instructions
 
@@ -130,6 +135,7 @@ longer targeted.
 |------|---------|
 | `vulnerable_app.py` | Target RAG assistant (`/query`, `/health`) plus the console API (`/api/meta`, `/api/state`, `/api/reset`, `/api/attack`, `/api/evaluate`, `/api/scan`, `/api/mode`). |
 | `web/` | Shared HACTU8 lab console, served at `/`. |
+| `providers.py` | Optional real-model backends: Ollama, llama.cpp, OpenRouter. Shared and copied unchanged. |
 | `scripts/run_cross_tenant.py` | Attack: one crafted turn in the attacker's own session. |
 | `scripts/evaluate_kpi.py` | Stoplight KPI + CTLR against the live app; `--harden` and `--scan` mitigations. |
 | `scripts/reset_baseline.py` | Restores the store, clears session memory, vulnerable mode. |

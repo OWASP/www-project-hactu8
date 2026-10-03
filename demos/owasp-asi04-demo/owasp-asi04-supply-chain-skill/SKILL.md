@@ -38,8 +38,10 @@ the newest version, so the attacker's entry wins.
   - The catalogue file must live in this skill's `catalogue/` folder, and is
     size-capped. Skill count, entry size, steps per task and the action log
     are capped.
-  - The model is a deterministic stub, so the lab cannot reach a real model
-    or the network.
+  - The model is a deterministic stub by default, so the lab cannot reach
+    the network unless you opt into a real-model backend. A real model's
+    output is only written to the simulated action log; it is never
+    executed.
   - The server rejects foreign `Host` headers (DNS rebinding) and non-JSON
     POSTs (cross-site forms).
 - The shipped payload is a **placeholder**: a marker line plus a fictional
@@ -68,6 +70,11 @@ pinned manifest approves.
 ## Prerequisites
 
 Python 3.9+. Standard library only; nothing to install.
+
+Optional real model: set `ASI04_BACKEND` to `ollama`, `llamacpp` or
+`openrouter` (which needs `OPENROUTER_API_KEY`), and `ASI04_MODEL` to the
+model name, before starting the target. The default `stub` needs no network.
+With `openrouter`, prompts and payloads leave the machine.
 
 ## Execution instructions
 
@@ -139,6 +146,7 @@ never resolved and the UCLR stays at 0. That threshold is part of the lesson.
 |------|---------|
 | `vulnerable_app.py` | Target agent (`/agent`, `/catalogue`, `/catalogue/publish`, `/api/actions`, `/health`) plus the console API (`/api/meta`, `/api/state`, `/api/reset`, `/api/attack`, `/api/evaluate`, `/api/scan`, `/api/mode`). |
 | `web/` | Shared HACTU8 lab console, served at `/`. |
+| `providers.py` | Optional real-model backends: Ollama, llama.cpp, OpenRouter. Shared and copied unchanged. |
 | `scripts/run_lookalike_publish.py` | Attack: publish one lookalike skill to the catalogue. |
 | `scripts/evaluate_kpi.py` | Stoplight KPI + UCLR against the live app; `--harden` and `--scan` mitigations. |
 | `scripts/reset_baseline.py` | Restores the seeded catalogue, clears the action log, vulnerable mode. |

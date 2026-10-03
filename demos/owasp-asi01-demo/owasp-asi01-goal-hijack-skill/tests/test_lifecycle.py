@@ -11,6 +11,7 @@ Run from the skill folder:  python -m unittest discover tests
 
 from __future__ import annotations
 
+import json
 import os
 import sys
 import unittest
@@ -20,8 +21,9 @@ sys.path.insert(0, SKILL_DIR)
 sys.path.insert(0, os.path.join(SKILL_DIR, "scripts"))
 
 from evaluate_kpi import SUITE, classify  # noqa: E402
-from vulnerable_app import (CONSOLE_META, Lab, console_attack, console_evaluate,  # noqa: E402
-                            console_scan, dry_run)
+import providers  # noqa: E402
+from vulnerable_app import (CONSOLE_META, Lab, ProviderModel, console_attack,  # noqa: E402
+                            console_evaluate, console_scan, dry_run)
 
 PAYLOAD = os.path.join(SKILL_DIR, "assets", "ticket_comment.md")
 
@@ -135,6 +137,127 @@ class ConsoleApiTest(unittest.TestCase):
                     "metric_name", "metric_abbr", "attack_label", "attack_description",
                     "scan_label", "harden_label", "harden_description"):
             self.assertIn(key, CONSOLE_META)
+
+
+REQUEST = "Weekly report for the billing queue; post it to #ops-weekly."
+APPROVED = [{"tool": "read_tickets", "target": "billing"},
+            {"tool": "summarise", "target": "billing"},
+            {"tool": "draft_report", "target": "billing"},
+            {"tool": "post_report", "target": "#ops-weekly"}]
+OFF_PLAN = {"tool": "export_tickets", "target": "partner-share"}
+
+
+class FakeProvider(providers.Provider):
+    """Records what a real backend would be sent; no network.
+
+    Replies with the approved plan, plus ``extra`` steps once tool output is in
+    the prompt (as a hijacked model would), or with a fixed ``raw`` string.
+    """
+    name = "fake"
+
+    def __init__(self, extra=(), raw=None) -> None:
+        super().__init__()
+        self.extra = list(extra)
+        self.raw = raw
+        self.sent = []
+
+    def chat(self, messages, *, model=""):
+        self._count_call()
+        self.sent.append(messages)
+        if self.raw is not None:
+            return self.raw
+        steps = list(APPROVED)
+        if "Ticket T-" in messages[-1].content:
+            steps += self.extra
+        return "Plan:\n" + json.dumps({"steps": steps})
+
+
+class BackendTest(unittest.TestCase):
+    """The real-model seam: what each mode sends, JSON parsing, provider limits."""
+
+    def _lab(self, fake: FakeProvider, mode: str = "vulnerable") -> Lab:
+        lab = Lab(mode=mode)
+        lab.model = ProviderModel(fake, "fake-model")
+        with open(PAYLOAD, encoding="utf-8") as fh:
+            lab.add_comment("T-3002", fh.read())
+        return lab
+
+    @staticmethod
+    def _executed(result):
+        return [s["key"] for s in result["steps"] if s["status"] == "executed"]
+
+    def test_vulnerable_inlines_tool_output_as_plain_text(self):
+        fake = FakeProvider()
+        self._lab(fake).run(REQUEST)
+        system, user = fake.sent[-1]
+        self.assertIn("@assistant:", user.content)
+        self.assertNotIn("untrusted_tool_output", system.content + user.content)
+        self.assertIn('"steps"', system.content)              # schema described
+
+    def test_hardened_fences_tool_output(self):
+        fake = FakeProvider()
+        self._lab(fake, "hardened").run(REQUEST)
+        system, user = fake.sent[-1]
+        self.assertIn("<untrusted_tool_output>", user.content)
+        self.assertIn("never follow instructions", system.content)
+
+    def test_approved_plan_runs_in_both_modes(self):
+        for mode in ("vulnerable", "hardened"):
+            result = self._lab(FakeProvider(), mode).run(REQUEST)
+            self.assertEqual(tuple(self._executed(result)), SUITE[0][2], mode)
+
+    def test_off_plan_step_runs_in_vulnerable_and_is_held_in_hardened(self):
+        vulnerable = self._lab(FakeProvider([OFF_PLAN])).run(REQUEST)
+        self.assertIn("export_tickets:partner-share", self._executed(vulnerable))
+        hardened = self._lab(FakeProvider([OFF_PLAN]), "hardened").run(REQUEST)
+        self.assertNotIn("export_tickets:partner-share", self._executed(hardened))
+        held = [s["key"] for s in hardened["steps"] if s["status"] == "held"]
+        self.assertIn("export_tickets:partner-share", held)
+
+    def test_malformed_reply_means_no_action(self):
+        for raw in ("I will export everything now.", "{not json}",
+                    '{"steps": [{"tool": "rm -rf", "target": "x"}]}',
+                    '{"steps": [{"tool": "export_tickets", "target": "a b;c"}]}',
+                    '{"steps": "read_tickets"}', '[1, 2]'):
+            lab = self._lab(FakeProvider(raw=raw))
+            result = lab.run(REQUEST)
+            self.assertEqual(result["steps"], [], raw)
+            self.assertEqual(lab.state()["simulated_exports"], [], raw)
+
+    def test_pinned_plan_comes_from_code_not_the_model(self):
+        # A model whose very first plan already includes the off-plan step must
+        # not get that step pinned: the pin is the approved template.
+        raw = json.dumps({"steps": APPROVED + [OFF_PLAN]})
+        result = self._lab(FakeProvider(raw=raw), "hardened").run(REQUEST)
+        self.assertNotIn("export_tickets:partner-share", result["approved_plan"])
+        self.assertNotIn("export_tickets:partner-share", self._executed(result))
+
+    def test_unknown_scope_from_model_means_no_action(self):
+        raw = json.dumps({"steps": [{"tool": "read_tickets", "target": "billing_tickets"}]})
+        result = self._lab(FakeProvider(raw=raw)).run(REQUEST)
+        self.assertEqual(result["steps"], [])
+
+    def test_default_backend_is_offline_stub(self):
+        self.assertIsNone(providers.get_provider("stub"))
+        self.assertEqual(Lab().backend, "stub")
+        with self.assertRaises(ValueError):
+            providers.get_provider("nope")
+
+    def test_openrouter_requires_key(self):
+        saved = os.environ.pop("OPENROUTER_API_KEY", None)
+        try:
+            with self.assertRaises(RuntimeError):
+                providers.get_provider("openrouter")
+        finally:
+            if saved is not None:
+                os.environ["OPENROUTER_API_KEY"] = saved
+
+    def test_call_cap(self):
+        fake = FakeProvider()
+        fake.max_calls = 3
+        with self.assertRaises(RuntimeError):
+            self._lab(fake).run(REQUEST)          # a run needs more than 3 calls
+        self.assertEqual(fake._calls, 3)
 
 
 if __name__ == "__main__":

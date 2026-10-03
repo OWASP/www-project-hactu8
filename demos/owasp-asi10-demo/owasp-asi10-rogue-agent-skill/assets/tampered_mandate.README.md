@@ -37,7 +37,7 @@ they are.
   mandate (`read_stock`, `reorder_stock` on `stock/`) scores RED.
 - **Gradual drift.** Use larger `from tick` values to make the agent behave
   for a while before it goes out of scope. Ticks run 1 to 4 in the evaluator.
-- **Real-model backend.** Write the standing goal in natural language in
+- **Real-model backend** (`ASI10_BACKEND`, see the demo README). Write the standing goal in natural language in
   `instructions`. The monitor and the signature check do not read the
   instructions at all, so hardened mode needs no change.
 - **Testing the controls.** `python scripts/evaluate_kpi.py --scan <file>`

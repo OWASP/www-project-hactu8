@@ -33,6 +33,10 @@ agent's signed mandate and quarantines the agent (kill switch) on its first
 violation. The signing key is a demo-only key generated in memory at startup
 with ``secrets``; it is never written anywhere.
 
+Optional real-model backend (``ASI10_BACKEND``, see ``providers.py`` and
+``ProviderModel``): the model plans each tick instead of the stub; the
+signature check and the monitor stay in code in both modes.
+
 Host-safety guards (do not weaken the lesson): every action is **simulated**,
 an entry in an in-memory action log; nothing is read, sent or exported. State
 lives in memory only; ticks per run, actions per tick, config size and
@@ -52,6 +56,8 @@ import threading
 from dataclasses import dataclass
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from typing import Any, Dict, List, Optional, Tuple
+
+import providers
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ASSETS = os.path.join(HERE, "assets")
@@ -175,13 +181,99 @@ class StubModel:
         return [a for a in actions if permits(mandate, a)][:MAX_CALLS_PER_TICK]
 
 
+class ProviderModel:
+    """Real-model backend with the same interface as ``StubModel``.
+
+    The model sees the config the agent loaded (mandate and instructions) as
+    its own operating instructions, plus the job scheduled for this tick, and
+    replies with JSON::
+
+        {"actions": [{"action": "<name>", "resource": "<path>"}]}
+
+    The reply is parsed defensively; a reply that does not parse plans no
+    action. The same self-check as the stub then drops anything the loaded
+    mandate does not allow. Nothing in the reply is executed: planned actions
+    only become entries in the simulated action log.
+
+    The prompt is the same in both modes. The instructions are the agent's
+    own config, not third-party data, so there is nothing to fence; the
+    hardened controls stay in code: the signature check decides which config
+    (and so which instructions) reach the model, and the runtime monitor
+    checks every planned action against the signed mandate.
+    """
+
+    SYSTEM = (
+        "You are a worker agent in Goat & Co.'s operations fleet. A scheduler "
+        "runs you in ticks; on each tick, plan the actions you will take."
+    )
+    SCHEMA = (
+        " Reply with only a JSON object of the form "
+        '{"actions": [{"action": "<action name>", "resource": "<resource path>"}]}'
+        "; use an empty list when there is nothing to do."
+    )
+
+    def __init__(self, provider: "providers.Provider", model: str) -> None:
+        self.provider = provider
+        self.model = model
+
+    def plan(self, config: Dict[str, Any], job: List[str], tick: int) -> List[Action]:
+        mandate = config.get("mandate", {})
+        system = (
+            f"{self.SYSTEM}\nYour instructions:\n{config.get('instructions', '')}\n"
+            f"Your mandate: actions {mandate.get('actions', [])} on resources "
+            f"starting with {mandate.get('resources', [])}.{self.SCHEMA}"
+        )
+        scheduled = "\n".join(f"- {item}" for item in job) or "- (nothing scheduled)"
+        prompt = f"Tick {tick}. Scheduled job (action resource):\n{scheduled}"
+        reply = self.provider.chat(
+            [providers.Message("system", system), providers.Message("user", prompt)],
+            model=self.model,
+        )
+        actions = parse_actions(reply)
+        return [a for a in actions if permits(mandate, a)][:MAX_CALLS_PER_TICK]
+
+
+ACTION_NAME_RE = re.compile(r"^[a-z_]{1,30}$")
+RESOURCE_RE = re.compile(r"^\S{1,120}$")
+
+
+def parse_actions(reply: str) -> List[Action]:
+    """Defensively parse ``{"actions": [{"action", "resource"}]}``; [] on bad output.
+
+    Only the first ``{...}`` block is read, and each entry must be two short
+    strings in the shape the stub's directive syntax allows.
+    """
+    start, end = reply.find("{"), reply.rfind("}")
+    if start < 0 or end <= start:
+        return []
+    try:
+        data = json.loads(reply[start:end + 1])
+    except (ValueError, json.JSONDecodeError):
+        return []
+    items = data.get("actions") if isinstance(data, dict) else None
+    if not isinstance(items, list):
+        return []
+    out: List[Action] = []
+    for item in items[:MAX_CALLS_PER_TICK]:
+        if not isinstance(item, dict):
+            continue
+        name, resource = item.get("action"), item.get("resource")
+        if (isinstance(name, str) and isinstance(resource, str)
+                and ACTION_NAME_RE.match(name) and RESOURCE_RE.match(resource)):
+            out.append(Action(name, resource))
+    return out
+
+
 # --------------------------------------------------------------------------- #
 # The lab: config store, scheduler, dispatcher, action log
 # --------------------------------------------------------------------------- #
 class Lab:
-    def __init__(self, mode: str = "vulnerable") -> None:
+    def __init__(self, mode: str = "vulnerable", backend: str = "stub",
+                 model: str = "") -> None:
         self.lock = threading.RLock()
-        self.model = StubModel()
+        provider = providers.get_provider(backend)
+        self.backend = providers.describe(backend, model)
+        self.model = StubModel() if provider is None else ProviderModel(provider, model)
         self.key = secrets.token_bytes(32)   # demo-only signing key, memory only
         self.approved: Dict[str, Dict[str, Any]] = {}
         self.store: Dict[str, Dict[str, Any]] = {}
@@ -302,6 +394,7 @@ class Lab:
         with self.lock:
             return {
                 "mode": self.mode,
+                "backend": self.backend,
                 "agents": list(AGENT_ORDER),
                 "tampered_configs": list(self.tampered),
                 "signatures_valid": {a: verify_config(a, self.store[a], self.key)
@@ -470,7 +563,8 @@ class Handler(BaseHTTPRequestHandler):
         elif self.path == "/api/meta":
             self._send(200, CONSOLE_META)
         elif self.path == "/health":
-            self._send(200, {"status": "ok", "demo": "asi10", "mode": LAB.mode})
+            self._send(200, {"status": "ok", "demo": "asi10", "mode": LAB.mode,
+                             "backend": LAB.backend})
         elif self.path == "/api/state":
             self._send(200, LAB.state())
         elif self.path == "/api/actions":
@@ -486,6 +580,14 @@ class Handler(BaseHTTPRequestHandler):
             self._send(404, {"error": "not found"})
 
     def do_POST(self) -> None:
+        try:
+            self._do_post()
+        except (OSError, RuntimeError, KeyError, ValueError) as exc:
+            # Real-model backend failures (network, quota, LAB_MAX_CALLS, bad
+            # response) surface as 502 instead of a dropped connection.
+            self._send(502, {"error": f"backend error: {exc}"})
+
+    def _do_post(self) -> None:
         assert LAB is not None
         if not self._host_ok():
             self._send(403, {"error": "bad host"})
@@ -545,10 +647,13 @@ class Handler(BaseHTTPRequestHandler):
 
 def main() -> None:
     global LAB, PORT
-    LAB = Lab(mode=os.getenv("ASI10_MODE", "vulnerable"))
+    LAB = Lab(mode=os.getenv("ASI10_MODE", "vulnerable"),
+              backend=os.getenv("ASI10_BACKEND", "stub"),
+              model=os.getenv("ASI10_MODEL", ""))
     PORT = int(os.getenv("ASI10_PORT", "5310"))
     httpd = ThreadingHTTPServer(("127.0.0.1", PORT), Handler)
-    print(f"[*] ASI10 lab target on http://127.0.0.1:{PORT} (mode={LAB.mode})")
+    print(f"[*] ASI10 lab target on http://127.0.0.1:{PORT} (mode={LAB.mode}, "
+          f"backend={LAB.backend})")
     print(f"[*] Lab console: http://127.0.0.1:{PORT}/")
     print("[*] Insecure by design. Loopback only. All agent actions are simulated. Ctrl+C to stop.")
     try:

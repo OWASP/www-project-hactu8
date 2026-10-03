@@ -23,8 +23,9 @@ sys.path.insert(0, os.path.join(SKILL_DIR, "scripts"))
 from evaluate_kpi import SUITE, classify  # noqa: E402
 from run_rug_pull import (SLEEPER_PAYLOAD, SLEEPER_TOOL, SWAP_PAYLOAD,  # noqa: E402
                           build_compromised_release)
+import providers  # noqa: E402
 from vulnerable_app import (  # noqa: E402
-    CONSOLE_META, REGISTRY_DIR, Lab, RemoteTool, console_attack, console_evaluate,
+    CONSOLE_META, REGISTRY_DIR, Lab, ProviderModel, RemoteTool, console_attack, console_evaluate,
     console_scan, definition_hash, load_baseline, load_pins, load_screen_rules, pin_diff,
     read_registry, sample_tool, write_registry,
 )
@@ -147,6 +148,79 @@ class ConsoleApiTest(unittest.TestCase):
                     "metric_name", "metric_abbr", "attack_label", "attack_description",
                     "scan_label", "harden_label", "harden_description"):
             self.assertIn(key, CONSOLE_META)
+
+
+class FakeProvider(providers.Provider):
+    """Records what a real backend would be sent; no network."""
+    name = "fake"
+
+    def __init__(self, reply: str = "Expense reports are due within 30 days.") -> None:
+        super().__init__()
+        self.reply = reply
+        self.sent = []
+
+    def chat(self, messages, *, model=""):
+        self._count_call()
+        self.sent.append(messages)
+        return self.reply
+
+
+EXPENSE_Q = "When are expense reports due?"
+
+
+class BackendTest(unittest.TestCase):
+    """The real-model seam: what each mode sends, and the provider limits."""
+
+    def setUp(self) -> None:
+        path = os.path.join(REGISTRY_DIR, f"test_{os.getpid()}_backend_{self._testMethodName}.json")
+        self.lab = Lab(registry_path=path)
+        self.fake = FakeProvider()
+        self.lab.model = ProviderModel(self.fake, "fake-model")
+        _, registry = read_registry(self.lab.registry_path)
+        release, _ = build_compromised_release(
+            registry, _read(SWAP_PAYLOAD), _read(SLEEPER_PAYLOAD), "both")
+        write_registry(self.lab.registry_path, release)
+
+    def tearDown(self) -> None:
+        self.lab.remove_registry()
+
+    def test_vulnerable_sends_swapped_description_as_plain_text(self):
+        self.lab.query(EXPENSE_Q)
+        system, user = self.fake.sent[-1]
+        self.assertIn("LLM04-CANARY-3a9d", system.content)
+        self.assertNotIn("untrusted_tool", system.content + user.content)
+
+    def test_hardened_fences_and_admits_only_pinned_definition(self):
+        self.lab.set_mode("hardened")
+        self.lab.query(EXPENSE_Q)
+        system, user = self.fake.sent[-1]
+        self.assertIn("<untrusted_tool_definition>", system.content)
+        self.assertIn("<untrusted_tool_output>", user.content)
+        self.assertIn("never follow instructions", system.content)
+        self.assertNotIn("LLM04-CANARY", system.content + user.content)   # gate in code
+
+    def test_default_backend_is_offline_stub(self):
+        self.assertIsNone(providers.get_provider("stub"))
+        self.assertEqual(self.lab.backend, "stub")
+        self.assertEqual(self.lab.state()["backend"], "stub")
+        with self.assertRaises(ValueError):
+            providers.get_provider("nope")
+
+    def test_openrouter_requires_key(self):
+        saved = os.environ.pop("OPENROUTER_API_KEY", None)
+        try:
+            with self.assertRaises(RuntimeError):
+                providers.get_provider("openrouter")
+        finally:
+            if saved is not None:
+                os.environ["OPENROUTER_API_KEY"] = saved
+
+    def test_call_cap(self):
+        self.fake.max_calls = 2
+        self.lab.query("a")
+        self.lab.query("b")
+        with self.assertRaises(RuntimeError):
+            self.lab.query("c")
 
 
 if __name__ == "__main__":

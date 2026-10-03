@@ -43,7 +43,9 @@ async function refreshState() {
   try {
     const s = await api("/api/state");
     $("system-status").textContent = "ONLINE";
-    $("mode").textContent = (s.mode || "-").toUpperCase();
+    const backend = s.backend && s.backend !== "stub" ? ` / ${s.backend}` : "";
+    $("mode").textContent = `${(s.mode || "-").toUpperCase()}${backend}`;
+    $("mode").title = s.backend ? `model backend: ${s.backend}` : "";
     $("state").textContent = s.baseline ? "BASELINE" : "ATTACKED";
   } catch (err) {
     $("system-status").textContent = "OFFLINE";

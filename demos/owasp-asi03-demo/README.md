@@ -82,10 +82,46 @@ You'll see four acts:
 
 ### Optional: run against a real model
 
-Not wired in this version. The stub is the only backend. The seam is
-`StubModel.plan(messages)` in `vulnerable_app.py`; a real backend replaces it.
-The mitigation does not depend on the model at all: it decides on the caller's
-token and session, outside the model.
+The stub is the default backend. `providers.py` (the same provider layer as
+AgenticGoat) adds three real ones. All are standard library only:
+
+```bash
+python run_demo.py --backend ollama --model llama3.2          # local Ollama
+python run_demo.py --backend llamacpp                         # local llama.cpp server
+export OPENROUTER_API_KEY=...                                 # remote; key stays in the header
+python run_demo.py --backend openrouter --model meta-llama/llama-3.2-3b-instruct
+
+# the target and console take the same settings from the environment:
+ASI03_BACKEND=openrouter ASI03_MODEL=... python owasp-asi03-privilege-skill/vulnerable_app.py
+```
+
+The attack mechanics are identical. Only the model changes:
+- The model plans the fetches by replying with a small JSON object
+  (`{"docs": ["HR-..."]}`) and writes the answer as `{"answer": "..."}`.
+  Replies are parsed defensively; a malformed plan means "no fetches". The
+  model never sees or chooses a credential.
+- **Vulnerable mode** passes the request and the fetched documents as plain
+  text, and the agent still fetches with its own service identity.
+- **Hardened mode** fences both in `<untrusted_data>` tags and tells the model
+  never to follow instructions inside them ("spotlighting"). The mitigation
+  itself stays in code: on-behalf-of and session binding decide, so a
+  document the model plans for an unentitled caller is still denied.
+
+This demo has no injection: the requests are ordinary asks, so a real model
+will usually plan them as the stub does, and the numbers should match.
+
+A real model may ignore the placeholder payload. Write a natural-language
+payload (see `assets/requests.README.md`), and `run_demo.py` reports the
+numbers rather than asserting them.
+
+Limits:
+- `LAB_MAX_CALLS` (default 200) caps calls per process.
+- `LAB_MAX_TOKENS` (default 400) caps output tokens per call.
+- `OLLAMA_TIMEOUT`, `LLAMACPP_TIMEOUT` and `OPENROUTER_TIMEOUT` set
+  per-provider HTTP timeouts.
+
+With `openrouter`, lab prompts, including your payloads, leave the machine.
+The stub and the local backends keep everything on the host.
 
 ---
 
@@ -202,6 +238,7 @@ owasp-asi03-demo/
 ├── owasp-asi03-privilege-skill/
 │   ├── SKILL.md                       #   metadata + instructions
 │   ├── vulnerable_app.py              #   Module 1: target, stub model, mitigation
+│   ├── providers.py                   #   optional real-model backends (shared, unchanged)
 │   ├── requirements.txt               #   stdlib only
 │   ├── web/                           #   shared lab console (index.html, app.js, styles.css)
 │   ├── scripts/
@@ -236,7 +273,7 @@ python scripts/evaluate_kpi.py --scan assets/requests.json   # REJECT, exit 2
 python scripts/evaluate_kpi.py --harden                      # GREEN, PER 0%, exit 0
 python scripts/reset_baseline.py                             # restore clean state
 python scripts/evaluate_kpi.py                               # GREEN, PER 0%
-python -m unittest discover tests                            # 10 tests
+python -m unittest discover tests                            # 17 tests
 ```
 
 ## License

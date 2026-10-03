@@ -35,8 +35,10 @@ inbox, and three overbilled invoices are approved and paid.
   - Payments are simulated: entries in an in-memory action log. No money moves.
   - All state lives in memory. Inbox size, document size, batch size, figure
     range and action-log length are capped.
-  - The intake model is a deterministic stub, so the lab cannot reach a real
-    model or the network.
+  - The intake model is a deterministic stub by default, so the lab cannot
+    reach the network unless you opt into a real-model backend. A real
+    model's reply is parsed as JSON and only feeds the simulated pipeline;
+    nothing it returns is executed or fetched.
   - The server rejects foreign `Host` headers (DNS rebinding) and non-JSON
     POSTs (cross-site forms).
 - The shipped payload is a **placeholder**: one stub directive line and a
@@ -63,6 +65,12 @@ agent tracing system.
 ## Prerequisites
 
 Python 3.9+. Standard library only; nothing to install.
+
+Optional real model: set `ASI08_BACKEND` to `ollama`, `llamacpp` or
+`openrouter` (which needs `OPENROUTER_API_KEY`), and `ASI08_MODEL` to the
+model name, before starting the target. The backend replaces the intake
+model. The default `stub` needs no network.
+With `openrouter`, prompts and payloads leave the machine.
 
 ## Execution instructions
 
@@ -132,6 +140,7 @@ lesson. To tune the containment, edit `assets/pipeline_policy.json`.
 | Path | Purpose |
 |------|---------|
 | `vulnerable_app.py` | Target pipeline (`/pipeline/run`, `/intake/inbox`, `/api/actions`, `/health`) plus the console API (`/api/meta`, `/api/state`, `/api/reset`, `/api/attack`, `/api/evaluate`, `/api/scan`, `/api/mode`). |
+| `providers.py` | Optional real-model backends: Ollama, llama.cpp, OpenRouter. Shared and copied unchanged. |
 | `web/` | Shared HACTU8 lab console, served at `/`. |
 | `scripts/run_cascade.py` | Attack: submit one document carrying one wrong figure to the intake inbox. |
 | `scripts/evaluate_kpi.py` | Stoplight KPI, Propagation Rate and blast radius against the live app; `--harden` and `--scan` mitigations. |

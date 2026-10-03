@@ -35,8 +35,8 @@ requests the calls written there, and the app executes them.
     in-memory action log; no money moves and nothing is deleted.
   - State lives in memory only. Tool calls per request (8), notes per ticket
     (20), note size and action-log length are capped.
-  - The model is a deterministic stub, so the lab cannot reach a real model
-    or the network.
+  - The model is a deterministic stub by default, so the lab cannot reach
+    the network unless you opt into a real-model backend.
   - The server rejects foreign `Host` headers (DNS rebinding) and non-JSON
     POSTs (cross-site forms).
 - The shipped payload is a **placeholder**: stub directive lines plus a
@@ -63,6 +63,11 @@ asks the human before any irreversible call.
 ## Prerequisites
 
 Python 3.9+. Standard library only; nothing to install.
+
+Optional real model: set `LLM03_BACKEND` to `ollama`, `llamacpp` or
+`openrouter` (which needs `OPENROUTER_API_KEY`), and `LLM03_MODEL` to the
+model name, before starting the target. The default `stub` needs no network.
+With `openrouter`, prompts and payloads leave the machine.
 
 ## Execution instructions
 
@@ -136,6 +141,7 @@ task already allows passes the gate by design.
 |------|---------|
 | `vulnerable_app.py` | Target support agent (`/agent`, `/tickets/note`, `/tickets/<id>`, `/api/actions`, `/health`) plus the console API (`/api/meta`, `/api/state`, `/api/reset`, `/api/attack`, `/api/evaluate`, `/api/scan`, `/api/mode`). |
 | `web/` | Shared HACTU8 lab console, served at `/`. |
+| `providers.py` | Optional real-model backends: Ollama, llama.cpp, OpenRouter. Shared and copied unchanged. |
 | `scripts/run_agency_hijack.py` | Attack: append the note to one ticket. |
 | `scripts/evaluate_kpi.py` | Stoplight KPI + UAR against the live app; `--harden` and `--scan` mitigations. |
 | `scripts/reset_baseline.py` | Restores the seeded desk, clears the action log, sets vulnerable mode. |

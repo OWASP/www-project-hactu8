@@ -35,8 +35,9 @@ A developer who copies its install line acts on a claim nobody verified.
   - Doc state lives in memory only, so page edits never touch the filesystem.
   - The grounding check is an offline lookup in `assets/approved_registry.json`;
     no package index or URL is ever contacted, and nothing is installed.
-  - The model is a deterministic stub, and hardened mode tries at most three
-    pages per query.
+  - The model is a deterministic stub by default, so the lab cannot reach
+    the network unless you opt into a real-model backend. Hardened mode tries
+    at most three pages per query.
   - The server rejects foreign `Host` headers (DNS rebinding) and non-JSON
     POSTs (cross-site forms).
 - The shipped payload is a **placeholder**: a fictional package name, a docs
@@ -65,6 +66,11 @@ would verify any artifact the user or a downstream agent will act on.
 ## Prerequisites
 
 Python 3.9+. Standard library only; nothing to install.
+
+Optional real model: set `LLM07_BACKEND` to `ollama`, `llamacpp` or
+`openrouter` (which needs `OPENROUTER_API_KEY`), and `LLM07_MODEL` to the
+model name, before starting the target. The default `stub` needs no network.
+With `openrouter`, prompts and payloads leave the machine.
 
 ## Execution instructions
 
@@ -137,6 +143,7 @@ change what counts as known-good, edit `assets/approved_registry.json`.
 | Path | Purpose |
 |------|---------|
 | `vulnerable_app.py` | Target dev-helper assistant (`/query`, `/docs/page`, `/health`) plus the console API (`/api/meta`, `/api/state`, `/api/reset`, `/api/attack`, `/api/evaluate`, `/api/scan`, `/api/mode`). |
+| `providers.py` | Optional real-model backends: Ollama, llama.cpp, OpenRouter. Shared and copied unchanged. |
 | `web/` | Shared HACTU8 lab console, served at `/`. |
 | `scripts/run_slopsquat.py` | Attack: publish one poisoned community doc page. |
 | `scripts/evaluate_kpi.py` | Stoplight KPI + UCR against the live app; `--harden` and `--scan` mitigations. |
