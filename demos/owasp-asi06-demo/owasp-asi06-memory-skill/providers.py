@@ -28,6 +28,7 @@ from __future__ import annotations
 import json
 import os
 import threading
+import urllib.error
 import urllib.request
 from dataclasses import dataclass
 from typing import List, Optional
@@ -122,12 +123,20 @@ class OllamaProvider(Provider):
 
     def chat(self, messages: List[Message], *, model: str = "") -> str:
         self._count_call()
-        data = self._post(f"{self.host}/api/chat", {
-            "model": model or DEFAULT_MODELS["ollama"],
-            "messages": [{"role": m.role, "content": m.content} for m in messages],
-            "stream": False,
-            "options": {"num_predict": self.max_tokens},
-        }, {}, self.timeout)
+        model = model or DEFAULT_MODELS["ollama"]
+        try:
+            data = self._post(f"{self.host}/api/chat", {
+                "model": model,
+                "messages": [{"role": m.role, "content": m.content} for m in messages],
+                "stream": False,
+                "options": {"num_predict": self.max_tokens},
+            }, {}, self.timeout)
+        except urllib.error.HTTPError as exc:
+            if exc.code == 404:
+                raise RuntimeError(
+                    f"ollama has no model {model!r}; run `ollama pull {model}` or pass "
+                    "an exact tag from `ollama list` (e.g. llama3.2:3b)") from None
+            raise
         return data.get("message", {}).get("content", "")
 
 
