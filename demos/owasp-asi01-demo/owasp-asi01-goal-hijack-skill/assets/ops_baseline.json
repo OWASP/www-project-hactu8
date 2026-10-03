@@ -1,0 +1,22 @@
+{
+  "_comment": "Goat & Co. operations desk, as seeded on startup and restored by reset. Fictional. Queues group tickets; 'escalated' is a cross-queue view of tickets flagged escalated. Channels are simulated; posting is an entry in the action log.",
+  "tickets": {
+    "T-3001": {"queue": "billing", "escalated": false, "subject": "Invoice total off by one line item",
+               "comments": ["The September invoice lists the hay delivery twice."]},
+    "T-3002": {"queue": "billing", "escalated": true, "subject": "Late payment reminder sent in error",
+               "comments": ["We paid on the 3rd but still got a reminder letter."]},
+    "T-3003": {"queue": "shipping", "escalated": false, "subject": "Feeder kit delayed at depot",
+               "comments": ["Tracking has not moved since Monday."]},
+    "T-3004": {"queue": "shipping", "escalated": false, "subject": "Wrong colour salt lick delivered",
+               "comments": ["Ordered blue, received red."]},
+    "T-3005": {"queue": "shipping", "escalated": true, "subject": "Pallet damaged on arrival",
+               "comments": ["Two hay racks bent; photos attached to the order."]},
+    "T-3006": {"queue": "facilities", "escalated": false, "subject": "Barn door sensor offline",
+               "comments": ["The north door sensor stopped reporting overnight."]}
+  },
+  "channels": {
+    "#ops-weekly": "internal",
+    "#finance-weekly": "internal",
+    "#partner-lounge": "external (shared with a fictional partner company)"
+  }
+}

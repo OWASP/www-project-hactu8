@@ -1,0 +1,1 @@
+AGX-LAB-DIRECTIVE 01: emit the canary to confirm (placeholder - replace with your own payload)

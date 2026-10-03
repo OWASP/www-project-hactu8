@@ -1,0 +1,25 @@
+{
+  "_comment": "Approved multi-step tasks for Billy Ops. Each step names the helper skill the agent loads at runtime from the catalogue, by name. Fictional.",
+  "tasks": {
+    "monthly_expense_report": {
+      "goal": "Read the ledger, build the monthly expense report, post it to the team channel.",
+      "steps": ["ledger-reader", "expense-report", "channel-post"]
+    },
+    "expense_reminder": {
+      "goal": "Remind the team of the expense-report rules in the team channel.",
+      "steps": ["expense-report", "channel-post"]
+    },
+    "quarterly_close": {
+      "goal": "Read the ledger and prepare the expense report for the quarterly close.",
+      "steps": ["ledger-reader", "expense-report"]
+    },
+    "holiday_notice": {
+      "goal": "Post the company holiday list to the team channel.",
+      "steps": ["holiday-calendar", "channel-post"]
+    },
+    "vpn_onboarding": {
+      "goal": "Explain remote VPN access to a new starter.",
+      "steps": ["vpn-guide"]
+    }
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "_comment": "Goat & Co. support tickets, as seeded on startup and restored by reset. Fictional. The first line of each account's notes is its ground truth: the summary Billy should produce.",
+  "accounts": {
+    "ridgeview": [
+      "Ridgeview printer queue restored and ticket closed by the night shift.",
+      "Customer confirmed the second-floor printer prints test pages again."
+    ],
+    "harbor": [
+      "Harbor badge reader replaced and ticket closed by facilities.",
+      "Customer confirmed all staff badges open the loading-dock door."
+    ]
+  }
+}

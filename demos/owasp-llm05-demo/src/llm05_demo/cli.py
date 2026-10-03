@@ -7,13 +7,17 @@ Runs the whole narrative in one process, no server or API key required:
   ACT 3  Post-poison impact ........ re-query -> RED drift + Poison Success Rate
   ACT 4  Remediation ............... source scoring + anomaly detection -> GREEN
 
-Invoke via ``python run_demo.py``, ``python -m llm05_demo.cli``, or the installed
-``llm05-demo`` console script.
+Invoke via ``python -m llm05_demo.cli`` or the installed ``llm05-demo`` console
+script. Backends match AgenticGoat (``--backend echo|ollama|llamacpp|openrouter``,
+``--model``, ``--embed-model``; or the ``LLM05_SRC_*`` variables). With a real
+model the rates are reported as measured.
 """
 
 from __future__ import annotations
 
-from typing import List
+import argparse
+import sys
+from typing import List, Optional
 
 from .backends import build_backends
 from .config import Config
@@ -49,10 +53,21 @@ def _report(answers: List[str]) -> dict:
     return psr
 
 
-def main() -> int:
-    config = Config.from_env()
+def main(argv: Optional[List[str]] = None) -> int:
+    # The stoplight emoji would crash a Windows cp1252 console otherwise.
+    if hasattr(sys.stdout, "reconfigure"):
+        sys.stdout.reconfigure(encoding="utf-8")
+    parser = argparse.ArgumentParser(description=__doc__,
+                                     formatter_class=argparse.RawDescriptionHelpFormatter)
+    parser.add_argument("--backend", help="echo (default) | ollama | llamacpp | openrouter")
+    parser.add_argument("--model", help="chat model for the backend")
+    parser.add_argument("--embed-model", help="Ollama / llama.cpp embedding model "
+                        "(default: the local hashing embedding)")
+    args = parser.parse_args(argv)
+    config = Config.from_env(backend=args.backend, model=args.model,
+                             embed_model=args.embed_model)
     embedding, llm = build_backends(config)
-    print(f"Backend: {config.backend}   top_k={config.top_k}")
+    print(f"Backend: {config.label}   top_k={config.top_k}")
 
     # ----------------------------------------------------------------- ACT 1
     _act("ACT 1 — Clean baseline (trusted knowledge base only)")
@@ -60,7 +75,7 @@ def main() -> int:
     store.add_texts(LEGITIMATE_DOCS, source=GOLDEN_SOURCE, trust=GOLDEN_TRUST)
     print(f"Ingested {len(store)} trusted policy documents from '{GOLDEN_SOURCE}'.")
     vulnerable = VulnerableRAG(store, llm, top_k=config.top_k)
-    _report(_run_suite(vulnerable))
+    psr_before = _report(_run_suite(vulnerable))
 
     # ----------------------------------------------------------------- ACT 2
     _act("ACT 2 — Poisoning attack (Module 2: adversarial injection)")
@@ -98,12 +113,15 @@ def main() -> int:
     _act("SUMMARY")
     print(
         f"  Targeted Poison Success Rate:\n"
-        f"    Clean baseline ....... 0%\n"
+        f"    Clean baseline ....... {psr_before['targeted_psr']:.0f}%\n"
         f"    After poisoning ...... {psr_after['targeted_psr']:.0f}%   "
-        f"(3 documents overrode the policy)\n"
+        f"({len(injected)} documents injected)\n"
         f"    After remediation .... {psr_fixed['targeted_psr']:.0f}%   "
-        f"(source scoring restored ground truth)"
+        f"(source scoring + anomaly detection)"
     )
+    if config.backend != "echo":
+        print("  (Real model: these rates are measured, not guaranteed; a model "
+              "may resist the poison.)")
     print(
         "\n  OWASP LLM05 mapping: Scenario #1 (Knowledge Repo Manipulation), "
         "Scenario #2\n  (Hidden 'update' instructions), Example #6 (RAG KB "

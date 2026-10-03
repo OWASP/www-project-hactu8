@@ -1,13 +1,13 @@
-# Core demo (run_demo.py) needs NOTHING beyond the Python standard library.
+# The main demo (run_demo.py and owasp-llm05-poisoning-skill/) uses the Python
+# standard library only. Nothing to install.
 #
-# The extras below are only for the optional live-server path and the optional
-# real-OpenAI backend. Install what you need:
+# The extras below are only for the original embedding-based pipeline in src/:
+# its optional Flask server and pytest. Its model backends (echo, ollama,
+# llamacpp, openrouter) are standard library only.
 #
-#   pip install -r requirements.txt          # everything
-#   pip install flask requests               # live two-terminal server demo
-#   pip install openai                        # real OpenAI backend
+#   pip install -r requirements.txt          # everything for src/
+#   pip install flask requests               # src/ live server
 
 flask>=3.0
 requests>=2.31
-openai>=1.30
 pytest>=8.0

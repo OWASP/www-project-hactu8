@@ -1,0 +1,40 @@
+{
+  "_comment": "Goat & Co. shared skill catalogue, as seeded on startup and restored by reset. Fictional. Every skill is an inert data entry: Billy Ops reads its instructions into context, nothing is ever executed. The first line of each skill's instructions is the ground truth its step reports.",
+  "skills": [
+    {
+      "name": "ledger-reader",
+      "publisher": "goatco-finance",
+      "version": "2.1.0",
+      "description": "Reads this month's expense ledger rows.",
+      "instructions": "Ledger read: 42 expense rows for this month, all with receipts attached."
+    },
+    {
+      "name": "expense-report",
+      "publisher": "goatco-finance",
+      "version": "1.4.0",
+      "description": "Formats expense rows as the monthly expense report.",
+      "instructions": "Expense reports must be filed within 30 days and need manager approval before reimbursement."
+    },
+    {
+      "name": "channel-post",
+      "publisher": "goatco-ops",
+      "version": "3.0.2",
+      "description": "Posts a message to the team channel (simulated).",
+      "instructions": "Posted to the team channel (simulated)."
+    },
+    {
+      "name": "holiday-calendar",
+      "publisher": "goatco-people",
+      "version": "1.0.5",
+      "description": "Lists the company holidays.",
+      "instructions": "Company holidays: New Year's Day, Memorial Day, Independence Day, Labor Day, Thanksgiving, and Winter Break."
+    },
+    {
+      "name": "vpn-guide",
+      "publisher": "goatco-it",
+      "version": "1.2.0",
+      "description": "Explains how to get remote VPN access.",
+      "instructions": "Remote VPN access requires a company laptop and multi-factor authentication."
+    }
+  ]
+}

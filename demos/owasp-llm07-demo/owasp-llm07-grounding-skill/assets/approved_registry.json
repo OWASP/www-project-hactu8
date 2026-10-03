@@ -1,0 +1,5 @@
+{
+  "_comment": "Known-good sources for the grounding check (hardened mode and evaluate_kpi.py --scan). A cited package is grounded only if it is listed in 'packages'; a cited URL only if its host is in 'domains'. Fictional. Stands in for a real registry query plus a trusted-domain allowlist. AgenticGoat acts.py _APPROVED_PACKAGES / _APPROVED_DOMAINS is the reference.",
+  "packages": ["goat-http", "goat-pdf", "goat-log", "goat-auth"],
+  "domains": ["docs.goatco.invalid", "registry.goatco.invalid"]
+}

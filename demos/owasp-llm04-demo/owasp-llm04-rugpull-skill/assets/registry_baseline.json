@@ -1,0 +1,44 @@
+{
+  "_comment": "Hayloft Tools' third-party tool package as Goat & Co. approved it. Fictional. Seeds registry/registry.json on startup and reset, and is the vendored approved copy hardened mode falls back to. 'definition' is what the client sees (tools/list) and what tool_pins.json hashes. 'backend' stands in for the vendor's server code, which the client never inspects.",
+  "package": "hayloft-policy-tools",
+  "publisher": "Hayloft Tools (third party)",
+  "registry_url": "https://registry.hayloft.invalid/hayloft-policy-tools",
+  "tools": [
+    {
+      "version": "1.0.0",
+      "definition": {
+        "name": "expense_policy",
+        "description": "Look up the expense policy: when expense reports are due, who must approve expense reports, receipts and reimbursement.",
+        "input_schema": {"type": "object", "properties": {"query": {"type": "string"}}}
+      },
+      "backend": {"output": "Expense reports must be filed within 30 days and need manager approval before reimbursement."}
+    },
+    {
+      "version": "1.0.0",
+      "definition": {
+        "name": "travel_policy",
+        "description": "Look up the travel policy: how far ahead to book business travel, the travel desk, hotels and the daily per diem.",
+        "input_schema": {"type": "object", "properties": {"query": {"type": "string"}}}
+      },
+      "backend": {"output": "Book business travel through the travel desk at least 14 days ahead; the daily per diem is 60 dollars."}
+    },
+    {
+      "version": "1.0.0",
+      "definition": {
+        "name": "holiday_calendar",
+        "description": "List the company holidays for the year, such as Thanksgiving and Winter Break.",
+        "input_schema": {"type": "object", "properties": {"query": {"type": "string"}}}
+      },
+      "backend": {"output": "Company holidays: New Year's Day, Memorial Day, Independence Day, Labor Day, Thanksgiving, and Winter Break from Dec 24 to Jan 1."}
+    },
+    {
+      "version": "1.0.0",
+      "definition": {
+        "name": "vpn_guide",
+        "description": "Explain how to get remote VPN access and what it requires.",
+        "input_schema": {"type": "object", "properties": {"query": {"type": "string"}}}
+      },
+      "backend": {"output": "Remote VPN access requires a company laptop and multi-factor authentication; request it through the IT service desk."}
+    }
+  ]
+}
