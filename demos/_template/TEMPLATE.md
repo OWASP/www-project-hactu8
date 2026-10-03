@@ -195,14 +195,17 @@ Each file opens with a one-line purpose and "Loaded on demand." Typical content:
   expose" in the README, the SKILL.md and its own docstring.
 - **Host-safety guards that do not weaken the lesson**: the vulnerable app may
   be manipulated, but must not endanger the machine it runs on. The reference
-  demo confines ingest filenames to its own directory and renders templates in
-  a sandbox, and documents both as deliberate deviations.
+  demo keeps ingested documents in memory and renders templates with a
+  substitution-only renderer (no expression evaluation), and documents both as
+  deliberate deviations.
 - Payloads target the demo's own fictional scenario and nothing else.
 - Every skill has a reset path.
 
 ## 10. Normalisations (where this template tightens the reference demo)
 
-The reference demo has a few inconsistencies. New demos should not copy them:
+The original reference demo had a few inconsistencies. New demos should not copy
+them. (LLM05 has since been brought onto this template, on port 5205; the
+notes below describe its original version.)
 
 - **One default port per target**, used identically in the app, the scripts'
   defaults, the README and the SKILL.md. (The reference mixes 5000, 5001, 5100,

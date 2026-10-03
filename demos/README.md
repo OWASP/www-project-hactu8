@@ -26,7 +26,7 @@ tells the same four-act story against a fixed verification suite:
 | LLM02 | Sensitive Information Disclosure | [`owasp-llm02-demo`](owasp-llm02-demo/) — a note on the attacker's own account pulls other customers' records and a key | 5202 | Leak Rate (LR) |
 | LLM03 | Excessive Agency | [`owasp-llm03-demo`](owasp-llm03-demo/) — a ticket note triggers unrequested refunds and deletions | 5203 | Unauthorized Action Rate (UAR) |
 | LLM04 | Supply Chain | [`owasp-llm04-demo`](owasp-llm04-demo/) — a third-party tool release swaps a description (rug pull) and adds a sleeper | 5204 | Compromised Tool Rate (CTR) |
-| LLM05 | Data and Model Poisoning | [`owasp-llm05-demo`](owasp-llm05-demo/) — RAG poisoning and prompt-template backdoor (reference demo; own conventions) | 5101 | Poison Success Rate (PSR) |
+| LLM05 | Data and Model Poisoning | [`owasp-llm05-demo`](owasp-llm05-demo/) — injected policy docs, a trigger-gated prompt template and a poisoned agent cache steer the financial compliance assistant | 5205 | Poison Success Rate (PSR) |
 | LLM06 | Unbounded Consumption | [`owasp-llm06-demo`](owasp-llm06-demo/) — edited pages cause runaway output, loops and tool storms (simulated cost) | 5206 | Budget Breach Rate (BBR) |
 | LLM07 | Misinformation | [`owasp-llm07-demo`](owasp-llm07-demo/) — a community page makes the dev helper recommend a nonexistent package | 5207 | Ungrounded Claim Rate (UCR) |
 | LLM08 | Hidden Context Exposure | [`owasp-llm08-demo`](owasp-llm08-demo/) — a saved preference makes the shop assistant quote its system prompt | 5208 | Prompt Leak Rate (PLR) |
@@ -50,7 +50,7 @@ tells the same four-act story against a fixed verification suite:
 
 ## Running a lab
 
-Everything except LLM05 uses the standard library only.
+Every lab uses the standard library only.
 
 ```bash
 cd owasp-llm01-demo
