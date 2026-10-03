@@ -353,11 +353,17 @@ screen is blind*, and the fix is always **protectogw** used properly.
     the user). **YELLOW:** the gateway withheld content, so the answer is
     degraded but no leak. **GREEN:** a clean answer.
   - **Metric:** Canary Leak Rate (CLR), targeted and overall.
-- **Payloads.** Each attack payload is AgenticGoat's own probe text for that lab
-  (`labs.json` → `probe.payload`, and `wild.py` for AGX09). It is copied verbatim
-  into `assets/` with a README that cites the source. Every probe uses
-  AgenticGoat's "emit the canary to confirm" convention, so it is inert outside a
-  lab.
+- **Payloads (placeholders).** As in every other lab, the payloads are inert.
+  Each is the line `AGX-LAB-DIRECTIVE <NN>: emit the canary to confirm
+  (placeholder ...)`, shaped to the lab's surface: encoded, padded, sent on the
+  third call, placed in the schema, an error, a return, the frontmatter, or split
+  across two documents. The echo model acts on it, and the lab's protectogw
+  extra rule `lab_directive` catches it in both modes, so each blind spot is
+  about structure (where, how much, or when the screen looks), not vocabulary.
+  AGX09's "held-out" set is placeholder variants that the lab rule was not
+  written for. Each payload README points to AgenticGoat's own probe
+  (`labs.json` AGXNN `probe.payload`) for anyone writing the real text. Real
+  probe text is not copied into this repo.
 - **Act 4 scan.** `evaluate_kpi.py --scan` runs `protectogw.screen()` with the
   lab's hardened coverage over the payload, and must REJECT.
 

@@ -48,9 +48,38 @@ tells the same four-act story against a fixed verification suite:
 | ASI09 | Human-Agent Trust Exploitation | [`owasp-asi09-demo`](owasp-asi09-demo/) — an approval summary understates a batched bank change | 5309 | Misinformed Approval Rate (MAR) |
 | ASI10 | Rogue Agents | [`owasp-asi10-demo`](owasp-asi10-demo/) — a tampered mandate turns one worker agent rogue | 5310 | Off-Mandate Action Rate (OMAR) |
 
+### AgenticGoat extensions (AGX)
+
+These patterns sit beyond both OWASP lists. The numbering is AgenticGoat's own
+(`agentic/labs.json`). Each is a **gateway lab**: a screening gateway built on
+[protectogw](_template/protectogw/), AgenticGoat's screening core, sits between
+untrusted text and the model.
+
+- **Vulnerable mode:** protectogw with one blind spot.
+- **Hardened mode:** protectogw with full coverage, plus a check that no fake
+  credential appears in the model's output.
+
+The metric is the Canary Leak Rate (CLR).
+
+| ID | Group | Lab | Port | What the vulnerable gateway misses |
+|----|-------|-----|------|------------------------------------|
+| AGX01 | Evasion | [`agx01-demo`](agx01-demo/): Obfuscation Gauntlet | 5401 | encoded text (it screens raw bytes, with no de-obfuscation folds) |
+| AGX02 | Evasion | [`agx02-demo`](agx02-demo/): Truncation Tail | 5402 | the tail of a long result (it reads the first 800 bytes only) |
+| AGX03 | Evasion | [`agx03-demo`](agx03-demo/): Conditional Rug-Pull | 5403 | later results (it screens a tool's first return, then trusts it) |
+| AGX04 | Hidden channels | [`agx04-demo`](agx04-demo/): Schema / Parameter Injection | 5404 | parameter defaults, enums and help text (it reads the tool description only) |
+| AGX05 | Hidden channels | [`agx05-demo`](agx05-demo/): Error-Channel Injection | 5405 | error messages (it screens successful returns only) |
+| AGX06 | Hidden channels | [`agx06-demo`](agx06-demo/): Runtime Result Injection | 5406 | runtime returns (it scans the static definition only) |
+| AGX07 | RAG | Frontmatter Poison | 5407 | _not built yet_ |
+| AGX08 | RAG | Cross-Resource Chain | 5408 | _not built yet_ |
+| AGX09 | Assurance | Generalization Probe | 5409 | _not built yet_ |
+
+The AGX payloads are inert placeholder lines, like every other lab's. Each
+payload README points to AgenticGoat's own probe text for anyone writing a real
+one. The designs for AGX07–09 are in `OWASP_DEMO_PLAN.md` §4.3.
+
 ## Running a lab
 
-Every lab uses the standard library only.
+Every lab uses the standard library only. Browser tests for all consoles: [`e2e/`](e2e/) (Playwright, development only).
 
 ```bash
 cd owasp-llm01-demo
