@@ -17,8 +17,9 @@ LLM10.
   input overflow, resource-intensive queries, model extraction through the
   API, and the prevention guidance (input validation, rate limiting, resource
   allocation management, timeouts and throttling, monitoring).
-- **MITRE ATLAS, Cost Harvesting** — adversaries send useless queries to an AI
-  service to raise its operator's costs.
+- **MITRE ATLAS AML.T0034, Cost Harvesting** — adversaries send useless queries
+  or computationally expensive inputs to an AI service to raise its operator's
+  costs.
 
 ## Scenarios & examples
 

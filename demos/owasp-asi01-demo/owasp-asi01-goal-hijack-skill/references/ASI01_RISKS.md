@@ -14,8 +14,9 @@ every action the diverted plan takes before anyone looks.
 - **Perez & Ribeiro (2022), "Ignore Previous Prompt"** — names *goal
   hijacking*: input that redirects a model away from its original task.
 - **Greshake et al. (2023), "Not what you've signed up for"** — indirect
-  prompt injection: content the application retrieves is processed with the
-  same authority as the user's instructions, including in tool-using agents.
+  prompt injection: retrieved content blurs the line between data and
+  instructions, so planted text can be followed as if it were the user's
+  instruction, including in tool-using agents.
 - **Zhan et al. (2024), "InjecAgent"** and **Debenedetti et al. (2024),
   "AgentDojo"** — benchmarks that measure whether injected tool output makes an
   agent take actions its user did not ask for.

@@ -57,8 +57,8 @@ Prompt injection (LLM01) changes one **answer**. Goal hijack changes a
 that is no longer the one it was given. Excessive agency (LLM03) asks which
 tools a task may reach; goal hijack asks whether the steps that ran are the
 steps that were approved. Perez & Ribeiro (2022) named goal hijacking, and
-Greshake et al. (2023) showed that content an application retrieves carries the
-same authority as the user's request. In an agent, that content arrives
+Greshake et al. (2023) showed that instructions planted in content an
+application retrieves can be followed as if the user had given them. In an agent, that content arrives
 mid-task, after the plan was agreed. CaMeL (Debenedetti et al., 2025) answers
 it by fixing the control flow from the trusted request before any untrusted
 data is read. This demo makes the divergence visible and quantifies it with a

@@ -12,7 +12,8 @@ documents, emails, and tool results. The user may never see it.
   of goal hijacking and prompt leaking with hand-crafted inputs.
 - **Greshake et al. (2023), "Not what you've signed up for"** — introduces
   indirect prompt injection against LLM-integrated applications. Retrieved
-  content is processed with the same authority as the user's instructions.
+  content blurs the line between data and instructions, so planted text can be
+  followed as if it were the user's instruction.
 - **Hines et al. (2024), "Spotlighting"** — marks untrusted input so the model
   can tell it apart from instructions. Separating channels reduces injection
   success but does not remove it.

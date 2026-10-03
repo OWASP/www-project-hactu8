@@ -13,9 +13,10 @@ This repo uses the 2026 numbering: LLM04 Supply Chain here is
 ## Research foundations
 
 - **Ohm et al. (2020), "Backstabber's Knife Collection: A Review of Open
-  Source Software Supply Chain Attacks"** — a catalogue of malicious packages
-  in open-source registries. Many arrive as new versions of trusted packages or
-  as lookalike names, not as new projects.
+  Source Software Supply Chain Attacks"** — a dataset of 174 malicious packages
+  from npm, PyPI and RubyGems. Most use typosquatted lookalike names; others
+  inject malicious code into existing, trusted packages, for example through a
+  compromised maintainer account.
 - **Hubinger et al. (2024), "Sleeper Agents: Training Deceptive LLMs that
   Persist Through Safety Training"** — models trained to behave well until a
   trigger appears. The behaviour survives standard safety training. This demo's

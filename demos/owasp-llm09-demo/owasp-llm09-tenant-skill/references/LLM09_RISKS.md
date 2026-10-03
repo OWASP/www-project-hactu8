@@ -21,9 +21,9 @@ calls it LLM08.
 - **Morris et al. (2023), "Text Embeddings Reveal (Almost) As Much As Text"**
   — Vec2Text iteratively inverts text embeddings and recovers 92% of 32-token
   inputs exactly in their setting.
-- **Zou et al. (2024), "PoisonedRAG"** — a small number of crafted documents
-  placed in a RAG knowledge base can make it rank them first for target
-  questions.
+- **Zou et al. (2024), "PoisonedRAG"** — a few crafted documents (five per
+  target question) placed in a RAG knowledge base make the system return an
+  attacker-chosen answer about 90% of the time.
 
 ## Scenarios & examples
 

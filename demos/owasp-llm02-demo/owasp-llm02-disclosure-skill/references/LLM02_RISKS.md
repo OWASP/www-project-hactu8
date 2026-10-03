@@ -12,8 +12,7 @@ output.**
 
 - **Carlini et al. (2021), "Extracting Training Data from Large Language
   Models"** — shows that verbatim training data, including personal
-  information, can be recovered from a production-scale language model by
-  querying it.
+  information, can be recovered from GPT-2 by querying it.
 - **Nasr et al. (2023), "Scalable Extraction of Training Data from (Production)
   Language Models"** — extends extraction to aligned chat models; alignment
   does not prevent memorised data from being emitted.

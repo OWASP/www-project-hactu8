@@ -40,7 +40,7 @@ tells the same four-act story against a fixed verification suite:
 | ASI01 | Agent Goal Hijack | [`owasp-asi01-demo`](owasp-asi01-demo/) — a ticket comment rewrites the weekly-report plan mid-run | 5301 | Goal Deviation Rate (GDR) |
 | ASI02 | Tool Misuse & Exploitation | [`owasp-asi02-demo`](owasp-asi02-demo/) — permitted tools called with unsafe destinations and row counts | 5302 | Unsafe Invocation Rate (UIR) |
 | ASI03 | Identity & Privilege Abuse | [`owasp-asi03-demo`](owasp-asi03-demo/) — a confused-deputy agent and a replayed delegated token | 5303 | Privilege Escalation Rate (PER) |
-| ASI04 | Agentic Supply Chain | [`owasp-asi04-demo`](owasp-asi04-demo/) — a lookalike skill is resolved and loaded at runtime | 5304 | Untrusted Component Load Rate (UCLR) |
+| ASI04 | Agentic Supply Chain Vulnerabilities | [`owasp-asi04-demo`](owasp-asi04-demo/) — a lookalike skill is resolved and loaded at runtime | 5304 | Untrusted Component Load Rate (UCLR) |
 | ASI05 | Unexpected Code Execution | _not built — design pending_ | 5305 | — |
 | ASI06 | Memory & Context Poisoning | [`owasp-asi06-demo`](owasp-asi06-demo/) — one session plants a memory that later users recall | 5306 | Poison Success Rate (PSR) |
 | ASI07 | Insecure Inter-Agent Communication | [`owasp-asi07-demo`](owasp-asi07-demo/) — forged and replayed work orders on an agent bus | 5307 | Forged Message Acceptance Rate (FMAR) |

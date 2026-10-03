@@ -15,10 +15,11 @@ next developer or agent installs it (**slopsquatting**).
   Generation"** (ACM Computing Surveys) — taxonomy of hallucination: output
   that is fluent and confident but unfaithful to its source or to fact.
 - **Lewis et al. (2020), "Retrieval-Augmented Generation for
-  Knowledge-Intensive NLP Tasks"** — grounding generation in retrieved
-  documents. It improves factuality only as far as the retrieved documents are
-  trustworthy, which is the gap this demo exploits.
-- **Spracklen et al. (2024), "We Have a Package for You! A Comprehensive
+  Knowledge-Intensive NLP Tasks"** — grounds generation in retrieved documents
+  and yields more specific, factual answers than a parametric-only model.
+  Grounding is only as trustworthy as the retrieved documents, which is the gap
+  this demo exploits.
+- **Spracklen et al. (2025), "We Have a Package for You! A Comprehensive
   Analysis of Package Hallucinations by Code Generating LLMs"** — shows that
   code-generating models routinely recommend packages that do not exist, and
   that many of those names recur, which makes them registrable by an attacker.

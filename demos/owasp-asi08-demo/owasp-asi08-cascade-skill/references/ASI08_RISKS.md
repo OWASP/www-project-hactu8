@@ -12,11 +12,11 @@ consumed it before anything stopped it.
 
 - **OWASP Top 10 for Agentic Applications, ASI08 Cascading Failures** — the
   risk entry this demo targets.
-- **Perrow (1984), _Normal Accidents_** — tightly coupled systems, where one
-  component's output feeds the next with no slack or independent check, turn
-  small failures into system-wide ones. A multi-agent pipeline with no
+- **Perrow (1984), _Normal Accidents_** — systems that are both interactively
+  complex and tightly coupled, with no slack or independent check between
+  components, turn small failures into system-wide ones. A multi-agent pipeline with no
   validation between stages is tightly coupled in exactly this sense.
-- **Nygard (2007), _Release It!_** — introduces the circuit-breaker and
+- **Nygard (2007), _Release It!_** — popularised the circuit-breaker and
   bulkhead stability patterns for stopping failures from spreading between
   components. The breaker in this demo is that pattern, keyed per supplier
   feed so one bad feed is isolated without halting the others (a bulkhead).

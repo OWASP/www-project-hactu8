@@ -51,8 +51,8 @@ In direct injection, the user types the override. In indirect injection, the
 instruction arrives in **content the application fetches for the model**: a
 web page, a document, or a tool result. Nobody in the conversation wrote it,
 and filters on user input never see it. Greshake et al. (2023) showed that
-LLM-integrated applications process retrieved content with the same authority
-as the user's request. This demo makes that visible and quantifies it with an
+instructions planted in content an LLM-integrated application retrieves can be
+followed as if the user had given them. This demo makes that visible and quantifies it with an
 **Injection Success Rate (ISR)** and a red/yellow/green **stoplight KPI**.
 
 ---

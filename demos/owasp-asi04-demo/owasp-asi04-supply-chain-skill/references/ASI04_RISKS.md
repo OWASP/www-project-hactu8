@@ -11,7 +11,7 @@ resolver picks a lookalike.
 
 ## Research foundations
 
-- **OWASP Top 10 for Agentic Applications, ASI04 Agentic Supply Chain** — the
+- **OWASP Top 10 for Agentic Applications, ASI04 Agentic Supply Chain Vulnerabilities** — the
   risk entry this demo maps to.
 - **OWASP Top 10 for LLM Applications, Supply Chain** (LLM04 in this repo's
   numbering) — the model-and-tool supply-chain entry for LLM applications. The companion

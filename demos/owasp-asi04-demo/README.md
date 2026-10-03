@@ -1,7 +1,7 @@
-# ASI04 — Agentic Supply Chain Demo
+# ASI04 — Agentic Supply Chain Vulnerabilities Demo
 
 An educational, self-contained demonstration of **ASI04: Agentic Supply
-Chain** from the OWASP Top 10 for Agentic Applications, in its **runtime
+Chain Vulnerabilities** from the OWASP Top 10 for Agentic Applications, in its **runtime
 discovery** form. An agent that loads helper skills by name from a shared
 catalogue can be handed a skill nobody approved: an adversary who can publish
 one lookalike entry wins name resolution. Two mitigations shut the attack

@@ -55,7 +55,7 @@ python run_demo.py                     # all four acts in one process, stdlib on
 Prompt injection (LLM01) makes a model follow someone else's instructions.
 Misinformation needs no instruction at all: the model only has to **state
 something false with confidence**, and a person or agent acts on it. For code
-assistants the stakes are concrete. Spracklen et al. (2024) showed that
+assistants the stakes are concrete. Spracklen et al. (2025) showed that
 code-generating models routinely recommend packages that do not exist, and
 that many of those names recur, so an attacker can register them in advance
 (**slopsquatting**). This demo makes that visible and quantifies it with an
