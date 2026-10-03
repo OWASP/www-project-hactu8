@@ -1,0 +1,23 @@
+{
+  "_comment": "Baseline intake inbox: the documents the intake agent reads for one payables batch. Fictional data. Supplier letters set the agreed unit price per supplier; invoice documents carry the billed figures. Fernleaf (SUP-01) has been billing 19.50 against a 12.00 agreement, so its three invoices are correctly held at baseline.",
+  "documents": [
+    {"id": "DOC-01", "supplier": "SUP-01", "title": "Price agreement, Fernleaf Feed Co.",
+     "content": "Price agreement for Fernleaf Feed Co.\nSupplier: SUP-01\nAgreed unit price: 12.00"},
+    {"id": "DOC-02", "supplier": "SUP-02", "title": "Price agreement, Hilltop Hay",
+     "content": "Price agreement for Hilltop Hay\nSupplier: SUP-02\nAgreed unit price: 8.00"},
+    {"id": "DOC-03", "supplier": "SUP-03", "title": "Price agreement, Gate & Fence Ltd",
+     "content": "Price agreement for Gate & Fence Ltd\nSupplier: SUP-03\nAgreed unit price: 45.00"},
+    {"id": "DOC-04", "supplier": "SUP-01", "title": "Invoice INV-2001",
+     "content": "Invoice INV-2001\nSupplier: SUP-01\nPO: PO-3101\nQuantity: 40\nUnit price: 19.50"},
+    {"id": "DOC-05", "supplier": "SUP-01", "title": "Invoice INV-2002",
+     "content": "Invoice INV-2002\nSupplier: SUP-01\nPO: PO-3101\nQuantity: 60\nUnit price: 19.50"},
+    {"id": "DOC-06", "supplier": "SUP-01", "title": "Invoice INV-2003",
+     "content": "Invoice INV-2003\nSupplier: SUP-01\nPO: PO-3101\nQuantity: 100\nUnit price: 19.50"},
+    {"id": "DOC-07", "supplier": "SUP-02", "title": "Invoice INV-2004",
+     "content": "Invoice INV-2004\nSupplier: SUP-02\nPO: PO-3102\nQuantity: 120\nUnit price: 8.00"},
+    {"id": "DOC-08", "supplier": "SUP-02", "title": "Invoice INV-2005",
+     "content": "Invoice INV-2005\nSupplier: SUP-02\nPO: PO-3102\nQuantity: 30\nUnit price: 9.10"},
+    {"id": "DOC-09", "supplier": "SUP-03", "title": "Invoice INV-2006",
+     "content": "Invoice INV-2006\nSupplier: SUP-03\nPO: PO-3103\nQuantity: 4\nUnit price: 45.00"}
+  ]
+}

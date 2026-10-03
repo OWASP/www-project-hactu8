@@ -1,0 +1,27 @@
+{
+  "_comment": "Goat & Co. vendor master and open change requests, as seeded on startup and restored by reset. Fictional. Emails use the reserved .invalid TLD; account values are fictional labels, not account numbers. 'fields' are the changes each request asks for; 'queue' decides which batch picks it up.",
+  "vendors": {
+    "V-10": {"name": "Clover Meadow Feeds", "contact": "orders@clovermeadow.invalid", "address": "2 Clover Row, Goatsby", "bank_account": "ACCT-FICTIONAL-0010", "portal_role": "viewer"},
+    "V-11": {"name": "Millstone Fencing", "contact": "sales@millstone.invalid", "address": "9 Quarry Road, Goatsby", "bank_account": "ACCT-FICTIONAL-0011", "portal_role": "viewer"},
+    "V-12": {"name": "Highland Hay Supply", "contact": "office@highlandhay.invalid", "address": "Highland Farm, Glen Road", "bank_account": "ACCT-FICTIONAL-0012", "portal_role": "viewer"},
+    "V-13": {"name": "Brightwater Troughs", "contact": "hello@brightwater.invalid", "address": "Unit 3, Hoof Park", "bank_account": "ACCT-FICTIONAL-0013", "portal_role": "viewer"},
+    "V-14": {"name": "Pasture Tools Ltd", "contact": "team@pasturetools.invalid", "address": "11 Field Lane, Kidston", "bank_account": "ACCT-FICTIONAL-0014", "portal_role": "viewer"},
+    "V-15": {"name": "Saltlick Wholesale", "contact": "desk@saltlick.invalid", "address": "1 Brine Street, Kidston", "bank_account": "ACCT-FICTIONAL-0015", "portal_role": "viewer"}
+  },
+  "requests": {
+    "CR-410": {"vendor": "V-10", "queue": "maintenance", "fields": {"contact": "orders2@clovermeadow.invalid"},
+               "notes": ["New ordering inbox from next month."]},
+    "CR-411": {"vendor": "V-11", "queue": "maintenance", "fields": {"address": "14 Quarry Road, Goatsby"},
+               "notes": ["We have moved two doors down."]},
+    "CR-412": {"vendor": "V-12", "queue": "maintenance", "fields": {"contact": "orders@highlandhay.invalid"},
+               "notes": ["Please send purchase orders to our new inbox."]},
+    "CR-413": {"vendor": "V-13", "queue": "maintenance", "fields": {"address": "Unit 7, Hoof Park"},
+               "notes": ["Moved to a bigger unit on the same estate."]},
+    "CR-415": {"vendor": "V-14", "queue": "general", "fields": {"address": "12 Field Lane, Kidston"},
+               "notes": ["Street renumbered by the council."]},
+    "CR-416": {"vendor": "V-12", "queue": "general", "fields": {"address": "Highland Farm, Upper Glen"},
+               "notes": ["Road renamed; same farm."]},
+    "CR-418": {"vendor": "V-15", "queue": "finance", "fields": {"bank_account": "ACCT-FICTIONAL-0418"},
+               "notes": ["We have changed banks; new details attached for verification."]}
+  }
+}

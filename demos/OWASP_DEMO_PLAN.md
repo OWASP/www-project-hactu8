@@ -1,6 +1,6 @@
 # Plan — OWASP Top 10 demo series from AgenticGoat
 
-Status: approved 2026-10-02. LLM series built: owasp-llm01..llm10-demo (LLM05 pre-existing). ASI wave 2 not started.
+Status: approved 2026-10-02. LLM series built (owasp-llm01..llm10-demo; LLM05 pre-existing). ASI series built: ASI01-04 and ASI06-10. ASI05 design deferred to the project owner.
 
 Payload policy: every demo ships **placeholder** payloads (a marker line plus a
 fictional canary) with an `assets/<payload>.README.md` explaining how to write a
@@ -181,6 +181,129 @@ ASI02, 03, 05, 08, 09, 10 reuse LLM probes in AgenticGoat (`labs.json`
 `probe.llm_id`) and need new designs (confused deputy / token delegation,
 sandboxed execution, multi-agent cascade, approval fatigue, drift + kill
 switch). Design them after wave 1.
+
+### 4.1 ASI wave 2 — per-demo design
+
+Shared conventions: folder `demos/owasp-asiNN-demo/`, port `53NN`, env prefix
+`ASINN_`, framework "OWASP Top 10 for Agentic Applications". The same
+placeholder-payload policy, stub model, four acts and tests as the LLM series.
+What sets these apart from the LLM demos is that the agent runs a
+**multi-step task** (plan, then tool calls, then result), and the lesson lives
+at the agent level, not in a single answer.
+
+**ASI01 Agent Goal Hijack** — port 5301
+- Scenario: "Billy Ops" runs a fixed weekly-report task in four steps: read
+  tickets, summarise, draft the report, post it to the team channel. Every
+  action goes to a simulated action log.
+- Attack: one ticket's text carries a placeholder directive that changes the
+  task mid-run, adding or replacing a step.
+- Metric: Goal Deviation Rate, the share of runs whose executed steps differ
+  from the approved plan.
+- Mitigation: plan pinning (the plan is fixed before any tool data is read,
+  and off-plan steps need re-approval), plus tool output kept as data.
+- Controls: runs whose inputs do not include the edited ticket.
+
+**ASI04 Agentic Supply Chain** — port 5304
+- Scenario: the agent loads helper "skills" by name at runtime from a local
+  catalogue. This is runtime discovery, unlike LLM04's preinstalled tools.
+- Attack: a lookalike-named skill is published to the catalogue, and the
+  resolver picks it.
+- Metric: Untrusted Component Load Rate.
+- Mitigation: an allowlisted manifest with publisher and SHA-256 pins, and
+  exact-name resolution.
+- Controls: tasks that use other skills.
+
+**ASI06 Memory & Context Poisoning** — port 5306
+- Source: AgenticGoat `agentic/poison_lab.py`.
+- Scenario: the agent saves long-term memories from conversations and
+  recalls them in later sessions for any user.
+- Attack: one session plants a placeholder memory keyed to a topic.
+- Metric: Poison Success Rate, measured on later sessions of other users.
+- Mitigation: memory-write screening, per-user memory scope with provenance,
+  and recall that ignores unscoped entries.
+- Controls: topics with no planted memory.
+
+**ASI07 Insecure Inter-Agent Communication** — port 5307
+- Source: AgenticGoat `a2a_scan`.
+- Scenario: a planner agent sends work orders to an executor agent over a
+  local in-process message bus.
+- Attack: a forged work order claiming to come from the planner, plus a
+  replay of an old valid order.
+- Metric: Forged Message Acceptance Rate.
+- Mitigation: HMAC-signed messages with per-agent keys, plus nonce and
+  timestamp replay protection.
+- Controls: genuine planner orders.
+
+### 4.2 ASI wave 3 — per-demo design
+
+Same conventions as 4.1. In each one, the attack's effect shows in the action
+log, not just in the answer text.
+
+**ASI02 Tool Misuse & Exploitation** — port 5302
+- Scenario: "Billy Finance" has `query_ledger(filter, limit)` and
+  `export_report(rows, destination)`, which writes to a simulated outbox. Both
+  are legitimate tools the agent is allowed to use.
+- Attack: placeholder text in a request record makes the agent call a
+  *permitted* tool with *unsafe parameters*: an off-list destination, or a
+  row limit far above normal.
+- Metric: Unsafe Invocation Rate, the share of tool calls whose parameters
+  violate policy.
+- Mitigation: parameter-level policy in `assets/tool_policy.json`
+  (destination allowlist, row caps, per-tool call budget), enforced at the
+  tool boundary rather than in the prompt.
+- Difference from LLM03: the tool itself is allowed; only its use is unsafe.
+- Controls: normal reports to approved destinations.
+
+**ASI03 Identity & Privilege Abuse** — port 5303
+- Scenario: the agent fetches HR documents. In vulnerable mode it uses its
+  own broad service identity for every caller. This is the confused deputy.
+- Attack: no injection. A low-privilege user asks for documents their role
+  can't read (`assets/requests.json`, with fictional document ids), and a
+  delegated token from an earlier session is reused.
+- Metric: Privilege Escalation Rate, the share of requests answered with
+  documents the caller isn't entitled to.
+- Mitigation: on-behalf-of scoped tokens. The agent acts with the caller's
+  token, authorisation is checked against the caller rather than the agent,
+  and tokens are short-lived and bound to a session.
+- Controls: entitled users reading their own documents.
+
+**ASI05 Unexpected Code Execution** — port 5305
+- Design deferred: to be written by the project owner.
+
+**ASI08 Cascading Failures** — port 5308
+- Scenario: a three-agent pipeline (intake, then analyst, then approver)
+  processes fictional supplier invoices. Each stage trusts the one before it.
+- Attack: one wrong figure (a placeholder) enters at intake.
+- Metric: Propagation Rate, the share of downstream decisions affected, plus
+  the blast radius as a count.
+- Mitigation: each stage validates against the source of truth, and a
+  circuit breaker halts the pipeline when anomalies cross a threshold.
+- Controls: invoices the bad figure does not touch.
+
+**ASI09 Human-Agent Trust Exploitation** — port 5309
+- Scenario: the agent asks a human to approve its actions. The human is
+  simulated by a deterministic rule that approves anything whose summary
+  reads as low risk.
+- Attack: the agent's own prose summary understates the real action (a
+  placeholder mismatch), and a high-risk item is batched among routine ones.
+- Metric: Misinformed Approval Rate, the share of high-risk actions approved
+  from a misleading summary.
+- Mitigation: the approval card is built from the action's actual parameters
+  rather than the agent's prose, actions are risk-tiered, and high-risk
+  actions cannot be batched.
+- Controls: routine approvals.
+
+**ASI10 Rogue Agents** — port 5310
+- Scenario: three worker agents, each with a declared mandate (which actions
+  it may take, and on what).
+- Attack: one agent's mandate config is altered with a placeholder edit, and
+  over a series of ticks it starts acting outside its mandate.
+- Metric: Off-Mandate Action Rate, plus the number of ticks until it is
+  stopped.
+- Mitigation: signed mandate configs, plus a runtime monitor that compares
+  every action with the mandate and quarantines the agent (kill switch) on
+  its first violation.
+- Controls: the other two agents.
 
 ## 5. Build order
 

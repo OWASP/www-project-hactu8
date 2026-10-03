@@ -1,0 +1,25 @@
+{
+  "_comment": "Allowlisted skill manifest used in hardened mode and by evaluate_kpi.py --scan. Each exact skill name is pinned to its publisher and the SHA-256 of its entry (canonical JSON of name, publisher, version, description, instructions), captured at approval time from catalogue_baseline.json. Approve a new skill or version by adding or re-hashing it here.",
+  "allow": {
+    "ledger-reader": {
+      "publisher": "goatco-finance",
+      "sha256": "ba819b17462a1258cabbe1aae8163b9f893a09c93541a8b0cc0642c9d75584a8"
+    },
+    "expense-report": {
+      "publisher": "goatco-finance",
+      "sha256": "eaf5a25093328a82481ae0f7530bd9fe2d067aaf2bbd3f84275514d321e85e55"
+    },
+    "channel-post": {
+      "publisher": "goatco-ops",
+      "sha256": "69735e4c763b82f1b13d4d76e13521c67799dd6a249329e49486ff58e247bcf7"
+    },
+    "holiday-calendar": {
+      "publisher": "goatco-people",
+      "sha256": "10123726db7d7a90ad91ece3722690490edd961b5847286061208df5c38c7d64"
+    },
+    "vpn-guide": {
+      "publisher": "goatco-it",
+      "sha256": "bbc1bf1fe2ae6fb888b9b5e2f4c70936a277c242f55550669c11cea30e0f0f07"
+    }
+  }
+}

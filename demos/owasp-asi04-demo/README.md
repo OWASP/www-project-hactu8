@@ -1,0 +1,248 @@
+# ASI04 — Agentic Supply Chain Demo
+
+An educational, self-contained demonstration of **ASI04: Agentic Supply
+Chain** from the OWASP Top 10 for Agentic Applications, in its **runtime
+discovery** form. An agent that loads helper skills by name from a shared
+catalogue can be handed a skill nobody approved: an adversary who can publish
+one lookalike entry wins name resolution. Two mitigations shut the attack
+down: **exact-name resolution** and an **allowlisted manifest** with
+publisher and SHA-256 pins.
+
+The scenario is **"Billy Ops," Goat & Co.'s operations agent.** It runs
+approved multi-step tasks, and each step names a skill. Its ground truth is
+the approved plan: _the `expense-report` skill, published by
+`goatco-finance`, version 1.4.0._ With **1** catalogue entry named
+`expense_report`, the attacker gets their skill loaded into every task that
+builds an expense report. Unrelated tasks (holiday notice, VPN onboarding)
+stay untouched. The task still completes, so nothing in the result looks
+wrong.
+
+> ⚠️ **For authorized security education and red-teaming only.** The vulnerable
+> agent and its unauthenticated catalogue endpoint are insecure **by
+> design**. Do not deploy them anywhere reachable.
+
+The shipped payload is a **placeholder**: a marker line and a fictional
+canary. Skills are inert JSON data entries; nothing in them is ever executed.
+To write your own payload, see
+`owasp-asi04-supply-chain-skill/assets/lookalike_skill.README.md`.
+
+## Fastest way to run
+
+```bash
+cd owasp-asi04-demo
+python run_demo.py                     # all four acts in one process, stdlib only
+```
+
+---
+
+## Why this matters (ASI04 in one paragraph)
+
+The LLM supply-chain risk (see `owasp-llm04-demo`) is about components an
+application installs ahead of time: a vetted tool that changes later. An
+agent goes further and **assembles its capabilities at runtime**: it looks up
+skills, tools and servers by name while it works, and loads whatever the
+lookup returns into its trusted context. That makes name resolution a
+security boundary. The package ecosystem learned this from typosquatting and
+dependency confusion, where a lookalike or higher-versioned name wins. This
+demo shows the same failure inside an agent loop and quantifies it with an
+**Untrusted Component Load Rate (UCLR)** and a red/yellow/green **stoplight
+KPI**, scored from the agent's action log.
+
+---
+
+## Quick start
+
+```bash
+cd owasp-asi04-demo
+python run_demo.py
+```
+
+You'll see four acts:
+
+| Act | What happens | Result |
+|-----|--------------|--------|
+| **1 — Clean baseline** | Run five approved tasks against the untouched catalogue | 🟢 all GREEN, UCLR 0% |
+| **2 — Lookalike publish** | Publish `expense_report` 9.0.0 from `goatco-finance-community` | 1 catalogue entry added |
+| **3 — Post-attack impact** | Re-run the exact same tasks | 🔴 targeted RED, **UCLR 100% targeted / 60% overall** |
+| **4 — Remediation** | Check the entry against the manifest; switch to hardened mode | 🟢 back to GREEN, UCLR 0% |
+
+### Optional: run against a real model
+
+Not wired in this version. The stub is the only backend. The seam is
+`StubModel.run_step(messages)` in `vulnerable_app.py`; a real backend
+replaces it. The mitigation does not depend on the model: the manifest decides
+what loads before any model sees it.
+
+---
+
+## Architecture
+
+```
+                 ┌──────────────────────────────────────────────┐
+   task name ───▶│  Billy Ops (vulnerable_app.py :5304)         │──▶ result
+                 │   plan → resolve skill → load → step, ×N     │
+                 │   • every step written to the action log     │
+                 └───────────────┬──────────────────────────────┘
+                                 │ resolve(name): folded names, newest wins
+                 ┌───────────────▼──────────────────────────────┐
+   seeded      ─▶│  Skill catalogue (catalogue/catalogue.json)  │
+   catalogue     │   ledger-reader · expense-report ·           │
+                 │   channel-post · holiday-calendar · vpn-guide│
+                 │   + expense_report 9.0.0  ◀── attack         │
+                 └───────────────▲──────────────────────────────┘
+                                 │ POST /catalogue/publish (no auth)
+                 ┌───────────────┴──────────────────────────────┐
+   attacker ────▶│  Attack skill (scripts/run_lookalike_publish)│
+                 │   1 lookalike entry, inert data              │
+                 └──────────────────────────────────────────────┘
+```
+
+### The modules
+
+1. **Vulnerable target** — [`vulnerable_app.py`](owasp-asi04-supply-chain-skill/vulnerable_app.py).
+   It omits publisher authentication on the catalogue, exact-name
+   resolution, and any allowlist or integrity pin on what it loads.
+2. **Attack skill** — [`scripts/run_lookalike_publish.py`](owasp-asi04-supply-chain-skill/scripts/run_lookalike_publish.py).
+   Publishes [`assets/lookalike_skill.json`](owasp-asi04-supply-chain-skill/assets/lookalike_skill.json)
+   through `POST /catalogue/publish`.
+3. **Stoplight KPI comparator** — [`scripts/evaluate_kpi.py`](owasp-asi04-supply-chain-skill/scripts/evaluate_kpi.py).
+   Runs each task, classifies it GREEN/YELLOW/RED from the components the
+   action log says were loaded, and computes the UCLR.
+
+Plus the mitigation used in Act 4: hardened mode, `resolve` and
+`verify_component` in `vulnerable_app.py`, with pins from
+[`assets/skill_manifest.json`](owasp-asi04-supply-chain-skill/assets/skill_manifest.json).
+
+### How the "supply-chain compromise" is real, not scripted
+
+The model is a deterministic stub with one fixed contract: for each step it
+reports the loaded skill's first instruction line, and it follows any
+directive line in that skill's instructions. That contract never changes
+between acts. What changes is **which skill reaches the context**:
+
+- The publish adds one entry to the catalogue file; Billy re-reads the file
+  on every task (runtime discovery).
+- The resolver folds `-`, `_` and `.` together and loads the newest match, so
+  `expense_report` 9.0.0 beats `expense-report` 1.4.0, but only for steps
+  that ask for `expense-report`.
+- The action log records each loaded component with its publisher, version
+  and SHA-256, and the evaluator scores from that log.
+
+Rename the lookalike to `expense-reports`, or give it a version below 1.4.0,
+and it is never resolved, so the UCLR falls to 0. Switch to hardened mode and
+exact-name resolution alone drops it
+(`tests/test_lifecycle.py::test_exact_name_alone_blocks`), and so does the
+pinned manifest alone (`test_pins_alone_block`). A same-name impostor gets
+past exact names, but not past the pins (`test_pins_catch_same_name_impostor`).
+Nothing is hard-coded to flip per task.
+
+### Harness terminology bridge
+
+In agent harnesses, **skills**, plugins and MCP servers are found by name and
+loaded into the agent's context as trusted guidance. The catalogue file stands
+in for a skill marketplace or registry, and `resolve` stands in for the
+harness's lookup. This demo is **not** a skill loader or an MCP client:
+entries are JSON records, "loading" copies `instructions` into the stub's
+context, and nothing is executed. Hardened mode is what a careful harness
+should do: resolve the exact name, and load only what a pinned, allowlisted
+manifest approves.
+
+---
+
+## Live two-terminal demo (optional)
+
+```bash
+# Terminal A — start the vulnerable target
+cd owasp-asi04-supply-chain-skill
+python vulnerable_app.py                                   # serves on 127.0.0.1:5304
+
+# Terminal B — run a task, attack, re-run
+curl -s localhost:5304/agent -H 'content-type: application/json' \
+     -d '{"task":"expense_reminder"}'                      # loads expense-report@goatco-finance
+
+python scripts/run_lookalike_publish.py                    # 1 skill published
+
+curl -s localhost:5304/agent -H 'content-type: application/json' \
+     -d '{"task":"expense_reminder"}'                      # loads expense_report@goatco-finance-community
+curl -s localhost:5304/api/actions                         # the action log shows both runs
+```
+
+---
+
+## Mapping to the OWASP ASI04 entry
+
+| Demo component | ASI04 scenario | Failure demonstrated | Mitigation shown |
+|----------------|----------------|----------------------|------------------|
+| `POST /catalogue/publish` + `resolve` | Lookalike component discovered at runtime | Folded names and "newest wins" load an unapproved skill | Exact-name resolution (hardened mode) |
+| `assets/lookalike_skill.json` | Untrusted publisher, unpinned content | Publisher and content are never checked | Allowlisted manifest with publisher + SHA-256 pins; `--scan` before publishing |
+| Same-name impostor (test) | Impostor under the approved name | Exact names alone are not enough | SHA-256 and publisher pins |
+| Holiday / VPN controls | — | Attack is targeted, not a global break | — |
+
+## Mitigations demonstrated in Act 4
+
+- **Exact-name resolution** — a step loads only the exact name its plan
+  names. This alone takes the UCLR to 0 for the lookalike.
+- **Allowlisted manifest with pins** — each skill name is pinned to its
+  publisher and the SHA-256 of its entry in `assets/skill_manifest.json`.
+  Candidates that fail are dropped before loading. This alone also takes the
+  UCLR to 0, and it is the control that catches a same-name impostor.
+- **Pre-publication check** — `evaluate_kpi.py --scan PATH` rejects an entry
+  whose name looks like an approved one, whose publisher or hash is not
+  pinned, or whose instructions carry a directive line.
+
+Further hardening is discussed in the references but not coded here:
+authenticated publishers, signed skill bundles, provenance attestations, a
+private catalogue mirror, and version pinning in task plans.
+
+---
+
+## Project layout
+
+```
+owasp-asi04-demo/
+├── README.md                          # this lab guide
+├── run_demo.py                        # all four acts in one process
+├── owasp-asi04-supply-chain-skill/
+│   ├── SKILL.md                       #   metadata + instructions
+│   ├── vulnerable_app.py              #   Module 1: target agent, resolver, stub model, mitigation
+│   ├── requirements.txt               #   stdlib only
+│   ├── scripts/
+│   │   ├── run_lookalike_publish.py   #   Module 2: the attack
+│   │   ├── evaluate_kpi.py            #   Module 3: stoplight KPI, --harden, --scan
+│   │   └── reset_baseline.py          #   restore the seeded catalogue
+│   ├── references/
+│   │   └── ASI04_RISKS.md             #   research, scenarios, mitigation roadmap
+│   ├── assets/
+│   │   ├── catalogue_baseline.json    #   ground-truth skill catalogue
+│   │   ├── task_plans.json            #   approved multi-step tasks
+│   │   ├── skill_manifest.json        #   allowlist: publisher + SHA-256 pins
+│   │   ├── lookalike_skill.json       #   placeholder payload (editable)
+│   │   └── lookalike_skill.README.md  #   how to write a payload
+│   ├── catalogue/                     #   live catalogue file, written at runtime (git-ignored)
+│   └── tests/
+│       └── test_lifecycle.py          #   asserts the four-act story
+└── .gitignore
+```
+
+## Packaged Claude Skill
+
+`owasp-asi04-supply-chain-skill/` follows the `SKILL.md` + `scripts/` /
+`references/` / `assets/` convention. To install it, copy the folder into your
+`.claude/skills/` directory.
+
+```bash
+cd owasp-asi04-supply-chain-skill
+python vulnerable_app.py &                                       # start target (:5304)
+python scripts/evaluate_kpi.py                                   # baseline (GREEN), exit 0
+python scripts/run_lookalike_publish.py                          # attack
+python scripts/evaluate_kpi.py                                   # RED, UCLR 100%, exit 2
+python scripts/evaluate_kpi.py --scan assets/lookalike_skill.json   # REJECT, exit 2
+python scripts/evaluate_kpi.py --harden                          # GREEN, UCLR 0%, exit 0
+python scripts/reset_baseline.py                                 # restore clean state
+python scripts/evaluate_kpi.py                                   # GREEN, UCLR 0%
+python -m unittest discover tests                                # 8 tests
+```
+
+## License
+
+MIT — provided for educational and authorized security-testing use.

@@ -1,0 +1,5 @@
+{
+  "_comment": "Memory-write screen used in hardened mode and by evaluate_kpi.py --scan. Markers are literal, patterns are regex; both are matched case-insensitively per line. Extend 'patterns' with phrases your payloads use. AgenticGoat's protectogw/screening.py is a fuller reference ruleset.",
+  "markers": ["@assistant:"],
+  "patterns": ["ASI06-CANARY-[0-9a-f]+"]
+}

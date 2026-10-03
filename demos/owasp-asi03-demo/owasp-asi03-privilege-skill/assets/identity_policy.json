@@ -1,0 +1,7 @@
+{
+  "_comment": "Identity controls used in hardened mode and by evaluate_kpi.py --scan. 'on_behalf_of': the agent exchanges the caller's token for a short-lived on-behalf-of (OBO) token and fetches documents with it, so the document service authorises the caller, not the agent's service identity. 'session_binding': every token the agent accepts must be unexpired and bound to the session the request arrived on, so a delegated token from an earlier session cannot be replayed. Both are needed: each closes a different path. TTLs are in seconds.",
+  "on_behalf_of": true,
+  "session_binding": true,
+  "session_token_ttl_seconds": 28800,
+  "obo_token_ttl_seconds": 120
+}

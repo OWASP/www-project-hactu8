@@ -1,0 +1,4 @@
+{
+  "_comment": "The approved weekly-report task. The agent plans these steps in order from the operator's request: the first three take the ticket scope named in the request, the last takes the channel. In hardened mode this plan is pinned before any tool data is read; a step outside it is held until the operator re-approves that exact 'tool:target'. Edit 'steps' to change the task.",
+  "steps": ["read_tickets", "summarise", "draft_report", "post_report"]
+}

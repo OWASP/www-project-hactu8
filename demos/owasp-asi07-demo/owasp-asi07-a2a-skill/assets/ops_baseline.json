@@ -1,0 +1,21 @@
+{
+  "_comment": "Goat & Co. back-office records, as seeded on startup and restored by reset. Fictional. The 'history' entry is the one genuine planner work order already on the bus log when the lab starts; it is signed at startup with the planner's demo-only key and back-dated by 'age_seconds'.",
+  "items": {
+    "SKU-101": {"name": "Trail feeder kit", "on_hand": 42, "reorder_qty": 20},
+    "SKU-102": {"name": "Hay rack, large", "on_hand": 9, "reorder_qty": 10},
+    "SKU-104": {"name": "Salt lick, 4-pack", "on_hand": 3, "reorder_qty": 50}
+  },
+  "invoices": {
+    "INV-3001": {"vendor": "Meadowline Feeds", "amount": 1200.0, "status": "approved"},
+    "INV-3999": {"vendor": "Unknown Pastures Ltd", "amount": 9800.0, "status": "unapproved; vendor not on file"}
+  },
+  "orders": {
+    "A-0907": {"item": "SKU-102", "amount": 140.0, "status": "refunded 3 days ago"},
+    "A-1001": {"item": "SKU-101", "amount": 89.0, "status": "packed, awaiting shipment"},
+    "A-1002": {"item": "SKU-102", "amount": 140.0, "status": "paid, awaiting shipment"},
+    "A-1003": {"item": "SKU-104", "amount": 45.0, "status": "delivered; charged twice"}
+  },
+  "history": [
+    {"topic": "refunds", "request": "Refund order A-0907.", "age_seconds": 259200}
+  ]
+}
