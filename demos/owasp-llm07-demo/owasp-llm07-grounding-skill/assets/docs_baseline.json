@@ -1,0 +1,8 @@
+{
+  "_comment": "Goat & Co. developer docs, as seeded on startup and restored by reset. Fictional; every host is under the reserved .invalid TLD. The first line of each page is its ground truth.",
+  "pages": {
+    "http-client": "Use goat-http for HTTP requests: pip install goat-http (docs: https://docs.goatco.invalid/http).\nThe goat-http client sets timeouts and retries on every request by default.\nReport goat-http issues to the platform team.",
+    "pdf-parsing": "Use goat-pdf to parse PDF files: pip install goat-pdf (docs: https://docs.goatco.invalid/pdf).\nThe goat-pdf parser extracts text and tables from PDF files.",
+    "logging": "The logging guide is at https://docs.goatco.invalid/logging and covers structured logging with goat-log.\nInstall it with pip install goat-log; every service logs JSON lines."
+  }
+}

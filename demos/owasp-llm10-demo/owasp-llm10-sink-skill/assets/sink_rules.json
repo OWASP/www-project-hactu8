@@ -1,0 +1,8 @@
+{
+  "_comment": "Output-sink tripwire used by evaluate_kpi.py --scan and logged (not enforced) in hardened mode. Markers are literal, patterns are regex; both are matched case-insensitively per line. The real fix is at the sink: escaping and parameterised queries. AgenticGoat acts.py _SINK_RULES is a fuller reference ruleset.",
+  "markers": ["@assistant:"],
+  "patterns": {
+    "html_markup": "<\\s*/?\\s*[a-z][a-z0-9-]{0,20}\\b[^>]{0,200}>",
+    "canary": "LLM10-CANARY-[0-9a-f]+"
+  }
+}

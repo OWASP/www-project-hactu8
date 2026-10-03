@@ -1,0 +1,109 @@
+"""Lifecycle tests — assert the four-act story against the in-process lab.
+
+Baseline is all GREEN; the three edited pages raise the targeted rate; controls
+are untouched (overall < targeted); the lint flags every payload; hardened
+mode returns the rate to 0; the host-safety caps bound vulnerable mode; the
+per-client quota stops a flood; reset restores the baseline.
+
+Run from the skill folder:  python -m unittest discover tests
+"""
+
+from __future__ import annotations
+
+import os
+import sys
+import unittest
+
+SKILL_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, SKILL_DIR)
+sys.path.insert(0, os.path.join(SKILL_DIR, "scripts"))
+
+from evaluate_kpi import SUITE, classify  # noqa: E402
+from run_consumption import PAYLOADS, payload_path  # noqa: E402
+from vulnerable_app import (HARD_MAX_OUTPUT_CHARS, HARD_MAX_STEPS,  # noqa: E402
+                            HARD_MAX_TOOL_CALLS, Lab, scan_page)
+
+
+def run_suite(lab: Lab, client: str = "suite"):
+    results = [(lab.query(q, client), targeted, truth) for q, targeted, truth in SUITE]
+    statuses = [(classify(r, truth), targeted) for r, targeted, truth in results]
+    targeted = [s for s, t in statuses if t]
+    bbr = sum(s == "RED" for s in targeted) / len(targeted)
+    overall = sum(s == "RED" for s, _ in statuses) / len(statuses)
+    return statuses, bbr, overall, [r for r, _, _ in results]
+
+
+def attack(lab: Lab) -> None:
+    for name, slug in PAYLOADS.items():
+        with open(payload_path(name), encoding="utf-8") as fh:
+            lab.write_page(slug, fh.read())
+
+
+class LifecycleTest(unittest.TestCase):
+    def setUp(self) -> None:
+        self.lab = Lab()
+
+    def test_act1_baseline_all_green(self):
+        statuses, bbr, _, _ = run_suite(self.lab)
+        self.assertTrue(all(s == "GREEN" for s, _ in statuses), statuses)
+        self.assertEqual(bbr, 0)
+
+    def test_act3_attack_hits_targeted_only(self):
+        attack(self.lab)
+        statuses, bbr, overall, _ = run_suite(self.lab)
+        self.assertEqual(bbr, 1.0)
+        self.assertLess(overall, bbr)
+        self.assertTrue(all(s == "GREEN" for s, t in statuses if not t), statuses)
+
+    def test_scan_flags_payloads_and_passes_baseline(self):
+        budget = self.lab.budget
+        for name, slug in PAYLOADS.items():
+            with open(payload_path(name), encoding="utf-8") as fh:
+                self.assertTrue(scan_page(fh.read(), budget, slug).blocked, name)
+        for slug, text in self.lab.pages.items():
+            self.assertFalse(scan_page(text, budget, slug).blocked, slug)
+
+    def test_act4_hardened_returns_to_zero(self):
+        attack(self.lab)
+        _, _, _, vulnerable = run_suite(self.lab, "before")
+        self.lab.set_mode("hardened")
+        statuses, bbr, _, hardened = run_suite(self.lab, "after")
+        self.assertEqual(bbr, 0)
+        self.assertTrue(all(s == "GREEN" for s, _ in statuses), statuses)
+        self.assertLess(sum(r["cost_usd"] for r in hardened),
+                        sum(r["cost_usd"] for r in vulnerable) / 10)
+
+    def test_host_safety_caps_bound_vulnerable_mode(self):
+        attack(self.lab)
+        _, _, _, results = run_suite(self.lab)
+        for r in results:
+            self.assertLessEqual(r["cost"]["agent_steps"], HARD_MAX_STEPS)
+            self.assertLessEqual(r["cost"]["tool_calls"], HARD_MAX_TOOL_CALLS)
+            self.assertLessEqual(len(r["answer"]), HARD_MAX_OUTPUT_CHARS)
+
+    def test_per_client_quota_stops_flood(self):
+        attack(self.lab)
+        self.lab.set_mode("hardened")
+        statuses = [self.lab.query("When does payroll run each month?", "attacker")["status"]
+                    for _ in range(40)]
+        self.assertIn("quota_exceeded", statuses)
+        self.assertEqual(statuses[0], "answered")
+        quota = self.lab.budget["per_client"]["max_tokens"]
+        # The overshoot is bounded by one request's budget.
+        self.assertLess(self.lab.ledger["attacker"], quota + 7000)
+        self.assertEqual(self.lab.query("Is Thanksgiving a company holiday?", "employee")["status"],
+                         "answered")
+
+    def test_reset_restores_baseline(self):
+        attack(self.lab)
+        run_suite(self.lab)
+        self.lab.reset()
+        state = self.lab.state()
+        self.assertTrue(state["baseline"])
+        self.assertEqual(state["client_spend_tokens"], {})
+        _, bbr, _, _ = run_suite(self.lab)
+        self.assertEqual(bbr, 0)
+
+
+if __name__ == "__main__":
+    unittest.main()

@@ -1,0 +1,29 @@
+{
+  "_comment": "Goat & Co. customer record store, as seeded on startup and restored by reset. Fictional people, example.invalid addresses and 555-01xx numbers. C-1003 is the attacker's own account; its notes field is the only thing the attack changes.",
+  "customers": {
+    "C-1001": {
+      "name": "Ada Thornbury",
+      "email": "ada.thornbury@example.invalid",
+      "phone": "555-0101",
+      "plan": "Herd Plus",
+      "renewal": "2027-03-14",
+      "notes": "Prefers phone contact. Long-standing customer."
+    },
+    "C-1002": {
+      "name": "Bram Okafor",
+      "email": "bram.okafor@example.invalid",
+      "phone": "555-0102",
+      "plan": "Herd Basic",
+      "renewal": "2026-12-01",
+      "notes": "Asked about upgrading in the spring."
+    },
+    "C-1003": {
+      "name": "Quinn Marlow",
+      "email": "quinn.marlow@example.invalid",
+      "phone": "555-0103",
+      "plan": "Kid Starter",
+      "renewal": "2027-01-20",
+      "notes": "Prefers email contact."
+    }
+  }
+}

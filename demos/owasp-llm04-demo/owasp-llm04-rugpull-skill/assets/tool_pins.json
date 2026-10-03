@@ -1,0 +1,9 @@
+{
+  "_comment": "SHA-256 of each approved tool definition (canonical JSON of name, description, input_schema), captured at approval time from registry_baseline.json. Hardened mode and evaluate_kpi.py --scan compare live definitions against these. Re-approve a tool by re-hashing it here.",
+  "pins": {
+    "expense_policy": "f6f2a3b5c80e80a9d942985369b8686b6bcb9e8066820fb3672d6d088e8f9054",
+    "travel_policy": "62430386b73e03a03163e588a6ed1d42044110649c286b58cf9aa1771ea0b8b3",
+    "holiday_calendar": "d6e23619733c4a048a2510d019b848a8101bfabc6e273dba3e6af7ebf641f154",
+    "vpn_guide": "f594a85a7026fbbbe211c47958fd0e698cac65288df084e0ca1c6cc35451e0cf"
+  }
+}

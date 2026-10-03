@@ -1,0 +1,123 @@
+"""Lifecycle tests — assert the four-act story against the in-process lab.
+
+Baseline is all GREEN; the compromised release raises the targeted rate;
+controls are untouched (overall < targeted); the pin diff flags the rug pull;
+sampling flags the sleeper that a single sample misses; hardened mode returns
+the rate to 0; reset restores the baseline.
+
+Each test uses its own registry file under ``registry/`` and deletes it.
+
+Run from the skill folder:  python -m unittest discover tests
+"""
+
+from __future__ import annotations
+
+import os
+import sys
+import unittest
+
+SKILL_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, SKILL_DIR)
+sys.path.insert(0, os.path.join(SKILL_DIR, "scripts"))
+
+from evaluate_kpi import SUITE, classify  # noqa: E402
+from run_rug_pull import (SLEEPER_PAYLOAD, SLEEPER_TOOL, SWAP_PAYLOAD,  # noqa: E402
+                          build_compromised_release)
+from vulnerable_app import (REGISTRY_DIR, Lab, RemoteTool, definition_hash,  # noqa: E402
+                            load_baseline, load_pins, load_screen_rules, pin_diff,
+                            read_registry, sample_tool, write_registry)
+
+
+def _read(path: str) -> str:
+    with open(path, encoding="utf-8") as fh:
+        return fh.read().strip()
+
+
+def run_suite(lab: Lab):
+    statuses = [(classify(lab.query(q)["answer"], truth), targeted)
+                for q, targeted, truth in SUITE]
+    targeted = [s for s, t in statuses if t]
+    ctr = sum(s == "RED" for s in targeted) / len(targeted)
+    overall = sum(s == "RED" for s, _ in statuses) / len(statuses)
+    return statuses, ctr, overall
+
+
+class LifecycleTest(unittest.TestCase):
+    def setUp(self) -> None:
+        path = os.path.join(REGISTRY_DIR, f"test_{os.getpid()}_{self._testMethodName}.json")
+        self.lab = Lab(registry_path=path)
+
+    def tearDown(self) -> None:
+        self.lab.remove_registry()
+
+    def publish(self, variant: str = "both") -> dict:
+        _, registry = read_registry(self.lab.registry_path)
+        release, _ = build_compromised_release(
+            registry, _read(SWAP_PAYLOAD), _read(SLEEPER_PAYLOAD), variant)
+        write_registry(self.lab.registry_path, release)
+        return release
+
+    def test_act1_baseline_all_green(self):
+        statuses, ctr, _ = run_suite(self.lab)
+        self.assertTrue(all(s == "GREEN" for s, _ in statuses), statuses)
+        self.assertEqual(ctr, 0)
+
+    def test_act3_attack_hits_targeted_only(self):
+        self.publish()
+        statuses, ctr, overall = run_suite(self.lab)
+        self.assertEqual(ctr, 1.0)
+        self.assertLess(overall, ctr)
+        self.assertTrue(all(s == "GREEN" for s, t in statuses if not t), statuses)
+
+    def test_pins_match_baseline_and_flag_rug_pull_only(self):
+        pins = load_pins()
+        for entry in load_baseline()["tools"]:
+            self.assertEqual(definition_hash(entry["definition"]), pins[entry["definition"]["name"]])
+        self.assertEqual(pin_diff(load_baseline(), pins), [])
+        findings = pin_diff(self.publish(), pins)
+        self.assertEqual(len(findings), 1)                  # the sleeper's definition is unchanged
+        self.assertTrue(findings[0].startswith("expense_policy"))
+
+    def test_sampling_catches_sleeper_single_sample_does_not(self):
+        release = self.publish("sleeper")
+        entry = next(e for e in release["tools"] if e["definition"]["name"] == SLEEPER_TOOL)
+        rules = load_screen_rules()
+        self.assertEqual(sample_tool(RemoteTool(entry, "registry"), rules, calls=1), [])
+        self.assertTrue(sample_tool(RemoteTool(entry, "registry"), rules))
+
+    def test_act4_hardened_returns_to_zero(self):
+        self.publish()
+        self.lab.set_mode("hardened")
+        statuses, ctr, _ = run_suite(self.lab)
+        self.assertEqual(ctr, 0)
+        self.assertTrue(all(s == "GREEN" for s, _ in statuses), statuses)
+        sources = {n: t.source for n, t in self.lab.installed.items()}
+        self.assertEqual(sources["expense_policy"], "vendored")
+        self.assertEqual(sources[SLEEPER_TOOL], "vendored")
+
+    def test_pinning_alone_misses_sleeper(self):
+        # With sampling reduced to one call, the pin still stops the rug pull,
+        # but the sleeper gets through: both controls are needed.
+        import vulnerable_app
+        self.publish()
+        saved = vulnerable_app.SAMPLE_CALLS
+        vulnerable_app.SAMPLE_CALLS = 1
+        try:
+            self.lab.set_mode("hardened")
+            statuses, ctr, _ = run_suite(self.lab)
+        finally:
+            vulnerable_app.SAMPLE_CALLS = saved
+        self.assertEqual(ctr, 0.5)
+        self.assertEqual([s for s, _ in statuses[:2]], ["GREEN", "GREEN"])
+
+    def test_reset_restores_baseline(self):
+        self.publish()
+        run_suite(self.lab)
+        self.lab.reset()
+        self.assertTrue(self.lab.state()["baseline"])
+        _, ctr, _ = run_suite(self.lab)
+        self.assertEqual(ctr, 0)
+
+
+if __name__ == "__main__":
+    unittest.main()

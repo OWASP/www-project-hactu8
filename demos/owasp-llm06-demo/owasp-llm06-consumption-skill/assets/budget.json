@@ -1,0 +1,21 @@
+{
+  "_comment": "Per-request budget, per-client quota and simulated pricing. In vulnerable mode the budget is only METERED (used to score the KPI); in hardened mode the agent loop ENFORCES it. Prices are fictional lab numbers, not any provider's rates. Edit freely; scan rules are used by evaluate_kpi.py --scan.",
+  "per_request": {
+    "max_input_tokens": 6000,
+    "max_output_tokens": 400,
+    "max_tool_calls": 8,
+    "max_agent_steps": 4
+  },
+  "per_client": {
+    "max_tokens": 10000
+  },
+  "pricing_usd_per_1k_tokens": {
+    "input": 0.003,
+    "output": 0.015
+  },
+  "outlier_ratio": 0.8,
+  "scan": {
+    "markers": ["@assistant:"],
+    "patterns": ["LLM06-CANARY-[0-9a-f]+"]
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "_comment": "Agency gate used in hardened mode and by evaluate_kpi.py --scan. 'tasks' maps each support task the operator can start to the tools it may call (least privilege). 'irreversible' lists tools that also need a per-action human confirmation, given as 'tool:target' in the request's 'confirmations'. The gate keys on these facts only and never reads the arguments the model supplies. AgenticGoat's acts.py _agency_gate is the reference.",
+  "tasks": {
+    "summarise_ticket": ["read_ticket"],
+    "draft_reply": ["read_ticket"],
+    "order_status": ["read_ticket", "lookup_order"],
+    "refund_order": ["lookup_order", "issue_refund"]
+  },
+  "irreversible": ["issue_refund", "delete_account"]
+}
