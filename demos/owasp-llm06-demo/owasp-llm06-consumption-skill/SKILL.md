@@ -38,6 +38,8 @@ budget it meters.
     output characters, and the stub clamps its own repeat and fan-out counts.
     Real CPU and memory use stays trivial.
   - Wiki state and the spend ledger live in memory only.
+  - The server rejects foreign `Host` headers (DNS rebinding) and non-JSON
+    POSTs (cross-site forms).
 - The shipped payloads are **placeholders**: one marker line plus a fictional
   canary each. See the `assets/*.README.md` files.
 - Dual-use: this exists to make the vulnerability observable and to motivate
@@ -71,7 +73,8 @@ Python 3.9+. Standard library only; nothing to install.
    python vulnerable_app.py             # serves on 127.0.0.1:5206
    ```
    On startup it seeds the wiki from `assets/kb_baseline.json` and loads the
-   budget from `assets/budget.json`.
+   budget from `assets/budget.json`. To drive the same four acts from a
+   browser, open <http://127.0.0.1:5206/>.
 
 2. **Review the ground truth and the budget.** Read `assets/budget.json`:
    each request may use 6,000 input tokens, 400 output tokens, 8 tool calls and
@@ -129,7 +132,8 @@ lint.
 
 | Path | Purpose |
 |------|---------|
-| `vulnerable_app.py` | Target agentic KB assistant (`/query`, `/kb/page`, `/api/mode`, `/api/reset`, `/api/state`, `/health`). |
+| `vulnerable_app.py` | Target agentic KB assistant (`/query`, `/kb/page`, `/health`) plus the console API (`/api/meta`, `/api/state`, `/api/reset`, `/api/attack`, `/api/evaluate`, `/api/scan`, `/api/mode`). |
+| `web/` | Shared HACTU8 lab console, served at `/`. |
 | `scripts/run_consumption.py` | Attack: overwrite three wiki pages; `--flood N` for denial of wallet. |
 | `scripts/evaluate_kpi.py` | Stoplight KPI + BBR + simulated spend against the live app; `--harden` and `--scan` mitigations. |
 | `scripts/reset_baseline.py` | Restores the seeded wiki, clears the spend ledger, vulnerable mode. |

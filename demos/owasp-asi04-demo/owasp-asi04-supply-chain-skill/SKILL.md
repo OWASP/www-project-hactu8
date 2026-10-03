@@ -32,7 +32,7 @@ the newest version, so the attacker's entry wins.
 - **Authorized use only.** Run against this skill's own `vulnerable_app.py`
   (bound to `127.0.0.1`) or a target you are explicitly permitted to test.
 - The vulnerable app is insecure **by design**; do not expose it. Host-safety
-  guards are built in and do not weaken the lesson:
+  guards are built in. None of them weakens the lesson:
   - Skills are inert JSON data entries. Loading one places its instructions in
     the model's context; nothing is ever executed.
   - The catalogue file must live in this skill's `catalogue/` folder, and is
@@ -40,6 +40,8 @@ the newest version, so the attacker's entry wins.
     are capped.
   - The model is a deterministic stub, so the lab cannot reach a real model
     or the network.
+  - The server rejects foreign `Host` headers (DNS rebinding) and non-JSON
+    POSTs (cross-site forms).
 - The shipped payload is a **placeholder**: a marker line plus a fictional
   canary. See [`assets/lookalike_skill.README.md`](assets/lookalike_skill.README.md).
 - Dual-use: this exists to make the vulnerability observable and to motivate
@@ -75,6 +77,7 @@ Python 3.9+. Standard library only; nothing to install.
    ```
    On startup it writes `catalogue/catalogue.json` from
    `assets/catalogue_baseline.json`.
+   To drive the same four acts from a browser, open <http://127.0.0.1:5304/>.
 
 2. **Review the ground truth.** Read `assets/task_plans.json` and
    `assets/skill_manifest.json`: each task names its skills, and each skill is
@@ -134,7 +137,8 @@ never resolved and the UCLR stays at 0. That threshold is part of the lesson.
 
 | Path | Purpose |
 |------|---------|
-| `vulnerable_app.py` | Target agent (`/agent`, `/catalogue`, `/catalogue/publish`, `/api/actions`, `/api/mode`, `/api/reset`, `/api/state`, `/health`). |
+| `vulnerable_app.py` | Target agent (`/agent`, `/catalogue`, `/catalogue/publish`, `/api/actions`, `/health`) plus the console API (`/api/meta`, `/api/state`, `/api/reset`, `/api/attack`, `/api/evaluate`, `/api/scan`, `/api/mode`). |
+| `web/` | Shared HACTU8 lab console, served at `/`. |
 | `scripts/run_lookalike_publish.py` | Attack: publish one lookalike skill to the catalogue. |
 | `scripts/evaluate_kpi.py` | Stoplight KPI + UCLR against the live app; `--harden` and `--scan` mitigations. |
 | `scripts/reset_baseline.py` | Restores the seeded catalogue, clears the action log, vulnerable mode. |

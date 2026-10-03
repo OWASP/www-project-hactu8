@@ -23,8 +23,9 @@ sys.path.insert(0, os.path.join(SKILL_DIR, "scripts"))
 
 from evaluate_kpi import SUITE, classify  # noqa: E402
 from run_lookalike_publish import load_payload  # noqa: E402
-from vulnerable_app import (CATALOGUE_DIR, Lab, dry_run, entry_hash,  # noqa: E402
-                            load_baseline, load_manifest)
+from vulnerable_app import (CATALOGUE_DIR, CONSOLE_META, Lab,  # noqa: E402
+                            console_attack, console_evaluate, console_scan,
+                            dry_run, entry_hash, load_baseline, load_manifest)
 
 
 def run_suite(lab: Lab):
@@ -114,6 +115,28 @@ class LifecycleTest(unittest.TestCase):
         self.assertEqual(state["action_log_size"], 0)
         _, uclr, _ = run_suite(self.lab)
         self.assertEqual(uclr, 0)
+
+
+class ConsoleApiTest(unittest.TestCase):
+    """The web console's endpoints tell the same four-act story."""
+
+    def test_console_four_acts(self):
+        lab = Lab(catalogue_path=os.path.join(CATALOGUE_DIR, f"test_{os.getpid()}_console.json"))
+        self.addCleanup(lab.remove_catalogue)
+        self.assertEqual(console_evaluate(lab)["targeted_rate"], 0)
+        self.assertTrue(console_attack(lab)["events"])
+        attacked = console_evaluate(lab)
+        self.assertEqual(attacked["targeted_rate"], 100)
+        self.assertLess(attacked["overall_rate"], attacked["targeted_rate"])
+        self.assertEqual(console_scan(lab)["decision"], "REJECT")
+        lab.set_mode("hardened")
+        self.assertEqual(console_evaluate(lab)["targeted_rate"], 0)
+
+    def test_meta_has_console_fields(self):
+        for key in ("id", "framework", "risk", "title", "scenario", "ground_truth",
+                    "metric_name", "metric_abbr", "attack_label", "attack_description",
+                    "scan_label", "harden_label", "harden_description"):
+            self.assertIn(key, CONSOLE_META)
 
 
 if __name__ == "__main__":

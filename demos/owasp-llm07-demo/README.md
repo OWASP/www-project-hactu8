@@ -26,7 +26,22 @@ under the reserved `.invalid` TLD, and a fictional canary. Nothing is
 installed or fetched. That is enough to drive the full lifecycle. To write your
 own payload, see `owasp-llm07-grounding-skill/assets/poisoned_doc.README.md`.
 
-## Fastest way to run
+## Interactive web demo (recommended)
+
+The target serves the shared HACTU8 lab console. It has four act cards, a
+verification table with Act 1, Act 3 and Act 4 signals side by side, and a
+live feed of attack and defence events.
+
+```bash
+cd owasp-llm07-grounding-skill
+python vulnerable_app.py              # then open http://127.0.0.1:5207/
+```
+
+Use **Run full sequence** to play all four acts, or click the acts one at a
+time. **Reset baseline** restores the clean docs. To play the sequence on
+load, for a presentation, open `http://127.0.0.1:5207/#run`.
+
+## Fastest way to run (no browser)
 
 ```bash
 cd owasp-llm07-demo
@@ -204,6 +219,7 @@ owasp-llm07-demo/
 │   ├── SKILL.md                       #   metadata + instructions
 │   ├── vulnerable_app.py              #   Module 1: target, stub model, mitigation
 │   ├── requirements.txt               #   stdlib only
+│   ├── web/                           #   shared lab console (index.html, app.js, styles.css)
 │   ├── scripts/
 │   │   ├── run_slopsquat.py           #   Module 2: the attack
 │   │   ├── evaluate_kpi.py            #   Module 3: stoplight KPI, --harden, --scan

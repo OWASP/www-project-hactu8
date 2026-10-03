@@ -52,6 +52,8 @@ from typing import Any, Dict, List, Optional, Tuple
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ASSETS = os.path.join(HERE, "assets")
+WEB_DIR = os.path.join(HERE, "web")
+WEB_FILES = {"index.html": "text/html", "app.js": "text/javascript", "styles.css": "text/css"}
 BASELINE_FILE = os.path.join(ASSETS, "kb_baseline.json")
 BUDGET_FILE = os.path.join(ASSETS, "budget.json")
 
@@ -404,9 +406,100 @@ class Lab:
 
 
 # --------------------------------------------------------------------------- #
+# Lab console API (web/ — the shared HACTU8 console)
+# --------------------------------------------------------------------------- #
+CONSOLE_META = {
+    "id": "LLM06",
+    "framework": "OWASP Top 10 for LLM Applications",
+    "risk": "Unbounded Consumption",
+    "title": "Consumption Lab",
+    "short_title": "Consumption Lab",
+    "scenario": (
+        "Billy, Goat & Co.'s agentic knowledge-base assistant, answers questions in an "
+        "agent loop that calls search_kb. Anyone can edit a wiki page. All cost is simulated."
+    ),
+    "ground_truth": ("Per-request budget: 6,000 input tokens, 400 output tokens, "
+                     "8 tool calls, 4 agent steps."),
+    "metric_name": "Budget Breach Rate",
+    "metric_abbr": "BBR",
+    "attack_label": "Edit three wiki pages",
+    "attack_description": ("Overwrite expenses, payroll and travel with runaway_output.md, "
+                           "tool_storm.md and recursive_loop.md (1 directive line each)."),
+    "scan_label": "Budget lint of the three pages",
+    "harden_label": "Enforce budget, depth cap, quota",
+    "harden_description": ("The agent loop enforces the per-request budget, a loop depth cap "
+                           "and a per-client quota."),
+}
+
+
+def _console_scripts():
+    """Import the CLI's attack and evaluator modules so console and CLI agree."""
+    import sys
+    scripts = os.path.join(HERE, "scripts")
+    if scripts not in sys.path:
+        sys.path.insert(0, scripts)
+    import evaluate_kpi
+    import run_consumption
+    return evaluate_kpi, run_consumption
+
+
+def console_attack(lab: Lab) -> Dict[str, Any]:
+    _, rc = _console_scripts()
+    events = []
+    for name, slug in rc.PAYLOADS.items():
+        with open(rc.payload_path(name), "r", encoding="utf-8") as fh:
+            saved = lab.write_page(slug, fh.read())
+        events.append(f"Wiki page '{saved}' overwritten with {name}.md "
+                      "(unauthenticated edit, 1 directive line).")
+    return {"events": events}
+
+
+def console_evaluate(lab: Lab) -> Dict[str, Any]:
+    import uuid
+    ek, _ = _console_scripts()
+    client = f"console-{uuid.uuid4().hex[:8]}"   # fresh client, as evaluate_kpi.py uses
+    rows = []
+    for query, targeted, truth in ek.SUITE:
+        result = lab.query(query, client)
+        first = result["answer"].splitlines()[0] if result["answer"] else ""
+        c = result["cost"]
+        detail = (f"{c['input_tokens'] + c['output_tokens']} tok, {c['tool_calls']} calls, "
+                  f"{c['agent_steps']} steps, ${result['cost_usd']:.4f} | {first}")
+        rows.append({"item": query, "targeted": targeted,
+                     "status": ek.classify(result, truth), "detail": detail})
+    return summarize(rows)
+
+
+def summarize(rows: List[Dict[str, Any]]) -> Dict[str, Any]:
+    targeted = [r for r in rows if r["targeted"]]
+    red_t = sum(r["status"] == "RED" for r in targeted)
+    red_all = sum(r["status"] == "RED" for r in rows)
+    return {
+        "rows": rows,
+        "red_targeted": red_t, "targeted": len(targeted),
+        "red_overall": red_all, "total": len(rows),
+        "targeted_rate": 100.0 * red_t / len(targeted) if targeted else 0.0,
+        "overall_rate": 100.0 * red_all / len(rows) if rows else 0.0,
+    }
+
+
+def console_scan(lab: Lab) -> Dict[str, Any]:
+    _, rc = _console_scripts()
+    findings: List[str] = []
+    for name, slug in rc.PAYLOADS.items():
+        with open(rc.payload_path(name), "r", encoding="utf-8") as fh:
+            result = scan_page(fh.read(), lab.budget, slug)
+        findings.extend(f"{name}.md: {f}" for f in result.findings)
+    return {"subject": ", ".join(f"assets/{n}.md" for n in rc.PAYLOADS),
+            "decision": "REJECT" if findings else "PASS",
+            "findings": findings}
+
+
+# --------------------------------------------------------------------------- #
 # HTTP surface
 # --------------------------------------------------------------------------- #
 LAB: Optional[Lab] = None
+PORT = 5206
 
 
 class Handler(BaseHTTPRequestHandler):
@@ -423,6 +516,21 @@ class Handler(BaseHTTPRequestHandler):
         self.end_headers()
         self.wfile.write(data)
 
+    def _host_ok(self) -> bool:
+        """Reject other Host headers (DNS-rebinding guard for a loopback lab)."""
+        host = (self.headers.get("Host") or "").lower()
+        return host in {f"127.0.0.1:{PORT}", f"localhost:{PORT}"}
+
+    def _static(self, name: str) -> None:
+        data = open(os.path.join(WEB_DIR, name), "rb").read()
+        self.send_response(200)
+        self.send_header("Content-Type", f"{WEB_FILES[name]}; charset=utf-8")
+        self.send_header("Content-Length", str(len(data)))
+        self.send_header("Content-Security-Policy",
+                         "default-src 'self'; style-src 'self'; script-src 'self'")
+        self.end_headers()
+        self.wfile.write(data)
+
     def _json(self) -> Dict[str, Any]:
         length = int(self.headers.get("Content-Length") or 0)
         if length > 1_000_000:
@@ -432,7 +540,16 @@ class Handler(BaseHTTPRequestHandler):
 
     def do_GET(self) -> None:
         assert LAB is not None
-        if self.path == "/health":
+        if not self._host_ok():
+            self._send(403, {"error": "bad host"})
+            return
+        if self.path == "/":
+            self._static("index.html")
+        elif self.path.startswith("/web/") and self.path[5:] in WEB_FILES:
+            self._static(self.path[5:])
+        elif self.path == "/api/meta":
+            self._send(200, CONSOLE_META)
+        elif self.path == "/health":
             self._send(200, {"status": "ok", "demo": "llm06", "mode": LAB.mode})
         elif self.path == "/api/state":
             self._send(200, LAB.state())
@@ -447,6 +564,14 @@ class Handler(BaseHTTPRequestHandler):
 
     def do_POST(self) -> None:
         assert LAB is not None
+        if not self._host_ok():
+            self._send(403, {"error": "bad host"})
+            return
+        # A cross-site HTML form cannot send application/json without a CORS
+        # preflight, so requiring it keeps other web pages off this lab.
+        if not (self.headers.get("Content-Type") or "").startswith("application/json"):
+            self._send(415, {"error": "Content-Type must be application/json"})
+            return
         try:
             body = self._json()
         except (ValueError, json.JSONDecodeError) as exc:
@@ -460,7 +585,14 @@ class Handler(BaseHTTPRequestHandler):
             self._send(200, {"status": "saved", "slug": slug})
         elif self.path == "/api/reset":
             LAB.reset()
+            LAB.set_mode("vulnerable")
             self._send(200, LAB.state())
+        elif self.path == "/api/attack":
+            self._send(200, console_attack(LAB))
+        elif self.path == "/api/evaluate":
+            self._send(200, console_evaluate(LAB))
+        elif self.path == "/api/scan":
+            self._send(200, console_scan(LAB))
         elif self.path == "/api/mode":
             try:
                 LAB.set_mode(str(body.get("mode", "")))
@@ -473,11 +605,12 @@ class Handler(BaseHTTPRequestHandler):
 
 
 def main() -> None:
-    global LAB
+    global LAB, PORT
     LAB = Lab(mode=os.getenv("LLM06_MODE", "vulnerable"))
-    port = int(os.getenv("LLM06_PORT", "5206"))
-    httpd = ThreadingHTTPServer(("127.0.0.1", port), Handler)
-    print(f"[*] LLM06 lab target on http://127.0.0.1:{port} (mode={LAB.mode})")
+    PORT = int(os.getenv("LLM06_PORT", "5206"))
+    httpd = ThreadingHTTPServer(("127.0.0.1", PORT), Handler)
+    print(f"[*] LLM06 lab target on http://127.0.0.1:{PORT} (mode={LAB.mode})")
+    print(f"[*] Lab console: http://127.0.0.1:{PORT}/")
     print("[*] Insecure by design. Loopback only. All cost is simulated. Ctrl+C to stop.")
     try:
         httpd.serve_forever()

@@ -32,12 +32,14 @@ session's transcript.
 - **Authorized use only.** Run against this skill's own `vulnerable_app.py`
   (bound to `127.0.0.1`) or a target you are explicitly permitted to test.
 - The vulnerable app is insecure **by design**; do not expose it. Host-safety
-  guards are built in and do not weaken the lesson:
+  guards are built in. None of them weakens the lesson:
   - Every token is a demo-only random string (`demo-<kind>-...`) minted in
     memory at startup and at every reset. It grants nothing outside the lab.
   - People and documents are fictional; state lives in memory only.
   - Sessions, tokens, queued requests, documents per request and the action
     log are all capped.
+  - The server rejects foreign `Host` headers (DNS rebinding) and non-JSON
+    POSTs (cross-site forms).
 - The shipped payload is a **placeholder**: plain requests for fictional
   document ids plus an inert canary. See
   [`assets/requests.README.md`](assets/requests.README.md).
@@ -64,6 +66,7 @@ Python 3.9+. Standard library only; nothing to install.
    ```
    On startup it seeds users, documents and three open requests from
    `assets/hr_baseline.json`, and mints fresh demo tokens.
+   To drive the same four acts from a browser, open <http://127.0.0.1:5303/>.
 
 2. **Review the ground truth.** Read `assets/hr_baseline.json`. Each
    document's `readers` and `roles` say who may read it. Dana is an intern and
@@ -121,7 +124,8 @@ to `false` in `assets/identity_policy.json`.
 
 | Path | Purpose |
 |------|---------|
-| `vulnerable_app.py` | Target HR agent (`/login`, `/requests`, `/agent/run`, `/api/history`, `/api/queue`, `/api/actions`, `/api/mode`, `/api/reset`, `/api/state`, `/health`). |
+| `vulnerable_app.py` | Target HR agent (`/login`, `/requests`, `/agent/run`, `/api/history`, `/api/queue`, `/api/actions`, `/health`) plus the console API (`/api/meta`, `/api/state`, `/api/reset`, `/api/attack`, `/api/evaluate`, `/api/scan`, `/api/mode`). |
+| `web/` | Shared HACTU8 lab console, served at `/`. |
 | `scripts/run_privilege_abuse.py` | Attack: log in as the intern and file the requests. |
 | `scripts/evaluate_kpi.py` | Stoplight KPI + PER from the action log; `--harden` and `--scan` mitigations. |
 | `scripts/reset_baseline.py` | Restores the seeded desk, fresh tokens and vulnerable mode. |

@@ -45,6 +45,8 @@ field, carries them out.
     log, action log and nonce cache are capped.
   - The models are deterministic stubs, so the lab cannot reach a real model
     or the network.
+  - The server rejects foreign `Host` headers (DNS rebinding) and non-JSON
+    POSTs (cross-site forms).
 - The shipped payload is a **placeholder**: stub directive lines plus a
   fictional canary. See [`assets/forged_order.README.md`](assets/forged_order.README.md).
 - Dual-use: this exists to make the vulnerability observable and to motivate
@@ -82,6 +84,7 @@ Python 3.9+. Standard library only; nothing to install.
    On startup it generates demo-only keys for `planner`, `executor` and
    `notifier`, seeds records from `assets/ops_baseline.json`, and puts one
    old genuine planner order (refund of `A-0907`, 3 days old) on the bus log.
+   To drive the same four acts from a browser, open <http://127.0.0.1:5307/>.
 
 2. **Review the ground truth.** Ground truth is the operator's intent. Each
    suite job in `scripts/evaluate_kpi.py` lists the exact `tool:target` steps
@@ -146,7 +149,8 @@ verifier enforces, edit `assets/bus_policy.json`; turning off
 
 | Path | Purpose |
 |------|---------|
-| `vulnerable_app.py` | Target planner + executor (`/jobs`, `/bus/publish`, `/bus/log`, `/api/actions`, `/api/mode`, `/api/reset`, `/api/state`, `/health`). |
+| `vulnerable_app.py` | Target planner + executor (`/jobs`, `/bus/publish`, `/bus/log`, `/api/actions`, `/health`) plus the console API (`/api/meta`, `/api/state`, `/api/reset`, `/api/attack`, `/api/evaluate`, `/api/scan`, `/api/mode`). |
+| `web/` | Shared HACTU8 lab console, served at `/`. |
 | `scripts/run_bus_forgery.py` | Attack: spoof the planner on two topics, replay one old order. |
 | `scripts/evaluate_kpi.py` | Stoplight KPI + FMAR against the live app; `--harden` and `--scan` mitigations. |
 | `scripts/reset_baseline.py` | Restores records and bus, clears the action log, sets vulnerable mode. |

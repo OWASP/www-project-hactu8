@@ -31,14 +31,16 @@ system prompt holds the key, so whatever Billy is talked into reciting leaks.
 
 - **Authorized use only.** Run against this skill's own `vulnerable_app.py`
   (bound to `127.0.0.1`) or a target you are explicitly permitted to test.
-- The vulnerable app is insecure **by design**; do not expose it. Three
-  host-safety guards are built in and do not weaken the lesson:
+- The vulnerable app is insecure **by design**; do not expose it. Four
+  host-safety guards are built in. None of them weakens the lesson:
   - Customer records live in memory only, so note edits never touch the
     filesystem.
   - One directive can pull in at most three records; notes and request
     bodies are size-capped.
   - The model is a deterministic stub, so the lab cannot reach a real model
     or the network.
+  - The server rejects foreign `Host` headers (DNS rebinding) and non-JSON
+    POSTs (cross-site forms).
 - All records are fictional (`example.invalid` addresses, `555-01xx` numbers),
   and the key is a fictional canary. The shipped payload is a **placeholder**:
   a marker line and two fictional record IDs. See
@@ -75,6 +77,7 @@ Python 3.9+. Standard library only; nothing to install.
    python vulnerable_app.py             # serves on 127.0.0.1:5202
    ```
    On startup it seeds the record store from `assets/customers_baseline.json`.
+   To drive the same four acts from a browser, open <http://127.0.0.1:5202/>.
 
 2. **Review the ground truth.** Read `assets/customers_baseline.json`: each
    customer may see only their own record. `C-1003` (Quinn Marlow) is on the
@@ -136,7 +139,8 @@ a new secret format, put it in `assets/system_prompt.txt` and extend
 
 | Path | Purpose |
 |------|---------|
-| `vulnerable_app.py` | Target account assistant (`/query`, `/account/notes`, `/api/mode`, `/api/reset`, `/api/state`, `/health`). |
+| `vulnerable_app.py` | Target account assistant (`/query`, `/account/notes`, `/health`) plus the console API (`/api/meta`, `/api/state`, `/api/reset`, `/api/attack`, `/api/evaluate`, `/api/scan`, `/api/mode`). |
+| `web/` | Shared HACTU8 lab console, served at `/`. |
 | `scripts/run_pivot.py` | Attack: save the pivot note on the attacker's own account. |
 | `scripts/evaluate_kpi.py` | Stoplight KPI + Leak Rate against the live app; `--harden` and `--scan` mitigations. |
 | `scripts/reset_baseline.py` | Restores the seeded records and vulnerable mode. |

@@ -36,6 +36,8 @@ Billy gives them then quotes its hidden context.
   - Preferences and replies are length-capped.
   - The model is a deterministic stub, so the lab cannot reach a real model
     or the network.
+  - The server rejects foreign `Host` headers (DNS rebinding) and non-JSON
+    POSTs (cross-site forms).
 - The "secret" is a fictional canary, `LLM08-CANARY-5e1d`, and the internal
   endpoint uses the reserved `.invalid` domain.
 - The shipped payload is a **placeholder**: a marker line and the stub's echo
@@ -71,7 +73,8 @@ Python 3.9+. Standard library only; nothing to install.
    ```bash
    python vulnerable_app.py             # serves on 127.0.0.1:5208
    ```
-   On startup it seeds the store from `assets/store_baseline.json`.
+   On startup it seeds the store from `assets/store_baseline.json`. To drive
+   the same four acts from a browser, open <http://127.0.0.1:5208/>.
 
 2. **Review the ground truth and the hidden context.** Read
    `assets/store_baseline.json`: orders ship within *2 business days*, returns
@@ -131,7 +134,8 @@ the PLR falls to 0. To test the filter, change `output.ngram` in
 
 | Path | Purpose |
 |------|---------|
-| `vulnerable_app.py` | Target store assistant (`/chat`, `/profile`, `/api/mode`, `/api/reset`, `/api/state`, `/health`). |
+| `vulnerable_app.py` | Target store assistant (`/chat`, `/profile`, `/health`) plus the console API (`/api/meta`, `/api/state`, `/api/reset`, `/api/attack`, `/api/evaluate`, `/api/scan`, `/api/mode`). |
+| `web/` | Shared HACTU8 lab console, served at `/`. |
 | `scripts/run_extraction.py` | Attack: save the extraction request as one account's reply preference. |
 | `scripts/evaluate_kpi.py` | Stoplight KPI + PLR against the live app; `--harden` and `--scan` mitigations. |
 | `scripts/reset_baseline.py` | Restores the seeded store and vulnerable mode. |

@@ -26,7 +26,22 @@ canary. Skills are inert JSON data entries; nothing in them is ever executed.
 To write your own payload, see
 `owasp-asi04-supply-chain-skill/assets/lookalike_skill.README.md`.
 
-## Fastest way to run
+## Interactive web demo (recommended)
+
+The target serves the shared HACTU8 lab console. It has four act cards, a
+verification table with Act 1, Act 3 and Act 4 signals side by side, and a
+live feed of attack and defence events.
+
+```bash
+cd owasp-asi04-supply-chain-skill
+python vulnerable_app.py              # then open http://127.0.0.1:5304/
+```
+
+Use **Run full sequence** to play all four acts, or click the acts one at a
+time. **Reset baseline** restores the seeded catalogue and vulnerable mode. To play the sequence on load, for a
+presentation, open `http://127.0.0.1:5304/#run`.
+
+## Fastest way to run (no browser)
 
 ```bash
 cd owasp-asi04-demo
@@ -206,6 +221,7 @@ owasp-asi04-demo/
 │   ├── SKILL.md                       #   metadata + instructions
 │   ├── vulnerable_app.py              #   Module 1: target agent, resolver, stub model, mitigation
 │   ├── requirements.txt               #   stdlib only
+│   ├── web/                           #   shared lab console (index.html, app.js, styles.css)
 │   ├── scripts/
 │   │   ├── run_lookalike_publish.py   #   Module 2: the attack
 │   │   ├── evaluate_kpi.py            #   Module 3: stoplight KPI, --harden, --scan
@@ -240,7 +256,7 @@ python scripts/evaluate_kpi.py --scan assets/lookalike_skill.json   # REJECT, ex
 python scripts/evaluate_kpi.py --harden                          # GREEN, UCLR 0%, exit 0
 python scripts/reset_baseline.py                                 # restore clean state
 python scripts/evaluate_kpi.py                                   # GREEN, UCLR 0%
-python -m unittest discover tests                                # 8 tests
+python -m unittest discover tests                                # 10 tests
 ```
 
 ## License

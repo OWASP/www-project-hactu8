@@ -20,7 +20,10 @@ sys.path.insert(0, os.path.join(SKILL_DIR, "scripts"))
 
 from evaluate_kpi import SUITE, classify, session_steps  # noqa: E402
 from run_memory_poison import poison_message  # noqa: E402
-from vulnerable_app import Lab, load_screen_rules, screen_memory  # noqa: E402
+from vulnerable_app import (  # noqa: E402
+    CONSOLE_META, console_attack, console_evaluate, console_scan,
+    Lab, load_screen_rules, screen_memory,
+)
 
 PAYLOAD = os.path.join(SKILL_DIR, "assets", "memory_note.md")
 
@@ -99,6 +102,27 @@ class LifecycleTest(unittest.TestCase):
         self.assertTrue(self.lab.state()["baseline"])
         _, psr, _ = run_suite(self.lab)
         self.assertEqual(psr, 0)
+
+
+class ConsoleApiTest(unittest.TestCase):
+    """The web console's endpoints tell the same four-act story."""
+
+    def test_console_four_acts(self):
+        lab = Lab()
+        self.assertEqual(console_evaluate(lab)["targeted_rate"], 0)
+        self.assertTrue(console_attack(lab)["events"])
+        attacked = console_evaluate(lab)
+        self.assertEqual(attacked["targeted_rate"], 100)
+        self.assertLess(attacked["overall_rate"], attacked["targeted_rate"])
+        self.assertEqual(console_scan(lab)["decision"], "REJECT")
+        lab.set_mode("hardened")
+        self.assertEqual(console_evaluate(lab)["targeted_rate"], 0)
+
+    def test_meta_has_console_fields(self):
+        for key in ("id", "framework", "risk", "title", "scenario", "ground_truth",
+                    "metric_name", "metric_abbr", "attack_label", "attack_description",
+                    "scan_label", "harden_label", "harden_description"):
+            self.assertIn(key, CONSOLE_META)
 
 
 if __name__ == "__main__":

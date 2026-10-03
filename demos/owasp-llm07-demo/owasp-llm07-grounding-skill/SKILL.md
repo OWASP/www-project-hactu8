@@ -30,13 +30,15 @@ A developer who copies its install line acts on a claim nobody verified.
 
 - **Authorized use only.** Run against this skill's own `vulnerable_app.py`
   (bound to `127.0.0.1`) or a target you are explicitly permitted to test.
-- The vulnerable app is insecure **by design**; do not expose it. Three
+- The vulnerable app is insecure **by design**; do not expose it. Four
   host-safety guards are built in and do not weaken the lesson:
   - Doc state lives in memory only, so page edits never touch the filesystem.
   - The grounding check is an offline lookup in `assets/approved_registry.json`;
     no package index or URL is ever contacted, and nothing is installed.
   - The model is a deterministic stub, and hardened mode tries at most three
     pages per query.
+  - The server rejects foreign `Host` headers (DNS rebinding) and non-JSON
+    POSTs (cross-site forms).
 - The shipped payload is a **placeholder**: a fictional package name, a docs
   URL under the reserved `.invalid` TLD, and a fictional canary. See
   [`assets/poisoned_doc.README.md`](assets/poisoned_doc.README.md).
@@ -70,7 +72,8 @@ Python 3.9+. Standard library only; nothing to install.
    ```bash
    python vulnerable_app.py             # serves on 127.0.0.1:5207
    ```
-   On startup it seeds the docs from `assets/docs_baseline.json`.
+   On startup it seeds the docs from `assets/docs_baseline.json`. To drive the
+   same four acts from a browser, open <http://127.0.0.1:5207/>.
 
 2. **Review the ground truth.** Read `assets/docs_baseline.json` and
    `assets/approved_registry.json`: the HTTP client is *goat-http*, installed
@@ -133,7 +136,8 @@ change what counts as known-good, edit `assets/approved_registry.json`.
 
 | Path | Purpose |
 |------|---------|
-| `vulnerable_app.py` | Target dev-helper assistant (`/query`, `/docs/page`, `/api/mode`, `/api/reset`, `/api/state`, `/health`). |
+| `vulnerable_app.py` | Target dev-helper assistant (`/query`, `/docs/page`, `/health`) plus the console API (`/api/meta`, `/api/state`, `/api/reset`, `/api/attack`, `/api/evaluate`, `/api/scan`, `/api/mode`). |
+| `web/` | Shared HACTU8 lab console, served at `/`. |
 | `scripts/run_slopsquat.py` | Attack: publish one poisoned community doc page. |
 | `scripts/evaluate_kpi.py` | Stoplight KPI + UCR against the live app; `--harden` and `--scan` mitigations. |
 | `scripts/reset_baseline.py` | Restores the seeded docs and vulnerable mode. |

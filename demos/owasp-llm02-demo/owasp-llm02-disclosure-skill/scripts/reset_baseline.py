@@ -14,6 +14,8 @@ Examples:
 from __future__ import annotations
 
 import argparse
+import json
+import urllib.request
 
 from run_pivot import DEFAULT_TARGET, _post, check_target
 
@@ -28,9 +30,11 @@ def main(argv=None) -> int:
 
     if not check_target(args.target):
         return 1
-    state = _post(f"{args.target}/api/reset", {})
-    if not args.keep_mode:
-        state = _post(f"{args.target}/api/mode", {"mode": "vulnerable"})
+    with urllib.request.urlopen(f"{args.target}/api/state", timeout=5) as resp:
+        mode = json.loads(resp.read())["mode"]
+    state = _post(f"{args.target}/api/reset", {})        # also restores vulnerable mode
+    if args.keep_mode and mode != state["mode"]:
+        state = _post(f"{args.target}/api/mode", {"mode": mode})
     print(f"[+] Baseline restored: customers {', '.join(state['customers'])}; mode={state['mode']}.")
     return 0
 

@@ -23,7 +23,22 @@ marker line and two fictional record IDs. That is enough to drive the full
 lifecycle. To write your own payload, see
 `owasp-llm02-disclosure-skill/assets/pivot_note.README.md`.
 
-## Fastest way to run
+## Interactive web demo (recommended)
+
+The target serves the shared HACTU8 lab console. It has four act cards, a
+verification table with Act 1, Act 3 and Act 4 signals side by side, and a
+live feed of attack and defence events.
+
+```bash
+cd owasp-llm02-disclosure-skill
+python vulnerable_app.py              # then open http://127.0.0.1:5202/
+```
+
+Use **Run full sequence** to play all four acts, or click the acts one at a
+time. **Reset baseline** restores the seeded records and vulnerable mode. To
+play the sequence on load, for a presentation, open `http://127.0.0.1:5202/#run`.
+
+## Fastest way to run (no browser)
 
 ```bash
 cd owasp-llm02-demo
@@ -206,6 +221,7 @@ owasp-llm02-demo/
 │   ├── SKILL.md                       #   metadata + instructions
 │   ├── vulnerable_app.py              #   Module 1: target, stub model, mitigations
 │   ├── requirements.txt               #   stdlib only
+│   ├── web/                           #   shared lab console (index.html, app.js, styles.css)
 │   ├── scripts/
 │   │   ├── run_pivot.py               #   Module 2: the attack
 │   │   ├── evaluate_kpi.py            #   Module 3: stoplight KPI, --harden, --scan

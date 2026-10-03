@@ -37,6 +37,8 @@ inbox, and three overbilled invoices are approved and paid.
     range and action-log length are capped.
   - The intake model is a deterministic stub, so the lab cannot reach a real
     model or the network.
+  - The server rejects foreign `Host` headers (DNS rebinding) and non-JSON
+    POSTs (cross-site forms).
 - The shipped payload is a **placeholder**: one stub directive line and a
   fictional canary. See [`assets/price_notice.README.md`](assets/price_notice.README.md).
 - Dual-use: this exists to make the vulnerability observable and to motivate
@@ -68,7 +70,8 @@ Python 3.9+. Standard library only; nothing to install.
    ```bash
    python vulnerable_app.py             # serves on 127.0.0.1:5308
    ```
-   On startup it seeds the intake inbox from `assets/intake_inbox.json`.
+   On startup it seeds the intake inbox from `assets/intake_inbox.json`. To
+   drive the same four acts from a browser, open <http://127.0.0.1:5308/>.
 
 2. **Review the ground truth.** Read `assets/po_ledger.json`: Fernleaf Feed Co.
    (`SUP-01`) supplies pellets at *12.00 a sack*. Its three invoices bill 19.50,
@@ -128,7 +131,8 @@ lesson. To tune the containment, edit `assets/pipeline_policy.json`.
 
 | Path | Purpose |
 |------|---------|
-| `vulnerable_app.py` | Target pipeline (`/pipeline/run`, `/intake/inbox`, `/api/actions`, `/api/mode`, `/api/reset`, `/api/state`, `/health`). |
+| `vulnerable_app.py` | Target pipeline (`/pipeline/run`, `/intake/inbox`, `/api/actions`, `/health`) plus the console API (`/api/meta`, `/api/state`, `/api/reset`, `/api/attack`, `/api/evaluate`, `/api/scan`, `/api/mode`). |
+| `web/` | Shared HACTU8 lab console, served at `/`. |
 | `scripts/run_cascade.py` | Attack: submit one document carrying one wrong figure to the intake inbox. |
 | `scripts/evaluate_kpi.py` | Stoplight KPI, Propagation Rate and blast radius against the live app; `--harden` and `--scan` mitigations. |
 | `scripts/reset_baseline.py` | Restores the seeded inbox, clears the action log, sets vulnerable mode. |

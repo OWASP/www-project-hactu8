@@ -87,7 +87,7 @@ demos/<demo-slug>/
 │   ├── references/           #   domain knowledge, loaded on demand
 │   │   └── <ID>_RISKS.md     #     research, scenario table, mitigation roadmap
 │   ├── assets/               #   editable payloads and baseline artifacts
-│   ├── web/                  #   optional: live lab console (index.html, app.js, styles.css)
+│   ├── web/                  #   shared lab console, copied from _template/web (§12)
 │   ├── requirements.txt
 │   └── .gitignore            #   ignore generated state (e.g. knowledge_base/)
 └── .gitignore
@@ -231,3 +231,38 @@ The reference demo has a few inconsistencies. New demos should not copy them:
 - [ ] SKILL.md frontmatter, safety section, numbered steps with expectations, Files table
 - [ ] References cite sources and mark DEMO TARGET rows
 - [ ] Ports, flags and exit codes consistent everywhere
+- [ ] `web/` copied unchanged; console API (§12) implemented and tested
+
+## 12. Lab console (web/)
+
+Every demo serves the **shared HACTU8 lab console**. The canonical copy is
+`_template/web/` (`index.html`, `app.js`, `styles.css`). Copy those three files
+into `<skill-slug>/web/` **unchanged**. Everything demo-specific comes from
+the target's console API:
+
+| Method + path | Body | Returns |
+|---|---|---|
+| `GET /` and `GET /web/<file>` | — | the three static files only (allowlist, no path joining) |
+| `GET /api/meta` | — | `id`, `framework`, `risk`, `title`, `short_title`, `scenario`, `ground_truth`, `metric_name`, `metric_abbr`, `attack_label`, `attack_description`, `scan_label`, `harden_label`, `harden_description` |
+| `GET /api/state` | — | at least `mode` and `baseline` (bool) |
+| `POST /api/reset` | `{}` | restores the baseline **and** vulnerable mode, then returns the state |
+| `POST /api/attack` | `{}` | runs the same attack as `run_<attack>.py`, from the same `assets/` payload → `{"events": [str, ...]}` |
+| `POST /api/evaluate` | `{}` | runs the same suite as `evaluate_kpi.py` → `{"rows": [{"item","targeted","status","detail"}], "targeted_rate", "overall_rate", "red_targeted", "targeted", "red_overall", "total"}`, rates in percent |
+| `POST /api/scan` | `{}` | the same check as `evaluate_kpi.py --scan` on the shipped payload → `{"subject", "decision": "REJECT"\|"PASS", "findings": [str]}` |
+| `POST /api/mode` | `{"mode": ...}` | `vulnerable` or `hardened` |
+
+Keep the logic in plain functions (`console_attack`, `console_evaluate`,
+`console_scan`, `summarize`) next to `CONSOLE_META`. The suite and classifier
+stay in `scripts/evaluate_kpi.py`, and the console imports them, so the CLI and
+the console can never disagree. Tests call the functions directly.
+
+Server guards (host safety, applied to every request):
+- Reject a `Host` header other than `127.0.0.1:<PORT>` or `localhost:<PORT>`
+  with 403. This guards against DNS rebinding.
+- Reject a POST whose `Content-Type` is not `application/json` with 415. A
+  cross-site HTML form cannot send JSON without a CORS preflight.
+- Serve static files with
+  `Content-Security-Policy: default-src 'self'; style-src 'self'; script-src 'self'`.
+
+To play all four acts on page load, for a presentation, open `/#run`.
+Reference implementation: `owasp-llm01-demo/owasp-llm01-injection-skill/vulnerable_app.py`.

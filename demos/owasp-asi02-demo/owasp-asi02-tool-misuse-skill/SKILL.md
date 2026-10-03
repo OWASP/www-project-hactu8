@@ -31,7 +31,7 @@ the row limit and the export destination.
 - **Authorized use only.** Run against this skill's own `vulnerable_app.py`
   (bound to `127.0.0.1`) or a target you are explicitly permitted to test.
 - The vulnerable app is insecure **by design**; do not expose it. Host-safety
-  guards are built in and do not weaken the lesson:
+  guards are built in. None of them weakens the lesson:
   - Every tool is **simulated**. An export is an entry in an in-memory outbox;
     destinations are labels, and nothing leaves the process.
   - The ledger is fictional and generated in memory (240 rows). Tool calls per
@@ -39,6 +39,8 @@ the row limit and the export destination.
     length (200) and action-log length (500) are capped.
   - The model is a deterministic stub, so the lab cannot reach a real model
     or the network.
+  - The server rejects foreign `Host` headers (DNS rebinding) and non-JSON
+    POSTs (cross-site forms).
 - The shipped payload is a **placeholder**: stub directive lines plus a
   fictional canary. See [`assets/request_note.README.md`](assets/request_note.README.md).
 - Dual-use: this exists to make the vulnerability observable and to motivate
@@ -72,7 +74,8 @@ Python 3.9+. Standard library only; nothing to install.
    python vulnerable_app.py             # serves on 127.0.0.1:5302
    ```
    On startup it seeds three report requests and generates the ledger from
-   `assets/finance_baseline.json`.
+   `assets/finance_baseline.json`. To drive the same four acts from a
+   browser, open <http://127.0.0.1:5302/>.
 
 2. **Review the ground truth.** Ground truth is the approved request record.
    Each suite item in `scripts/evaluate_kpi.py` lists the exact calls it should
@@ -138,7 +141,8 @@ inside the policy passes the gate by design.
 
 | Path | Purpose |
 |------|---------|
-| `vulnerable_app.py` | Target finance agent (`/agent`, `/requests/note`, `/requests/<id>`, `/api/actions`, `/api/outbox`, `/api/mode`, `/api/reset`, `/api/state`, `/health`). |
+| `vulnerable_app.py` | Target finance agent (`/agent`, `/requests/note`, `/requests/<id>`, `/api/actions`, `/api/outbox`, `/health`) plus the console API (`/api/meta`, `/api/state`, `/api/reset`, `/api/attack`, `/api/evaluate`, `/api/scan`, `/api/mode`). |
+| `web/` | Shared HACTU8 lab console, served at `/`. |
 | `scripts/run_tool_misuse.py` | Attack: append the note to one report request. |
 | `scripts/evaluate_kpi.py` | Stoplight KPI + UIR against the live app; `--harden` and `--scan` mitigations. |
 | `scripts/reset_baseline.py` | Restores the seeded requests, clears the action log and outbox, sets vulnerable mode. |

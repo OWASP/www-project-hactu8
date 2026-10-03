@@ -25,7 +25,23 @@ The shipped payloads are **placeholders**: a marker line and a fictional
 canary each. That is enough to drive the full lifecycle. To write your own,
 see the `owasp-llm06-consumption-skill/assets/*.README.md` files.
 
-## Fastest way to run
+## Interactive web demo (recommended)
+
+The target serves the shared HACTU8 lab console. It has four act cards, a
+verification table with Act 1, Act 3 and Act 4 signals side by side, and a
+live feed of attack and defence events.
+
+```bash
+cd owasp-llm06-consumption-skill
+python vulnerable_app.py              # then open http://127.0.0.1:5206/
+```
+
+Use **Run full sequence** to play all four acts, or click the acts one at a
+time. **Reset baseline** restores the clean wiki and clears the spend ledger.
+To play the sequence on load, for a presentation, open
+`http://127.0.0.1:5206/#run`.
+
+## Fastest way to run (no browser)
 
 ```bash
 cd owasp-llm06-demo
@@ -211,6 +227,7 @@ owasp-llm06-demo/
 │   ├── SKILL.md                       #   metadata + instructions
 │   ├── vulnerable_app.py              #   Module 1: target, agent loop, stub model, mitigation
 │   ├── requirements.txt               #   stdlib only
+│   ├── web/                           #   shared lab console (index.html, app.js, styles.css)
 │   ├── scripts/
 │   │   ├── run_consumption.py         #   Module 2: the attack (+ --flood)
 │   │   ├── evaluate_kpi.py            #   Module 3: stoplight KPI, --harden, --scan

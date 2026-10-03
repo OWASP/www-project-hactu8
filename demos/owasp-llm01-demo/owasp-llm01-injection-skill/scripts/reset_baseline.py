@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 """Reset — restore the target's wiki to the seeded baseline, in vulnerable mode.
 
-Calls ``POST /api/reset`` (reloads ``assets/kb_baseline.json``) and
-``POST /api/mode`` with ``vulnerable``, so the four acts can be re-run.
+Calls ``POST /api/reset``, which reloads ``assets/kb_baseline.json`` and
+restores vulnerable mode, so the four acts can be re-run. ``--keep-mode``
+re-applies the mode that was active before the reset.
 
 Exit code: 0 when reset, 1 when the target is unreachable.
 
@@ -14,6 +15,8 @@ Examples:
 from __future__ import annotations
 
 import argparse
+import json
+import urllib.request
 
 from run_injection import DEFAULT_TARGET, _post, check_target
 
@@ -28,9 +31,11 @@ def main(argv=None) -> int:
 
     if not check_target(args.target):
         return 1
-    state = _post(f"{args.target}/api/reset", {})
-    if not args.keep_mode:
-        state = _post(f"{args.target}/api/mode", {"mode": "vulnerable"})
+    with urllib.request.urlopen(f"{args.target}/api/state", timeout=5) as resp:
+        mode = json.loads(resp.read())["mode"]
+    state = _post(f"{args.target}/api/reset", {})        # also restores vulnerable mode
+    if args.keep_mode and mode != state["mode"]:
+        state = _post(f"{args.target}/api/mode", {"mode": mode})
     print(f"[+] Baseline restored: pages {', '.join(state['pages'])}; mode={state['mode']}.")
     return 0
 

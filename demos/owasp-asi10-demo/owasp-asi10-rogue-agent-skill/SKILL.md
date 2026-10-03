@@ -39,6 +39,8 @@ untouched.
     and action-log length are capped.
   - The signing key is demo-only, generated in memory at startup with
     `secrets`, and never written anywhere.
+  - The server rejects foreign `Host` headers (DNS rebinding) and non-JSON
+    POSTs (cross-site forms).
 - The shipped payload is a **placeholder**: two standing-order marker lines
   with a fictional canary. See
   [`assets/tampered_mandate.README.md`](assets/tampered_mandate.README.md).
@@ -73,7 +75,8 @@ Python 3.9+. Standard library only; nothing to install.
    python vulnerable_app.py             # serves on 127.0.0.1:5310
    ```
    On startup it seeds the fleet from `assets/fleet_baseline.json` and signs
-   each config with a fresh demo-only key.
+   each config with a fresh demo-only key. To drive the same four acts from a
+   browser, open <http://127.0.0.1:5310/>.
 
 2. **Review the ground truth.** Read `assets/fleet_baseline.json`: each agent's
    approved `mandate` and its scheduled `work_queue` for ticks 1 to 4. Billy
@@ -134,7 +137,8 @@ an attacker who forgets to edit it.
 
 | Path | Purpose |
 |------|---------|
-| `vulnerable_app.py` | Target fleet (`/api/run`, `/config`, `/config/<agent>`, `/api/actions`, `/api/mode`, `/api/reset`, `/api/state`, `/health`). |
+| `vulnerable_app.py` | Target fleet (`/api/run`, `/config`, `/config/<agent>`, `/api/actions`, `/health`) plus the console API (`/api/meta`, `/api/state`, `/api/reset`, `/api/attack`, `/api/evaluate`, `/api/scan`, `/api/mode`). |
+| `web/` | Shared HACTU8 lab console, served at `/`. |
 | `scripts/run_mandate_tamper.py` | Attack: rewrite one agent's mandate config. |
 | `scripts/evaluate_kpi.py` | Stoplight KPI + OMAR + ticks until stopped; `--harden` and `--scan` mitigations. |
 | `scripts/reset_baseline.py` | Restores the signed baseline configs and vulnerable mode. |

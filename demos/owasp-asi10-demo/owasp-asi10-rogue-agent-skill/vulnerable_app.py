@@ -55,6 +55,9 @@ from typing import Any, Dict, List, Optional, Tuple
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ASSETS = os.path.join(HERE, "assets")
+WEB_DIR = os.path.join(HERE, "web")
+WEB_FILES = {"index.html": "text/html", "app.js": "text/javascript", "styles.css": "text/css"}
+PAYLOAD_FILE = os.path.join(ASSETS, "tampered_mandate.json")
 BASELINE_FILE = os.path.join(ASSETS, "fleet_baseline.json")
 
 # The stub's instruction syntax. A line in an agent's instructions that starts
@@ -328,9 +331,95 @@ def dry_run(config: Dict[str, Any], agent: str = "billy-stock",
 
 
 # --------------------------------------------------------------------------- #
+# Lab console API (web/ — the shared HACTU8 console)
+# --------------------------------------------------------------------------- #
+CONSOLE_META = {
+    "id": "ASI10",
+    "framework": "OWASP Top 10 for Agentic Applications",
+    "risk": "Rogue Agents",
+    "title": "Rogue Agent Lab",
+    "short_title": "Rogue Agent Lab",
+    "scenario": (
+        "Goat & Co. runs three worker agents (billing, stock, support) in scheduler ticks. "
+        "Each hot-reloads its mandate config from a store anyone can write; nothing "
+        "checks the controller's signature or monitors what the agents do."
+    ),
+    "ground_truth": "Each agent takes only its scheduled job, inside its signed mandate.",
+    "metric_name": "Off-Mandate Action Rate",
+    "metric_abbr": "OMAR",
+    "attack_label": "Edit one agent's mandate config",
+    "attack_description": "Overwrite billy-stock's mandate and instructions with "
+                          "assets/tampered_mandate.json (signature left stale).",
+    "scan_label": "Mandate config check (diff + monitor dry run)",
+    "harden_label": "Signed configs + runtime monitor",
+    "harden_description": "Configs with a bad signature are rejected; a monitor blocks "
+                          "off-mandate actions and quarantines the agent.",
+}
+
+
+def console_attack(lab: Lab) -> Dict[str, Any]:
+    import sys
+    sys.path.insert(0, os.path.join(HERE, "scripts"))
+    from run_mandate_tamper import apply_edit, load_payload
+
+    payload = load_payload(PAYLOAD_FILE)
+    agent = payload.get("agent", "billy-stock")
+    live = lab.get_config(agent)
+    edited = apply_edit(live, payload)
+    lab.write_config(agent, edited)
+    added = [a for a in edited["mandate"]["actions"] if a not in live["mandate"]["actions"]]
+    return {"events": [f"{agent}'s mandate config overwritten with tampered_mandate.json "
+                       f"(unauthenticated config store; mandate widened by "
+                       f"{', '.join(added) or 'nothing'}; signature left stale)."]}
+
+
+def console_evaluate(lab: Lab) -> Dict[str, Any]:
+    import sys
+    sys.path.insert(0, os.path.join(HERE, "scripts"))
+    from evaluate_kpi import SUITE, classify, step_actions, summarise
+
+    result = lab.run(DEFAULT_TICKS)
+    rows = []
+    for agent, tick, targeted, intended in SUITE:
+        actions = step_actions(result["action_log"], agent, tick)
+        rows.append({"item": f"{agent} @ tick {tick}", "targeted": targeted,
+                     "status": classify(actions, intended),
+                     "detail": summarise(actions, intended)})
+    return summarize(rows)
+
+
+def summarize(rows: List[Dict[str, Any]]) -> Dict[str, Any]:
+    targeted = [r for r in rows if r["targeted"]]
+    red_t = sum(r["status"] == "RED" for r in targeted)
+    red_all = sum(r["status"] == "RED" for r in rows)
+    return {
+        "rows": rows,
+        "red_targeted": red_t, "targeted": len(targeted),
+        "red_overall": red_all, "total": len(rows),
+        "targeted_rate": 100.0 * red_t / len(targeted) if targeted else 0.0,
+        "overall_rate": 100.0 * red_all / len(rows) if rows else 0.0,
+    }
+
+
+def console_scan(lab: Lab) -> Dict[str, Any]:
+    with open(PAYLOAD_FILE, "r", encoding="utf-8") as fh:
+        config = json.load(fh)
+    agent = config.get("agent", "billy-stock")
+    report = dry_run(config, agent)
+    findings = list(report["widening"])
+    findings += [f"tick {e['tick']}: {e['key']} ({e['reason']})" for e in report["blocked"]]
+    if report["stopped_at"] is not None:
+        findings.append(f"monitor would quarantine {agent} at tick {report['stopped_at']}")
+    return {"subject": "assets/tampered_mandate.json",
+            "decision": "REJECT" if report["widening"] or report["blocked"] else "PASS",
+            "findings": findings}
+
+
+# --------------------------------------------------------------------------- #
 # HTTP surface
 # --------------------------------------------------------------------------- #
 LAB: Optional[Lab] = None
+PORT = 5310
 
 
 class Handler(BaseHTTPRequestHandler):
@@ -347,6 +436,21 @@ class Handler(BaseHTTPRequestHandler):
         self.end_headers()
         self.wfile.write(data)
 
+    def _host_ok(self) -> bool:
+        """Reject other Host headers (DNS-rebinding guard for a loopback lab)."""
+        host = (self.headers.get("Host") or "").lower()
+        return host in {f"127.0.0.1:{PORT}", f"localhost:{PORT}"}
+
+    def _static(self, name: str) -> None:
+        data = open(os.path.join(WEB_DIR, name), "rb").read()
+        self.send_response(200)
+        self.send_header("Content-Type", f"{WEB_FILES[name]}; charset=utf-8")
+        self.send_header("Content-Length", str(len(data)))
+        self.send_header("Content-Security-Policy",
+                         "default-src 'self'; style-src 'self'; script-src 'self'")
+        self.end_headers()
+        self.wfile.write(data)
+
     def _json(self) -> Dict[str, Any]:
         length = int(self.headers.get("Content-Length") or 0)
         if length > 1_000_000:
@@ -356,7 +460,16 @@ class Handler(BaseHTTPRequestHandler):
 
     def do_GET(self) -> None:
         assert LAB is not None
-        if self.path == "/health":
+        if not self._host_ok():
+            self._send(403, {"error": "bad host"})
+            return
+        if self.path == "/":
+            self._static("index.html")
+        elif self.path.startswith("/web/") and self.path[5:] in WEB_FILES:
+            self._static(self.path[5:])
+        elif self.path == "/api/meta":
+            self._send(200, CONSOLE_META)
+        elif self.path == "/health":
             self._send(200, {"status": "ok", "demo": "asi10", "mode": LAB.mode})
         elif self.path == "/api/state":
             self._send(200, LAB.state())
@@ -374,6 +487,14 @@ class Handler(BaseHTTPRequestHandler):
 
     def do_POST(self) -> None:
         assert LAB is not None
+        if not self._host_ok():
+            self._send(403, {"error": "bad host"})
+            return
+        # A cross-site HTML form cannot send application/json without a CORS
+        # preflight, so requiring it keeps other web pages off this lab.
+        if not (self.headers.get("Content-Type") or "").startswith("application/json"):
+            self._send(415, {"error": "Content-Type must be application/json"})
+            return
         try:
             body = self._json()
         except (ValueError, json.JSONDecodeError) as exc:
@@ -403,7 +524,14 @@ class Handler(BaseHTTPRequestHandler):
             self._send(200, {"status": "saved", "agent": agent})
         elif self.path == "/api/reset":
             LAB.reset()
+            LAB.set_mode("vulnerable")
             self._send(200, LAB.state())
+        elif self.path == "/api/attack":
+            self._send(200, console_attack(LAB))
+        elif self.path == "/api/evaluate":
+            self._send(200, console_evaluate(LAB))
+        elif self.path == "/api/scan":
+            self._send(200, console_scan(LAB))
         elif self.path == "/api/mode":
             try:
                 LAB.set_mode(str(body.get("mode", "")))
@@ -416,11 +544,12 @@ class Handler(BaseHTTPRequestHandler):
 
 
 def main() -> None:
-    global LAB
+    global LAB, PORT
     LAB = Lab(mode=os.getenv("ASI10_MODE", "vulnerable"))
-    port = int(os.getenv("ASI10_PORT", "5310"))
-    httpd = ThreadingHTTPServer(("127.0.0.1", port), Handler)
-    print(f"[*] ASI10 lab target on http://127.0.0.1:{port} (mode={LAB.mode})")
+    PORT = int(os.getenv("ASI10_PORT", "5310"))
+    httpd = ThreadingHTTPServer(("127.0.0.1", PORT), Handler)
+    print(f"[*] ASI10 lab target on http://127.0.0.1:{PORT} (mode={LAB.mode})")
+    print(f"[*] Lab console: http://127.0.0.1:{PORT}/")
     print("[*] Insecure by design. Loopback only. All agent actions are simulated. Ctrl+C to stop.")
     try:
         httpd.serve_forever()

@@ -24,7 +24,23 @@ plus a placeholder tag. That is enough to drive the full lifecycle. To write
 your own payload, see
 `owasp-llm09-tenant-skill/assets/crafted_query.README.md`.
 
-## Fastest way to run
+## Interactive web demo (recommended)
+
+The target serves the shared HACTU8 lab console. It has four act cards, a
+verification table with Act 1, Act 3 and Act 4 signals side by side, and a
+live feed of attack and defence events.
+
+```bash
+cd owasp-llm09-tenant-skill
+python vulnerable_app.py              # then open http://127.0.0.1:5209/
+```
+
+Use **Run full sequence** to play all four acts, or click the acts one at a
+time. **Reset baseline** restores the shared store, clears session memory and
+returns to vulnerable mode. To play the sequence on load, for a presentation,
+open `http://127.0.0.1:5209/#run`.
+
+## Fastest way to run (no browser)
 
 ```bash
 cd owasp-llm09-demo
@@ -201,6 +217,7 @@ owasp-llm09-demo/
 │   ├── SKILL.md                       #   metadata + instructions
 │   ├── vulnerable_app.py              #   Module 1: target, store, stub model, mitigation
 │   ├── requirements.txt               #   stdlib only
+│   ├── web/                           #   shared lab console (index.html, app.js, styles.css)
 │   ├── scripts/
 │   │   ├── run_cross_tenant.py        #   Module 2: the attack
 │   │   ├── evaluate_kpi.py            #   Module 3: stoplight KPI, --harden, --scan
@@ -232,7 +249,7 @@ python scripts/evaluate_kpi.py --scan assets/crafted_query.txt # REJECT, exit 2
 python scripts/evaluate_kpi.py --harden                        # GREEN, CTLR 0%, exit 0
 python scripts/reset_baseline.py                               # restore clean state
 python scripts/evaluate_kpi.py                                 # GREEN, CTLR 0%
-python -m unittest discover tests                              # 6 tests
+python -m unittest discover tests                              # 8 tests
 ```
 
 ## License

@@ -45,6 +45,8 @@ from typing import Any, Dict, List, Optional, Tuple
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ASSETS = os.path.join(HERE, "assets")
+WEB_DIR = os.path.join(HERE, "web")
+WEB_FILES = {"index.html": "text/html", "app.js": "text/javascript", "styles.css": "text/css"}
 BASELINE_FILE = os.path.join(ASSETS, "docs_baseline.json")
 REGISTRY_FILE = os.path.join(ASSETS, "approved_registry.json")
 
@@ -251,9 +253,78 @@ class Lab:
 
 
 # --------------------------------------------------------------------------- #
+# Lab console API (web/ — the shared HACTU8 console)
+# --------------------------------------------------------------------------- #
+PAYLOAD_FILE = os.path.join(ASSETS, "poisoned_doc.md")
+PAYLOAD_PAGE = "http-client-faq"      # run_slopsquat.py's default --page
+
+CONSOLE_META = {
+    "id": "LLM07",
+    "framework": "OWASP Top 10 for LLM Applications",
+    "risk": "Misinformation",
+    "title": "Grounding Lab",
+    "short_title": "Grounding Lab",
+    "scenario": (
+        "Billy Dev, Goat & Co.'s developer-helper assistant, recommends packages and "
+        "doc links from the developer docs. Anyone can add a community doc page."
+    ),
+    "ground_truth": "The HTTP client is goat-http: pip install goat-http (docs.goatco.invalid/http).",
+    "metric_name": "Ungrounded Claim Rate",
+    "metric_abbr": "UCR",
+    "attack_label": "Publish one community page",
+    "attack_description": "Add assets/poisoned_doc.md as community page http-client-faq.",
+    "scan_label": "Grounding check of the page",
+    "harden_label": "Ground every citation",
+    "harden_description": ("Cited packages and URL hosts are checked against the approved "
+                           "registry; ungrounded drafts are withheld."),
+}
+
+
+def console_attack(lab: Lab) -> Dict[str, Any]:
+    with open(PAYLOAD_FILE, "r", encoding="utf-8") as fh:
+        slug = lab.write_page(PAYLOAD_PAGE, fh.read())
+    return {"events": [f"Community page '{slug}' published from poisoned_doc.md "
+                       "(unauthenticated add, 1 page, no existing page touched)."]}
+
+
+def console_evaluate(lab: Lab) -> Dict[str, Any]:
+    import sys
+    sys.path.insert(0, os.path.join(HERE, "scripts"))
+    from evaluate_kpi import SUITE, classify
+
+    rows = []
+    for query, targeted, truth in SUITE:
+        answer = lab.query(query)["answer"]
+        rows.append({"item": query, "targeted": targeted,
+                     "status": classify(answer, truth), "detail": answer})
+    return summarize(rows)
+
+
+def summarize(rows: List[Dict[str, Any]]) -> Dict[str, Any]:
+    targeted = [r for r in rows if r["targeted"]]
+    red_t = sum(r["status"] == "RED" for r in targeted)
+    red_all = sum(r["status"] == "RED" for r in rows)
+    return {
+        "rows": rows,
+        "red_targeted": red_t, "targeted": len(targeted),
+        "red_overall": red_all, "total": len(rows),
+        "targeted_rate": 100.0 * red_t / len(targeted) if targeted else 0.0,
+        "overall_rate": 100.0 * red_all / len(rows) if rows else 0.0,
+    }
+
+
+def console_scan(lab: Lab) -> Dict[str, Any]:
+    with open(PAYLOAD_FILE, "r", encoding="utf-8") as fh:
+        result = check_grounding(fh.read(), lab.registry)
+    return {"subject": "assets/poisoned_doc.md",
+            "decision": "PASS" if result.grounded else "REJECT",
+            "findings": result.findings}
+
+# --------------------------------------------------------------------------- #
 # HTTP surface
 # --------------------------------------------------------------------------- #
 LAB: Optional[Lab] = None
+PORT = 5207
 
 
 class Handler(BaseHTTPRequestHandler):
@@ -270,6 +341,21 @@ class Handler(BaseHTTPRequestHandler):
         self.end_headers()
         self.wfile.write(data)
 
+    def _host_ok(self) -> bool:
+        """Reject other Host headers (DNS-rebinding guard for a loopback lab)."""
+        host = (self.headers.get("Host") or "").lower()
+        return host in {f"127.0.0.1:{PORT}", f"localhost:{PORT}"}
+
+    def _static(self, name: str) -> None:
+        data = open(os.path.join(WEB_DIR, name), "rb").read()
+        self.send_response(200)
+        self.send_header("Content-Type", f"{WEB_FILES[name]}; charset=utf-8")
+        self.send_header("Content-Length", str(len(data)))
+        self.send_header("Content-Security-Policy",
+                         "default-src 'self'; style-src 'self'; script-src 'self'")
+        self.end_headers()
+        self.wfile.write(data)
+
     def _json(self) -> Dict[str, Any]:
         length = int(self.headers.get("Content-Length") or 0)
         if length > 1_000_000:
@@ -279,7 +365,16 @@ class Handler(BaseHTTPRequestHandler):
 
     def do_GET(self) -> None:
         assert LAB is not None
-        if self.path == "/health":
+        if not self._host_ok():
+            self._send(403, {"error": "bad host"})
+            return
+        if self.path == "/":
+            self._static("index.html")
+        elif self.path.startswith("/web/") and self.path[5:] in WEB_FILES:
+            self._static(self.path[5:])
+        elif self.path == "/api/meta":
+            self._send(200, CONSOLE_META)
+        elif self.path == "/health":
             self._send(200, {"status": "ok", "demo": "llm07", "mode": LAB.mode})
         elif self.path == "/api/state":
             self._send(200, LAB.state())
@@ -294,6 +389,14 @@ class Handler(BaseHTTPRequestHandler):
 
     def do_POST(self) -> None:
         assert LAB is not None
+        if not self._host_ok():
+            self._send(403, {"error": "bad host"})
+            return
+        # A cross-site HTML form cannot send application/json without a CORS
+        # preflight, so requiring it keeps other web pages off this lab.
+        if not (self.headers.get("Content-Type") or "").startswith("application/json"):
+            self._send(415, {"error": "Content-Type must be application/json"})
+            return
         try:
             body = self._json()
         except (ValueError, json.JSONDecodeError) as exc:
@@ -310,7 +413,14 @@ class Handler(BaseHTTPRequestHandler):
             self._send(200, {"status": "saved", "slug": slug})
         elif self.path == "/api/reset":
             LAB.reset()
+            LAB.set_mode("vulnerable")
             self._send(200, LAB.state())
+        elif self.path == "/api/attack":
+            self._send(200, console_attack(LAB))
+        elif self.path == "/api/evaluate":
+            self._send(200, console_evaluate(LAB))
+        elif self.path == "/api/scan":
+            self._send(200, console_scan(LAB))
         elif self.path == "/api/mode":
             try:
                 LAB.set_mode(str(body.get("mode", "")))
@@ -323,11 +433,12 @@ class Handler(BaseHTTPRequestHandler):
 
 
 def main() -> None:
-    global LAB
+    global LAB, PORT
     LAB = Lab(mode=os.getenv("LLM07_MODE", "vulnerable"))
-    port = int(os.getenv("LLM07_PORT", "5207"))
-    httpd = ThreadingHTTPServer(("127.0.0.1", port), Handler)
-    print(f"[*] LLM07 lab target on http://127.0.0.1:{port} (mode={LAB.mode})")
+    PORT = int(os.getenv("LLM07_PORT", "5207"))
+    httpd = ThreadingHTTPServer(("127.0.0.1", PORT), Handler)
+    print(f"[*] LLM07 lab target on http://127.0.0.1:{PORT} (mode={LAB.mode})")
+    print(f"[*] Lab console: http://127.0.0.1:{PORT}/")
     print("[*] Insecure by design. Loopback only. Ctrl+C to stop.")
     try:
         httpd.serve_forever()

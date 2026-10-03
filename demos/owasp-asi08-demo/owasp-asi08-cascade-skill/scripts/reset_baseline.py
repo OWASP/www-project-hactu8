@@ -15,6 +15,8 @@ Examples:
 from __future__ import annotations
 
 import argparse
+import json
+import urllib.request
 
 from run_cascade import DEFAULT_TARGET, _post, check_target
 
@@ -29,9 +31,12 @@ def main(argv=None) -> int:
 
     if not check_target(args.target):
         return 1
-    state = _post(f"{args.target}/api/reset", {})
-    if not args.keep_mode:
-        state = _post(f"{args.target}/api/mode", {"mode": "vulnerable"})
+    mode = "vulnerable"
+    if args.keep_mode:
+        with urllib.request.urlopen(f"{args.target}/api/state", timeout=10) as resp:
+            mode = json.loads(resp.read())["mode"]
+    _post(f"{args.target}/api/reset", {})          # also restores vulnerable mode
+    state = _post(f"{args.target}/api/mode", {"mode": mode})
     print(f"[+] Baseline restored: inbox {len(state['inbox'])} documents, "
           f"action log cleared; mode={state['mode']}.")
     return 0

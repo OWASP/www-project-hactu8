@@ -121,6 +121,8 @@ def scan(path: str, session: str = DEFAULT_SESSION) -> int:
 
 
 def main(argv=None) -> int:
+    if hasattr(sys.stdout, "reconfigure"):
+        sys.stdout.reconfigure(encoding="utf-8")  # emoji on Windows pipes
     parser = argparse.ArgumentParser(description=__doc__,
                                      formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--target", default=DEFAULT_TARGET)

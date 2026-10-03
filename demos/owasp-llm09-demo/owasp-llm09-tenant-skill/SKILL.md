@@ -30,11 +30,13 @@ skill shows how to detect it and harden against it.
 - **Authorized use only.** Run against this skill's own `vulnerable_app.py`
   (bound to `127.0.0.1`) or a target you are explicitly permitted to test.
 - The vulnerable app is insecure **by design**; do not expose it. Host-safety
-  guards are built in and do not weaken the lesson:
+  guards are built in. None of them weakens the lesson:
   - The store and session memory live in memory only; nothing is written to disk.
   - Session memory keeps at most 3 turns of at most 500 characters.
   - The model is a deterministic stub, so the lab cannot reach a real model
     or the network.
+  - The server rejects foreign `Host` headers (DNS rebinding) and non-JSON
+    POSTs (cross-site forms).
 - Both tenants and all documents are fictional. The shipped payload is a
   **placeholder**. See [`assets/crafted_query.README.md`](assets/crafted_query.README.md).
 - Dual-use: this exists to make the vulnerability observable and to motivate
@@ -67,7 +69,8 @@ Python 3.9+. Standard library only; nothing to install.
    ```bash
    python vulnerable_app.py             # serves on 127.0.0.1:5209
    ```
-   On startup it seeds the shared store from `assets/vector_store.json`.
+   On startup it seeds the shared store from `assets/vector_store.json`. To
+   drive the same four acts from a browser, open <http://127.0.0.1:5209/>.
 
 2. **Review the ground truth.** Read `assets/vector_store.json`. Meadow Fold
    buys hay at *180 dollars per tonne*, the vet visits on the *second
@@ -125,7 +128,8 @@ longer targeted.
 
 | Path | Purpose |
 |------|---------|
-| `vulnerable_app.py` | Target RAG assistant (`/query`, `/api/mode`, `/api/reset`, `/api/state`, `/health`). |
+| `vulnerable_app.py` | Target RAG assistant (`/query`, `/health`) plus the console API (`/api/meta`, `/api/state`, `/api/reset`, `/api/attack`, `/api/evaluate`, `/api/scan`, `/api/mode`). |
+| `web/` | Shared HACTU8 lab console, served at `/`. |
 | `scripts/run_cross_tenant.py` | Attack: one crafted turn in the attacker's own session. |
 | `scripts/evaluate_kpi.py` | Stoplight KPI + CTLR against the live app; `--harden` and `--scan` mitigations. |
 | `scripts/reset_baseline.py` | Restores the store, clears session memory, vulnerable mode. |

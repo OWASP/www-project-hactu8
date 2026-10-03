@@ -28,11 +28,13 @@ instruction it finds there.
 
 - **Authorized use only.** Run against this skill's own `vulnerable_app.py`
   (bound to `127.0.0.1`) or a target you are explicitly permitted to test.
-- The vulnerable app is insecure **by design**; do not expose it. Two
-  host-safety guards are built in and do not weaken the lesson:
+- The vulnerable app is insecure **by design**; do not expose it. Three
+  host-safety guards are built in. None of them weakens the lesson:
   - Wiki state lives in memory only, so page edits never touch the filesystem.
   - The model is a deterministic stub, so the lab cannot reach a real model
     or the network.
+  - The server rejects foreign `Host` headers (DNS rebinding) and non-JSON
+    POSTs (cross-site forms).
 - The shipped payload is a **placeholder**: a marker line plus a fictional
   canary. See [`assets/injected_page.README.md`](assets/injected_page.README.md).
 - Dual-use: this exists to make the vulnerability observable and to motivate
@@ -64,7 +66,8 @@ Python 3.9+. Standard library only; nothing to install.
    ```bash
    python vulnerable_app.py             # serves on 127.0.0.1:5201
    ```
-   On startup it seeds the wiki from `assets/kb_baseline.json`.
+   On startup it seeds the wiki from `assets/kb_baseline.json`. To drive the
+   same four acts from a browser, open <http://127.0.0.1:5201/>.
 
 2. **Review the ground truth.** Read `assets/kb_baseline.json`: expense reports
    are due within *30 days* and need *manager approval*. Employees act on
@@ -122,7 +125,8 @@ lesson. To test the screen, extend `assets/screen_rules.json`.
 
 | Path | Purpose |
 |------|---------|
-| `vulnerable_app.py` | Target KB assistant (`/query`, `/kb/page`, `/api/mode`, `/api/reset`, `/api/state`, `/health`). |
+| `vulnerable_app.py` | Target KB assistant (`/query`, `/kb/page`, `/health`) plus the console API (`/api/meta`, `/api/state`, `/api/reset`, `/api/attack`, `/api/evaluate`, `/api/scan`, `/api/mode`). |
+| `web/` | Shared HACTU8 lab console, served at `/`. |
 | `scripts/run_injection.py` | Attack: overwrite one wiki page with the injected page. |
 | `scripts/evaluate_kpi.py` | Stoplight KPI + ISR against the live app; `--harden` and `--scan` mitigations. |
 | `scripts/reset_baseline.py` | Restores the seeded wiki and vulnerable mode. |

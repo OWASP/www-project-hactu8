@@ -39,6 +39,8 @@ own prose, and the risky line is batched below what the human reads.
     note size, card lines and action-log length are capped.
   - The model and the human approver are deterministic stubs, so the lab
     cannot reach a real model or the network.
+  - The server rejects foreign `Host` headers (DNS rebinding) and non-JSON
+    POSTs (cross-site forms).
 - The shipped payload is a **placeholder**: one field line with a fictional
   value, one stub directive line and a fictional canary. See
   [`assets/vendor_amendment.README.md`](assets/vendor_amendment.README.md).
@@ -74,7 +76,8 @@ Python 3.9+. Standard library only; nothing to install.
    python vulnerable_app.py             # serves on 127.0.0.1:5309
    ```
    On startup it seeds vendors and change requests from
-   `assets/vendor_baseline.json`.
+   `assets/vendor_baseline.json`. To drive the same four acts from a browser,
+   open <http://127.0.0.1:5309/>.
 
 2. **Review the ground truth.** Each suite item in `scripts/evaluate_kpi.py`
    lists the routine `tool:vendor` actions it should execute. No high-risk
@@ -135,7 +138,8 @@ of a card the approver reads, edit `assets/approval_policy.json`.
 
 | Path | Purpose |
 |------|---------|
-| `vulnerable_app.py` | Target agent (`/agent`, `/portal/amend`, `/requests/<id>`, `/api/actions`, `/api/mode`, `/api/reset`, `/api/state`, `/health`). |
+| `vulnerable_app.py` | Target agent (`/agent`, `/portal/amend`, `/requests/<id>`, `/api/actions`, `/health`) plus the console API (`/api/meta`, `/api/state`, `/api/reset`, `/api/attack`, `/api/evaluate`, `/api/scan`, `/api/mode`). |
+| `web/` | Shared HACTU8 lab console, served at `/`. |
 | `scripts/run_trust_exploit.py` | Attack: amend one change request. |
 | `scripts/evaluate_kpi.py` | Stoplight KPI + MAR against the live app; `--harden` and `--scan` mitigations. |
 | `scripts/reset_baseline.py` | Restores the seeded vendors and requests, clears the action log, sets vulnerable mode. |

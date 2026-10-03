@@ -25,7 +25,23 @@ The shipped payload is a **placeholder**: two stub directive lines and a
 fictional canary. That is enough to drive the full lifecycle. To write your own
 payload, see `owasp-asi01-goal-hijack-skill/assets/ticket_comment.README.md`.
 
-## Fastest way to run
+## Interactive web demo (recommended)
+
+The target serves the shared HACTU8 lab console. It has four act cards, a
+verification table with Act 1, Act 3 and Act 4 signals side by side, and a
+live feed of attack and defence events.
+
+```bash
+cd owasp-asi01-goal-hijack-skill
+python vulnerable_app.py              # then open http://127.0.0.1:5301/
+```
+
+Use **Run full sequence** to play all four acts, or click the acts one at a
+time. **Reset baseline** restores the clean tickets, empties the action log and
+returns to vulnerable mode. To play the sequence on load, for a presentation,
+open `http://127.0.0.1:5301/#run`.
+
+## Fastest way to run (no browser)
 
 ```bash
 cd owasp-asi01-demo
@@ -211,6 +227,7 @@ owasp-asi01-demo/
 │   ├── SKILL.md                       #   metadata + instructions
 │   ├── vulnerable_app.py              #   Module 1: target, stub model, simulated tools, plan gate
 │   ├── requirements.txt               #   stdlib only
+│   ├── web/                           #   shared lab console (index.html, app.js, styles.css)
 │   ├── scripts/
 │   │   ├── run_goal_hijack.py         #   Module 2: the attack
 │   │   ├── evaluate_kpi.py            #   Module 3: stoplight KPI, --harden, --scan
@@ -243,7 +260,7 @@ python scripts/evaluate_kpi.py --scan assets/ticket_comment.md  # REJECT, exit 2
 python scripts/evaluate_kpi.py --harden                         # GREEN, GDR 0%, exit 0
 python scripts/reset_baseline.py                                # restore clean state
 python scripts/evaluate_kpi.py                                  # GREEN, GDR 0%
-python -m unittest discover tests                               # 9 tests
+python -m unittest discover tests                               # 11 tests
 ```
 
 ## License

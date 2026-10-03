@@ -30,7 +30,22 @@ The shipped payload is a **placeholder**: two stub directive lines and a
 fictional canary. That is enough to drive the full lifecycle. To write your own
 payload, see `owasp-asi07-a2a-skill/assets/forged_order.README.md`.
 
-## Fastest way to run
+## Interactive web demo (recommended)
+
+The target serves the shared HACTU8 lab console. It has four act cards, a
+verification table with Act 1, Act 3 and Act 4 signals side by side, and a
+live feed of attack and defence events.
+
+```bash
+cd owasp-asi07-a2a-skill
+python vulnerable_app.py              # then open http://127.0.0.1:5307/
+```
+
+Use **Run full sequence** to play all four acts, or click the acts one at a
+time. **Reset baseline** restores the seeded records and bus and vulnerable mode. To play the
+sequence on load, for a presentation, open `http://127.0.0.1:5307/#run`.
+
+## Fastest way to run (no browser)
 
 ```bash
 cd owasp-asi07-demo
@@ -226,6 +241,7 @@ owasp-asi07-demo/
 │   ├── SKILL.md                       #   metadata + instructions
 │   ├── vulnerable_app.py              #   Module 1: target, bus, stub agents, verifier
 │   ├── requirements.txt               #   stdlib only
+│   ├── web/                           #   shared lab console (index.html, app.js, styles.css)
 │   ├── scripts/
 │   │   ├── run_bus_forgery.py         #   Module 2: the attack
 │   │   ├── evaluate_kpi.py            #   Module 3: stoplight KPI, --harden, --scan

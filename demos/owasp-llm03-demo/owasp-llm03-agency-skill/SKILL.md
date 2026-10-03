@@ -37,6 +37,8 @@ requests the calls written there, and the app executes them.
     (20), note size and action-log length are capped.
   - The model is a deterministic stub, so the lab cannot reach a real model
     or the network.
+  - The server rejects foreign `Host` headers (DNS rebinding) and non-JSON
+    POSTs (cross-site forms).
 - The shipped payload is a **placeholder**: stub directive lines plus a
   fictional canary. See [`assets/ticket_note.README.md`](assets/ticket_note.README.md).
 - Dual-use: this exists to make the vulnerability observable and to motivate
@@ -69,7 +71,8 @@ Python 3.9+. Standard library only; nothing to install.
    python vulnerable_app.py             # serves on 127.0.0.1:5203
    ```
    On startup it seeds customers, orders and tickets from
-   `assets/support_baseline.json`.
+   `assets/support_baseline.json`. To drive the same four acts from a
+   browser, open <http://127.0.0.1:5203/>.
 
 2. **Review the ground truth.** Ground truth is the operator's intent. Each
    suite item in `scripts/evaluate_kpi.py` lists the exact `tool:target` calls
@@ -131,7 +134,8 @@ task already allows passes the gate by design.
 
 | Path | Purpose |
 |------|---------|
-| `vulnerable_app.py` | Target support agent (`/agent`, `/tickets/note`, `/tickets/<id>`, `/api/actions`, `/api/mode`, `/api/reset`, `/api/state`, `/health`). |
+| `vulnerable_app.py` | Target support agent (`/agent`, `/tickets/note`, `/tickets/<id>`, `/api/actions`, `/health`) plus the console API (`/api/meta`, `/api/state`, `/api/reset`, `/api/attack`, `/api/evaluate`, `/api/scan`, `/api/mode`). |
+| `web/` | Shared HACTU8 lab console, served at `/`. |
 | `scripts/run_agency_hijack.py` | Attack: append the note to one ticket. |
 | `scripts/evaluate_kpi.py` | Stoplight KPI + UAR against the live app; `--harden` and `--scan` mitigations. |
 | `scripts/reset_baseline.py` | Restores the seeded desk, clears the action log, sets vulnerable mode. |

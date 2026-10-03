@@ -39,6 +39,8 @@ KPI reads.
     length are capped.
   - The model is a deterministic stub, so the lab cannot reach a real model
     or the network.
+  - The server rejects foreign `Host` headers (DNS rebinding) and non-JSON
+    POSTs (cross-site forms).
 - The shipped payload is a **placeholder**: a topic line, a marker line and a
   fictional canary. See [`assets/memory_note.README.md`](assets/memory_note.README.md).
 - Dual-use: this exists to make the vulnerability observable and to motivate
@@ -73,7 +75,8 @@ Python 3.9+. Standard library only; nothing to install.
    python vulnerable_app.py             # serves on 127.0.0.1:5306
    ```
    On startup it seeds the KB and two harmless user memories from
-   `assets/memory_baseline.json`.
+   `assets/memory_baseline.json`. To drive the same four acts from a browser,
+   open <http://127.0.0.1:5306/>.
 
 2. **Review the ground truth.** Read `assets/memory_baseline.json`: business
    travel is booked through the *travel desk* at least *14 days* ahead, and
@@ -134,7 +137,8 @@ threshold is part of the lesson. To test the write screen, extend
 
 | Path | Purpose |
 |------|---------|
-| `vulnerable_app.py` | Target memory agent (`/session`, `/api/actions`, `/api/memory`, `/api/mode`, `/api/reset`, `/api/state`, `/health`). |
+| `vulnerable_app.py` | Target memory agent (`/session`, `/api/actions`, `/api/memory`, `/health`) plus the console API (`/api/meta`, `/api/state`, `/api/reset`, `/api/attack`, `/api/evaluate`, `/api/scan`, `/api/mode`). |
+| `web/` | Shared HACTU8 lab console, served at `/`. |
 | `scripts/run_memory_poison.py` | Attack: one "remember this" session that plants the memory. |
 | `scripts/evaluate_kpi.py` | Stoplight KPI + PSR from the action log; `--harden` and `--scan` mitigations. |
 | `scripts/reset_baseline.py` | Restores the seeded memory store, clears the action log, vulnerable mode. |

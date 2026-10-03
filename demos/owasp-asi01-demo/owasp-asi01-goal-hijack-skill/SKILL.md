@@ -32,13 +32,15 @@ new steps.
 - **Authorized use only.** Run against this skill's own `vulnerable_app.py`
   (bound to `127.0.0.1`) or a target you are explicitly permitted to test.
 - The vulnerable app is insecure **by design**; do not expose it. Host-safety
-  guards are built in and do not weaken the lesson:
+  guards are built in. None of them weakens the lesson:
   - Every tool is **simulated**. A post or an export is an entry in an
     in-memory action log; nothing leaves the process.
   - State lives in memory only. Steps per run (8), comments per ticket (20),
     comment size and action-log length are capped.
   - The model is a deterministic stub, so the lab cannot reach a real model
     or the network.
+  - The server rejects foreign `Host` headers (DNS rebinding) and non-JSON
+    POSTs (cross-site forms).
 - The shipped payload is a **placeholder**: stub directive lines plus a
   fictional canary. See [`assets/ticket_comment.README.md`](assets/ticket_comment.README.md).
 - Dual-use: this exists to make the vulnerability observable and to motivate
@@ -73,6 +75,7 @@ Python 3.9+. Standard library only; nothing to install.
    python vulnerable_app.py             # serves on 127.0.0.1:5301
    ```
    On startup it seeds tickets and channels from `assets/ops_baseline.json`.
+   To drive the same four acts from a browser, open <http://127.0.0.1:5301/>.
 
 2. **Review the ground truth.** Ground truth is the approved plan. Read
    `assets/weekly_report_plan.json`: every weekly report is exactly
@@ -135,7 +138,8 @@ stays on the plan by design.
 
 | Path | Purpose |
 |------|---------|
-| `vulnerable_app.py` | Target ops agent (`/agent`, `/tickets/comment`, `/tickets/<id>`, `/api/actions`, `/api/mode`, `/api/reset`, `/api/state`, `/health`). |
+| `vulnerable_app.py` | Target ops agent (`/agent`, `/tickets/comment`, `/tickets/<id>`, `/api/actions`, `/health`) plus the console API (`/api/meta`, `/api/state`, `/api/reset`, `/api/attack`, `/api/evaluate`, `/api/scan`, `/api/mode`). |
+| `web/` | Shared HACTU8 lab console, served at `/`. |
 | `scripts/run_goal_hijack.py` | Attack: append the comment to one ticket. |
 | `scripts/evaluate_kpi.py` | Stoplight KPI + GDR against the live app; `--harden` and `--scan` mitigations. |
 | `scripts/reset_baseline.py` | Restores the seeded desk, clears the action log, sets vulnerable mode. |

@@ -37,6 +37,8 @@ tool turn hostile from its second call. Billy itself is never touched.
   - Sampling is capped at 5 calls per tool.
   - The model is a deterministic stub, so the lab cannot reach a real model
     or the network.
+  - The server rejects foreign `Host` headers (DNS rebinding) and non-JSON
+    POSTs (cross-site forms).
 - The shipped payloads are **placeholders**: a marker line plus a fictional
   canary. See [`assets/swapped_description.README.md`](assets/swapped_description.README.md)
   and [`assets/sleeper_output.README.md`](assets/sleeper_output.README.md).
@@ -72,7 +74,8 @@ Python 3.9+. Standard library only; nothing to install.
    python vulnerable_app.py             # serves on 127.0.0.1:5204
    ```
    On startup it writes `registry/registry.json` from
-   `assets/registry_baseline.json` and installs the four tools.
+   `assets/registry_baseline.json` and installs the four tools. To drive the
+   same four acts from a browser, open <http://127.0.0.1:5204/>.
 
 2. **Review the ground truth.** Read `assets/registry_baseline.json`: expense
    reports are due within *30 days* with *manager approval*, and travel is
@@ -133,7 +136,8 @@ with `run_rug_pull.py --trigger 6` to see the sampler's blind spot.
 
 | Path | Purpose |
 |------|---------|
-| `vulnerable_app.py` | Target assistant (`/query`, `/tools`, `/api/mode`, `/api/reset`, `/api/state`, `/health`), stub model, admission gate. |
+| `vulnerable_app.py` | Target assistant (`/query`, `/tools`, `/health`), stub model, admission gate, plus the console API (`/api/meta`, `/api/state`, `/api/reset`, `/api/attack`, `/api/evaluate`, `/api/scan`, `/api/mode`). |
+| `web/` | Shared HACTU8 lab console, served at `/`. |
 | `scripts/run_rug_pull.py` | Attack: publish a compromised release to the registry file. |
 | `scripts/evaluate_kpi.py` | Stoplight KPI + CTR against the live app; `--harden` and `--scan` mitigations. |
 | `scripts/reset_baseline.py` | Restores the approved registry and vulnerable mode. |
