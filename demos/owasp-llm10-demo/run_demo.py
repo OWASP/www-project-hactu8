@@ -29,7 +29,7 @@ sys.path.insert(0, SKILL_DIR)
 sys.path.insert(0, os.path.join(SKILL_DIR, "scripts"))
 
 from evaluate_kpi import ICON, SUITE, classify, describe  # noqa: E402
-from vulnerable_app import Lab, load_sink_rules, screen_output  # noqa: E402
+from vulnerable_app import Lab, screen_output  # noqa: E402
 
 PAYLOAD = os.path.join(SKILL_DIR, "assets", "poisoned_note.md")
 
@@ -73,8 +73,8 @@ def main(argv=None) -> int:
     attacked = act(lab, "Act 3 — Post-attack impact (same sinks)")
 
     print("\n[defense] Act 4 — Remediation")
-    findings = screen_output(payload, load_sink_rules()).findings
-    print(f"[defense] Static screen of the note: REJECT ({', '.join(findings)})")
+    findings = screen_output(payload).findings
+    print(f"[defense] Static protectogw screen of the note: REJECT ({', '.join(findings)})")
     lab.set_mode("hardened")
     print("[defense] Hardened mode: HTML escaping and parameterised SQL. Model output unchanged.")
     remediated = act(lab, "Act 4 — Re-run with mitigations")

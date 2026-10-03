@@ -109,9 +109,9 @@ With `openrouter`, prompts and payloads leave the machine.
    ```
    `--scan` screens the page before it is published. `--harden` switches the
    target to hardened mode: tool output goes in its own `tool` role, which the
-   model never takes instructions from, and is screened with
-   `assets/screen_rules.json`. Channel separation alone is enough here, and the
-   tests prove it.
+   model never takes instructions from, and is screened with protectogw
+   (AgenticGoat's screening core, vendored unchanged in `protectogw/`). Channel
+   separation alone is enough here, and the tests prove it.
 
 7. **Reset to baseline.**
    ```bash
@@ -126,7 +126,8 @@ Edit [`assets/injected_page.md`](assets/injected_page.md) and follow
 [`assets/injected_page.README.md`](assets/injected_page.README.md). Keep the
 three real lines so the page still ranks first. If you remove them, the page is
 no longer retrieved and the ISR falls to 0. That threshold is part of the
-lesson. To test the screen, extend `assets/screen_rules.json`.
+lesson. To test the screen, add a `protectogw.Rule` to `SCREEN_POLICY` in
+`vulnerable_app.py`.
 
 ## Files
 
@@ -142,5 +143,5 @@ lesson. To test the screen, extend `assets/screen_rules.json`.
 | `assets/injected_page.md` | Adversarial page (placeholder payload; editable). |
 | `assets/injected_page.README.md` | How to write a payload for the echo and real-model backends. |
 | `assets/kb_baseline.json` | Untampered wiki: the ground truth. |
-| `assets/screen_rules.json` | Tool-output screen rules (editable). |
+| `protectogw/` | AgenticGoat's screening core, vendored unchanged; the tool-output screen. |
 | `tests/test_lifecycle.py` | Asserts the four-act story in-process. |

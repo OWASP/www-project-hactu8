@@ -32,7 +32,8 @@ scope filter.
 
 Hardened mode (``POST /api/mode`` or ``ASI06_MODE=hardened``) closes all three
 gaps, ported from the guard in AgenticGoat ``agentic/poison_lab.py``: writes
-are screened against ``assets/screen_rules.json`` and blocked on a match; new
+are screened with ``protectogw`` (AgenticGoat's screening core, vendored
+unchanged in ``protectogw/``) and blocked on a match; new
 memories are saved with ``user`` scope, an owner and provenance; and recall
 returns only ``user``-scoped entries owned by the current user with a
 provenance record, so unscoped (``shared``) entries are ignored.
@@ -54,6 +55,7 @@ from dataclasses import dataclass, field
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from typing import Any, Dict, List, Optional, Tuple
 
+import protectogw
 import providers
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -62,7 +64,6 @@ WEB_DIR = os.path.join(HERE, "web")
 WEB_FILES = {"index.html": "text/html", "app.js": "text/javascript", "styles.css": "text/css"}
 PAYLOAD_FILE = os.path.join(ASSETS, "memory_note.md")
 BASELINE_FILE = os.path.join(ASSETS, "memory_baseline.json")
-SCREEN_RULES_FILE = os.path.join(ASSETS, "screen_rules.json")
 
 SYSTEM_PROMPT = (
     "You are Billy Recall, the assistant for Goat & Co. "
@@ -99,11 +100,6 @@ def load_baseline() -> Dict[str, Any]:
     return data
 
 
-def load_screen_rules() -> Dict[str, Any]:
-    with open(SCREEN_RULES_FILE, "r", encoding="utf-8") as fh:
-        return json.load(fh)
-
-
 def keywords(text: str) -> List[str]:
     return [w for w in re.findall(r"\w+", text.lower()) if w not in STOPWORDS]
 
@@ -121,28 +117,40 @@ class ScreenResult:
         return bool(self.findings)
 
 
-def screen_memory(text: str, rules: Dict[str, Any]) -> ScreenResult:
-    """Report lines that match a screen rule; a match blocks the whole write.
+# protectogw judges the normalized, de-obfuscated text (lowercased, leet-folded
+# so "@" becomes "a" and "0" becomes "o", zero-width stripped, base64/hex/
+# ROT13/... decoded), so the lab rules below are written against that form.
+# They add this lab's placeholder syntax to protectogw's built-in ruleset,
+# exfil taxonomy and canary check: the stub's directive marker ("@assistant:"
+# -> "aassistant:") and the payload's canary tag ("ASI06-CANARY-3b9e" ->
+# "asio6-canary-eb9e").
+SCREEN_POLICY = protectogw.Policy(extra_rules=(
+    protectogw.Rule("lab_directive", r"\ba?assistant\s*:"),
+    protectogw.Rule("lab_canary", r"asi[o0]6-canary-\w+"),
+))
 
-    Rules come from ``assets/screen_rules.json``: literal ``markers`` and regex
-    ``patterns``, both matched case-insensitively per line. Hidden HTML
+
+def screen_memory(text: str,
+                  policy: Optional[protectogw.Policy] = None) -> ScreenResult:
+    """Report lines protectogw blocks; a block on any line blocks the whole write.
+
+    Each line is screened with ``protectogw.screen`` under ``SCREEN_POLICY``
+    (or ``policy``); findings are the protectogw signal names. Hidden HTML
     comments count as a finding, since a memory a reviewer cannot read should
-    never be stored.
+    never be stored. protectogw is one layer: its SECURITY.md states a ~75%
+    generalization ceiling, so scoped recall stays the control that holds.
     """
+    policy = SCREEN_POLICY if policy is None else policy
     findings: List[str] = []
     if re.search(r"<!--.*?-->", text, re.S):
         findings.append("hidden HTML comment")
         text = re.sub(r"<!--.*?-->", "", text, flags=re.S)
-    markers = [m.lower() for m in rules.get("markers", [])]
-    patterns = [re.compile(p, re.I) for p in rules.get("patterns", [])]
     kept: List[str] = []
     for line in text.splitlines():
-        low = line.lower()
-        hit = next((m for m in markers if m in low), None)
-        if hit is None:
-            hit = next((p.pattern for p in patterns if p.search(line)), None)
-        if hit is not None:
-            findings.append(f"rule {hit!r}")
+        result = protectogw.screen(line, policy=policy)
+        if result.blocked:
+            findings.extend(sig.plane for sig in result.signals
+                            if sig.plane not in findings)
             continue
         kept.append(line)
     return ScreenResult("\n".join(kept).strip(), findings)
@@ -244,7 +252,7 @@ class Lab:
                  model: str = "") -> None:
         self.lock = threading.RLock()
         self.set_backend(backend, model)
-        self.rules = load_screen_rules()
+        self.policy = SCREEN_POLICY
         self.pages: Dict[str, str] = {}
         self.memories: List[Dict[str, Any]] = []
         self.action_log: List[Dict[str, Any]] = []
@@ -312,7 +320,7 @@ class Lab:
             return None, ["memory store full"]
         findings: List[str] = []
         if self.mode == "hardened":
-            findings = screen_memory(text, self.rules).findings
+            findings = screen_memory(text, self.policy).findings
             if findings:
                 return None, findings
             scope = "user"
@@ -476,7 +484,7 @@ def summarize(rows: List[Dict[str, Any]]) -> Dict[str, Any]:
 
 def console_scan(lab: Lab) -> Dict[str, Any]:
     with open(PAYLOAD_FILE, "r", encoding="utf-8") as fh:
-        result = screen_memory(fh.read(), lab.rules)
+        result = screen_memory(fh.read(), lab.policy)
     return {"subject": "assets/memory_note.md",
             "decision": "REJECT" if result.blocked else "PASS",
             "findings": result.findings}

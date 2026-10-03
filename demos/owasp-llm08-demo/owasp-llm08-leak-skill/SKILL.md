@@ -118,8 +118,11 @@ vulnerable prompt's fictional canary.
    python scripts/evaluate_kpi.py --harden                                     # GREEN, PLR 0%
    ```
    `--scan` is the design check a prompt should pass before it ships.
-   `--harden` deploys the secret-free prompt and filters every reply with
-   `assets/filter_rules.json`. The tests show each layer alone: the design fix
+   `--harden` deploys the secret-free prompt and filters every reply:
+   protectogw (AgenticGoat's screening core, vendored unchanged in
+   `protectogw/`) guards the discount code as a canary, and the lab's n-gram
+   check (`output.ngram` in `assets/filter_rules.json`) withholds verbatim
+   prompt fragments. The tests show each layer alone: the design fix
    removes the code but the prompt is still quoted, and the filter alone
    withholds the quote even with the code still in the prompt.
 
@@ -154,5 +157,6 @@ the PLR falls to 0. To test the filter, change `output.ngram` in
 | `assets/system_prompt_vulnerable.txt` | Deployed prompt with the embedded secret and tool schema. |
 | `assets/system_prompt_hardened.txt` | Secret-free prompt deployed in hardened mode. |
 | `assets/store_baseline.json` | Help centre and accounts: the ground truth. |
-| `assets/filter_rules.json` | Prompt design-check rules and output-filter rules (editable). |
+| `assets/filter_rules.json` | Prompt design-check rules and the output n-gram size (editable). |
+| `protectogw/` | AgenticGoat's screening core, vendored unchanged; the output filter's canary/leak check. |
 | `tests/test_lifecycle.py` | Asserts the four-act story in-process. |

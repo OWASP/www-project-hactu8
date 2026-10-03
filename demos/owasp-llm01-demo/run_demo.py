@@ -29,7 +29,7 @@ sys.path.insert(0, SKILL_DIR)
 sys.path.insert(0, os.path.join(SKILL_DIR, "scripts"))
 
 from evaluate_kpi import ICON, SUITE, classify  # noqa: E402
-from vulnerable_app import Lab, load_screen_rules, screen_tool_output  # noqa: E402
+from vulnerable_app import Lab, screen_tool_output  # noqa: E402
 
 PAYLOAD = os.path.join(SKILL_DIR, "assets", "injected_page.md")
 
@@ -73,8 +73,8 @@ def main(argv=None) -> int:
     attacked = act(lab, "Act 3 — Post-attack impact (same questions)")
 
     print("\n[defense] Act 4 — Remediation")
-    findings = screen_tool_output(payload, load_screen_rules()).findings
-    print(f"[defense] Static screen of the page: REJECT ({', '.join(findings)})")
+    findings = screen_tool_output(payload).findings
+    print(f"[defense] Static protectogw screen of the page: REJECT ({', '.join(findings)})")
     lab.set_mode("hardened")
     print("[defense] Hardened mode: tool output kept in its own untrusted role and screened.")
     remediated = act(lab, "Act 4 — Re-run with mitigations")

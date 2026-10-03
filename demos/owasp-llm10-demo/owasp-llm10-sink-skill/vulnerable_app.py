@@ -32,8 +32,9 @@ to flip.
 
 Hardened mode (``POST /api/mode`` or ``LLM10_MODE=hardened``) escapes the
 output before it reaches either HTML sink and binds it as a parameter in SQL.
-It also runs the ``assets/sink_rules.json`` tripwire and reports matches in
-``screen_findings`` without relying on it.
+It also runs a ``protectogw`` tripwire (AgenticGoat's screening core, vendored
+unchanged in ``protectogw/``) and reports its signals in ``screen_findings``
+without relying on it.
 
 Host-safety guards (do not weaken the lesson): SQLite is ``:memory:`` only and
 uses ``execute`` (one statement, never a script); the log is capped; ticket
@@ -54,12 +55,12 @@ from dataclasses import dataclass, field
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from typing import Any, Dict, List, Optional
 
+import protectogw
 import providers
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ASSETS = os.path.join(HERE, "assets")
 BASELINE_FILE = os.path.join(ASSETS, "tickets_baseline.json")
-SINK_RULES_FILE = os.path.join(ASSETS, "sink_rules.json")
 PAYLOAD_FILE = os.path.join(ASSETS, "poisoned_note.md")
 WEB_DIR = os.path.join(HERE, "web")
 WEB_FILES = {"index.html": "text/html", "app.js": "text/javascript", "styles.css": "text/css"}
@@ -88,11 +89,6 @@ def load_baseline() -> Dict[str, List[str]]:
         return {k: list(v) for k, v in json.load(fh)["accounts"].items()}
 
 
-def load_sink_rules() -> Dict[str, Any]:
-    with open(SINK_RULES_FILE, "r", encoding="utf-8") as fh:
-        return json.load(fh)
-
-
 # --------------------------------------------------------------------------- #
 # Mitigation tripwire: output-sink screen
 # --------------------------------------------------------------------------- #
@@ -105,26 +101,35 @@ class ScreenResult:
         return bool(self.findings)
 
 
-def screen_output(text: str, rules: Dict[str, Any]) -> ScreenResult:
-    """Report lines whose content a downstream sink would interpret.
+# protectogw judges the normalized, de-obfuscated text (lowercased, leet-folded
+# so "@" becomes "a" and "1" becomes "i", zero-width stripped, base64/hex/
+# ROT13/... decoded), so the lab rules below are written against that form.
+# They add to protectogw's built-in ruleset, exfil taxonomy and canary check:
+# the stub's directive marker ("@assistant:" -> "aassistant:"), the payload's
+# canary tag ("LLM10-CANARY-4b1e" -> "llmio-canary-abie"), and the one
+# sink-shape rule this lab is about: markup a downstream HTML sink would render.
+SINK_POLICY = protectogw.Policy(extra_rules=(
+    protectogw.Rule("lab_directive", r"\ba?assistant\s*:"),
+    protectogw.Rule("lab_canary", r"llm[i1][o0]-canary-\w+"),
+    protectogw.Rule("html_markup", r"<\s*/?\s*[a-z][a-z0-9-]{0,20}\b[^>]{0,200}>"),
+))
 
-    Rules come from ``assets/sink_rules.json``: literal ``markers`` and named
-    regex ``patterns``, matched case-insensitively per line. This is a
-    tripwire: hardened mode logs it, ``--scan`` uses it to reject a note before
-    it is filed. The fix that actually returns the rate to 0 is at the sink.
+
+def screen_output(text: str,
+                  policy: Optional[protectogw.Policy] = None) -> ScreenResult:
+    """Report protectogw signals for text a downstream sink would receive.
+
+    Screens with ``protectogw.screen`` under ``SINK_POLICY`` (or ``policy``);
+    findings are the names of the signals behind a BLOCK. This is a tripwire:
+    hardened mode logs it, ``--scan`` uses it to reject a note before it is
+    filed. The fix that actually returns the rate to 0 is at the sink
+    (``html.escape`` and ``?`` placeholders); protectogw is one layer, and its
+    SECURITY.md states a ~75% generalization ceiling.
     """
-    markers = [m.lower() for m in rules.get("markers", [])]
-    patterns = {name: re.compile(p, re.I) for name, p in rules.get("patterns", {}).items()}
-    findings: List[str] = []
-    for line in text.splitlines():
-        low = line.lower()
-        for m in markers:
-            if m in low:
-                findings.append(f"marker {m!r}")
-        for name, pat in patterns.items():
-            if pat.search(line):
-                findings.append(f"rule {name!r}")
-    return ScreenResult(findings)
+    result = protectogw.screen(text, policy=SINK_POLICY if policy is None else policy)
+    if not result.blocked:
+        return ScreenResult([])
+    return ScreenResult(list(dict.fromkeys(sig.plane for sig in result.signals)))
 
 
 # --------------------------------------------------------------------------- #
@@ -217,7 +222,7 @@ class Lab:
                  model: str = "") -> None:
         self.lock = threading.Lock()
         self.set_backend(backend, model)
-        self.rules = load_sink_rules()
+        self.policy = SINK_POLICY
         self.tickets: Dict[str, List[str]] = {}
         self.added: List[str] = []
         self.db: Optional[sqlite3.Connection] = None
@@ -319,7 +324,7 @@ class Lab:
         if sink not in SINKS:
             raise ValueError(f"sink must be one of {SINKS}")
         summary = self.summarise(account)
-        findings = screen_output(summary, self.rules).findings if self.mode == "hardened" else []
+        findings = screen_output(summary, self.policy).findings if self.mode == "hardened" else []
         error: Optional[str] = None
         if sink == "html":
             output = self._sink_html(account, summary)
@@ -414,7 +419,7 @@ def summarize(rows: List[Dict[str, Any]]) -> Dict[str, Any]:
 
 def console_scan(lab: Lab) -> Dict[str, Any]:
     with open(PAYLOAD_FILE, "r", encoding="utf-8") as fh:
-        result = screen_output(fh.read(), lab.rules)
+        result = screen_output(fh.read(), lab.policy)
     return {"subject": "assets/poisoned_note.md",
             "decision": "REJECT" if result.blocked else "PASS",
             "findings": result.findings}

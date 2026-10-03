@@ -163,7 +163,8 @@ Echo and the local backends keep everything on the host.
 
 Plus the mitigation used in Act 4: hardened mode (`Vault`,
 `move_secrets_to_vault`, scoped `read_record`, `redact_output`) in
-`vulnerable_app.py`, with rules from [`assets/redaction_rules.json`](owasp-llm02-disclosure-skill/assets/redaction_rules.json).
+`vulnerable_app.py`. The leak check is [`protectogw`](owasp-llm02-disclosure-skill/protectogw/README.md)'s
+canary check on the vaulted key; masking uses rules from [`assets/redaction_rules.json`](owasp-llm02-disclosure-skill/assets/redaction_rules.json).
 
 ### How the leak is real, not scripted
 
@@ -228,7 +229,7 @@ curl -s localhost:5202/query -H 'content-type: application/json' \
 |----------------|----------------|----------------------|------------------|
 | `read_record` + `POST /account/notes` | Unauthorized access to other users' data | Model-chosen tool arguments decide whose record is read | Per-user scoping (hardened mode) |
 | `assets/system_prompt.txt` | Sensitive data in the application's configuration | Key in the prompt is recited with the context | Secret vault; `--scan` rejects the prompt |
-| Unfiltered `/query` answer | Lack of output sanitisation | Canary and PII returned verbatim | Output redaction (`redaction_rules.json`) |
+| Unfiltered `/query` answer | Lack of output sanitisation | Canary and PII returned verbatim | protectogw canary check + output redaction (`redaction_rules.json`) |
 | `C-1001` / `C-1002` controls | — | Attack is targeted, not a global break | — |
 
 ## Mitigations demonstrated in Act 4
@@ -239,10 +240,15 @@ curl -s localhost:5202/query -H 'content-type: application/json' \
 - **Secret vault** — `move_secrets_to_vault` lifts credential lines out of the
   prompt into a `Vault` with a masked `repr`; the CRM connector reads it, the
   model never does.
-- **Output redaction** — each answer is redacted against
-  `assets/redaction_rules.json`: canary, credential lines, and emails or phone
-  numbers that are not the customer's own. Findings are reported in
-  `redactions`.
+- **Output leak check and redaction** — each answer is first screened with
+  protectogw (AgenticGoat's screening core, vendored unchanged in `protectogw/`: normalizer + de-obfuscation folds + ruleset + exfil taxonomy + canary check), with every vaulted value passed as a canary: a hit is a decisive
+  `canary_leak` (case-insensitive, whatever phrasing produced it) and the value
+  is masked. protectogw blocks rather than masks, so the lab keeps its own
+  masking: `assets/redaction_rules.json` redacts the canary pattern, credential
+  lines, and emails or phone numbers that are not the customer's own (a
+  per-session allowlist protectogw has no notion of). Findings are reported in
+  `redactions`. protectogw's `SECURITY.md` states a ~75% generalization
+  ceiling, so it is one layer, never the boundary; scoping and the vault hold.
 - **Pre-deployment scan** — `evaluate_kpi.py --scan PATH` rejects a prompt or
   context file that holds a secret or PII.
 
@@ -264,6 +270,7 @@ owasp-llm02-demo/
 │   ├── vulnerable_app.py              #   Module 1: target, stub model, mitigations
 │   ├── providers.py                   #   optional real-model backends (shared, unchanged)
 │   ├── requirements.txt               #   stdlib only
+│   ├── protectogw/                    #   AgenticGoat screening core (vendored unchanged)
 │   ├── web/                           #   shared lab console (index.html, app.js, styles.css)
 │   ├── scripts/
 │   │   ├── run_pivot.py               #   Module 2: the attack

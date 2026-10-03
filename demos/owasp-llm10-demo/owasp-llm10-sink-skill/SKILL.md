@@ -115,11 +115,12 @@ With `openrouter`, prompts and payloads leave the machine.
    python scripts/evaluate_kpi.py --scan assets/poisoned_note.md   # REJECT, exit 2
    python scripts/evaluate_kpi.py --harden                         # GREEN, USR 0%
    ```
-   `--scan` screens the note with `assets/sink_rules.json` before it is filed.
+   `--scan` screens the note with protectogw (AgenticGoat's screening core,
+   vendored unchanged in `protectogw/`) before it is filed.
    `--harden` switches the target to hardened mode: `html.escape` before both
    HTML sinks and `?` placeholders in SQL. The model's output is unchanged; it
    now arrives as data. The tests prove the sink fixes work even with an empty
-   tripwire ruleset.
+   tripwire policy.
 
 7. **Reset to baseline.**
    ```bash
@@ -133,8 +134,8 @@ With `openrouter`, prompts and payloads leave the machine.
 Edit [`assets/poisoned_note.md`](assets/poisoned_note.md) and follow
 [`assets/poisoned_note.README.md`](assets/poisoned_note.README.md). Keep the
 `@assistant:` marker; without it the model summarises the first note and the
-sinks receive harmless text, so the USR falls to 0. To test the tripwire,
-extend `assets/sink_rules.json`.
+sinks receive harmless text, so the USR falls to 0. To test the tripwire, add
+a `protectogw.Rule` to `SINK_POLICY` in `vulnerable_app.py`.
 
 ## Files
 
@@ -150,5 +151,5 @@ extend `assets/sink_rules.json`.
 | `assets/poisoned_note.md` | Adversarial note (placeholder payload; editable). |
 | `assets/poisoned_note.README.md` | How to write a payload for the echo and real-model backends. |
 | `assets/tickets_baseline.json` | Untampered tickets: the ground truth. |
-| `assets/sink_rules.json` | Output-sink tripwire rules (editable). |
+| `protectogw/` | AgenticGoat's screening core, vendored unchanged; the output-sink tripwire. |
 | `tests/test_lifecycle.py` | Asserts the four-act story in-process. |

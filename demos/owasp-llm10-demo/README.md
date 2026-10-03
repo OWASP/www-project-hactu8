@@ -164,8 +164,8 @@ Echo and the local backends keep everything on the host.
    Classifies each sink result GREEN/YELLOW/RED and computes the USR.
 
 Plus the mitigation used in Act 4: hardened mode in `vulnerable_app.py`
-(`html.escape`, `?` placeholders), with the tripwire `screen_output` and its
-rules in [`assets/sink_rules.json`](owasp-llm10-sink-skill/assets/sink_rules.json).
+(`html.escape`, `?` placeholders), with the tripwire `screen_output`, which
+screens with [`protectogw`](owasp-llm10-sink-skill/protectogw/README.md).
 
 ### How the "unsafe sink" is real, not scripted
 
@@ -187,7 +187,7 @@ application handles that output**:
 
 Switch to hardened mode and the same text is escaped (`&lt;mark`) and bound
 as a parameter, so it is stored exactly and displayed as text. That works even
-with an empty tripwire ruleset (`tests/test_lifecycle.py::test_sink_handling_alone_blocks`).
+with an empty tripwire policy (`tests/test_lifecycle.py::test_sink_handling_alone_blocks`).
 Nothing is hard-coded to flip per item.
 
 ### MCP terminology bridge
@@ -239,10 +239,14 @@ highlighted, which shows that the browser rendered the model's markup.
 - **Contextual output encoding** — `html.escape` before both HTML sinks.
 - **Parameterised queries** — `?` placeholders; the summary is bound as data
   and stored exactly as the model wrote it.
-- **Output-sink tripwire** — `screen_output` with `assets/sink_rules.json`
-  flags markup, the directive marker and the canary. Hardened mode logs it in
+- **Output-sink tripwire** — `screen_output` screens with protectogw (AgenticGoat's screening core, vendored unchanged in `protectogw/`: normalizer + de-obfuscation folds + ruleset + exfil taxonomy + canary check).
+  `SINK_POLICY` adds three lab rules: `html_markup` for markup a sink would
+  render, `lab_directive` for the `@assistant:` marker and `lab_canary` for the
+  canary tag. Hardened mode logs the protectogw signal names in
   `screen_findings`; `evaluate_kpi.py --scan PATH` rejects a note before it is
-  filed. It is a detector, not the fix.
+  filed. It is a detector, not the fix: the escaping and `?` placeholders above
+  are what return the rate to 0, and protectogw's `SECURITY.md` states a ~75%
+  generalization ceiling, so it is one layer, never the boundary.
 
 Further hardening is discussed in the references but not coded here: schema-
 validated structured outputs, least-privilege database accounts, sandboxing
@@ -269,6 +273,7 @@ owasp-llm10-demo/
 │   ├── vulnerable_app.py              #   Module 1: target, stub model, sinks, mitigation
 │   ├── providers.py                   #   optional real-model backends (shared, unchanged)
 │   ├── requirements.txt               #   stdlib only
+│   ├── protectogw/                    #   AgenticGoat screening core (vendored unchanged)
 │   ├── web/                           #   shared lab console (index.html, app.js, styles.css)
 │   ├── scripts/
 │   │   ├── run_sink_poison.py         #   Module 2: the attack
@@ -279,8 +284,7 @@ owasp-llm10-demo/
 │   ├── assets/
 │   │   ├── tickets_baseline.json      #   ground-truth tickets
 │   │   ├── poisoned_note.md           #   placeholder payload (editable)
-│   │   ├── poisoned_note.README.md    #   how to write a payload
-│   │   └── sink_rules.json            #   tripwire rules (editable)
+│   │   └── poisoned_note.README.md    #   how to write a payload
 │   └── tests/
 │       └── test_lifecycle.py          #   asserts the four-act story
 └── .gitignore

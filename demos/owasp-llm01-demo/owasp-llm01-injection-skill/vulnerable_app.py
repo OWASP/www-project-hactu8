@@ -22,8 +22,9 @@ assembly. Nothing is hard-coded to flip.
 
 Hardened mode (``POST /api/mode`` or ``LLM01_MODE=hardened``) closes both gaps:
 tool output is passed as a separate, untrusted ``tool`` role the model never
-takes instructions from, and each tool result is screened against
-``assets/screen_rules.json`` before it is used.
+takes instructions from, and each tool result is screened with ``protectogw``
+(AgenticGoat's screening core, vendored unchanged in ``protectogw/``) before it
+is used.
 
 Host-safety guard (does not weaken the lesson): KB state lives in memory only;
 page edits never touch the filesystem.
@@ -40,6 +41,7 @@ from dataclasses import dataclass, field
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from typing import Any, Dict, List, Optional, Tuple
 
+import protectogw
 import providers
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -48,7 +50,6 @@ WEB_DIR = os.path.join(HERE, "web")
 WEB_FILES = {"index.html": "text/html", "app.js": "text/javascript", "styles.css": "text/css"}
 BASELINE_FILE = os.path.join(ASSETS, "kb_baseline.json")
 PAYLOAD_FILE = os.path.join(ASSETS, "injected_page.md")
-SCREEN_RULES_FILE = os.path.join(ASSETS, "screen_rules.json")
 
 SYSTEM_PROMPT = (
     "You are Billy, the internal knowledge-base assistant for Goat & Co. "
@@ -74,11 +75,6 @@ def load_baseline() -> Dict[str, str]:
         return dict(json.load(fh)["pages"])
 
 
-def load_screen_rules() -> Dict[str, Any]:
-    with open(SCREEN_RULES_FILE, "r", encoding="utf-8") as fh:
-        return json.load(fh)
-
-
 # --------------------------------------------------------------------------- #
 # Mitigation: tool-output screen
 # --------------------------------------------------------------------------- #
@@ -92,28 +88,39 @@ class ScreenResult:
         return bool(self.findings)
 
 
-def screen_tool_output(text: str, rules: Dict[str, Any]) -> ScreenResult:
-    """Drop lines that match a screen rule; report what was dropped.
+# protectogw judges the normalized, de-obfuscated text (lowercased, leet-folded
+# so "@" becomes "a", zero-width stripped, base64/hex/ROT13/... decoded), so
+# the lab rules below are written against that form. They add this lab's
+# placeholder syntax to protectogw's built-in ruleset, exfil taxonomy and
+# canary check: the stub's directive marker ("@assistant:" -> "aassistant:")
+# and the payload's canary tag ("LLM01-CANARY-7f2c" -> "llmoi-canary-7f2c").
+SCREEN_POLICY = protectogw.Policy(extra_rules=(
+    protectogw.Rule("lab_directive", r"\ba?assistant\s*:"),
+    protectogw.Rule("lab_canary", r"llm[o0][i1]-canary-\w+"),
+))
 
-    Rules come from ``assets/screen_rules.json``: literal ``markers`` and regex
-    ``patterns``, both matched case-insensitively per line. Hidden HTML
-    comments are removed first so content a human reviewer cannot see is never
-    passed to the model.
+
+def screen_tool_output(text: str,
+                       policy: Optional[protectogw.Policy] = None) -> ScreenResult:
+    """Drop lines protectogw blocks; report which signals fired.
+
+    Each line is screened with ``protectogw.screen`` under ``SCREEN_POLICY``
+    (or ``policy``). Hidden HTML comments are removed first so content a human
+    reviewer cannot see is never passed to the model. protectogw is one layer:
+    its SECURITY.md states a ~75% generalization ceiling, so channel separation
+    stays the control that holds.
     """
+    policy = SCREEN_POLICY if policy is None else policy
     findings: List[str] = []
     if re.search(r"<!--.*?-->", text, re.S):
         findings.append("hidden HTML comment")
         text = re.sub(r"<!--.*?-->", "", text, flags=re.S)
-    markers = [m.lower() for m in rules.get("markers", [])]
-    patterns = [re.compile(p, re.I) for p in rules.get("patterns", [])]
     kept: List[str] = []
     for line in text.splitlines():
-        low = line.lower()
-        hit = next((m for m in markers if m in low), None)
-        if hit is None:
-            hit = next((p.pattern for p in patterns if p.search(line)), None)
-        if hit is not None:
-            findings.append(f"rule {hit!r}")
+        result = protectogw.screen(line, policy=policy)
+        if result.blocked:
+            findings.extend(sig.plane for sig in result.signals
+                            if sig.plane not in findings)
             continue
         kept.append(line)
     return ScreenResult("\n".join(kept).strip(), findings)
@@ -191,7 +198,7 @@ class Lab:
                  model: str = "") -> None:
         self.lock = threading.Lock()
         self.set_backend(backend, model)
-        self.rules = load_screen_rules()
+        self.policy = SCREEN_POLICY
         self.pages: Dict[str, str] = {}
         self.edited: List[str] = []
         self.mode = mode
@@ -241,7 +248,7 @@ class Lab:
         slug, page = self.search_kb(user_query)
         findings: List[str] = []
         if self.mode == "hardened":
-            result = screen_tool_output(page, self.rules)
+            result = screen_tool_output(page, self.policy)
             page, findings = result.clean_text, result.findings
             messages = [
                 {"role": "system", "content": SYSTEM_PROMPT},
@@ -335,7 +342,7 @@ def summarize(rows: List[Dict[str, Any]]) -> Dict[str, Any]:
 
 def console_scan(lab: Lab) -> Dict[str, Any]:
     with open(PAYLOAD_FILE, "r", encoding="utf-8") as fh:
-        result = screen_tool_output(fh.read(), lab.rules)
+        result = screen_tool_output(fh.read(), lab.policy)
     return {"subject": "assets/injected_page.md",
             "decision": "REJECT" if result.blocked else "PASS",
             "findings": result.findings}

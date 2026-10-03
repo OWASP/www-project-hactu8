@@ -29,9 +29,11 @@ output filter lets through. Nothing is hard-coded to flip.
 Hardened mode (``POST /api/mode`` or ``LLM02_MODE=hardened``) closes all three
 gaps: the key is moved out of the prompt into a ``Vault`` the CRM connector
 reads and the model never sees; ``read_record`` refuses any ID but the
-signed-in customer's; and each answer is redacted against
-``assets/redaction_rules.json`` (canary, credential lines, and contact details
-that are not the customer's own).
+signed-in customer's; and each answer is leak-checked with ``protectogw``
+(AgenticGoat's screening core, vendored unchanged in ``protectogw/``; its
+canary check guards the vaulted key) and redacted against
+``assets/redaction_rules.json`` (canary pattern, credential lines, and contact
+details that are not the customer's own).
 
 Host-safety guards (do not weaken the lesson): customer records live in memory
 only, so note edits never touch the filesystem; a directive can pivot to at most
@@ -48,6 +50,7 @@ from dataclasses import dataclass, field
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from typing import Any, Dict, Iterable, List, Optional, Tuple
 
+import protectogw
 import providers
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -114,10 +117,6 @@ class Vault:
     def names(self) -> List[str]:
         return sorted(self._secrets)
 
-    def found_in(self, text: str) -> List[str]:
-        """Names of vaulted secrets whose value appears in ``text``."""
-        return [n for n, v in self._secrets.items() if v and v in text]
-
     def __repr__(self) -> str:
         return f"<Vault {len(self._secrets)} secret(s) ****>"
 
@@ -157,15 +156,28 @@ def redact_output(text: str, rules: Dict[str, Any], allowed: Iterable[str] = (),
     """Redact secrets always, and PII that is not in ``allowed``.
 
     ``allowed`` holds the signed-in customer's own values: telling a customer
-    their own email address is not a disclosure. Vaulted values are redacted as
-    a last tripwire, as AgenticGoat ``assert_not_leaking`` does for the real key.
+    their own email address is not a disclosure. With a ``vault``, the reply is
+    first screened by ``protectogw.screen(text, canaries=<vaulted values>)``:
+    a canary hit is the decisive leak signal (``canary_leak``), and the vaulted
+    values are then masked case-insensitively. protectogw is one layer (its
+    SECURITY.md states a ~75% generalization ceiling); scoping and the vault
+    are what hold.
     """
     own = {a.lower() for a in allowed}
     findings: List[str] = []
     if vault is not None:
-        for name in vault.found_in(text):
-            findings.append(f"vaulted secret {name!r}")
-            text = text.replace(vault.reveal(name), REDACTED)
+        # The leak check is protectogw: every vaulted value is a canary, and a
+        # canary hit is decisive whatever phrasing produced it. Any other
+        # protectogw BLOCK signal on the reply (ruleset, exfil taxonomy) is
+        # reported too. protectogw blocks rather than masks, so the masking
+        # below stays this lab's own.
+        values = [vault.reveal(n) for n in vault.names()]
+        leak = protectogw.screen(text, canaries=values)
+        findings.extend(sig.plane for sig in leak.signals
+                        if sig.verdict is protectogw.Verdict.BLOCK)
+        if any(sig.plane == "canary_leak" for sig in leak.signals):
+            for value in values:
+                text = re.sub(re.escape(value), REDACTED, text, flags=re.I)
     for name, pat in _compile(rules, "secrets"):
         if pat.search(text):
             findings.append(f"secret {name!r}")

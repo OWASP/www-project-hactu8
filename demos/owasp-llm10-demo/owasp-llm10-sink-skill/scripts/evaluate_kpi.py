@@ -14,8 +14,8 @@ Also carries the mitigations:
 
 * ``--harden`` switches the target to hardened mode (HTML escaping and
   parameterised SQL) before evaluating — Act 4.
-* ``--scan PATH`` screens a note file with ``assets/sink_rules.json`` and
-  rejects it before it is ever filed.
+* ``--scan PATH`` screens a note file with protectogw (``SINK_POLICY`` in
+  ``vulnerable_app.py``) and rejects it before it is ever filed.
 
 Exit code: 0 when clean (USR 0% / scan pass), 2 when exposure is detected
 (USR > 0% / scan reject), 1 when the target is unreachable.
@@ -37,7 +37,7 @@ from typing import Any, Dict, List, Tuple
 from run_sink_poison import DEFAULT_TARGET, SKILL_DIR, _post, check_target
 
 sys.path.insert(0, SKILL_DIR)
-from vulnerable_app import load_sink_rules, screen_output  # noqa: E402
+from vulnerable_app import screen_output  # noqa: E402
 
 # Tags the sink templates emit themselves. Any other tag in a rendered page
 # came from the model's output — that is the unsafe-handling signal.
@@ -127,14 +127,14 @@ def evaluate(base: str, color: bool = True) -> float:
 def scan(path: str) -> int:
     with open(path, "r", encoding="utf-8") as fh:
         text = fh.read()
-    result = screen_output(text, load_sink_rules())
+    result = screen_output(text)
     print(f"\n--- [defense] OUTPUT-SINK SCREEN ({os.path.basename(path)}) ---")
     if result.blocked:
         print("  🔴 REJECT — note carries content a downstream sink would interpret:")
         for finding in result.findings:
             print(f"      - {finding}")
         return 2
-    print("  🟢 PASS — no sink rule matched.")
+    print("  🟢 PASS — protectogw blocked nothing.")
     return 0
 
 

@@ -52,7 +52,7 @@ chosen topic.
 | Vulnerability | Hardening strategy |
 |---------------|--------------------|
 | **Trust-boundary violation** — unauthenticated ingestion. | Authenticated ingestion (mTLS/API-key), origin vetting of third-party sources. |
-| **Lack of source scoring** — all retrieved snippets treated as authoritative. | Grounding + source scoring against a Golden Corpus; reject low-reputation context. Implemented as the `source_gate` control in `vulnerable_app.py` (provenance markers + override indicators; seeded official policies trusted). |
+| **Lack of source scoring** — all retrieved snippets treated as authoritative. | Grounding + source scoring against a Golden Corpus; reject low-reputation context. Implemented as the `source_gate` control in `vulnerable_app.py` (provenance markers + a protectogw screen — AgenticGoat's screening core, vendored unchanged: normalizer + de-obfuscation folds + ruleset + exfil taxonomy + canary check, plus lab rules for the override phrasing; seeded official policies trusted). protectogw's `SECURITY.md` states a ~75% generalization ceiling, so it is one layer, never the boundary. |
 | **S#1 RAG drift** — no detection of deviation from truth. | Data Version Control (DVC) for datasets: hash verification, lineage, rapid rollback. |
 | **S#6 artifact tampering** — malicious chat templates/GGUF files. | Treat templates as code: SHA-256 pinning + SSTI static analysis. Implemented as the `template_pin` control in `vulnerable_app.py` and `evaluate_kpi.py --scan-prompt-template`. |
 | **Distributed poisoning** — an authenticated peer agent relays poisoned data. | Verify provenance and a content digest, not just the agent's identity. Implemented as the `agent_verify` control in `vulnerable_app.py`. |

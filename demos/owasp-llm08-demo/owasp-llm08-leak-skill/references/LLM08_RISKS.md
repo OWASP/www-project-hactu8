@@ -53,10 +53,10 @@ control.
 |---------------|--------------------|
 | Secret in the system prompt | **Design fix.** Remove it. Validate discount codes in the order service, outside the model. Implemented: `assets/system_prompt_hardened.txt`, deployed in hardened mode. |
 | Prompt shipped without review | **Design check before release.** Scan prompts for secrets and internal details. Implemented: `scan_prompt` + `evaluate_kpi.py --scan`. |
-| Verbatim prompt fragments in replies | **Output filter.** Withhold reply lines sharing an n-gram with the active system prompt, or matching the canary. Implemented: `filter_output` + `assets/filter_rules.json`. |
+| Verbatim prompt fragments in replies | **Output filter.** Withhold reply lines sharing an n-gram with the active system prompt, or that protectogw blocks. Implemented: `filter_output`. The leak check is protectogw (AgenticGoat's screening core, vendored unchanged: normalizer + de-obfuscation folds + ruleset + exfil taxonomy + canary check) with the discount code as a guarded canary; the n-gram check (`output.ngram` in `assets/filter_rules.json`) is kept because protectogw does not compare against the prompt. Its `SECURITY.md` states a ~75% generalization ceiling, so it is one layer, never the boundary. |
 | Paraphrased or translated leaks | Not coded. Semantic similarity checks or a classifier on output help, but no filter is complete, so the design fix comes first. |
 | Security logic stated in the prompt | Enforce permissions in code (tool layer, data access), never by instruction text. |
-| Leak of guarded tokens | Treat a canary hit as decisive and rotate the secret (see LLM02). |
+| Leak of guarded tokens | Treat a canary hit as decisive and rotate the secret (see LLM02). Implemented: protectogw's canary check in `filter_output`. |
 
 Further hardening discussed, not coded: semantic leak detection, rotating any
 secret that ever sat in a prompt, and adversarial testing with held-out

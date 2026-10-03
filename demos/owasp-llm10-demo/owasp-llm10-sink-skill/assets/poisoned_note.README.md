@@ -36,8 +36,8 @@ Keep this file plain text. `run_sink_poison.py` does not escape anything.
   to score GREEN by showing it as escaped text.
 - **Real-model backend.** Not wired in this version (see the README). With a
   real model, the note would need natural-language wording that makes the
-  model repeat the text, and you would extend `sink_rules.json` so the
-  tripwire reports it. Escaping and parameterisation still do the real work,
+  model repeat the text, and you would add a `protectogw.Rule` to
+  `SINK_POLICY` in `vulnerable_app.py` if protectogw does not already flag it. Escaping and parameterisation still do the real work,
   whatever the model says.
 - **Stay in the lab.** Target only this skill's own sinks. The served status
   page carries a `default-src 'none'` CSP, the database is `:memory:`, and

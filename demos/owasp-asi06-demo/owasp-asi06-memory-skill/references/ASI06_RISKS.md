@@ -50,13 +50,12 @@ repo uses the 2026 numbering of the OWASP Top 10 for Agentic Applications.
 
 | Vulnerability | Hardening strategy |
 |---------------|--------------------|
-| Unscreened memory writes | **Memory-write screening.** Screen each write and block on a match. Implemented: `screen_memory` + `assets/screen_rules.json` in hardened mode, and `evaluate_kpi.py --scan`. |
+| Unscreened memory writes | **Memory-write screening.** Screen each write and block on a match. Implemented: `screen_memory` in hardened mode and `evaluate_kpi.py --scan`, screening with protectogw (AgenticGoat's screening core, vendored unchanged: normalizer + de-obfuscation folds + ruleset + exfil taxonomy + canary check) plus lab rules for the placeholder syntax. Its `SECURITY.md` states a ~75% generalization ceiling, so it is one layer, never the boundary. |
 | Memories shared across users | **Per-user scope with provenance.** New memories are saved with `user` scope, an owner, and the session that wrote them. Implemented: hardened `save_memory`. |
 | Recall trusts any entry | **Scoped recall.** Recall returns only `user`-scoped entries owned by the current user with a provenance record; unscoped entries are ignored. Implemented: `recall_allowed`. This alone neutralises memory planted before hardening. |
 | Memory treated as instructions | Keep recalled memory in its own data channel and never take instructions from it (see the LLM01 demo's channel separation). |
 | Long-lived poison | Expiry, review queues and a quarantine path for flagged memories; audit memory by owner. |
 | Shared organisational memory | Allow shared entries only through a reviewed, authenticated publishing path. |
 
-Further hardening discussed, not coded: obfuscation-aware normalisation of
-writes (AgenticGoat `protectogw`), output screening, memory expiry, and
+Further hardening discussed, not coded: output screening, memory expiry, and
 held-out adversarial testing.

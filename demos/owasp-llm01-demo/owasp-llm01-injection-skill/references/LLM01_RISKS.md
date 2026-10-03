@@ -46,11 +46,11 @@ documents, emails, and tool results. The user may never see it.
 | Vulnerability | Hardening strategy |
 |---------------|--------------------|
 | Tool output treated as instructions | **Channel separation.** Keep tool results in their own role and never take instructions from it. Implemented: hardened mode in `vulnerable_app.py`. |
-| Unscreened tool output | **Tool-output screening** before results reach the model. Implemented: `screen_tool_output` + `assets/screen_rules.json`. AgenticGoat `protectogw/screening.py` is a fuller ruleset with normalisation. |
+| Unscreened tool output | **Tool-output screening** before results reach the model. Implemented: `screen_tool_output` screens with protectogw (AgenticGoat's screening core, vendored unchanged: normalizer + de-obfuscation folds + ruleset + exfil taxonomy + canary check), plus lab rules for the placeholder syntax. Its `SECURITY.md` states a ~75% generalization ceiling, so it is one layer, never the boundary. |
 | Unauthenticated content sources | Authenticate and attribute edits to data the assistant reads. Review changes to high-impact pages. |
 | Hidden content | Strip or render hidden markup before use. Implemented for HTML comments. |
 | Over-privileged follow-on actions | Least privilege on tools, plus human approval for consequential actions (see LLM03 Excessive Agency). |
 | Leak of guarded tokens | Canary/secret output filters. Treat a canary hit as decisive (see LLM02). |
 
-Further hardening discussed, not coded: obfuscation-aware normalisation,
-model-side classifiers, and adversarial testing with held-out payload sets.
+Further hardening discussed, not coded: model-side classifiers and
+adversarial testing with held-out payload sets.

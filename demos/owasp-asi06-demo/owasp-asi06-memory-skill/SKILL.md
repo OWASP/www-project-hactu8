@@ -137,8 +137,8 @@ Edit [`assets/memory_note.md`](assets/memory_note.md) and follow
 [`assets/memory_note.README.md`](assets/memory_note.README.md). The first line
 picks which questions recall the memory. If it shares no keyword with the
 travel questions, the memory is never recalled and the PSR falls to 0. That
-threshold is part of the lesson. To test the write screen, extend
-`assets/screen_rules.json`.
+threshold is part of the lesson. To test the write screen, add a
+`protectogw.Rule` to `SCREEN_POLICY` in `vulnerable_app.py`.
 
 ## Files
 
@@ -154,5 +154,5 @@ threshold is part of the lesson. To test the write screen, extend
 | `assets/memory_note.md` | The memory to plant (placeholder payload; editable). |
 | `assets/memory_note.README.md` | How to write a payload for the echo and real-model backends. |
 | `assets/memory_baseline.json` | KB ground truth and seeded user memories. |
-| `assets/screen_rules.json` | Memory-write screen rules (editable). |
+| `protectogw/` | AgenticGoat's screening core, vendored unchanged; the memory-write screen. |
 | `tests/test_lifecycle.py` | Asserts the four-act story in-process. |

@@ -31,7 +31,7 @@ sys.path.insert(0, os.path.join(SKILL_DIR, "scripts"))
 
 from evaluate_kpi import ICON, SUITE, classify, session_steps, summarise  # noqa: E402
 from run_memory_poison import poison_message  # noqa: E402
-from vulnerable_app import Lab, load_screen_rules, screen_memory  # noqa: E402
+from vulnerable_app import Lab, screen_memory  # noqa: E402
 
 PAYLOAD = os.path.join(SKILL_DIR, "assets", "memory_note.md")
 
@@ -78,8 +78,8 @@ def main(argv=None) -> int:
     attacked = act(lab, "Act 3 — Post-attack impact (same users, same questions)")
 
     print("\n[defense] Act 4 — Remediation")
-    findings = screen_memory(payload, load_screen_rules()).findings
-    print(f"[defense] Static screen of the memory: REJECT ({', '.join(findings)})")
+    findings = screen_memory(payload).findings
+    print(f"[defense] Static protectogw screen of the memory: REJECT ({', '.join(findings)})")
     lab.set_mode("hardened")
     print("[defense] Hardened mode: writes screened, per-user scope with provenance, "
           "unscoped entries ignored on recall. The planted memory stays in the store.")

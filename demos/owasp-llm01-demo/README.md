@@ -151,7 +151,7 @@ Echo and the local backends keep everything on the host.
    Classifies each answer GREEN/YELLOW/RED and computes the ISR.
 
 Plus the mitigation used in Act 4: hardened mode and `screen_tool_output` in
-`vulnerable_app.py`, with rules from [`assets/screen_rules.json`](owasp-llm01-injection-skill/assets/screen_rules.json).
+`vulnerable_app.py`, which screens with [`protectogw`](owasp-llm01-injection-skill/protectogw/README.md).
 
 ### How the "injection" is real, not scripted
 
@@ -214,16 +214,19 @@ curl -s localhost:5201/query -H 'content-type: application/json' \
 - **Channel separation** — tool output goes in its own `tool` role, and the
   model never takes instructions from that role. This alone takes the ISR to 0
   here.
-- **Tool-output screening** — each result is screened against
-  `assets/screen_rules.json`, and HTML comments are stripped. Matching lines are
-  dropped and reported in `screen_findings`.
+- **Tool-output screening** — each result line is screened with
+  protectogw (AgenticGoat's screening core, vendored unchanged in `protectogw/`: normalizer + de-obfuscation folds + ruleset + exfil taxonomy + canary check). `SCREEN_POLICY` adds two lab rules for the placeholder syntax
+  (`lab_directive` for `@assistant:`, `lab_canary` for the canary tag), and HTML
+  comments are stripped. Blocked lines are dropped and their protectogw signal
+  names are reported in `screen_findings`. protectogw's `SECURITY.md` states a
+  ~75% generalization ceiling, so it is one layer, never the boundary; channel
+  separation is what holds.
 - **Pre-publication scan** — `evaluate_kpi.py --scan PATH` rejects a page
   before it ever reaches the wiki.
 
 Further hardening is discussed in the references but not coded here:
-authenticated and attributed wiki edits, normalisation against obfuscation
-(AgenticGoat `protectogw`), least-privilege tools, and held-out adversarial
-testing.
+authenticated and attributed wiki edits, least-privilege tools, and held-out
+adversarial testing.
 
 ---
 
@@ -238,6 +241,7 @@ owasp-llm01-demo/
 │   ├── vulnerable_app.py              #   Module 1: target, stub model, mitigation
 │   ├── providers.py                   #   optional real-model backends (shared, unchanged)
 │   ├── requirements.txt               #   stdlib only
+│   ├── protectogw/                    #   AgenticGoat screening core (vendored unchanged)
 │   ├── web/                           #   shared lab console (index.html, app.js, styles.css)
 │   ├── scripts/
 │   │   ├── run_injection.py           #   Module 2: the attack
@@ -248,8 +252,7 @@ owasp-llm01-demo/
 │   ├── assets/
 │   │   ├── kb_baseline.json           #   ground-truth wiki
 │   │   ├── injected_page.md           #   placeholder payload (editable)
-│   │   ├── injected_page.README.md    #   how to write a payload
-│   │   └── screen_rules.json          #   screen rules (editable)
+│   │   └── injected_page.README.md    #   how to write a payload
 │   └── tests/
 │       └── test_lifecycle.py          #   asserts the four-act story
 └── .gitignore

@@ -62,7 +62,7 @@ This repo uses the 2026 numbering: LLM04 Supply Chain here is
 | Vulnerability | Hardening strategy |
 |---------------|--------------------|
 | Updates accepted on the vendor's say-so | **Pin approved definitions.** SHA-256 each tool definition at approval and reject any mismatch. Implemented: `assets/tool_pins.json`, `definition_hash` and `pin_diff` in `vulnerable_app.py`, and `evaluate_kpi.py --scan`. |
-| Behaviour changes a definition hash cannot see | **Multi-call sampling.** Call each tool several times before admitting it, and flag drift between identical calls and screen hits. Implemented: `sample_tool`, `SAMPLE_CALLS = 5`. A trigger beyond the sample window still passes. |
+| Behaviour changes a definition hash cannot see | **Multi-call sampling.** Call each tool several times before admitting it, and flag drift between identical calls and screen hits. Implemented: `sample_tool`, `SAMPLE_CALLS = 5`; the output screen is protectogw (AgenticGoat's screening core, vendored unchanged: normalizer + de-obfuscation folds + ruleset + exfil taxonomy + canary check). Its `SECURITY.md` states a ~75% generalization ceiling, so the screen is one layer, never the boundary. A trigger beyond the sample window still passes. |
 | No safe fallback | **Vendor the approved version.** A rejected update keeps the approved copy instead of breaking the tool. Implemented: `assets/registry_baseline.json` as the vendored copy. |
 | Pinning only what the client sees | Pin the whole artifact (package hash in a lockfile) and require signed provenance (Sigstore, SLSA), so behaviour-only changes need a new approval too. |
 | Unsafe model formats | Load weights only in non-executable formats (safetensors), scan model files, and verify their hashes. |

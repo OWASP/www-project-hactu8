@@ -33,8 +33,10 @@ The memory lives in RAM only and is cleared by `scripts/reset_baseline.py`.
   `@assistant:`. Include the canary if you want the canary check to fire; the
   provenance check fires either way.
 - **Real-model backend.** Write the memory in natural language, phrased as a
-  standing preference or fact the assistant should apply later. Add a matching
-  rule to `screen_rules.json` so the hardened write screen catches new writes.
+  standing preference or fact the assistant should apply later. If
+  protectogw's built-in ruleset does not catch it, add a `protectogw.Rule` to
+  `SCREEN_POLICY` in `vulnerable_app.py` so the hardened write screen blocks new
+  writes.
   The scope rule does not depend on wording: another user's memory is never
   recalled in hardened mode.
 - **Testing the screen.** Variants inside an HTML comment exercise the

@@ -31,7 +31,8 @@ Hardened mode (``POST /api/mode`` or ``LLM04_MODE=hardened``) replaces the
 smoke test with an **admission gate**: each tool definition is hashed
 (SHA-256) and compared with ``assets/tool_pins.json``, and each tool is called
 ``SAMPLE_CALLS`` times and its outputs checked for consistency and screened
-with ``assets/screen_rules.json``. A tool that fails is rejected, and Billy
+with ``protectogw`` (AgenticGoat's screening core, vendored unchanged in
+``protectogw/``). A tool that fails is rejected, and Billy
 keeps the approved version vendored in ``assets/registry_baseline.json``.
 
 Host-safety guards (do not weaken the lesson): the registry file must live in
@@ -53,6 +54,7 @@ from dataclasses import dataclass, field
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from typing import Any, Dict, List, Optional, Tuple
 
+import protectogw
 import providers
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -63,7 +65,6 @@ REGISTRY_DIR = os.path.join(HERE, "registry")
 DEFAULT_REGISTRY = os.path.join(REGISTRY_DIR, "registry.json")
 BASELINE_FILE = os.path.join(ASSETS, "registry_baseline.json")
 PINS_FILE = os.path.join(ASSETS, "tool_pins.json")
-SCREEN_RULES_FILE = os.path.join(ASSETS, "screen_rules.json")
 
 SYSTEM_PROMPT = (
     "You are Billy, the operations assistant for Goat & Co. "
@@ -110,11 +111,6 @@ def load_pins() -> Dict[str, str]:
         return dict(json.load(fh)["pins"])
 
 
-def load_screen_rules() -> Dict[str, Any]:
-    with open(SCREEN_RULES_FILE, "r", encoding="utf-8") as fh:
-        return json.load(fh)
-
-
 def read_registry(path: str) -> Tuple[bytes, Dict[str, Any]]:
     with open(confine(path), "rb") as fh:
         raw = fh.read(MAX_REGISTRY_BYTES + 1)
@@ -155,15 +151,31 @@ def pin_diff(registry: Dict[str, Any], pins: Dict[str, str]) -> List[str]:
     return findings
 
 
-def screen_output(text: str, rules: Dict[str, Any]) -> List[str]:
-    """Return the screen rules a tool output trips (markers literal, patterns regex)."""
-    low = text.lower()
-    hits = [f"rule {m!r}" for m in rules.get("markers", []) if m.lower() in low]
-    hits += [f"rule {p!r}" for p in rules.get("patterns", []) if re.search(p, text, re.I)]
-    return hits
+# protectogw judges the normalized, de-obfuscated text (lowercased, leet-folded
+# so "@" becomes "a", zero-width stripped, base64/hex/ROT13/... decoded), so
+# the lab rules below are written against that form. They add this lab's
+# placeholder syntax to protectogw's built-in ruleset, exfil taxonomy and
+# canary check: the stub's directive marker ("@assistant:" -> "aassistant:")
+# and the payload's canary tag ("LLM04-CANARY-b61e" -> "llmoa-canary-b6ie").
+SCREEN_POLICY = protectogw.Policy(extra_rules=(
+    protectogw.Rule("lab_directive", r"\ba?assistant\s*:"),
+    protectogw.Rule("lab_canary", r"llm[o0][a4]-canary-\w+"),
+))
 
 
-def sample_tool(tool: "RemoteTool", rules: Dict[str, Any], calls: int = SAMPLE_CALLS) -> List[str]:
+def screen_output(text: str, policy: Optional[protectogw.Policy] = None) -> List[str]:
+    """Return the protectogw signals that block a tool output ([] when it passes).
+
+    Screens with ``protectogw.screen`` under ``SCREEN_POLICY`` (or ``policy``).
+    protectogw is one layer: its SECURITY.md states a ~75% generalization
+    ceiling, so pinning and drift sampling stay the controls that hold.
+    """
+    result = protectogw.screen(text, policy=SCREEN_POLICY if policy is None else policy)
+    return [sig.plane for sig in result.signals] if result.blocked else []
+
+
+def sample_tool(tool: "RemoteTool", policy: Optional[protectogw.Policy] = None,
+                calls: int = SAMPLE_CALLS) -> List[str]:
     """Call a tool ``calls`` times with one probe; flag drift or screen hits.
 
     A lookup tool given the same input must return the same output. Drift
@@ -178,7 +190,7 @@ def sample_tool(tool: "RemoteTool", rules: Dict[str, Any], calls: int = SAMPLE_C
             first = out
         elif out != first:
             findings.append(f"{tool.name}: output on call {i} differs from call 1")
-        findings += [f"{tool.name}: call {i} trips {h}" for h in screen_output(out, rules)]
+        findings += [f"{tool.name}: call {i} trips {h}" for h in screen_output(out, policy)]
         if findings:
             break
     return findings
@@ -312,7 +324,7 @@ class Lab:
         self.baseline = load_baseline()
         self.approved = {e["definition"]["name"]: e for e in self.baseline["tools"]}
         self.pins = load_pins()
-        self.rules = load_screen_rules()
+        self.policy = SCREEN_POLICY
         self.installed: Dict[str, RemoteTool] = {}
         self.admission_log: List[str] = []
         self._seen: Optional[str] = None
@@ -382,7 +394,7 @@ class Lab:
         candidate = RemoteTool(entry, source="registry")
         if self.mode == "vulnerable":
             # The gap: no pin check, and a one-call smoke test is the only vetting.
-            hits = screen_output(candidate.call(PROBE_ARGS), self.rules)
+            hits = screen_output(candidate.call(PROBE_ARGS), self.policy)
             if hits:
                 self.admission_log.append(f"{name} {candidate.version}: smoke test failed")
                 return None
@@ -390,7 +402,7 @@ class Lab:
             return candidate
         findings = pin_diff({"tools": [entry]}, self.pins)
         if not findings:
-            findings = sample_tool(candidate, self.rules)
+            findings = sample_tool(candidate, self.policy)
         if not findings:
             self.admission_log.append(f"{name} {candidate.version}: admitted (pin match, "
                                       f"{SAMPLE_CALLS} samples clean)")

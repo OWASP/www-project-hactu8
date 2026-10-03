@@ -1,5 +1,0 @@
-{
-  "_comment": "Output screen used by the admission gate's sampling (hardened mode) and the vulnerable smoke test. Markers are literal, patterns are regex; both are matched case-insensitively. Extend 'patterns' with phrases your payloads use. AgenticGoat's protectogw/screening.py _RULES is a fuller reference ruleset.",
-  "markers": ["@assistant:"],
-  "patterns": ["LLM04-CANARY-[0-9a-f]+"]
-}

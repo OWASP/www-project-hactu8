@@ -240,10 +240,16 @@ curl -s localhost:5205/query -H 'content-type: application/json' \
 
 ## Mitigations demonstrated in Act 4
 
-- **Source gate** — retrieved documents that carry override indicators, or
+- **Source gate** — retrieved documents that protectogw blocks, or that
   lack `[SOURCE:]`/`[APPROVED_BY:]`/`[VERSION:]` provenance, are excluded. The
   two seeded official policies are trusted by name while their content still
-  matches the seeded copy.
+  matches the seeded copy. The screen is
+  [protectogw](owasp-llm05-poisoning-skill/protectogw/README.md), AgenticGoat's
+  screening core vendored unchanged (normalizer + de-obfuscation folds +
+  ruleset + exfil taxonomy + canary check); `SCREEN_POLICY` in
+  `vulnerable_app.py` adds lab rules for this payload's override phrasing.
+  protectogw's `SECURITY.md` states a ~75% generalization ceiling, so it is one
+  layer, never the boundary: provenance stays required.
 - **Template pinning** — the active template is used only if its SHA-256
   matches the pinned baseline; otherwise the baseline is used.
   `--scan-prompt-template` also flags conditional logic, override wording and
@@ -271,6 +277,7 @@ owasp-llm05-demo/
 │   ├── SKILL.md                       #   metadata + instructions
 │   ├── vulnerable_app.py              #   Module 1: target, stub model, mitigations
 │   ├── providers.py                   #   optional real-model backends (shared, unchanged)
+│   ├── protectogw/                    #   AgenticGoat screening core (vendored unchanged)
 │   ├── requirements.txt               #   stdlib only
 │   ├── web/                           #   shared lab console (index.html, app.js, styles.css)
 │   ├── scripts/

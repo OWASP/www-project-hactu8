@@ -236,6 +236,7 @@ notes below describe its original version.)
 - [ ] Ports, flags and exit codes consistent everywhere
 - [ ] `web/` copied unchanged; console API (§12) implemented and tested
 - [ ] `providers.py` copied unchanged; `ProviderModel`, `set_backend`, `/api/models`, `/api/backend` + `--backend` (§13) implemented and tested
+- [ ] Any text screen uses `protectogw/` copied unchanged, with the lab directive as a `Policy` extra rule (§14)
 
 ## 12. Lab console (web/)
 
@@ -318,3 +319,33 @@ Per demo:
 
 Reference implementation: `owasp-llm01-demo` (`ProviderModel` in `vulnerable_app.py`, `BackendTest`).
 
+
+## 14. Screening untrusted text (protectogw/)
+
+When a lab's mitigation screens untrusted text (tool output, documents,
+messages, memory writes, tool definitions, or model output checked for a
+guarded token), use **protectogw** rather than a bespoke regex.
+
+- **What it is.** protectogw is AgenticGoat's screening core: a normaliser and
+  de-obfuscation folds, a ruleset, an exfiltration indicator taxonomy, a canary
+  check, `Policy`/`Rule` configuration, and the `Session` cross-read screen.
+- **How to ship it.** `_template/protectogw/` is copied into `<skill-slug>/`
+  **unchanged**, like `providers.py` and `web/`.
+- **The lab's placeholder directive.** Keep it caught with
+  `Policy(extra_rules=(Rule("lab_directive", ...),))`. protectogw matches rules
+  against *normalised* lowercase text, and its leet fold turns `@` into `a`, so
+  write the pattern for that form. Check it with
+  `protectogw.normalize(protectogw.screening._deobfuscate(text))`.
+- **Output side.** `screen(reply, canaries=[token])` is the attack-agnostic last
+  layer. A guarded token in the output is a decisive block.
+- **One layer, not the boundary.** protectogw's own `SECURITY.md` states a
+  measured generalisation ceiling of about 75% on held-out attacks. Code-level
+  controls (pinning, signing, scoping, budgets, approvals) stay authoritative.
+- **AGX labs.** The AGX labs (`agxNN-demo`, OWASP_DEMO_PLAN.md §4.3) are built
+  around it. In each one, the vulnerable gateway is protectogw configured or
+  placed with one blind spot, and the hardened gateway is protectogw with full
+  coverage plus the canary check.
+
+Licence: protectogw has no licence chosen yet (its `SECURITY.md` §7 lists this
+as a release blocker). Settle that before these labs are published outside the
+project.

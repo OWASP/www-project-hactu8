@@ -22,8 +22,9 @@ straight away because of two things:
   canary if you want the evaluator to score RED without editing it.
 - **Real-model backend.** Write the instruction in natural language. The
   admission gate's sampling flags it in two ways: drift (call N differs from
-  call 1, which needs no rule) and the screen in `screen_rules.json`. Add a
-  pattern there if you want the screen to name your payload.
+  call 1, which needs no rule) and the protectogw output screen. Add a
+  `protectogw.Rule` to `SCREEN_POLICY` in `vulnerable_app.py` if protectogw's
+  built-in ruleset does not already name your payload.
 - **Beating the sampler.** Set `--trigger` above `SAMPLE_CALLS` (5) and the
   gate no longer sees the hostile output. That blind spot is real: you catch
   what you sample. The references discuss it.

@@ -122,7 +122,9 @@ With `openrouter`, prompts and payloads leave the machine.
    `--scan` rejects a prompt that holds a secret. `--harden` switches the
    target to hardened mode: the key moves to a vault the model never sees,
    `read_record` refuses any ID but the signed-in customer's, and answers are
-   redacted with `assets/redaction_rules.json`. The model is still fooled by
+   leak-checked with protectogw's canary check (AgenticGoat's screening core,
+   vendored unchanged in `protectogw/`) and masked with
+   `assets/redaction_rules.json`. The model is still fooled by
    the directive; it can only recite the customer's own record. Scoping and
    the vault alone are enough here, and the tests prove it.
 
@@ -157,5 +159,6 @@ a new secret format, put it in `assets/system_prompt.txt` and extend
 | `assets/pivot_note.README.md` | How to write a payload for the echo and real-model backends. |
 | `assets/customers_baseline.json` | Fictional customer records: the ground truth. |
 | `assets/system_prompt.txt` | Deployed prompt with the embedded CRM key (the scan target). |
-| `assets/redaction_rules.json` | Output redaction and secret-scan rules (editable). |
+| `assets/redaction_rules.json` | Output masking and secret-scan rules (editable). |
+| `protectogw/` | AgenticGoat's screening core, vendored unchanged; the canary leak check on answers. |
 | `tests/test_lifecycle.py` | Asserts the four-act story in-process. |

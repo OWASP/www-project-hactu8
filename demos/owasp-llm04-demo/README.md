@@ -164,7 +164,7 @@ Echo and the local backends keep everything on the host.
 
 Plus the mitigation used in Act 4: hardened mode's admission gate
 (`pin_diff` against [`assets/tool_pins.json`](owasp-llm04-rugpull-skill/assets/tool_pins.json),
-`sample_tool` with [`assets/screen_rules.json`](owasp-llm04-rugpull-skill/assets/screen_rules.json)),
+`sample_tool`, whose output screen is [`protectogw`](owasp-llm04-rugpull-skill/protectogw/README.md)),
 and the vendored approved package in
 [`assets/registry_baseline.json`](owasp-llm04-rugpull-skill/assets/registry_baseline.json).
 
@@ -242,7 +242,13 @@ curl -s localhost:5204/query -H 'content-type: application/json' \
   rejected. This alone stops the rug pull.
 - **Multi-call sampling** — each update is called 5 times with one probe. Drift
   between identical calls, or a screen hit, rejects it. This stops the sleeper,
-  whose definition matches its pin.
+  whose definition matches its pin. The output screen is protectogw
+  (AgenticGoat's screening core, vendored unchanged in `protectogw/`:
+  normalizer + de-obfuscation folds + ruleset + exfil taxonomy + canary check),
+  with `SCREEN_POLICY` adding lab rules for the placeholder syntax
+  (`lab_directive`, `lab_canary`). Its `SECURITY.md` states a ~75%
+  generalization ceiling, so it is one layer, never the boundary: the drift
+  check needs no rule at all.
 - **Vendored fallback** — a rejected tool keeps its approved version, so
   answers stay GREEN instead of failing.
 - **Pre-install scan** — `evaluate_kpi.py --scan` diffs a registry file against
@@ -266,6 +272,7 @@ owasp-llm04-demo/
 │   ├── vulnerable_app.py              #   Module 1: target, stub model, admission gate
 │   ├── providers.py                   #   optional real-model backends (shared, unchanged)
 │   ├── requirements.txt               #   stdlib only
+│   ├── protectogw/                    #   AgenticGoat screening core (vendored unchanged)
 │   ├── web/                           #   shared lab console (index.html, app.js, styles.css)
 │   ├── scripts/
 │   │   ├── run_rug_pull.py            #   Module 2: the attack
@@ -279,8 +286,7 @@ owasp-llm04-demo/
 │   │   ├── swapped_description.md     #   rug-pull payload placeholder (editable)
 │   │   ├── swapped_description.README.md  # how to write it
 │   │   ├── sleeper_output.md          #   sleeper payload placeholder (editable)
-│   │   ├── sleeper_output.README.md   #   how to write it
-│   │   └── screen_rules.json          #   sampling screen rules (editable)
+│   │   └── sleeper_output.README.md   #   how to write it
 │   ├── registry/                      #   live registry file (generated, gitignored)
 │   └── tests/
 │       └── test_lifecycle.py          #   asserts the four-act story

@@ -166,8 +166,10 @@ backends keep everything on the host.
 Plus the mitigations used in Act 4: the secret-free
 [`assets/system_prompt_hardened.txt`](owasp-llm08-leak-skill/assets/system_prompt_hardened.txt),
 `scan_prompt` (the design check) and `filter_output` (the output filter) in
-`vulnerable_app.py`, with rules from
-[`assets/filter_rules.json`](owasp-llm08-leak-skill/assets/filter_rules.json).
+`vulnerable_app.py`. The design check and the n-gram size come from
+[`assets/filter_rules.json`](owasp-llm08-leak-skill/assets/filter_rules.json); the
+output filter's leak check is
+[`protectogw`](owasp-llm08-leak-skill/protectogw/README.md).
 
 ### How the leak is real, not scripted
 
@@ -241,9 +243,16 @@ curl -s localhost:5208/chat -H 'content-type: application/json' \
 - **Pre-release design check** — `evaluate_kpi.py --scan PATH` rejects a
   prompt that embeds a canary, a `discount code:` line, a URL or a
   credential-like assignment.
-- **Output filter** — each reply line is withheld if it matches the canary
-  pattern or shares a 5-word run with the active system prompt. Withheld lines
-  are reported in `filter_findings`.
+- **Output filter** — each reply line is screened with protectogw (AgenticGoat's screening core, vendored unchanged in `protectogw/`: normalizer + de-obfuscation folds + ruleset + exfil taxonomy + canary check), run as
+  `protectogw.screen(line, policy=OUTPUT_POLICY)`. The policy guards the
+  discount code as a canary (a decisive block) and adds a `lab_canary` rule so
+  a base64-encoded or spaced-out code is caught after normalization. The lab
+  keeps its own n-gram check, which protectogw does not do: a line sharing a
+  5-word run with the active system prompt is withheld too. Withheld lines are
+  replaced by a notice and reported in `filter_findings` (protectogw signal
+  names or the n-gram reason). protectogw's `SECURITY.md` states a ~75%
+  generalization ceiling, so it is one layer, never the boundary; the design
+  fix is what holds.
 
 Further hardening is discussed in the references but not coded: semantic leak
 detection for paraphrased or translated prompts, rotating any secret that ever
@@ -262,6 +271,7 @@ owasp-llm08-demo/
 │   ├── vulnerable_app.py              #   Module 1: target, stub model, mitigations
 │   ├── providers.py                   #   optional real-model backends (shared, unchanged)
 │   ├── requirements.txt               #   stdlib only
+│   ├── protectogw/                    #   AgenticGoat screening core (vendored unchanged)
 │   ├── web/                           #   shared lab console (index.html, app.js, styles.css)
 │   ├── scripts/
 │   │   ├── run_extraction.py          #   Module 2: the attack
@@ -275,7 +285,7 @@ owasp-llm08-demo/
 │   │   ├── system_prompt_hardened.txt #   secret-free prompt (design fix)
 │   │   ├── extraction_request.md      #   placeholder payload (editable)
 │   │   ├── extraction_request.README.md  # how to write a payload
-│   │   └── filter_rules.json          #   design-check + output-filter rules (editable)
+│   │   └── filter_rules.json          #   design-check rules + output n-gram size (editable)
 │   └── tests/
 │       └── test_lifecycle.py          #   asserts the four-act story
 └── .gitignore
@@ -297,7 +307,7 @@ python scripts/evaluate_kpi.py --scan assets/system_prompt_vulnerable.txt   # RE
 python scripts/evaluate_kpi.py --harden                      # GREEN, PLR 0%, exit 0
 python scripts/reset_baseline.py                             # restore clean state
 python scripts/evaluate_kpi.py                               # GREEN, PLR 0%
-python -m unittest discover tests                            # 15 tests
+python -m unittest discover tests                            # 21 tests
 ```
 
 ## License

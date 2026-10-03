@@ -114,7 +114,8 @@ changes (`ProviderModel` in `vulnerable_app.py`):
 A real model's answer cannot be traced to one message, so the evaluator
 scores it on the answer text alone (canary present, ground truth missing).
 A real model may ignore the placeholder payload. Write a natural-language
-payload and a matching rule in `assets/screen_rules.json` (see
+payload, and add a `protectogw.Rule` to `SCREEN_POLICY` in `vulnerable_app.py`
+if protectogw's built-in ruleset misses it (see
 `assets/memory_note.README.md`), and `run_demo.py` reports the numbers rather
 than asserting them.
 
@@ -166,8 +167,8 @@ Echo and the local backends keep everything on the host.
    `GET /api/actions`, classifies GREEN/YELLOW/RED and computes the PSR.
 
 Plus the mitigation used in Act 4: hardened mode, `screen_memory` and
-`recall_allowed` in `vulnerable_app.py`, with rules from
-[`assets/screen_rules.json`](owasp-asi06-memory-skill/assets/screen_rules.json).
+`recall_allowed` in `vulnerable_app.py`; the write screen is
+[`protectogw`](owasp-asi06-memory-skill/protectogw/README.md).
 
 ### How the "poisoning" is real, not scripted
 
@@ -241,9 +242,15 @@ curl -s localhost:5306/api/actions                         # respond.directive_s
 
 ## Mitigations demonstrated in Act 4
 
-- **Memory-write screening** — each write is screened against
-  `assets/screen_rules.json` (and for hidden HTML comments). A match blocks the
-  write, and the `save_memory` step is logged as `blocked` with its findings.
+- **Memory-write screening** — each write line is screened with
+  protectogw (AgenticGoat's screening core, vendored unchanged in
+  `protectogw/`: normalizer + de-obfuscation folds + ruleset + exfil taxonomy +
+  canary check), and for hidden HTML comments. `SCREEN_POLICY` adds two lab
+  rules for the placeholder syntax (`lab_directive` for `@assistant:`, `lab_canary` for the
+  canary tag). A block on any line blocks the write, and the `save_memory` step
+  is logged as `blocked` with the protectogw signal names as findings.
+  protectogw's `SECURITY.md` states a ~75% generalization ceiling, so it is one
+  layer, never the boundary; scoped recall is what holds.
 - **Per-user scope with provenance** — new memories are saved with `user`
   scope, an owner, and the session and channel that wrote them.
 - **Scoped recall** — recall returns only `user`-scoped entries owned by the
@@ -254,8 +261,7 @@ curl -s localhost:5306/api/actions                         # respond.directive_s
 
 Further hardening is discussed in the references but not coded here: keeping
 recalled memory in a separate data channel (see the LLM01 demo), memory expiry
-and review, a reviewed path for shared organisational memory, and
-obfuscation-aware screening (AgenticGoat `protectogw`).
+and review, and a reviewed path for shared organisational memory.
 
 ---
 
@@ -270,6 +276,7 @@ owasp-asi06-demo/
 │   ├── vulnerable_app.py              #   Module 1: target, stub model, action log, mitigation
 │   ├── providers.py                   #   optional real-model backends (shared, unchanged)
 │   ├── requirements.txt               #   stdlib only
+│   ├── protectogw/                    #   AgenticGoat screening core (vendored unchanged)
 │   ├── web/                           #   shared lab console (index.html, app.js, styles.css)
 │   ├── scripts/
 │   │   ├── run_memory_poison.py       #   Module 2: the attack
@@ -280,8 +287,7 @@ owasp-asi06-demo/
 │   ├── assets/
 │   │   ├── memory_baseline.json       #   KB ground truth + seeded user memories
 │   │   ├── memory_note.md             #   placeholder payload (editable)
-│   │   ├── memory_note.README.md      #   how to write a payload
-│   │   └── screen_rules.json          #   memory-write screen rules (editable)
+│   │   └── memory_note.README.md      #   how to write a payload
 │   └── tests/
 │       └── test_lifecycle.py          #   asserts the four-act story
 └── .gitignore

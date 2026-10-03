@@ -59,7 +59,7 @@ Applications 2025 lists it as LLM05.)
 | Unencoded output in HTML | **Contextual output encoding.** Implemented: `html.escape` in hardened mode for both HTML sinks. |
 | String-built SQL | **Parameterised queries.** Implemented: `?` placeholders in hardened mode. |
 | Renderer passes raw HTML | Escape before rendering, or use a renderer with raw HTML disabled. Implemented: escape-then-render. |
-| No visibility of sink-active output | **Output-sink tripwire.** Implemented: `screen_output` + `assets/sink_rules.json`, logged in hardened mode and used by `--scan`. A tripwire, not the fix. |
+| No visibility of sink-active output | **Output-sink tripwire.** Implemented: `screen_output` screens with protectogw (AgenticGoat's screening core, vendored unchanged: normalizer + de-obfuscation folds + ruleset + exfil taxonomy + canary check) plus lab rules for markup, the directive marker and the canary; logged in hardened mode and used by `--scan`. Its `SECURITY.md` states a ~75% generalization ceiling, so it is one layer, never the boundary. A tripwire, not the fix. |
 | Browser runs what renders | Content-Security-Policy. Implemented as a host-safety guard (`default-src 'none'` on `/status/`). |
 | Auto-fetched images / links | Image-domain allowlist or disable remote images. Discussed, not coded. |
 | Unauthenticated content sources | Authenticate and attribute ticket notes (see LLM01). |

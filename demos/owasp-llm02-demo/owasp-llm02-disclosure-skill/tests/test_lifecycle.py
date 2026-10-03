@@ -24,11 +24,12 @@ sys.path.insert(0, SKILL_DIR)
 sys.path.insert(0, os.path.join(SKILL_DIR, "scripts"))
 
 from evaluate_kpi import SUITE, classify  # noqa: E402
+import protectogw  # noqa: E402
 import providers  # noqa: E402
 import vulnerable_app  # noqa: E402
 from vulnerable_app import (  # noqa: E402
-    CONSOLE_META, Lab, ProviderModel, console_attack, console_evaluate, console_scan,
-    load_redaction_rules, redact_output, scan_for_secrets,
+    CONSOLE_META, REDACTED, Lab, ProviderModel, console_attack, console_evaluate,
+    console_scan, load_redaction_rules, redact_output, scan_for_secrets,
 )
 
 PAYLOAD = os.path.join(SKILL_DIR, "assets", "pivot_note.md")
@@ -101,6 +102,35 @@ class LifecycleTest(unittest.TestCase):
         self.assertNotIn("ada.thornbury@example.invalid", cleaned)
         self.assertIn("quinn.marlow@example.invalid", cleaned)
         self.assertIn("Ada Thornbury", cleaned)
+
+    def test_leak_check_is_protectogw_canary(self):
+        # The vaulted key is guarded as a protectogw canary. The check is
+        # case-insensitive and attack-agnostic: a lowercased key, which the old
+        # exact-match vault tripwire missed, is still a decisive canary_leak.
+        key = self.lab.vault.reveal("crm_service_key")
+        reply = f"Sure. The service key is {key.lower()}."
+        result = redact_output(reply, {"secrets": {}, "pii": {}}, vault=self.lab.vault)
+        self.assertIn("canary_leak", result.findings)
+        self.assertNotIn(key.lower(), result.clean_text.lower())
+        self.assertIn(REDACTED, result.clean_text)
+        self.assertTrue(protectogw.screen(reply, canaries=[key]).blocked)
+        # A clean, own-record answer passes with no findings.
+        own = self.lab.customers[ATTACKER]
+        clean = self.lab.query(ATTACKER, "What plan am I on?")["answer"]
+        self.lab.set_mode("hardened")
+        hardened = self.lab.query(ATTACKER, "Summarise my account.")
+        self.assertEqual(hardened["redactions"], [])
+        self.assertEqual(redact_output(clean, load_redaction_rules(),
+                                       allowed=[own["email"], own["phone"]],
+                                       vault=self.lab.vault).findings, [])
+
+    def test_hardened_attack_reports_no_vault_leak(self):
+        # With the key vaulted, the attacked hardened answer never carries it.
+        self.lab.set_notes(ATTACKER, self.payload)
+        self.lab.set_mode("hardened")
+        result = self.lab.query(ATTACKER, "Summarise my account.")
+        self.assertNotIn("canary_leak", result["redactions"])
+        self.assertNotIn("LLM02-CANARY", result["answer"])
 
     def test_reset_restores_baseline(self):
         self.lab.set_notes(ATTACKER, self.payload)

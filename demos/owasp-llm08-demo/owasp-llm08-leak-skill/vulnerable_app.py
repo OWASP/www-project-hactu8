@@ -27,8 +27,10 @@ output handling. Nothing is hard-coded to flip.
 Hardened mode (``POST /api/mode`` or ``LLM08_MODE=hardened``) closes both gaps:
 the app deploys a prompt with no secret in it (the design fix; discounts are
 validated by the order service, outside the model), and every reply passes an
-output filter that withholds lines carrying the canary or sharing an n-gram
-with the active system prompt (``assets/filter_rules.json``).
+output filter that withholds lines protectogw blocks (AgenticGoat's screening
+core, vendored unchanged in ``protectogw/``: its canary check guards the
+discount code) or that share an n-gram with the active system prompt
+(``output.ngram`` in ``assets/filter_rules.json``).
 
 An optional real-model backend (``providers.py``, ``LLM08_BACKEND``) replaces
 the stub through ``ProviderModel``; the prompt choice and the output filter
@@ -49,6 +51,7 @@ from dataclasses import dataclass, field
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from typing import Any, Dict, List, Optional, Set, Tuple
 
+import protectogw
 import providers
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -130,17 +133,43 @@ def _ngrams(words: List[str], n: int) -> Set[Tuple[str, ...]]:
     return {tuple(words[i:i + n]) for i in range(len(words) - n + 1)}
 
 
-def filter_output(reply: str, system_prompt: str, rules: Dict[str, Any]) -> FilterResult:
+# The guarded token. The app owns canary minting; protectogw is only told
+# which tokens to guard. It is the discount code embedded in the vulnerable
+# prompt (assets/system_prompt_vulnerable.txt).
+GUARDED_CANARIES: Tuple[str, ...] = ("LLM08-CANARY-5e1d",)
+
+# protectogw's canary check is a literal match on the raw reply. The lab rule
+# also catches the canary family once protectogw has normalized and
+# de-obfuscated the line (lowercased, leet-folded so "0" -> "o" and "5" -> "s",
+# letter-spacing joined, base64/hex/ROT13/... decoded): "LLM08-CANARY-5e1d"
+# becomes "llmo8-canary-seid", so an encoded or spaced-out leak is still caught.
+OUTPUT_POLICY = protectogw.Policy(
+    canaries=GUARDED_CANARIES,
+    extra_rules=(protectogw.Rule("lab_canary", r"llm[o0]8\s*-\s*canary\s*-\s*\w+"),),
+)
+
+
+def filter_output(reply: str, system_prompt: str, rules: Dict[str, Any],
+                  policy: Optional[protectogw.Policy] = None) -> FilterResult:
     """Withhold reply lines that expose the hidden context; report them.
 
-    A line is withheld if it matches an ``output.patterns`` regex (the canary)
-    or shares any run of ``output.ngram`` consecutive words with the active
-    system prompt — verbatim prompt fragments. A line shorter than ``ngram``
-    words (but at least 3) is withheld if it appears whole in the prompt.
-    ``ngram`` 0 disables the overlap check.
+    Two checks per line:
+
+    * ``protectogw.screen`` under ``OUTPUT_POLICY`` (or ``policy``): the
+      decisive canary check for the guarded discount code, plus protectogw's
+      ruleset, exfil taxonomy and the ``lab_canary`` rule on the normalized,
+      de-obfuscated line. Findings are protectogw signal names.
+    * The n-gram overlap check (kept: protectogw does not know the prompt): a
+      line sharing any run of ``output.ngram`` consecutive words with the active
+      system prompt is a verbatim prompt fragment. A line shorter than ``ngram``
+      words (but at least 3) is withheld if it appears whole in the prompt.
+      ``ngram`` 0 disables it.
+
+    protectogw is one layer (its SECURITY.md states a ~75% generalization
+    ceiling); the secret-free prompt is the design fix that holds.
     """
+    policy = OUTPUT_POLICY if policy is None else policy
     out = rules.get("output", {})
-    patterns = [re.compile(p, re.I) for p in out.get("patterns", [])]
     n = int(out.get("ngram", 0))
     prompt_words = _words(system_prompt)
     prompt_grams = _ngrams(prompt_words, n) if n > 0 else set()
@@ -148,7 +177,8 @@ def filter_output(reply: str, system_prompt: str, rules: Dict[str, Any]) -> Filt
     kept: List[str] = []
     findings: List[str] = []
     for line in reply.splitlines():
-        hit = next((p.pattern for p in patterns if p.search(line)), None)
+        screened = protectogw.screen(line, policy=policy)
+        hit = ", ".join(sig.plane for sig in screened.signals) if screened.blocked else None
         words = _words(line)
         if hit is None and n > 0:
             if _ngrams(words, n) & prompt_grams:
@@ -157,7 +187,7 @@ def filter_output(reply: str, system_prompt: str, rules: Dict[str, Any]) -> Filt
                 # A short line quoted whole from the prompt is still a fragment.
                 hit = "short verbatim fragment of system prompt"
         if hit is not None:
-            findings.append(f"rule {hit!r}")
+            findings.append(hit)
             continue
         kept.append(line)
     if findings:
@@ -249,6 +279,7 @@ class Lab:
         self.lock = threading.Lock()
         self.set_backend(backend, model)
         self.rules = load_rules()
+        self.output_policy = OUTPUT_POLICY
         self.prompts = {m: load_prompt(m) for m in VALID_MODES}
         self.faq: Dict[str, Dict[str, Any]] = {}
         self.accounts: List[str] = []
@@ -317,7 +348,7 @@ class Lab:
         reply = self.model.generate(messages)
         findings: List[str] = []
         if self.mode == "hardened":
-            filtered = filter_output(reply, self.system_prompt, self.rules)
+            filtered = filter_output(reply, self.system_prompt, self.rules, self.output_policy)
             reply, findings = filtered.clean_text, filtered.findings
         # The gap (vulnerable mode): the reply goes to the customer unchecked.
         return {

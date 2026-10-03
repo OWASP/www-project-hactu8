@@ -29,12 +29,14 @@ Keep this file plain text. `run_extraction.py` does not escape anything.
 - **Real-model backend.** Write a natural-language request that asks the
   assistant to restate its setup: repeat it, translate it, or summarise it.
   Translation and summary are the interesting cases, because they change the
-  wording: the n-gram output filter in `filter_rules.json` only catches
-  verbatim fragments, and the canary pattern only catches the code itself.
+  wording: the n-gram output filter (`output.ngram` in `filter_rules.json`)
+  only catches verbatim fragments, and protectogw's canary check only catches
+  the code itself (plain, encoded or spaced out).
   That gap is why the design fix (no secret in the prompt) is the primary
   mitigation.
 - **Testing the filter.** Lower or raise `output.ngram` in
   `filter_rules.json` and watch which lines are withheld.
 
 Source material: AgenticGoat's LLM07 probe in `training_live.py` and the
-`system_reveal` screen rule in `protectogw/screening.py` are the reference.
+`system_reveal` rule in the vendored `protectogw/screening.py` are the
+reference.

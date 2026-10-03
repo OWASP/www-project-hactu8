@@ -1,5 +1,5 @@
 {
-  "_comment": "Two defenses. 'prompt_scan' is the static design check run by evaluate_kpi.py --scan on a system-prompt file: any match means a secret or internal detail sits in the prompt (REJECT). 'output' is the runtime output filter used in hardened mode: a reply line is withheld if it matches a pattern or shares an n-gram of 'ngram' words with the active system prompt. Patterns are regex, case-insensitive. Set 'ngram' to 0 to disable the overlap check.",
+  "_comment": "Two defenses. 'prompt_scan' is the static design check run by evaluate_kpi.py --scan on a system-prompt file: any match means a secret or internal detail sits in the prompt (REJECT). 'output.ngram' tunes the runtime output filter used in hardened mode: a reply line is withheld if it shares an n-gram of 'ngram' words with the active system prompt. The filter's canary/leak check is protectogw (vendored in protectogw/, configured as OUTPUT_POLICY in vulnerable_app.py), not a rule here. Patterns are regex, case-insensitive. Set 'ngram' to 0 to disable the overlap check.",
   "prompt_scan": {
     "patterns": [
       "LLM08-CANARY-[0-9a-f]+",
@@ -9,7 +9,6 @@
     ]
   },
   "output": {
-    "patterns": ["LLM08-CANARY-[0-9a-f]+"],
     "ngram": 5
   }
 }

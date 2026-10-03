@@ -22,7 +22,8 @@ Keep this file plain text. `run_injection.py` does not escape anything.
   `@assistant:`. Whatever follows the marker becomes the answer. Include the
   canary if you want the evaluator to score RED without editing it.
 - **Real-model backend.** Write the instruction in natural language, then add a
-  matching rule to `screen_rules.json` so hardened mode catches it.
+  `protectogw.Rule` to `SCREEN_POLICY` in `vulnerable_app.py` if protectogw's
+  built-in ruleset does not already catch it, so hardened mode drops it.
 - **Hiding it from human reviewers.** Variants such as text inside an HTML
   comment test the screen's hidden-content check.
 

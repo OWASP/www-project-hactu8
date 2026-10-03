@@ -28,8 +28,9 @@ flip.
 Hardened mode (``POST /api/mode`` or ``LLM05_MODE=hardened``) closes all three
 gaps, each with its own control (see ``state()["mitigations"]``):
 
-* ``source_gate`` — retrieved documents that fail ``_protected_scan`` (override
-  indicators, or missing ``[SOURCE:]``/``[APPROVED_BY:]``/``[VERSION:]``
+* ``source_gate`` — retrieved documents that fail ``_protected_scan`` (a
+  ``protectogw`` BLOCK — AgenticGoat's screening core, vendored unchanged in
+  ``protectogw/`` — or missing ``[SOURCE:]``/``[APPROVED_BY:]``/``[VERSION:]``
   provenance) are excluded. The two seeded official policies are trusted by
   name while their content still matches the seeded golden copy.
 * ``template_pin`` — the active template is used only if its SHA-256 matches
@@ -56,6 +57,7 @@ from collections import Counter
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from typing import Any, Dict, List, Optional, Tuple
 
+import protectogw
 import providers
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -168,16 +170,30 @@ def render_template(template: str, system: str, context: str, query: str) -> str
 # --------------------------------------------------------------------------- #
 # Mitigation checks
 # --------------------------------------------------------------------------- #
-OVERRIDE_INDICATORS = (
-    "overrides all previous", "pre-verified", "approved without", "ignore legacy",
-    "authoritative",
-)
+# protectogw judges the normalized, de-obfuscated text (lowercased, leet-folded,
+# zero-width stripped, base64/hex/ROT13/... decoded), so the lab rules are
+# written against that form. They add this lab's policy-override phrasing,
+# which protectogw's built-in ruleset only FLAGs ("effective immediately"), to
+# its ruleset, exfil taxonomy and canary check. protectogw's SECURITY.md states
+# a ~75% generalization ceiling: it is one layer, and provenance stays required.
+SCREEN_POLICY = protectogw.Policy(extra_rules=(
+    protectogw.Rule("lab_override", r"overrides? all (?:previous|prior)|\[override\]"),
+    protectogw.Rule("lab_preapproval", r"pre-?verified|approved without"),
+    protectogw.Rule("lab_ignore_alerts", r"ignore (?:legacy|all|previous|prior) (?:alerts|policies|controls)"),
+    protectogw.Rule("lab_authority_claim", r"\bauthoritative\b"),
+))
 
 
-def _protected_scan(content: str) -> Dict[str, Any]:
-    """Ingestion gate: override indicators and provenance markers."""
+def _protected_scan(content: str,
+                    policy: Optional[protectogw.Policy] = None) -> Dict[str, Any]:
+    """Ingestion gate: a protectogw screen plus provenance markers.
+
+    ``findings`` are the protectogw signal names when it BLOCKs the document;
+    a FLAG alone does not quarantine.
+    """
+    result = protectogw.screen(content, policy=SCREEN_POLICY if policy is None else policy)
+    findings = [sig.plane for sig in result.signals] if result.blocked else []
     lowered = content.lower()
-    findings = [indicator for indicator in OVERRIDE_INDICATORS if indicator in lowered]
     has_provenance = all(marker in lowered for marker in ("[source:", "[approved_by:", "[version:"))
     return {
         "sha256": _sha256(content),
@@ -527,7 +543,7 @@ def scan_artifacts() -> List[str]:
     """Run the three hardened-mode checks on the shipped attack artifacts."""
     findings: List[str] = []
     scan = _protected_scan(_read(POISON_TEMPLATE_FILE))
-    findings += [f"poison_template.txt: override indicator {f!r}" for f in scan["findings"]]
+    findings += [f"poison_template.txt: protectogw signal {f!r}" for f in scan["findings"]]
     if not scan["has_provenance"]:
         findings.append("poison_template.txt: no [SOURCE:]/[APPROVED_BY:]/[VERSION:] provenance")
     template = json.loads(_read(PROMPT_TEMPLATE_FILE)).get("template", "")

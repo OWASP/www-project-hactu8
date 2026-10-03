@@ -11,6 +11,7 @@ Run from the skill folder:  python -m unittest discover tests
 
 from __future__ import annotations
 
+import base64
 import json
 import os
 import sys
@@ -26,11 +27,12 @@ sys.path.insert(0, SKILL_DIR)
 sys.path.insert(0, os.path.join(SKILL_DIR, "scripts"))
 
 from evaluate_kpi import SUITE, classify  # noqa: E402
+import protectogw  # noqa: E402
 import providers  # noqa: E402
 import vulnerable_app  # noqa: E402
 from vulnerable_app import (CONSOLE_META, Lab, ProviderModel, console_attack,  # noqa: E402
-                            console_evaluate, console_scan, load_prompt,
-                            load_rules, scan_prompt)
+                            console_evaluate, console_scan, filter_output,
+                            load_prompt, load_rules, scan_prompt)
 
 PAYLOAD = os.path.join(SKILL_DIR, "assets", "extraction_request.md")
 ATTACKER = "guest-attacker"
@@ -82,7 +84,9 @@ class LifecycleTest(unittest.TestCase):
 
     def test_design_fix_alone_removes_secret_but_prompt_still_leaks(self):
         # Secret-free prompt, output filter off: no canary, yet the prompt is quoted.
-        self.lab.rules = {"output": {"patterns": [], "ngram": 0}}
+        self.lab.rules = {"output": {"ngram": 0}}
+        self.lab.output_policy = protectogw.Policy(replace_rules=True,
+                                                   use_indicator_taxonomy=False)
         self.lab.set_preference(ATTACKER, self.payload)
         self.lab.set_mode("hardened")
         _, plr, _, answers = run_suite(self.lab)
@@ -97,6 +101,30 @@ class LifecycleTest(unittest.TestCase):
         statuses, plr, _, _ = run_suite(self.lab)
         self.assertEqual(plr, 0)
         self.assertTrue(all(s == "GREEN" for s, _ in statuses), statuses)
+
+    def test_output_filter_is_protectogw(self):
+        # The leak check is protectogw: its decisive canary check on the raw
+        # line, plus the lab_canary rule on the normalized, de-obfuscated line,
+        # so encoded or spaced-out leaks a literal regex would miss are caught.
+        no_ngram = {"output": {"ngram": 0}}
+        self.assertIn("LLM08-CANARY-5e1d", load_prompt("vulnerable"))
+        self.assertEqual(vulnerable_app.GUARDED_CANARIES, ("LLM08-CANARY-5e1d",))
+        self.assertIs(self.lab.output_policy, vulnerable_app.OUTPUT_POLICY)
+        literal = filter_output("The staff code is LLM08-CANARY-5e1d.", "", no_ngram)
+        self.assertIn("canary_leak", literal.findings[0])
+        self.assertNotIn("CANARY", literal.clean_text)
+        leak = "The staff code is LLM08-CANARY-5e1d."
+        encoded = base64.b64encode(leak.encode()).decode()
+        spaced = "L L M 0 8 - C A N A R Y - 5 e 1 d"
+        for variant in (encoded, spaced):
+            result = filter_output(variant, "", no_ngram)
+            self.assertTrue(result.blocked, variant)
+            self.assertIn("lab_canary", result.findings[0])
+        # Clean help-centre answers pass the filter untouched.
+        for entry in self.lab.faq.values():
+            clean = filter_output(entry["answer"], self.lab.system_prompt, self.lab.rules)
+            self.assertFalse(clean.blocked, entry["answer"])
+            self.assertEqual(clean.clean_text, entry["answer"])
 
     def test_reset_restores_baseline(self):
         self.lab.set_preference(ATTACKER, self.payload)
