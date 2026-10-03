@@ -192,6 +192,9 @@ def report_after(ask: Callable[[str], str]) -> float:
 
 # --------------------------------------------------------------------------- #
 def main(argv: List[str] | None = None) -> int:
+    # The stoplight emoji would crash a Windows cp1252 console otherwise.
+    if hasattr(sys.stdout, "reconfigure"):
+        sys.stdout.reconfigure(encoding="utf-8")
     parser = argparse.ArgumentParser(description=__doc__)
     group = parser.add_mutually_exclusive_group()
     group.add_argument("--target", help="Base URL of a running vulnerable server.")
