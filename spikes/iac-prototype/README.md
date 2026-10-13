@@ -309,15 +309,41 @@ For Streamlit applications, change the `--server.port` argument when running.
 
 ### Python Virtual Environment Issues
 
-If you encounter issues with the virtual environment:
+The Python configurations in [`.vscode/launch.json`](.vscode/launch.json) use
+each service's own `.venv`, not the interpreter selected for the workspace.
+`extension-api` shares the `iac-console` environment.
+
+If debugpy reports `Couldn't spawn debuggee: [Errno 2]`, check the configured
+interpreter:
 
 ```bash
-cd <streamlit-app-directory>
-rm -rf .venv
-python -m venv .venv
-source .venv/bin/activate
-pip install -r requirements.txt
+ls -l iac-copilot-api/.venv/bin/python*
+iac-copilot-api/.venv/bin/python --version
 ```
+
+An environment directory can still exist while its interpreter symlink points
+to a Python installation removed by a Homebrew upgrade or a runtime change.
+Selecting another interpreter in VS Code does not override the explicit
+`python` paths in the launch configurations.
+
+To recreate an affected environment, stop its running services and preserve
+the old environment first. Run the following from the affected service
+directory (`iac-copilot-api`, `iac-console`, `iac-dashboard`, or `iac-registry`).
+Use an available Python version compatible with that service's dependencies;
+Python 3.13 is the documented setup version. Choose a different backup name
+if `.venv.backup` already exists.
+
+```bash
+mv .venv .venv.backup
+python3.13 -m venv .venv
+.venv/bin/python -m pip install -r requirements.txt
+.venv/bin/python --version
+```
+
+For `extension-api`, also install `flask` and `flask-cors` into the
+`iac-console` environment. Restart the debugger after repairing the affected
+environments. Do not replace the launch paths with a global Python interpreter:
+the services depend on packages installed in their respective environments.
 
 ### Node Modules Issues
 
