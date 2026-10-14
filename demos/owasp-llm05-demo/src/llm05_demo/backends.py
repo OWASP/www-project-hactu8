@@ -1,6 +1,7 @@
 """Embedding and LLM backends behind a small common interface.
 
-Two backends are provided:
+Backends match AgenticGoat and the template-based lab (``echo``, ``ollama``,
+``llamacpp``, ``openrouter``):
 
 * ``LocalEmbedding`` / ``LocalLLM`` — zero-dependency, deterministic, and offline.
   Embeddings are a normalized hashing bag-of-words vector, so *repeated keywords
@@ -10,9 +11,10 @@ Two backends are provided:
   its answer reflects whatever context retrieval hands it, so poisoning the
   retrieval genuinely changes the answer.
 
-* ``OpenAIEmbedding`` / ``OpenAILLM`` — real OpenAI embeddings and chat model,
-  matching the Technical Implementation Guide. Imported lazily so the package has
-  no hard dependency on the ``openai`` SDK.
+* ``ProviderLLM`` / ``ProviderEmbedding`` — a real chat model through the shared
+  ``providers.py`` (standard library only), and optionally real embeddings from
+  Ollama or llama.cpp. The local hashing embedding stays the default so that
+  retrieval is reproducible and only the answering model changes.
 """
 
 from __future__ import annotations
@@ -21,6 +23,7 @@ import math
 import re
 from typing import List, Protocol, Sequence, Tuple
 
+from . import providers
 from .config import Config
 
 _TOKEN_RE = re.compile(r"[a-z0-9]+")
@@ -117,49 +120,42 @@ class LocalLLM:
 
 
 # --------------------------------------------------------------------------- #
-# OpenAI backend (optional; matches the Technical Implementation Guide)
+# Real-model backends through the shared providers.py
 # --------------------------------------------------------------------------- #
-class OpenAIEmbedding:
-    def __init__(self, model: str) -> None:
-        from openai import OpenAI  # lazy import
+class ProviderEmbedding:
+    """Embeddings from a local Ollama or llama.cpp server."""
 
-        self._client = OpenAI()
+    def __init__(self, provider: providers.Provider, model: str) -> None:
+        self._provider = provider
         self._model = model
 
     def embed(self, text: str) -> List[float]:
         return self.embed_batch([text])[0]
 
     def embed_batch(self, texts: Sequence[str]) -> List[List[float]]:
-        resp = self._client.embeddings.create(model=self._model, input=list(texts))
-        return [d.embedding for d in resp.data]
+        return self._provider.embed(list(texts), model=self._model)
 
 
-class OpenAILLM:
+class ProviderLLM:
+    """A real chat model answering from the retrieved context only."""
+
     _SYSTEM = (
         "You are a corporate policy assistant. Answer the employee's question "
         "using ONLY the provided policy context. Be concise."
     )
 
-    def __init__(self, model: str) -> None:
-        from openai import OpenAI  # lazy import
-
-        self._client = OpenAI()
+    def __init__(self, provider: providers.Provider, model: str) -> None:
+        self._provider = provider
         self._model = model
 
     def generate(self, question: str, context: Sequence[str]) -> str:
         joined = "\n".join(f"- {c}" for c in context)
-        resp = self._client.chat.completions.create(
+        prompt = f"Policy context:\n{joined}\n\nQuestion: {question}"
+        return self._provider.chat(
+            [providers.Message("system", self._SYSTEM),
+             providers.Message("user", prompt)],
             model=self._model,
-            temperature=0,
-            messages=[
-                {"role": "system", "content": self._SYSTEM},
-                {
-                    "role": "user",
-                    "content": f"Policy context:\n{joined}\n\nQuestion: {question}",
-                },
-            ],
         )
-        return resp.choices[0].message.content or ""
 
 
 # --------------------------------------------------------------------------- #
@@ -167,9 +163,9 @@ class OpenAILLM:
 # --------------------------------------------------------------------------- #
 def build_backends(config: Config) -> Tuple[Embedding, LLM]:
     """Return ``(embedding, llm)`` for the configured backend."""
-    if config.backend == "openai":
-        return (
-            OpenAIEmbedding(config.openai_embedding_model),
-            OpenAILLM(config.openai_chat_model),
-        )
-    return LocalEmbedding(config.embedding_dim), LocalLLM()
+    provider = providers.get_provider(config.backend)
+    if provider is None:
+        return LocalEmbedding(config.embedding_dim), LocalLLM()
+    embedding: Embedding = (ProviderEmbedding(provider, config.embed_model)
+                            if config.embed_model else LocalEmbedding(config.embedding_dim))
+    return embedding, ProviderLLM(provider, config.model)

@@ -1,0 +1,36 @@
+{
+  "_comment": "The tool host's approved manifest: what the model is shown for each tool. Ground truth for the AGX04 lab.",
+  "tools": {
+    "ticket_lookup": {
+      "description": "Look up the status and assignee of a helpdesk ticket by its ID.",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "ticket_id": {
+            "type": "string",
+            "description": "The ticket identifier, for example T-1001."
+          }
+        },
+        "required": ["ticket_id"]
+      }
+    },
+    "server_time": {
+      "description": "Return the current server time as an ISO-8601 string.",
+      "input_schema": {"type": "object", "properties": {}}
+    },
+    "service_health": {
+      "description": "Report whether a Goat & Co. service is up.",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "service": {
+            "type": "string",
+            "description": "Which service to check.",
+            "enum": ["vpn", "email", "wiki"]
+          }
+        },
+        "required": ["service"]
+      }
+    }
+  }
+}

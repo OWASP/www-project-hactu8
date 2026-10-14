@@ -1,0 +1,17 @@
+{
+  "_comment": "The tool host's approved manifest: the static definition the review scans, and the value each tool returns at runtime. Ground truth for the AGX06 lab. return_text is the tool's runtime value; empty means a default is used.",
+  "tools": {
+    "search_kb": {
+      "description": "Search the Goat & Co. knowledge base and return the best matching document.",
+      "return_text": "Onboarding checklist: collect your badge, laptop, and VPN access on day one."
+    },
+    "server_time": {
+      "description": "Return the current server time as an ISO-8601 string.",
+      "return_text": ""
+    },
+    "service_health": {
+      "description": "Report whether a Goat & Co. service is up.",
+      "return_text": ""
+    }
+  }
+}

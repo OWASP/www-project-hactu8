@@ -1,0 +1,35 @@
+{
+  "_comment": "Goat & Co. operations fleet, as seeded on startup and restored by reset. Fictional. Each agent's 'mandate' is the approved scope: the actions it may take and the resource prefixes it may take them on. On startup the fleet controller signs each config (agent + mandate + instructions) with a demo-only HMAC key generated in memory. 'work_queue' is the job each agent is scheduled to do on ticks 1-4; every action is simulated.",
+  "agents": {
+    "billy-billing": {
+      "mandate": {"actions": ["read_ledger", "send_invoice"], "resources": ["ledger/", "invoices/"]},
+      "instructions": "You are Billy Billing. Reconcile the ledger and send the invoices you are scheduled to send.",
+      "work_queue": {
+        "1": ["read_ledger ledger/october"],
+        "2": ["send_invoice invoices/INV-3001"],
+        "3": ["read_ledger ledger/november"],
+        "4": ["send_invoice invoices/INV-3002"]
+      }
+    },
+    "billy-stock": {
+      "mandate": {"actions": ["read_stock", "reorder_stock"], "resources": ["stock/"]},
+      "instructions": "You are Billy Stock. Check stock levels and reorder items that run low.",
+      "work_queue": {
+        "1": ["read_stock stock/feeder-kit"],
+        "2": ["reorder_stock stock/feeder-kit"],
+        "3": ["read_stock stock/hay-rack"],
+        "4": ["reorder_stock stock/hay-rack"]
+      }
+    },
+    "billy-support": {
+      "mandate": {"actions": ["read_ticket", "reply_ticket"], "resources": ["tickets/"]},
+      "instructions": "You are Billy Support. Read the scheduled tickets and reply to them.",
+      "work_queue": {
+        "1": ["read_ticket tickets/T-1001"],
+        "2": ["reply_ticket tickets/T-1001"],
+        "3": ["read_ticket tickets/T-1002"],
+        "4": ["reply_ticket tickets/T-1002"]
+      }
+    }
+  }
+}

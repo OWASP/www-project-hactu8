@@ -1,0 +1,7 @@
+{
+  "_comment": "Message verification used in hardened mode and by evaluate_kpi.py --scan. 'verify_signature' checks an HMAC-SHA256 over the canonical message with the claimed sender's own key. 'work_order_senders' lists the agents allowed to issue work orders. 'replay_protection' rejects a nonce already seen and, when 'max_age_seconds' is set, a timestamp outside that window. Keys are demo-only, generated in memory at startup and never written to disk. AgenticGoat's acts.py a2a_scan (treat every peer message as untrusted) is the reference.",
+  "verify_signature": true,
+  "work_order_senders": ["planner"],
+  "replay_protection": true,
+  "max_age_seconds": 300
+}

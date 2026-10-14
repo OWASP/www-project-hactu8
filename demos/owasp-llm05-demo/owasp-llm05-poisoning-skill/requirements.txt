@@ -1,3 +1,1 @@
-# Scenario #1 + #6 demo. jinja2 is pulled in transitively by flask.
-flask>=3.0
-requests>=2.31
+# Standard library only. Python 3.9+. Nothing to install.

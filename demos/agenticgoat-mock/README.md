@@ -35,22 +35,26 @@ in the sidebar is a self-contained challenge:
 
 ## Lessons included — mapped 1:1 to the OWASP LLM Top 10 (2026)
 
-| Lesson | OWASP category |
-|---|---|
-| Direct Prompt Injection | LLM01:2026 Prompt Injection |
-| System Context Leak via Summarization | LLM02:2026 Sensitive Information Disclosure |
-| Excessive-Agency Simulated Refund | LLM03:2026 Excessive Agency |
-| Malicious Skill / Package Install | LLM04:2026 Supply Chain |
-| RAG Corpus Data Poisoning | LLM05:2026 Data and Model Poisoning |
-| Denial of Wallet / Output Explosion | LLM06:2026 Unbounded Consumption |
-| Fabricated Evidence Driving an Action | LLM07:2026 Misinformation |
-| System Prompt & Tool Schema Extraction | LLM08:2026 Hidden Context Exposure |
-| Cross-Tenant Retrieval Disclosure | LLM09:2026 Vector and Embedding Weaknesses |
-| Unsanitized Output Injection | LLM10:2026 Improper Output Handling |
+| Lesson | OWASP category | Full lab |
+|---|---|---|
+| Direct Prompt Injection | LLM01:2026 Prompt Injection | [`owasp-llm01-demo`](../owasp-llm01-demo/) |
+| System Context Leak via Summarization | LLM02:2026 Sensitive Information Disclosure | [`owasp-llm02-demo`](../owasp-llm02-demo/) |
+| Excessive-Agency Simulated Refund | LLM03:2026 Excessive Agency | [`owasp-llm03-demo`](../owasp-llm03-demo/) |
+| Malicious Skill / Package Install | LLM04:2026 Supply Chain | [`owasp-llm04-demo`](../owasp-llm04-demo/) |
+| RAG Corpus Data Poisoning | LLM05:2026 Data and Model Poisoning | [`owasp-llm05-demo`](../owasp-llm05-demo/) |
+| Denial of Wallet / Output Explosion | LLM06:2026 Unbounded Consumption | [`owasp-llm06-demo`](../owasp-llm06-demo/) |
+| Fabricated Evidence Driving an Action | LLM07:2026 Misinformation | [`owasp-llm07-demo`](../owasp-llm07-demo/) |
+| System Prompt & Tool Schema Extraction | LLM08:2026 Hidden Context Exposure | [`owasp-llm08-demo`](../owasp-llm08-demo/) |
+| Cross-Tenant Retrieval Disclosure | LLM09:2026 Vector and Embedding Weaknesses | [`owasp-llm09-demo`](../owasp-llm09-demo/) |
+| Unsanitized Output Injection | LLM10:2026 Improper Output Handling | [`owasp-llm10-demo`](../owasp-llm10-demo/) |
 
 Each lesson's trigger keywords, "leaked" secret, and hardened-mode block
 reason are canned and deterministic — there's no real model behind this, by
 design (see "How it works" below).
+
+Each lesson has a full four-act lab, with a vulnerable target, a scripted attack,
+a stoplight KPI, a mitigation and a web console, in the linked folder. See
+[`../README.md`](../README.md) for the whole set.
 
 ## How it maps to the proposal
 

@@ -6,8 +6,9 @@ the tooling to attack it and to measure the impact.
 
 Modules
 -------
-config       Backend selection (local, no-key default; or OpenAI).
+config       Backend selection (echo default; ollama, llamacpp, openrouter).
 backends     Embedding + LLM backends behind a common interface.
+providers    Shared provider layer (a copy of demos/_template/providers.py).
 vector_store In-memory vector store with cosine similarity search.
 corpus       Legitimate policy corpus, adversarial documents, and test queries.
 rag_pipeline The intentionally vulnerable RAG orchestration (Module 1).

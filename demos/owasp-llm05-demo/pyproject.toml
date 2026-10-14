@@ -15,7 +15,6 @@ dependencies = []  # core demo runs on the standard library only
 
 [project.optional-dependencies]
 server = ["flask>=3.0", "requests>=2.31"]
-openai = ["openai>=1.30"]
 dev = ["pytest>=8.0"]
 
 [project.scripts]

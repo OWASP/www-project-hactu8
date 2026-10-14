@@ -1,0 +1,11 @@
+{
+  "_comment": "Output redaction and secret scan rules, used in hardened mode and by evaluate_kpi.py --scan. Each pattern is a case-insensitive regex. 'secrets' are always redacted and moved to the vault; 'pii' matches are redacted unless they belong to the signed-in customer. Names cannot be matched by pattern, which is why per-user record scoping is the primary control. The decisive leak check on the vaulted key itself is protectogw's canary check (vulnerable_app.redact_output); these rules mask, which protectogw does not.",
+  "secrets": {
+    "canary": "LLM02-CANARY-[0-9a-f]+",
+    "credential_line": "^\\s*[a-z_]*(key|token|secret|password)[a-z_]*\\s*:\\s*\\S+"
+  },
+  "pii": {
+    "email": "[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,}",
+    "phone": "\\b555-01\\d\\d\\b"
+  }
+}

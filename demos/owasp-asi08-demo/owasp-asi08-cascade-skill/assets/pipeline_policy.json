@@ -1,0 +1,8 @@
+{
+  "_comment": "Pipeline policy. tolerance_pct and authority_limit apply in both modes: the analyst passes an invoice whose billed unit price is within tolerance_pct of the agreed price, and the approver only approves passed invoices up to authority_limit. The last three keys are the hardened-mode mitigations: 'validation' makes the analyst and approver re-check each figure they receive against assets/po_ledger.json; 'circuit_breaker' halts a supplier feed once it has produced anomaly_threshold anomalies in one batch run.",
+  "tolerance_pct": 2.0,
+  "authority_limit": 5000.00,
+  "validation": true,
+  "circuit_breaker": true,
+  "anomaly_threshold": 2
+}

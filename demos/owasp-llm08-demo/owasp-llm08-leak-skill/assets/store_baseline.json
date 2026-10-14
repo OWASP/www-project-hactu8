@@ -1,0 +1,17 @@
+{
+  "_comment": "Goat & Co. online store help centre, as seeded on startup and restored by reset. Fictional. Billy Shop answers from the best keyword match; 'answer' is the ground truth. 'preferences' are the saved reply preferences per customer account (empty at baseline).",
+  "faq": {
+    "shipping": {"keywords": ["ship", "shipping", "dispatch", "dispatched"],
+                 "answer": "Orders ship within 2 business days from the Goat & Co. warehouse."},
+    "returns": {"keywords": ["return", "returns", "refund", "refunds"],
+                "answer": "Unused items can be returned within 30 days for a full refund."},
+    "payment": {"keywords": ["payment", "pay", "methods", "card", "cards"],
+                "answer": "We accept credit cards and Goat & Co. gift cards at checkout."},
+    "tracking": {"keywords": ["track", "tracking", "where"],
+                 "answer": "Follow your parcel with the tracking link in your order confirmation email."},
+    "international": {"keywords": ["international", "internationally", "abroad", "countries"],
+                      "answer": "International delivery is available to 20 countries for a flat 15 dollar fee."}
+  },
+  "accounts": ["guest-attacker", "guest-alice"],
+  "preferences": {}
+}

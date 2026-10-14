@@ -1,0 +1,9 @@
+{
+  "_comment": "Parameter-level tool policy enforced at the tool boundary in hardened mode and by evaluate_kpi.py --scan. Every tool listed here is permitted; the policy bounds HOW it may be called. 'max_calls' is the per-run call budget (executed calls only). 'max_limit' caps query_ledger's row limit. 'destinations' is the export allowlist and 'max_rows' caps the rows one export may carry. The gate reads the call's real parameters, never the model's prose.",
+  "tools": {
+    "read_request": {"max_calls": 1},
+    "query_ledger": {"max_calls": 1, "max_limit": 100},
+    "export_report": {"max_calls": 1, "max_rows": 100,
+                      "destinations": ["finance-reports", "audit-archive"]}
+  }
+}

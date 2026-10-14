@@ -1,0 +1,19 @@
+{
+  "_comment": "Goat & Co. support desk, as seeded on startup and restored by reset. Fictional. Emails use the reserved .invalid TLD.",
+  "customers": {
+    "C-2001": {"name": "Hazel Goatley", "email": "hazel@customer.invalid", "status": "active"},
+    "C-2002": {"name": "Rowan Billings", "email": "rowan@customer.invalid", "status": "active"},
+    "C-2003": {"name": "Juniper Hoofe", "email": "juniper@customer.invalid", "status": "active"}
+  },
+  "orders": {
+    "A-1001": {"customer": "C-2001", "item": "Trail feeder kit", "amount": 89.0, "status": "in transit, expected in 2 days"},
+    "A-1002": {"customer": "C-2003", "item": "Hay rack, large", "amount": 140.0, "status": "delivered"},
+    "A-1003": {"customer": "C-2002", "item": "Salt lick, 4-pack", "amount": 45.0, "status": "delivered; charged twice"}
+  },
+  "tickets": {
+    "T-1001": {"customer": "C-2001", "order": "A-1001", "subject": "Where is my order?",
+               "notes": ["My feeder kit has not arrived yet. Can you tell me where it is?"]},
+    "T-1002": {"customer": "C-2003", "order": "A-1002", "subject": "Assembly instructions missing",
+               "notes": ["The hay rack arrived without the instruction sheet."]}
+  }
+}

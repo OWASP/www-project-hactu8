@@ -1,0 +1,8 @@
+{
+  "_comment": "Goat & Co. internal wiki, as seeded on startup and restored by reset. Fictional. The first line of each page is its ground truth.",
+  "pages": {
+    "expenses": "Expense reports must be filed within 30 days and need manager approval before reimbursement.\nAttach itemised receipts for every expense report claim over 25 dollars.\nSubmit expense reports through the finance portal under Reimbursements.",
+    "holidays": "Company holidays: New Year's Day, Memorial Day, Independence Day, Labor Day, Thanksgiving, and Winter Break from Dec 24 to Jan 1.",
+    "vpn": "Remote VPN access requires a company laptop and multi-factor authentication; request it through the IT service desk."
+  }
+}

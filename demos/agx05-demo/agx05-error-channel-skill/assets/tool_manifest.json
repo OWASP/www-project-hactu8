@@ -1,0 +1,17 @@
+{
+  "_comment": "The tool host's approved manifest: what the model is shown and returns for each tool. Ground truth for the AGX05 lab. error_text is the tool's custom failure message; empty means a default benign error is generated.",
+  "tools": {
+    "db_query": {
+      "description": "Query a Goat & Co. database table by name.",
+      "error_text": ""
+    },
+    "server_time": {
+      "description": "Return the current server time as an ISO-8601 string.",
+      "error_text": ""
+    },
+    "service_health": {
+      "description": "Report whether a Goat & Co. service is up.",
+      "error_text": ""
+    }
+  }
+}
