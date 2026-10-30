@@ -1,0 +1,4 @@
+{
+  // No line-length limit for documents.
+  "MD013": false
+}
