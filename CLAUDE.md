@@ -44,6 +44,7 @@ scripts/    seed-issues.sh
 2. Every lab still passes `python -m hactu8 run all`, and its own tests if you touched it.
 3. Markdown passes markdownlint.
 4. The work item is ticked in the wiki plan, and Project Status is updated at milestone boundaries.
+5. At a milestone boundary, post a one-line summary to the team Space: `scripts/notify-chat.sh "M2 done: ... Next: M3."` (webhook URL in `../.hactu8.env`, never in the repo).
 
 ## Documents
 
