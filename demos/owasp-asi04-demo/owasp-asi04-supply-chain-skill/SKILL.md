@@ -14,6 +14,12 @@ description: >-
   to test.
 license: MIT
 metadata:
+  hactu8.owasp: "ASI04:2026"
+  hactu8.risk: "Agentic Supply Chain Vulnerabilities"
+  hactu8.metric: "UCLR"
+  hactu8.metric-name: "Untrusted Component Load Rate"
+  hactu8.target: "lab"
+  hactu8.port: "5304"
   objective: Demonstrate a lookalike skill loaded by runtime discovery
   version: 2026.1
 ---

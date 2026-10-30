@@ -12,6 +12,12 @@ description: >-
   you are not authorized to test.
 license: MIT
 metadata:
+  hactu8.owasp: "LLM01:2026"
+  hactu8.risk: "Prompt Injection"
+  hactu8.metric: "ISR"
+  hactu8.metric-name: "Injection Success Rate"
+  hactu8.target: "lab"
+  hactu8.port: "5201"
   objective: Demonstrate indirect prompt injection via tool output
   version: 2026.1
 ---

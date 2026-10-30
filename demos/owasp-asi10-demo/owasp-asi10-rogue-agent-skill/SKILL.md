@@ -14,6 +14,12 @@ description: >-
   systems you are not authorized to test.
 license: MIT
 metadata:
+  hactu8.owasp: "ASI10:2026"
+  hactu8.risk: "Rogue Agents"
+  hactu8.metric: "OMAR"
+  hactu8.metric-name: "Off-Mandate Action Rate"
+  hactu8.target: "lab"
+  hactu8.port: "5310"
   objective: Demonstrate a rogue agent acting outside its mandate after a config edit
   version: 2026.1
 ---

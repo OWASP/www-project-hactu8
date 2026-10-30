@@ -14,6 +14,12 @@ description: >-
   not authorized to test.
 license: MIT
 metadata:
+  hactu8.owasp: "ASI06:2026"
+  hactu8.risk: "Memory & Context Poisoning"
+  hactu8.metric: "PSR"
+  hactu8.metric-name: "Poison Success Rate"
+  hactu8.target: "lab"
+  hactu8.port: "5306"
   objective: Demonstrate cross-session, cross-user agent memory poisoning
   version: 2026.1
 ---

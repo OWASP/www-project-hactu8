@@ -15,6 +15,12 @@ description: >-
   red-teaming only — never against systems you are not authorized to test.
 license: MIT
 metadata:
+  hactu8.owasp: "ASI09:2026"
+  hactu8.risk: "Human-Agent Trust Exploitation"
+  hactu8.metric: "MAR"
+  hactu8.metric-name: "Misinformed Approval Rate"
+  hactu8.target: "lab"
+  hactu8.port: "5309"
   objective: Demonstrate approvals given on a misleading agent summary and the card design that prevents them
   version: 2026.1
 ---

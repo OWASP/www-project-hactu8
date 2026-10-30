@@ -13,6 +13,12 @@ description: >-
   against systems you are not authorized to test.
 license: MIT
 metadata:
+  hactu8.owasp: "LLM09:2026"
+  hactu8.risk: "Vector and Embedding Weaknesses"
+  hactu8.metric: "CTLR"
+  hactu8.metric-name: "Cross-Tenant Leak Rate"
+  hactu8.target: "lab"
+  hactu8.port: "5209"
   objective: Demonstrate cross-tenant leakage through a shared vector store
   version: 2026.1
 ---

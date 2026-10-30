@@ -14,6 +14,12 @@ description: >-
   against systems you are not authorized to test.
 license: MIT
 metadata:
+  hactu8.owasp: "ASI01:2026"
+  hactu8.risk: "Agent Goal Hijack"
+  hactu8.metric: "GDR"
+  hactu8.metric-name: "Goal Deviation Rate"
+  hactu8.target: "lab"
+  hactu8.port: "5301"
   objective: Demonstrate a multi-step agent plan diverted mid-task and the pinned plan that stops it
   version: 2026.1
 ---

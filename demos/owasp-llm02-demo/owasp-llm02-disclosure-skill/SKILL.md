@@ -14,6 +14,12 @@ description: >-
   not authorized to test.
 license: MIT
 metadata:
+  hactu8.owasp: "LLM02:2026"
+  hactu8.risk: "Sensitive Information Disclosure"
+  hactu8.metric: "LR"
+  hactu8.metric-name: "Leak Rate"
+  hactu8.target: "lab"
+  hactu8.port: "5202"
   objective: Demonstrate cross-user PII and credential disclosure through model context
   version: 2026.1
 ---

@@ -14,6 +14,12 @@ description: >-
   to test.
 license: MIT
 metadata:
+  hactu8.owasp: "ASI08:2026"
+  hactu8.risk: "Cascading Failures"
+  hactu8.metric: "PR"
+  hactu8.metric-name: "Propagation Rate"
+  hactu8.target: "lab"
+  hactu8.port: "5308"
   objective: Demonstrate one bad input cascading through a multi-agent pipeline
   version: 2026.1
 ---

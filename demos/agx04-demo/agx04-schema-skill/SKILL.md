@@ -13,6 +13,12 @@ description: >-
   not authorized to test.
 license: MIT
 metadata:
+  hactu8.owasp: "AGX04"
+  hactu8.risk: "Schema / Parameter Injection"
+  hactu8.metric: "CLR"
+  hactu8.metric-name: "Canary Leak Rate"
+  hactu8.target: "lab"
+  hactu8.port: "5404"
   objective: Demonstrate injection through tool parameter schemas past a description-only screen
   version: 2026.1
 ---

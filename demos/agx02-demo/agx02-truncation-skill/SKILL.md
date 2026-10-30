@@ -13,6 +13,12 @@ description: >-
   not authorized to test.
 license: MIT
 metadata:
+  hactu8.owasp: "AGX02"
+  hactu8.risk: "Truncation Tail"
+  hactu8.metric: "CLR"
+  hactu8.metric-name: "Canary Leak Rate"
+  hactu8.target: "lab"
+  hactu8.port: "5402"
   objective: Demonstrate injection past a head-only screen, and the whole-artifact fix
   version: 2026.1
 ---

@@ -13,6 +13,12 @@ description: >-
   you are not authorized to test.
 license: MIT
 metadata:
+  hactu8.owasp: "AGX01"
+  hactu8.risk: "Obfuscation Gauntlet"
+  hactu8.metric: "CLR"
+  hactu8.metric-name: "Canary Leak Rate"
+  hactu8.target: "lab"
+  hactu8.port: "5401"
   objective: Demonstrate injection that evades a raw-text screen through encoding, and the normalize-first fix
   version: 2026.1
 ---

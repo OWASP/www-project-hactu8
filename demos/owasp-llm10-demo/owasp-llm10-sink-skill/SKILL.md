@@ -13,6 +13,12 @@ description: >-
   you are not authorized to test.
 license: MIT
 metadata:
+  hactu8.owasp: "LLM10:2026"
+  hactu8.risk: "Improper Output Handling"
+  hactu8.metric: "USR"
+  hactu8.metric-name: "Unsafe Sink Rate"
+  hactu8.target: "lab"
+  hactu8.port: "5210"
   objective: Demonstrate model output reaching downstream sinks as code
   version: 2026.1
 ---

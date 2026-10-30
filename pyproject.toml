@@ -1,0 +1,24 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "hactu8"
+version = "0.1.0"
+description = "OWASP HACTU8: repeatable security assurance tests for AI systems"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+dependencies = []
+
+[project.optional-dependencies]
+dev = ["jsonschema>=4"]
+
+[project.scripts]
+hactu8 = "hactu8.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["hactu8*"]
+
+[tool.setuptools.package-data]
+hactu8 = ["schemas/*.json"]

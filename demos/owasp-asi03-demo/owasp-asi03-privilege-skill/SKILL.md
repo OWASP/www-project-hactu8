@@ -14,6 +14,12 @@ description: >-
   systems you are not authorized to test.
 license: MIT
 metadata:
+  hactu8.owasp: "ASI03:2026"
+  hactu8.risk: "Identity & Privilege Abuse"
+  hactu8.metric: "PER"
+  hactu8.metric-name: "Privilege Escalation Rate"
+  hactu8.target: "lab"
+  hactu8.port: "5303"
   objective: Demonstrate confused-deputy privilege abuse by an agent
   version: 2026.1
 ---

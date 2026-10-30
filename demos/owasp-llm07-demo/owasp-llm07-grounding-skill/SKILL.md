@@ -14,6 +14,12 @@ description: >-
   to test.
 license: MIT
 metadata:
+  hactu8.owasp: "LLM07:2026"
+  hactu8.risk: "Misinformation"
+  hactu8.metric: "UCR"
+  hactu8.metric-name: "Ungrounded Claim Rate"
+  hactu8.target: "lab"
+  hactu8.port: "5207"
   objective: Demonstrate ungrounded package and URL recommendations and the grounding check
   version: 2026.1
 ---

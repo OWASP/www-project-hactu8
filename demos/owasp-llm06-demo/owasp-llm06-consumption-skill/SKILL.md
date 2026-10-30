@@ -14,6 +14,12 @@ description: >-
   to test.
 license: MIT
 metadata:
+  hactu8.owasp: "LLM06:2026"
+  hactu8.risk: "Unbounded Consumption"
+  hactu8.metric: "BBR"
+  hactu8.metric-name: "Budget Breach Rate"
+  hactu8.target: "lab"
+  hactu8.port: "5206"
   objective: Demonstrate unbounded consumption in an agent loop
   version: 2026.1
 ---

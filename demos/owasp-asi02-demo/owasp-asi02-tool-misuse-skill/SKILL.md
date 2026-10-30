@@ -14,6 +14,12 @@ description: >-
   systems you are not authorized to test.
 license: MIT
 metadata:
+  hactu8.owasp: "ASI02:2026"
+  hactu8.risk: "Tool Misuse & Exploitation"
+  hactu8.metric: "UIR"
+  hactu8.metric-name: "Unsafe Invocation Rate"
+  hactu8.target: "lab"
+  hactu8.port: "5302"
   objective: Demonstrate permitted tools called with unsafe parameters and the tool-boundary policy that stops it
   version: 2026.1
 ---

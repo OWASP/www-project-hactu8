@@ -13,6 +13,12 @@ description: >-
   red-teaming only — never against systems you are not authorized to test.
 license: MIT
 metadata:
+  hactu8.owasp: "AGX05"
+  hactu8.risk: "Error-Channel Injection"
+  hactu8.metric: "CLR"
+  hactu8.metric-name: "Canary Leak Rate"
+  hactu8.target: "lab"
+  hactu8.port: "5405"
   objective: Demonstrate injection through a tool's error channel past a happy-path-only screen
   version: 2026.1
 ---

@@ -14,6 +14,12 @@ description: >-
   to test.
 license: MIT
 metadata:
+  hactu8.owasp: "LLM05:2026"
+  hactu8.risk: "Data and Model Poisoning"
+  hactu8.metric: "PSR"
+  hactu8.metric-name: "Poison Success Rate"
+  hactu8.target: "lab"
+  hactu8.port: "5205"
   objective: Demonstrate RAG Knowledge Base and Artifact Poisoning (Scenario #1 & #6)
   version: 2026.2
 ---

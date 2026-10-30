@@ -1,0 +1,115 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://owasp.org/www-project-hactu8/schemas/result/v1.json",
+  "title": "HACTU8 Result v1",
+  "description": "One run of one HACTU8 skill: four acts (baseline, attack, impact, remediation), each item scored GREEN / YELLOW / RED.",
+  "type": "object",
+  "required": ["schema", "run_id", "hactu8_version", "started_at", "skill", "target", "model", "classifier", "acts", "summary", "exit_code"],
+  "properties": {
+    "schema": { "const": "hactu8.result/v1" },
+    "run_id": { "type": "string", "pattern": "^[0-9]{8}T[0-9]{6}Z-[a-z0-9-]+$" },
+    "hactu8_version": { "type": "string" },
+    "started_at": { "type": "string", "format": "date-time" },
+    "finished_at": { "type": ["string", "null"], "format": "date-time" },
+    "duration_ms": { "type": ["integer", "null"], "minimum": 0 },
+    "skill": {
+      "type": "object",
+      "required": ["id", "name", "owasp", "metric"],
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "version": { "type": "string" },
+        "owasp": { "type": "string", "description": "OWASP id, e.g. LLM01:2026, ASI03:2026, or AGX01" },
+        "risk": { "type": "string" },
+        "metric": {
+          "type": "object",
+          "required": ["id", "name"],
+          "properties": { "id": { "type": "string" }, "name": { "type": "string" } }
+        }
+      }
+    },
+    "target": {
+      "type": "object",
+      "required": ["kind", "id"],
+      "properties": {
+        "kind": { "enum": ["lab", "url", "mcp", "lamb"] },
+        "id": { "type": "string" },
+        "port": { "type": "string" },
+        "url": { "type": "string" }
+      }
+    },
+    "model": {
+      "type": "object",
+      "required": ["backend"],
+      "properties": { "backend": { "type": "string" }, "model": { "type": "string" } }
+    },
+    "classifier": {
+      "type": "object",
+      "required": ["name"],
+      "properties": { "name": { "type": "string" } }
+    },
+    "acts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["act", "phase", "title", "notes", "items", "metric"],
+        "properties": {
+          "act": { "type": "integer", "minimum": 1, "maximum": 4 },
+          "phase": { "enum": ["baseline", "attack", "impact", "remediation", "other"] },
+          "title": { "type": "string" },
+          "notes": { "type": "array", "items": { "type": "string" } },
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["id", "prompt", "targeted", "verdict", "confidence"],
+              "properties": {
+                "id": { "type": "string" },
+                "prompt": { "type": "string" },
+                "targeted": { "type": "boolean", "description": "false for control items that must stay GREEN" },
+                "verdict": { "enum": ["GREEN", "YELLOW", "RED"] },
+                "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+                "reason": { "type": "string" },
+                "evidence": { "type": "string" }
+              }
+            }
+          },
+          "reported_rate": { "type": ["number", "null"] },
+          "metric": {
+            "type": "object",
+            "required": ["targeted", "overall"],
+            "properties": {
+              "targeted": { "$ref": "#/$defs/rate" },
+              "overall": { "$ref": "#/$defs/rate" }
+            }
+          }
+        }
+      }
+    },
+    "summary": {
+      "type": "object",
+      "required": ["baseline_rate", "impact_rate", "remediated_rate", "story_holds", "asserted", "status"],
+      "properties": {
+        "baseline_rate": { "type": ["number", "null"] },
+        "impact_rate": { "type": ["number", "null"] },
+        "remediated_rate": { "type": ["number", "null"] },
+        "story_holds": { "type": "boolean" },
+        "asserted": { "type": "boolean", "description": "true for deterministic backends, where the story is checked" },
+        "status": { "enum": ["pass", "fail", "reported", "error"] }
+      }
+    },
+    "exit_code": { "type": ["integer", "null"] },
+    "output": { "type": "string", "description": "Tail of the raw run output" }
+  },
+  "$defs": {
+    "rate": {
+      "type": "object",
+      "required": ["red", "total", "rate"],
+      "properties": {
+        "red": { "type": "integer", "minimum": 0 },
+        "total": { "type": "integer", "minimum": 0 },
+        "rate": { "type": "number", "minimum": 0, "maximum": 100 }
+      }
+    }
+  }
+}

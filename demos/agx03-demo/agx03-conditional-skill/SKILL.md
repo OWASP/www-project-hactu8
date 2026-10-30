@@ -13,6 +13,12 @@ description: >-
   test.
 license: MIT
 metadata:
+  hactu8.owasp: "AGX03"
+  hactu8.risk: "Conditional Rug-Pull"
+  hactu8.metric: "CLR"
+  hactu8.metric-name: "Canary Leak Rate"
+  hactu8.target: "lab"
+  hactu8.port: "5403"
   objective: Demonstrate a count-gated rug-pull past a screen-once gateway, and the every-return fix
   version: 2026.1
 ---

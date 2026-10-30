@@ -13,6 +13,12 @@ description: >-
   authorized to test.
 license: MIT
 metadata:
+  hactu8.owasp: "LLM04:2026"
+  hactu8.risk: "Supply Chain"
+  hactu8.metric: "CTR"
+  hactu8.metric-name: "Compromised Tool Rate"
+  hactu8.target: "lab"
+  hactu8.port: "5204"
   objective: Demonstrate tool supply-chain compromise via a third-party registry
   version: 2026.1
 ---

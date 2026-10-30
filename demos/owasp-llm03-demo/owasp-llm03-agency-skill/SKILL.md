@@ -13,6 +13,12 @@ description: >-
   against systems you are not authorized to test.
 license: MIT
 metadata:
+  hactu8.owasp: "LLM03:2026"
+  hactu8.risk: "Excessive Agency"
+  hactu8.metric: "UAR"
+  hactu8.metric-name: "Unauthorized Action Rate"
+  hactu8.target: "lab"
+  hactu8.port: "5203"
   objective: Demonstrate tool calls outside user intent and the agency gate that stops them
   version: 2026.1
 ---

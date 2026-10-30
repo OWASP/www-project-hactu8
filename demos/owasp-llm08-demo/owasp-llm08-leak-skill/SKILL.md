@@ -14,6 +14,12 @@ description: >-
   authorized to test.
 license: MIT
 metadata:
+  hactu8.owasp: "LLM08:2026"
+  hactu8.risk: "Hidden Context Exposure"
+  hactu8.metric: "PLR"
+  hactu8.metric-name: "Prompt Leak Rate"
+  hactu8.target: "lab"
+  hactu8.port: "5208"
   objective: Demonstrate hidden-context exposure from a secret-bearing system prompt
   version: 2026.1
 ---

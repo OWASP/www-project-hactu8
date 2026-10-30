@@ -376,3 +376,6 @@ spikes/iac-prototype/iac-copilot-api/data/chroma/bb66dd33-b886-4e4b-84d2-c9aa973
 spikes/iac-prototype/iac-copilot-api/data/chroma/bb66dd33-b886-4e4b-84d2-c9aa973c54b1/index_metadata.pickle
 spikes/iac-prototype/iac-copilot-api/data/chroma/bb66dd33-b886-4e4b-84d2-c9aa973c54b1/length.bin
 spikes/iac-prototype/iac-copilot-api/data/chroma/bb66dd33-b886-4e4b-84d2-c9aa973c54b1/link_lists.bin
+
+# HACTU8 local results
+.hactu8/

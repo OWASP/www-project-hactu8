@@ -14,6 +14,12 @@ description: >-
   to test.
 license: MIT
 metadata:
+  hactu8.owasp: "AGX06"
+  hactu8.risk: "Runtime Result Injection"
+  hactu8.metric: "CLR"
+  hactu8.metric-name: "Canary Leak Rate"
+  hactu8.target: "lab"
+  hactu8.port: "5406"
   objective: Demonstrate injection through a tool's runtime return past a static-definition scan
   version: 2026.1
 ---

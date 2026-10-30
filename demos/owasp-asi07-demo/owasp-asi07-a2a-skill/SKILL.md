@@ -15,6 +15,12 @@ description: >-
   red-teaming only — never against systems you are not authorized to test.
 license: MIT
 metadata:
+  hactu8.owasp: "ASI07:2026"
+  hactu8.risk: "Insecure Inter-Agent Communication"
+  hactu8.metric: "FMAR"
+  hactu8.metric-name: "Forged Message Acceptance Rate"
+  hactu8.target: "lab"
+  hactu8.port: "5307"
   objective: Demonstrate spoofed and replayed inter-agent messages and the signing that stops them
   version: 2026.1
 ---
