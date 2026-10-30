@@ -1,119 +1,49 @@
-# HACTU8 Reference Application
+# OWASP HACTU8
 
-<!-- TODO: create a working readme.md to document, setup, run and debug the reference solution -->
-This repository contains the core specifications, architecture, and starter code for the HACTU8 reference application—a modular platform for secure AI and LLM system testing, scanning, and assurance.
+HACTU8 turns attacks on AI systems into repeatable assurance tests: run a skill against a target, measure the impact, apply the mitigation, and prove the fix with the same suite. It is an [OWASP Incubator project](https://owasp.org/www-project-hactu8/).
 
----
+This `phase1-mvp` branch holds the Phase 1 build. The `main` branch is the OWASP project website.
 
-## 📦 Project Structure
+## Status
+
+Phase 1 MVP, demo on 2026-11-13. See the wiki:
+
+- [Phase 1 MVP Plan](https://github.com/OWASP/www-project-hactu8/wiki/Phase-1-MVP-Plan)
+- [Roadmap](https://github.com/OWASP/www-project-hactu8/wiki/Roadmap)
+- [Decision Log](https://github.com/OWASP/www-project-hactu8/wiki/Decision-Log)
+- [Market Comparables](https://github.com/OWASP/www-project-hactu8/wiki/Market-Comparables)
+
+## Layout
 
 ```text
-reference-solution/
-├── platform/       # UI, prompt workbench, registry browser, notification center
-├── engine/         # Orchestration engine, agent scheduler, job runner
-├── services/       # Identity, registry, plugin runtime, providers
-├── scan/           # LLM NMAP scanner (signature-based/heuristic)
-├── specs/          # Architecture specs, Top 10 test templates, model contracts
-└── README.md              # Project description (this file)
+demos/      Self-contained OWASP labs (LLM01-10, ASI01-10, AGX01-06), each a portable skill
+spikes/     Prototypes: IAC console (iac-prototype), early platform UX, legacy skills
+assets/     Logos and images
+scripts/    Project automation (issue seeding)
 ```
 
----
+Coming in Phase 1: `hactu8/` (core CLI, API, runner, reports), `lamb/` (the sacrificial target), and container files.
 
-## 🎯 Purpose
+## Quick start (today)
 
-The HACTU8 platform provides:
-
-- A reference architecture for securing LLM systems
-- Drop-in support for multiple model and RAG providers
-- Tools for red-teaming, assurance, and continuous testing
-
-It is an OWASP Incubator project. See: [https://owasp.org/www-project-hactu8/](https://owasp.org/www-project-hactu8/)
-
----
-
-<!-- TODO: rewrite 
-## 🔧 Interface Contracts (Examples, tbd)
-
-### Model Provider Interface
-
-```python
-class ModelProvider:
-    def identify(self) -> dict:
-        """Returns metadata: name, version, vendor"""
-        pass
-
-    def execute_prompt(self, prompt: str, context: Optional[dict] = None) -> str:
-        """Sends prompt to model and returns result"""
-        pass
-
-    def get_limits(self) -> dict:
-        """Returns model-specific constraints like max tokens"""
-        pass
-```
-
-### RAG Provider Interface
-
-```python
-class RAGProvider:
-    def retrieve(self, query: str) -> List[str]:
-        """Returns context snippets given a query"""
-        pass
-
-    def ingest(self, documents: List[str], metadata: Optional[dict] = None):
-        """Ingests documents into retrieval store"""
-        pass
-
-    def configure(self, settings: dict):
-        """Sets up indexing parameters, rerankers, etc."""
-        pass
-```
-
----
-
-## ⚙️ Quickstart Boilerplate
+Each lab runs with the Python standard library and a deterministic offline model.
 
 ```bash
-# Clone and initialize modules
-$ git clone https://github.com/owasp/reference.git
-$ cd reference
-$ make init  # Or use scripts/setup.sh
+git clone -b phase1-mvp https://github.com/OWASP/www-project-hactu8.git
+cd www-project-hactu8/demos/owasp-llm01-demo
+python run_demo.py
 ```
 
----
+Real models are optional: `--backend ollama --model llama3.2:3b`, or `openrouter` with `OPENROUTER_API_KEY`. See [demos/README.md](demos/README.md).
 
-## 🛠 Recommended Tools
+## Safety
 
-- Python 3.13
-- FastAPI or NodeJS for services
-- React/SvelteKit for platform
-- Redis/PostgreSQL/TimescaleDB for storage
-- Prefect or Celery for orchestration
+Every target is insecure by design and binds to `127.0.0.1`. Use only against systems you are authorized to test. Shipped payloads are inert placeholders.
 
----
+## Contributing
 
-## 📚 Documentation
+Pick an open issue under milestone [P1:M3 Running Demo](https://github.com/OWASP/www-project-hactu8/milestone/3) and open a pull request against `phase1-mvp`.
 
-See [`specs/`](./specs/) for:
+## License
 
-- OWASP LLM Top 10 test strategies
-- System diagrams (Mermaid, PNG, PDF)
-- Use cases, user roles, deployment profiles
-
----
-
-## 🤝 Contributions
-
-We welcome contributions to:
-
-- Improve test batteries
-- Add provider support
-- Extend plugin APIs
-
-Use pull requests with spec updates and test cases.
-
----
--->
-
-## 🛡️ License
-
-[MIT](LICENSE)
+MIT, as declared in each lab's `SKILL.md`. The root license file is still to be added.
