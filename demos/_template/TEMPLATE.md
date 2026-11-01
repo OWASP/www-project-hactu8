@@ -235,8 +235,9 @@ notes below describe its original version.)
 - [ ] References cite sources and mark DEMO TARGET rows
 - [ ] Ports, flags and exit codes consistent everywhere
 - [ ] `web/` copied unchanged; console API (§12) implemented and tested
-- [ ] `providers.py` copied unchanged; `ProviderModel`, `set_backend`, `/api/models`, `/api/backend` + `--backend` (§13) implemented and tested
-- [ ] Any text screen uses `protectogw/` copied unchanged, with the lab directive as a `Policy` extra rule (§14)
+- [ ] `providers.py` vendored by `scripts/vendor.py`; `ProviderModel`, `set_backend`, `/api/models`, `/api/backend` + `--backend` (§13) implemented and tested
+- [ ] Any text screen uses `protectogw/` vendored by `scripts/vendor.py`, with the lab directive as a `Policy` extra rule (§14)
+- [ ] `run_demo.py` keeps the adapter output shape and calls `evidence(...)` after each item line (§15); `python -m hactu8 run <id>` passes
 
 ## 12. Lab console (web/)
 
@@ -278,9 +279,12 @@ Reference implementation: `owasp-llm01-demo/owasp-llm01-injection-skill/vulnerab
 
 `echo`, the demo's own deterministic model, is the default and the only
 backend the tests and the story assertions use. The name follows AgenticGoat;
-`stub` is accepted as an alias. `_template/providers.py` is a port of
-AgenticGoat's provider layer, standard library only. Copy it into
-`<skill-slug>/` **unchanged**. It offers `ollama`, `llamacpp` and `openrouter`,
+`stub` is accepted as an alias. `providers.py` is a port of AgenticGoat's
+provider layer, standard library only. The canonical copy is
+`hactu8/providers.py`; `python scripts/vendor.py` copies it **unchanged** into
+`_template/` and every `<skill-slug>/` (edit it there, never in a lab). It
+offers `ollama`, `llamacpp` and `openrouter` in the console, plus `anthropic`
+and `openai` from the command line (`ANTHROPIC_API_KEY`, `OPENAI_API_KEY`),
 model listing for the console (`available_models`), embeddings on the local
 servers (`Provider.embed`, used by LLM05's `src/` pipeline), and per-process
 limits `LAB_MAX_CALLS` and `LAB_MAX_TOKENS`.
@@ -329,8 +333,9 @@ guarded token), use **protectogw** rather than a bespoke regex.
 - **What it is.** protectogw is AgenticGoat's screening core: a normaliser and
   de-obfuscation folds, a ruleset, an exfiltration indicator taxonomy, a canary
   check, `Policy`/`Rule` configuration, and the `Session` cross-read screen.
-- **How to ship it.** `_template/protectogw/` is copied into `<skill-slug>/`
-  **unchanged**, like `providers.py` and `web/`.
+- **How to ship it.** The canonical copy is `hactu8/protectogw/`;
+  `python scripts/vendor.py` copies it into `_template/` and every
+  `<skill-slug>/` that has one, **unchanged**, like `providers.py`.
 - **The lab's placeholder directive.** Keep it caught with
   `Policy(extra_rules=(Rule("lab_directive", ...),))`. protectogw matches rules
   against *normalised* lowercase text, and its leet fold turns `@` into `a`, so
@@ -349,3 +354,21 @@ guarded token), use **protectogw** rather than a bespoke regex.
 Licence: protectogw has no licence chosen yet (its `SECURITY.md` §7 lists this
 as a release blocker). Settle that before these labs are published outside the
 project.
+
+## 15. Output the hactu8 adapter parses (run_demo.py)
+
+`hactu8/adapters/lab.py` reads `run_demo.py` stdout, so keep this shape:
+
+- Act headers `[*] Act N — <title>` (and `[defense] Act 4 — Remediation`).
+- One item line per suite entry: four spaces, the stoplight icon, the status
+  padded to six, the item text, and two spaces plus `(control)` for controls.
+- The rate line: four spaces, then `<Metric Name>: <n>% targeted`.
+- Attack and defence notes as `[+] ...` and `[defense] ...`.
+
+Evidence: right after each item line, call `evidence(<what the model
+produced>)`: the answer string, or the tool calls, steps or result the lab
+scored. The helper prints nothing unless `HACTU8_EVIDENCE=1`, which the adapter
+sets, so the terminal output is unchanged. When set, it prints one line: eight
+spaces, `evidence:`, a space, then a JSON string (non-strings are JSON-encoded,
+truncated to 2000 characters). The `llm-judge` and `jev` classifiers score that
+evidence. Copy the helper from any lab's `run_demo.py`.

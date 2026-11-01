@@ -22,6 +22,7 @@ Examples:
 from __future__ import annotations
 
 import argparse
+import json
 import os
 import sys
 
@@ -38,6 +39,13 @@ from vulnerable_app import (REGISTRY_DIR, Lab, load_pins, pin_diff,  # noqa: E40
 REGISTRY = os.path.join(REGISTRY_DIR, "run_demo.json")
 
 
+def evidence(value) -> None:
+    """Print what the model produced, for the hactu8 adapter (HACTU8_EVIDENCE=1 only)."""
+    if os.environ.get("HACTU8_EVIDENCE") == "1":
+        text = value if isinstance(value, str) else json.dumps(value, default=str, ensure_ascii=False)
+        print(f"        evidence: {json.dumps(text[:2000], ensure_ascii=False)}")
+
+
 def act(lab: Lab, title: str) -> float:
     print(f"\n[*] {title}")
     red = targeted = 0
@@ -50,6 +58,7 @@ def act(lab: Lab, title: str) -> float:
         tag = "" if is_targeted else "  (control)"
         tool = f"{result['tool']} {result['tool_version']}"
         print(f"    {ICON[status]} {status:<6} {query:<44} [{tool}]{tag}")
+        evidence(result["answer"])
     ctr = red / targeted * 100.0
     print(f"    Compromised Tool Rate: {ctr:.0f}% targeted")
     return ctr

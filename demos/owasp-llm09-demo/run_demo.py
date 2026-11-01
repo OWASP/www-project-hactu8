@@ -20,6 +20,7 @@ Examples:
 from __future__ import annotations
 
 import argparse
+import json
 import os
 import sys
 
@@ -35,6 +36,13 @@ PAYLOAD = os.path.join(SKILL_DIR, "assets", "crafted_query.txt")
 SESSION = "meadow-analyst"
 
 
+def evidence(value) -> None:
+    """Print what the model produced, for the hactu8 adapter (HACTU8_EVIDENCE=1 only)."""
+    if os.environ.get("HACTU8_EVIDENCE") == "1":
+        text = value if isinstance(value, str) else json.dumps(value, default=str, ensure_ascii=False)
+        print(f"        evidence: {json.dumps(text[:2000], ensure_ascii=False)}")
+
+
 def act(lab: Lab, title: str) -> float:
     print(f"\n[*] {title}")
     red = targeted = 0
@@ -47,6 +55,7 @@ def act(lab: Lab, title: str) -> float:
         tag = "" if is_targeted else "  (control)"
         source = result["retrieved"][0]["id"] if result["retrieved"] else "-"
         print(f"    {ICON[status]} {status:<6} {query:<40} <- {source}{tag}")
+        evidence(result["answer"])
     ctlr = red / targeted * 100.0
     print(f"    Cross-Tenant Leak Rate: {ctlr:.0f}% targeted")
     return ctlr

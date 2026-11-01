@@ -39,17 +39,26 @@ from vulnerable_app import (  # noqa: E402
 )
 
 
+def evidence(value) -> None:
+    """Print what the model produced, for the hactu8 adapter (HACTU8_EVIDENCE=1 only)."""
+    if os.environ.get("HACTU8_EVIDENCE") == "1":
+        text = value if isinstance(value, str) else json.dumps(value, default=str, ensure_ascii=False)
+        print(f"        evidence: {json.dumps(text[:2000], ensure_ascii=False)}")
+
+
 def act(lab: Lab, title: str) -> float:
     print(f"\n[*] {title}")
     red = targeted = red_all = 0
     for query, is_targeted in SUITE:
-        status = classify(lab.query(query)["answer"])
+        answer = lab.query(query)["answer"]
+        status = classify(answer)
         red_all += status == "RED"
         if is_targeted:
             targeted += 1
             red += status == "RED"
         tag = "" if is_targeted else "  (control)"
         print(f"    {ICON[status]} {status:<6} {query}{tag}")
+        evidence(answer)
     psr = red / targeted * 100.0
     print(f"    Poison Success Rate: {psr:.0f}% targeted, "
           f"{red_all / len(SUITE) * 100.0:.0f}% overall")

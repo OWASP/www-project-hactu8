@@ -20,6 +20,7 @@ Examples:
 from __future__ import annotations
 
 import argparse
+import json
 import os
 import sys
 
@@ -34,6 +35,13 @@ from vulnerable_app import Lab, screen_output  # noqa: E402
 PAYLOAD = os.path.join(SKILL_DIR, "assets", "poisoned_note.md")
 
 
+def evidence(value) -> None:
+    """Print what the model produced, for the hactu8 adapter (HACTU8_EVIDENCE=1 only)."""
+    if os.environ.get("HACTU8_EVIDENCE") == "1":
+        text = value if isinstance(value, str) else json.dumps(value, default=str, ensure_ascii=False)
+        print(f"        evidence: {json.dumps(text[:2000], ensure_ascii=False)}")
+
+
 def act(lab: Lab, title: str) -> float:
     print(f"\n[*] {title}")
     red = targeted = 0
@@ -45,6 +53,7 @@ def act(lab: Lab, title: str) -> float:
             red += status == "RED"
         tag = "" if is_targeted else "  (control)"
         print(f"    {ICON[status]} {status:<6} {label:<24} {describe(result)[:52]}{tag}")
+        evidence(result)
     usr = red / targeted * 100.0
     print(f"    Unsafe Sink Rate: {usr:.0f}% targeted")
     return usr

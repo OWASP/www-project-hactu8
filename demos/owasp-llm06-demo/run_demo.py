@@ -21,6 +21,7 @@ Examples:
 from __future__ import annotations
 
 import argparse
+import json
 import os
 import sys
 
@@ -32,6 +33,13 @@ sys.path.insert(0, os.path.join(SKILL_DIR, "scripts"))
 from evaluate_kpi import ICON, SUITE, classify  # noqa: E402
 from run_consumption import PAYLOADS, payload_path  # noqa: E402
 from vulnerable_app import Lab, scan_page  # noqa: E402
+
+
+def evidence(value) -> None:
+    """Print what the model produced, for the hactu8 adapter (HACTU8_EVIDENCE=1 only)."""
+    if os.environ.get("HACTU8_EVIDENCE") == "1":
+        text = value if isinstance(value, str) else json.dumps(value, default=str, ensure_ascii=False)
+        print(f"        evidence: {json.dumps(text[:2000], ensure_ascii=False)}")
 
 
 def act(lab: Lab, title: str, client: str) -> float:
@@ -50,6 +58,7 @@ def act(lab: Lab, title: str, client: str) -> float:
         print(f"    {ICON[status]} {status:<6} {c['input_tokens'] + c['output_tokens']:>6} tok "
               f"{c['tool_calls']:>3} calls {c['agent_steps']:>2} steps "
               f"${result['cost_usd']:.4f}  {query}{tag}")
+        evidence(result)
     bbr = red / targeted * 100.0
     print(f"    Budget Breach Rate: {bbr:.0f}% targeted; simulated spend ${spend:.4f}")
     return bbr

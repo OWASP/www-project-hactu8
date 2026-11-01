@@ -22,6 +22,7 @@ Examples:
 from __future__ import annotations
 
 import argparse
+import json
 import os
 import sys
 
@@ -37,6 +38,13 @@ from vulnerable_app import CATALOGUE_DIR, Lab, dry_run  # noqa: E402
 CATALOGUE = os.path.join(CATALOGUE_DIR, "run_demo.json")
 
 
+def evidence(value) -> None:
+    """Print what the model produced, for the hactu8 adapter (HACTU8_EVIDENCE=1 only)."""
+    if os.environ.get("HACTU8_EVIDENCE") == "1":
+        text = value if isinstance(value, str) else json.dumps(value, default=str, ensure_ascii=False)
+        print(f"        evidence: {json.dumps(text[:2000], ensure_ascii=False)}")
+
+
 def act(lab: Lab, title: str) -> float:
     print(f"\n[*] {title}")
     red = targeted = 0
@@ -50,6 +58,7 @@ def act(lab: Lab, title: str) -> float:
         loaded = ", ".join(f"{s['component']} {s['version']}" if s["status"] == "loaded"
                            else f"{s['requested']} BLOCKED" for s in steps)
         print(f"    {ICON[status]} {status:<6} {task:<24} [{loaded}]{tag}")
+        evidence(steps)
     uclr = red / targeted * 100.0
     print(f"    Untrusted Component Load Rate: {uclr:.0f}% targeted")
     return uclr

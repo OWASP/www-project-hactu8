@@ -12,19 +12,25 @@ Every lab prints the same shape (``demos/_template/TEMPLATE.md``):
     [defense] mitigation step
     [*] Act 4 — Re-run with mitigations
 
-so one parser covers all labs without changing them.
+so one parser covers all labs. With ``HACTU8_EVIDENCE=1`` (set by ``run``) each
+item line is followed by what the model produced, as one JSON string:
+
+        evidence: "<answer, tool calls or steps>"
+
+Items are classified after parsing, so a classifier sees the evidence.
 """
 
 from __future__ import annotations
 
+import json
 import os
 import re
 import subprocess
 import sys
 import time
-from typing import List, Optional
+from typing import List, Optional, Union
 
-from hactu8.classify import get_classifier
+from hactu8.classify import Classifier, get_classifier
 from hactu8.result import PHASES, envelope, now_iso, rate, summarize
 
 ACT_RE = re.compile(r"^\[\*\] Act (\d) — (.+)$")
@@ -32,14 +38,16 @@ DEFENSE_ACT_RE = re.compile(r"^\[defense\] Act (\d) — (.+)$")
 ITEM_RE = re.compile(r"^ {4}\S+ (GREEN|YELLOW|RED)\s+(.+?)(  \(control\))?$")
 RATE_RE = re.compile(r"^ {4}(.+?): (\d+(?:\.\d+)?)% targeted")
 NOTE_RE = re.compile(r"^\[(\+|defense)\] (.+)$")
+EVIDENCE_RE = re.compile(r'^ {8}evidence: (".*")$')
 
 
 def _slug(text: str) -> str:
     return re.sub(r"[^a-z0-9]+", "-", text.lower()).strip("-")[:48]
 
 
-def parse(output: str, classifier_name: str = "keyword") -> List[dict]:
-    classifier = get_classifier(classifier_name)
+def parse(output: str, classifier: Union[str, Classifier] = "keyword", context: Optional[dict] = None) -> List[dict]:
+    if isinstance(classifier, str):
+        classifier = get_classifier(classifier)
     acts: List[dict] = []
     current: Optional[dict] = None
 
@@ -58,16 +66,19 @@ def parse(output: str, classifier_name: str = "keyword") -> List[dict]:
             current = open_act(int(m.group(1)), m.group(2).strip())
         elif m := DEFENSE_ACT_RE.match(line):
             current = open_act(int(m.group(1)), m.group(2).strip())
+        elif current is not None and (m := EVIDENCE_RE.match(line)):
+            if current["items"] and "evidence" not in current["items"][-1]:
+                try:
+                    current["items"][-1]["evidence"] = str(json.loads(m.group(1)))
+                except ValueError:
+                    pass
         elif current is not None and (m := ITEM_RE.match(line)):
             prompt = m.group(2).strip()
-            v = classifier.classify(prompt, lab_verdict=m.group(1))
             current["items"].append({
                 "id": f"{len(current['items']) + 1:02d}-{_slug(prompt)}",
                 "prompt": prompt,
                 "targeted": m.group(3) is None,
-                "verdict": v.verdict,
-                "confidence": v.confidence,
-                "reason": v.reason,
+                "lab_verdict": m.group(1),
             })
         elif current is not None and (m := RATE_RE.match(line)):
             current["reported_rate"] = float(m.group(2))
@@ -77,17 +88,29 @@ def parse(output: str, classifier_name: str = "keyword") -> List[dict]:
                 current["notes"].append(note)
 
     for act in acts:
+        for item in act["items"]:
+            v = classifier.classify(item["prompt"], item.get("evidence", ""), item["lab_verdict"],
+                                    {**(context or {}), "act": act["act"], "phase": act["phase"],
+                                     "targeted": item["targeted"]})
+            item.update(verdict=v.verdict, confidence=v.confidence, reason=v.reason)
+            if v.source:
+                item["classified_by"] = v.source
         act["metric"] = {"targeted": rate(act["items"], True), "overall": rate(act["items"], False)}
     acts.sort(key=lambda a: a["act"])
     return acts
 
 
-def run(skill, backend: str = "echo", model: str = "", classifier: str = "keyword", timeout: int = 300) -> dict:
-    doc = envelope(skill, backend, model, classifier)
+def run(skill, backend: str = "echo", model: str = "", classifier: Union[str, Classifier] = "keyword",
+        timeout: int = 300, tier: str = "") -> dict:
+    if isinstance(classifier, str):
+        classifier = get_classifier(classifier)
+    doc = envelope(skill, backend, model, classifier.name)
+    if tier:
+        doc["model"]["tier"] = tier
     cmd = [sys.executable, "run_demo.py", "--backend", backend]
     if model:
         cmd += ["--model", model]
-    env = dict(os.environ, PYTHONIOENCODING="utf-8", PYTHONDONTWRITEBYTECODE="1")
+    env = dict(os.environ, PYTHONIOENCODING="utf-8", PYTHONDONTWRITEBYTECODE="1", HACTU8_EVIDENCE="1")
     start = time.monotonic()
     try:
         proc = subprocess.run(cmd, cwd=skill.lab_dir, capture_output=True, text=True,
@@ -97,10 +120,11 @@ def run(skill, backend: str = "echo", model: str = "", classifier: str = "keywor
         output, code = (exc.stdout or "") if isinstance(exc.stdout, str) else "", 124
     doc["duration_ms"] = int((time.monotonic() - start) * 1000)
     doc["finished_at"] = now_iso()
-    doc["acts"] = parse(output, classifier)
+    doc["acts"] = parse(output, classifier, {"risk": skill.risk, "metric": skill.metric_name})
+    doc["classifier"] = classifier.info()
     doc["summary"] = summarize(doc["acts"], backend)
     doc["exit_code"] = code
     if code not in (0,) and doc["summary"]["status"] == "pass":
         doc["summary"]["status"] = "fail"
-    doc["output"] = output[-8000:]
+    doc["output"] = "\n".join(l for l in output.splitlines() if not EVIDENCE_RE.match(l))[-8000:]
     return doc

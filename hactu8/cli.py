@@ -1,9 +1,13 @@
 """hactu8 command line.
 
     hactu8 list [--json]
-    hactu8 run <skill...|all> [--backend echo] [--model M] [--classifier keyword] [--json]
+    hactu8 run <skill...|all> [--tier T | --backend B [--model M]] [--classifier C] [--json]
     hactu8 results [--json]
     hactu8 show <run_id|latest>
+    hactu8 router [--json]
+
+Without --backend, the model under test comes from the router (hactu8.yaml,
+role ``target``; deterministic echo by default). --tier picks a tier instead.
 
 Exit code: 0 when every run passes (or is reported for a real model), 1 otherwise.
 """
@@ -15,8 +19,10 @@ import json
 import sys
 from typing import List
 
-from hactu8 import __version__, catalog, store
+from hactu8 import __version__, catalog, config, store
 from hactu8.adapters import lab
+from hactu8.classify import get_classifier
+from hactu8.router import Router, RouterError
 
 
 def _print_table(rows: List[List[str]], headers: List[str]) -> None:
@@ -42,10 +48,40 @@ def cmd_list(args) -> int:
     return 0
 
 
+def _run_routed(skill, args, router: Router, classifier) -> dict:
+    """Run one skill. A routed run that cannot complete escalates to the next candidate."""
+    if args.backend:
+        return lab.run(skill, backend=args.backend, model=args.model, classifier=classifier, timeout=args.timeout)
+    role = args.tier or "target"
+    cand = router.resolve(role)
+    failed: List[str] = []
+    while True:
+        doc = lab.run(skill, backend=cand.backend, model=args.model or cand.model,
+                      classifier=classifier, timeout=args.timeout, tier=cand.tier)
+        if failed:
+            doc["model"]["escalated_from"] = failed
+        nxt = router.fallbacks(role, cand) if doc["summary"]["status"] == "error" else []
+        if not nxt:
+            return doc
+        failed.append(cand.label)
+        if not args.json:
+            print(f"  {cand.label} could not complete the run; escalating to {nxt[0].label}", flush=True)
+        cand = nxt[0]
+
+
 def cmd_run(args) -> int:
     ids = [s.id for s in catalog.discover()] if args.skills == ["all"] else args.skills
     failed = 0
     docs = []
+    cfg = config.load()
+    router = Router.from_config(cfg)
+    try:
+        classifier = get_classifier(args.classifier or (cfg.get("classifiers") or {}).get("default", "keyword"),
+                                    cfg, router)
+        label = args.backend or router.resolve(args.tier or "target").label
+    except (KeyError, RuntimeError, RouterError) as exc:
+        print(f"error: {exc}", file=sys.stderr)
+        return 2
     for skill_id in ids:
         try:
             skill = catalog.get(skill_id)
@@ -54,8 +90,8 @@ def cmd_run(args) -> int:
             failed += 1
             continue
         if not args.json:
-            print(f"running {skill.id} ({skill.owasp} {skill.risk}) on {args.backend}{' ' + args.model if args.model else ''} ...", flush=True)
-        doc = lab.run(skill, backend=args.backend, model=args.model, classifier=args.classifier, timeout=args.timeout)
+            print(f"running {skill.id} ({skill.owasp} {skill.risk}) on {label} ...", flush=True)
+        doc = _run_routed(skill, args, router, classifier)
         path = store.save(doc)
         docs.append(doc)
         s = doc["summary"]
@@ -97,6 +133,32 @@ def cmd_show(args) -> int:
     return 0
 
 
+def cmd_router(args) -> int:
+    try:
+        router = Router.from_config()
+    except (config.ConfigError, ValueError) as exc:
+        print(f"error: {exc}", file=sys.stderr)
+        return 2
+    rows = router.describe()
+    if args.json:
+        print(json.dumps({"config": str(config.find_config() or ""), "roles": router.roles,
+                          "max_tier": router.max_tier, "on_error": router.on_error, "candidates": rows}, indent=2))
+        return 0
+    print(f"config: {config.find_config() or 'built-in defaults'}")
+    print(f"roles: {', '.join(f'{k}={v}' for k, v in router.roles.items())}; "
+          f"auto-escalation up to {router.max_tier}; on_error={router.on_error}\n")
+    _print_table([[r["tier"] + ("" if r["auto"] else " (opt-in)"), r["backend"], r["model"] or "-",
+                   "yes" if r["available"] else "no", r["reason"]] for r in rows],
+                 ["TIER", "BACKEND", "MODEL", "AVAILABLE", "WHY"])
+    for role in router.roles:
+        try:
+            print(f"\n{role}: {router.resolve(role).label}", end="")
+        except RouterError as exc:
+            print(f"\n{role}: none ({exc})", end="")
+    print()
+    return 0
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="hactu8", description="OWASP HACTU8 assurance test runner")
     parser.add_argument("--version", action="version", version=f"hactu8 {__version__}")
@@ -108,9 +170,11 @@ def build_parser() -> argparse.ArgumentParser:
 
     p = sub.add_parser("run", help="run one or more skills ('all' for every skill)")
     p.add_argument("skills", nargs="+")
-    p.add_argument("--backend", default="echo", help="echo (default) | ollama | llamacpp | openrouter")
+    p.add_argument("--backend", default="", help="echo | ollama | llamacpp | openrouter | anthropic | openai "
+                   "(default: from the router)")
     p.add_argument("--model", default="")
-    p.add_argument("--classifier", default="keyword")
+    p.add_argument("--tier", default="", help="router tier for the model under test: deterministic | local | cloud")
+    p.add_argument("--classifier", default="", help="keyword (default) | llm-judge | jev")
     p.add_argument("--timeout", type=int, default=300)
     p.add_argument("--json", action="store_true")
     p.set_defaults(func=cmd_run)
@@ -122,6 +186,10 @@ def build_parser() -> argparse.ArgumentParser:
     p = sub.add_parser("show", help="print a stored result")
     p.add_argument("run_id")
     p.set_defaults(func=cmd_show)
+
+    p = sub.add_parser("router", help="show router tiers and which models are available")
+    p.add_argument("--json", action="store_true")
+    p.set_defaults(func=cmd_router)
     return parser
 
 

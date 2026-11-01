@@ -41,12 +41,22 @@
     "model": {
       "type": "object",
       "required": ["backend"],
-      "properties": { "backend": { "type": "string" }, "model": { "type": "string" } }
+      "properties": {
+        "backend": { "type": "string" },
+        "model": { "type": "string" },
+        "tier": { "type": "string", "description": "Router tier the model came from (hactu8.yaml)" },
+        "escalated_from": { "type": "array", "items": { "type": "string" }, "description": "Candidates that failed before this one" }
+      }
     },
     "classifier": {
       "type": "object",
       "required": ["name"],
-      "properties": { "name": { "type": "string" } }
+      "properties": {
+        "name": { "enum": ["keyword", "llm-judge", "jev"] },
+        "role": { "type": "string" },
+        "models": { "type": "array", "items": { "type": "string" }, "description": "Judge models that scored at least one item" },
+        "url": { "type": "string" }
+      }
     },
     "acts": {
       "type": "array",
@@ -70,7 +80,9 @@
                 "verdict": { "enum": ["GREEN", "YELLOW", "RED"] },
                 "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
                 "reason": { "type": "string" },
-                "evidence": { "type": "string" }
+                "evidence": { "type": "string", "description": "What the model under test produced (answer, tool calls or steps), truncated" },
+                "lab_verdict": { "enum": ["GREEN", "YELLOW", "RED"], "description": "The lab's own keyword verdict" },
+                "classified_by": { "type": "string", "description": "Backend that produced the verdict, e.g. keyword or ollama:llama3.2:3b" }
               }
             }
           },

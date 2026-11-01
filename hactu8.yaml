@@ -1,0 +1,50 @@
+# hactu8.yaml: model router and classifier settings.
+# Tiers are tried in escalation order: deterministic, then local, then cloud.
+# Within a tier, candidates are tried top to bottom; the first available one wins.
+# A candidate is available when its key is set (cloud) or its server answers (local).
+# Keys come from the environment only; never put a key in this file.
+
+router:
+  order: [deterministic, local, cloud]
+  # Automatic escalation never goes past this tier. Cloud sends lab prompts,
+  # including payloads, off the machine, so it is opt-in: pass --tier cloud,
+  # or raise this to cloud.
+  max_tier: local
+  # When a candidate fails (unreachable, error, or a run that cannot complete),
+  # try the next one ("escalate") or stop ("stop").
+  on_error: escalate
+  probe_timeout: 2
+
+# Which tier each role starts from.
+roles:
+  target: deterministic   # the model inside the lab under test
+  judge: local            # the model the llm-judge classifier uses
+
+tiers:
+  deterministic:
+    - backend: echo
+  local:
+    - backend: ollama
+      model: llama3.2:3b
+    - backend: llamacpp
+      model: local
+  cloud:
+    - backend: anthropic
+      model: claude-haiku-5-5
+    - backend: openai
+      model: gpt-4.1-mini
+    - backend: openrouter
+      model: meta-llama/llama-3.2-3b-instruct
+
+classifiers:
+  default: keyword
+  llm-judge:
+    max_calls: 1000       # per process; overrides LAB_MAX_CALLS for the judge
+    max_tokens: 1024      # per reply; thinking models need room before the JSON
+  jev:
+    # Optional hosted classifier. Off unless enabled here or HACTU8_ENABLE_JEV=1,
+    # and it needs the key named by key_env in the environment.
+    enabled: false
+    url: ""
+    key_env: JEV_API_KEY
+    timeout: 30

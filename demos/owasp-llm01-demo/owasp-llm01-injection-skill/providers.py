@@ -1,8 +1,9 @@
-"""providers.py — optional real-model backends for HACTU8 demo labs.
+"""providers.py — optional real-model backends for HACTU8 and its demo labs.
 
-Shared by every demo and copied unchanged into each skill folder (like web/).
-Ported from AgenticGoat's providers.py, so the env vars match that repo.
-Standard library only.
+Canonical copy: ``hactu8/providers.py``. ``scripts/vendor.py`` copies it
+unchanged into ``demos/_template/`` and every skill folder (like web/), so labs
+stay self-contained; edit it here, never in a lab. Ported from AgenticGoat's
+providers.py, so the env vars match that repo. Standard library only.
 
 Backends (selected per demo with ``<PREFIX>_BACKEND``; model with ``<PREFIX>_MODEL``;
 or switched at runtime from the web console through ``POST /api/backend``):
@@ -13,6 +14,8 @@ or switched at runtime from the web console through ``POST /api/backend``):
   llamacpp    local llama.cpp server. LLAMACPP_HOST (default http://localhost:8080).
   openrouter  remote. OPENROUTER_API_KEY required. The key is sent only in the
               Authorization header, never logged and never placed in a prompt.
+  anthropic   remote. ANTHROPIC_API_KEY required (x-api-key header only).
+  openai      remote. OPENAI_API_KEY required (Authorization header only).
 
 Safety and cost limits, applied to every non-stub call:
 
@@ -21,8 +24,8 @@ Safety and cost limits, applied to every non-stub call:
   <PROVIDER>_TIMEOUT per-call HTTP timeout in seconds (default 120), with
                      LAB_HTTP_TIMEOUT as the shared fallback
 
-The OpenRouter key comes from the environment only, as in AgenticGoat. It is
-never accepted from the console, a file, or a request; the console is told only
+API keys come from the environment only, as in AgenticGoat. They are never
+accepted from the console, a file, or a request; the console is told only
 whether a key is set.
 
 Choosing a remote backend means lab prompts, including the demo's payloads,
@@ -40,7 +43,11 @@ import urllib.request
 from dataclasses import dataclass
 from typing import List, Optional
 
+# BACKENDS is what the lab console offers; anthropic and openai are CLI and router only for now.
 BACKENDS = ("echo", "ollama", "llamacpp", "openrouter")
+ALL_BACKENDS = BACKENDS + ("anthropic", "openai")
+LOCAL = ("ollama", "llamacpp")
+KEY_ENV = {"openrouter": "OPENROUTER_API_KEY", "anthropic": "ANTHROPIC_API_KEY", "openai": "OPENAI_API_KEY"}
 OFFLINE = "echo"
 _ALIASES = {"stub": "echo"}
 MODEL_RE = re.compile(r"[A-Za-z0-9._:/@+-]{1,120}")
@@ -48,6 +55,8 @@ DEFAULT_MODELS = {
     "ollama": "llama3.2:3b",
     "llamacpp": "local",
     "openrouter": "meta-llama/llama-3.2-3b-instruct",
+    "anthropic": "claude-haiku-5-5",
+    "openai": "gpt-4.1-mini",
 }
 _ALLOWED_URL_SCHEMES = ("http://", "https://")
 
@@ -237,6 +246,76 @@ class OpenRouterProvider(Provider):
         return sorted(m["id"] for m in data.get("data", []) if m.get("id"))
 
 
+def _require_key(backend: str) -> _ProviderKey:
+    env = KEY_ENV[backend]
+    raw = os.environ.get(env, "").strip()
+    if not raw:
+        raise RuntimeError(
+            f"{backend} selected but {env} is not set. Export it in your shell; "
+            "never hard-code it or pass it through a prompt.")
+    return _ProviderKey(raw)
+
+
+class AnthropicProvider(Provider):
+    name = "anthropic"
+
+    def __init__(self) -> None:
+        super().__init__()
+        self._key = _require_key("anthropic")
+        self.timeout = http_timeout("ANTHROPIC_TIMEOUT")
+
+    def chat(self, messages: List[Message], *, model: str = "") -> str:
+        self._count_call()
+        system = "\n\n".join(m.content for m in messages if m.role == "system")
+        payload = {
+            "model": model or DEFAULT_MODELS["anthropic"],
+            "max_tokens": self.max_tokens,
+            "messages": [{"role": m.role, "content": m.content} for m in messages if m.role != "system"],
+        }
+        if system:
+            payload["system"] = system
+        if self._key.reveal() in json.dumps(payload):
+            raise RuntimeError("refusing to send: provider key found in request body")
+        data = self._post("https://api.anthropic.com/v1/messages", payload,
+                          {"x-api-key": self._key.reveal(), "anthropic-version": "2023-06-01"},
+                          self.timeout)
+        return "".join(b.get("text", "") for b in data.get("content", []) if b.get("type") == "text")
+
+    def list_models(self) -> List[str]:
+        data = self._get("https://api.anthropic.com/v1/models",
+                         {"x-api-key": self._key.reveal(), "anthropic-version": "2023-06-01"},
+                         min(self.timeout, 15.0))
+        return sorted(m["id"] for m in data.get("data", []) if m.get("id"))
+
+
+class OpenAIProvider(Provider):
+    name = "openai"
+
+    def __init__(self) -> None:
+        super().__init__()
+        self._key = _require_key("openai")
+        self.timeout = http_timeout("OPENAI_TIMEOUT")
+
+    def chat(self, messages: List[Message], *, model: str = "") -> str:
+        self._count_call()
+        payload = {
+            "model": model or DEFAULT_MODELS["openai"],
+            "messages": [{"role": m.role, "content": m.content} for m in messages],
+            "max_completion_tokens": self.max_tokens,
+        }
+        if self._key.reveal() in json.dumps(payload):
+            raise RuntimeError("refusing to send: provider key found in request body")
+        data = self._post("https://api.openai.com/v1/chat/completions", payload,
+                          {"Authorization": f"Bearer {self._key.reveal()}"}, self.timeout)
+        return data["choices"][0]["message"]["content"] or ""
+
+    def list_models(self) -> List[str]:
+        data = self._get("https://api.openai.com/v1/models",
+                         {"Authorization": f"Bearer {self._key.reveal()}"},
+                         min(self.timeout, 15.0))
+        return sorted(m["id"] for m in data.get("data", []) if m.get("id"))
+
+
 def normalize(name: str) -> str:
     """Canonical backend name: lower-case, ``stub`` -> ``echo``, empty -> echo."""
     name = (name or OFFLINE).strip().lower()
@@ -262,7 +341,11 @@ def get_provider(name: str) -> Optional[Provider]:
         return LlamaCppProvider()
     if name == "openrouter":
         return OpenRouterProvider()
-    raise ValueError(f"unknown backend {name!r}; use one of {', '.join(BACKENDS)}")
+    if name == "anthropic":
+        return AnthropicProvider()
+    if name == "openai":
+        return OpenAIProvider()
+    raise ValueError(f"unknown backend {name!r}; use one of {', '.join(ALL_BACKENDS)}")
 
 
 def describe(name: str, model: str) -> str:
@@ -288,5 +371,12 @@ def console_info() -> dict:
     return {
         "backends": list(BACKENDS),
         "default_models": dict(DEFAULT_MODELS),
-        "openrouter_key_set": bool(os.environ.get("OPENROUTER_API_KEY", "").strip()),
+        "openrouter_key_set": key_set("openrouter"),
+        "keys_set": {name: key_set(name) for name in KEY_ENV},
     }
+
+
+def key_set(backend: str) -> bool:
+    """True when ``backend`` needs no key, or its key is in the environment."""
+    env = KEY_ENV.get(normalize(backend))
+    return env is None or bool(os.environ.get(env, "").strip())
