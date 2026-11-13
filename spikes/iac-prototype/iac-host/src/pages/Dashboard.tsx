@@ -1,61 +1,39 @@
-import React, { Suspense } from 'react';
+import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
+import { hactu8Api } from '../services/hactu8Api';
 
-const StreamlitDashboard = React.lazy(() => import('iac_mfe_primary/StreamlitDashboard'));
+export default function Dashboard() {
+  const [counts, setCounts] = useState({ skills: 0, results: 0, targets: 0 });
+  const [error, setError] = useState('');
 
-type DashboardErrorBoundaryState = {
-  hasError: boolean;
-  message: string;
-};
+  useEffect(() => {
+    Promise.all([hactu8Api.skills(), hactu8Api.results(), hactu8Api.targets()])
+      .then(([skills, results, targets]) =>
+        setCounts({ skills: skills.total, results: results.total, targets: targets.total }))
+      .catch((err: Error) => setError(err.message));
+  }, []);
 
-class DashboardErrorBoundary extends React.Component<React.PropsWithChildren, DashboardErrorBoundaryState> {
-  state: DashboardErrorBoundaryState = {
-    hasError: false,
-    message: '',
-  };
-
-  static getDerivedStateFromError(error: unknown): DashboardErrorBoundaryState {
-    return {
-      hasError: true,
-      message: error instanceof Error ? error.message : 'Unknown error loading dashboard.',
-    };
-  }
-
-  componentDidCatch(error: unknown): void {
-    console.error('Failed to load dashboard micro frontend:', error);
-  }
-
-  render() {
-    if (this.state.hasError) {
-      return (
-        <div className="p-4">
-          <h3>Dashboard failed to load</h3>
-          <p>
-            Ensure the dashboard remote is running on port 3001 and Streamlit dashboard is available on port
-            8511.
-          </p>
-          <pre className="whitespace-pre-wrap">{this.state.message}</pre>
-        </div>
-      );
-    }
-
-    return this.props.children;
-  }
+  return (
+    <section className="page">
+      <div className="page-heading">
+        <div><h1>Assurance dashboard</h1><p>Baseline, attack, impact, and remediation against the same suite.</p></div>
+        <Link className="primary-link" to="/run">Run an assurance test</Link>
+      </div>
+      {error && <div className="alert error">API unavailable: {error}</div>}
+      <div className="metric-grid">
+        <article className="metric"><span>Skills</span><strong>{counts.skills}</strong><small>LLM, agentic, and gateway tests</small></article>
+        <article className="metric"><span>Targets</span><strong>{counts.targets}</strong><small>HACTU8 Lamb is the MVP target</small></article>
+        <article className="metric"><span>Stored results</span><strong>{counts.results}</strong><small>Result JSON ready for reports</small></article>
+      </div>
+      <article className="panel">
+        <h2>M4 vertical slice</h2>
+        <ol>
+          <li>Select HACTU8 Lamb and an assurance skill.</li>
+          <li>Run the deterministic four-act lifecycle.</li>
+          <li>Inspect evidence and verdicts in Results.</li>
+          <li>Download Markdown, HTML, or SARIF from Reports.</li>
+        </ol>
+      </article>
+    </section>
+  );
 }
-
-const Dashboard = () => (
-  <div className="flex flex-col min-h-screen w-full h-full">
-    <header className="p-4 bg-white shadow z-10">
-      <h2>IAC Dashboard</h2>
-    </header>
-
-    <main className="flex-1 relative overflow-hidden">
-      <DashboardErrorBoundary>
-        <Suspense fallback={<div className="p-4">Loading Streamlit Dashboard...</div>}>
-          <StreamlitDashboard />
-        </Suspense>
-      </DashboardErrorBoundary>
-    </main>
-  </div>
-);
-
-export default Dashboard;

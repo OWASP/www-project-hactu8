@@ -4,7 +4,7 @@ Instructions for Claude Code working in this repository.
 
 ## Project
 
-OWASP HACTU8 turns attacks on AI systems into repeatable assurance tests: baseline, attack, impact, remediation, all against the same suite. Phase 1 builds the harness around the existing labs. The demo is on 2026-11-13.
+OWASP HACTU8 turns attacks on AI systems into repeatable assurance tests: baseline, attack, impact, remediation, all against the same suite. Phase 1 builds the harness around the existing labs. The demo is on 2026-12-11.
 
 - Branch: work on `phase1-mvp`. Never commit to `main` (it is the OWASP website).
 - Plan, with work items H-01 to H-62: <https://github.com/OWASP/www-project-hactu8/wiki/Phase-1-MVP-Plan>
@@ -16,7 +16,7 @@ OWASP HACTU8 turns attacks on AI systems into repeatable assurance tests: baseli
 ## Status
 
 - M0 and M1 done. `python -m hactu8 run all` passes 25 of 25 on the echo backend.
-- Next is M2: `hactu8.yaml` router tiers (deterministic, then local, then cloud), one canonical providers package, labs emitting the model's answer as `evidence`, and the `llm-judge` and `jev` classifier backends (Jev optional, behind an API key).
+- M2 is complete: router tiers, canonical providers/protectogw, evidence output, and keyword, llm-judge and Jev classifiers. Next is M3: Lamb service, vulnerable MCP surface, naming cleanup and Registry entry.
 
 ## Layout
 
@@ -36,7 +36,7 @@ scripts/    seed-issues.sh
 - Results follow `hactu8/schemas/result.schema.json` (`hactu8.result/v1`). Change the schema and the tests together.
 - The echo backend stays the deterministic default; tests must pass offline.
 - Safety: every target binds to `127.0.0.1`. Payloads ship as inert placeholders. Never add working exploit payloads.
-- The sacrificial target is named Lamb (formerly AgenticGoat; the name is pending core-team confirmation). The fictional company Billy, Goat & Co. stays in the labs.
+- The sacrificial target is named HACTU8 Lamb (formerly AgenticGoat). The fictional company Billy, Goat & Co. stays in the labs.
 
 ## Done means
 

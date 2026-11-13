@@ -1,8 +1,8 @@
 /**
  * Type definitions for the IAC Registry — an inventory of known intelligent
  * components in the environment: deployed agents, model integrations, MCP
- * hosts, and reference/example targets (e.g. an intentionally-vulnerable
- * "AgenticGoat" system used for testing and learning).
+ * hosts, and reference/example targets (e.g. the intentionally-vulnerable
+ * HACTU8 Lamb service used for testing and learning).
  *
  * Registry entries are metadata only — registering an entry does not deploy
  * or provision anything. Other areas of the host (Testing projects,

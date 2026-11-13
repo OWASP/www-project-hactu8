@@ -6,7 +6,7 @@ This `phase1-mvp` branch holds the Phase 1 build. The `main` branch is the OWASP
 
 ## Status
 
-Phase 1 MVP, demo on 2026-11-13. See the wiki:
+Phase 1 MVP, demo on 2026-12-11. See the wiki:
 
 - [Phase 1 MVP Plan](https://github.com/OWASP/www-project-hactu8/wiki/Phase-1-MVP-Plan)
 - [Roadmap](https://github.com/OWASP/www-project-hactu8/wiki/Roadmap)
@@ -16,7 +16,7 @@ Phase 1 MVP, demo on 2026-11-13. See the wiki:
 ## Layout
 
 ```text
-hactu8/     Core: skill catalog, runner, lab adapter, classifiers, model router, providers, protectogw, result schema, CLI
+hactu8/     Core: catalog, runner, classifiers, router, providers, API, reports, Lamb, result schema, CLI
 demos/      Self-contained OWASP labs (LLM01-10, ASI01-10, AGX01-06), each a portable skill
 tests/      Core tests
 spikes/     Prototypes: IAC console (iac-prototype), early platform UX, legacy skills
@@ -25,7 +25,7 @@ scripts/    Project automation: issue seeding, vendor.py (copies shared modules 
 hactu8.yaml Model router tiers and classifier settings
 ```
 
-Coming in Phase 1: API, console, reports, `lamb/` (the sacrificial target), and container files.
+Coming in Phase 1: container files and the AI attacker skill.
 
 ## Quick start
 
@@ -54,13 +54,41 @@ python -m hactu8 run llm01 --backend ollama --model llama3.2:3b
 python -m hactu8 run llm01 --classifier llm-judge
 ```
 
-Classifiers score each item GREEN, YELLOW or RED with a confidence. `keyword` (default, offline) records the lab's own verdict. `llm-judge` asks the judge model to score the item's evidence, which is what the model under test produced. It falls back to the lab verdict at confidence 0.5 when no judge answers. `jev` is an optional hosted classifier: it is off unless `classifiers.jev.enabled` is set (or `HACTU8_ENABLE_JEV=1`), and it needs `JEV_API_KEY`.
+Classifiers score each item GREEN, YELLOW or RED with a confidence. `keyword` (default, offline) records the lab's own verdict. `llm-judge` asks the judge model to score the item's evidence, which is what the model under test produced. It falls back to the lab verdict at confidence 0.5 when no judge answers. `jev` is an optional TypeSafe System One classifier: it is off unless `classifiers.jev.enabled` is set (or `HACTU8_ENABLE_JEV=1`), and it needs `TYPESAFE_API_KEY` (`JEV_API_KEY` remains a compatibility alias).
 
 Shared lab code (`providers.py`, `protectogw/`) has one canonical copy in `hactu8/`. Run `python scripts/vendor.py` after editing it, and the tests check that every lab copy matches.
 
 Results follow [`hactu8/schemas/result.schema.json`](hactu8/schemas/result.schema.json). Run the tests with `python -m unittest discover -s tests -t .`.
 
 Each lab also runs on its own; see [demos/README.md](demos/README.md).
+
+## HACTU8 Lamb
+
+Lamb is the loopback-only sacrificial target. It exposes one public gateway, starts the 25 existing lab servers as isolated workers when first requested, and includes an intentionally vulnerable MCP target for tool-description poisoning and rug-pull tests.
+
+```bash
+python -m pip install -e '.[lamb]'
+python -m hactu8.lamb
+curl http://127.0.0.1:5500/api/labs
+```
+
+Lab consoles and APIs are under `http://127.0.0.1:5500/labs/<skill-id>/`; the Streamable HTTP MCP endpoint is `http://127.0.0.1:5500/mcp`. `POST /api/reset` restores running labs and the MCP target to baseline.
+
+## API, console, and reports
+
+The optional FastAPI service exposes skills, targets, runs, stored results, branding, and Markdown/HTML/SARIF report downloads. The trimmed React console uses those live endpoints for the complete Run to Results to Reports workflow.
+
+```bash
+python -m pip install -e '.[api]'
+python -m hactu8.api
+
+# In a second terminal:
+cd spikes/iac-prototype/iac-host
+npm install
+npm run dev
+```
+
+The API binds to `http://127.0.0.1:8000`; the console defaults to that URL and can be pointed elsewhere with `VITE_HACTU8_API_URL`. White-label name, tagline, report title, and colors are configured in [`branding.yaml`](branding.yaml).
 
 ## Safety
 

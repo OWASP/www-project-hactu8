@@ -2,6 +2,19 @@
   "version": "0.2.0",
   "compounds": [
     {
+      "name": "MVP: Launch",
+      "configurations": [
+        "MVP: Lamb",
+        "MVP: API",
+        "MVP: Console"
+      ],
+      "stopAll": true,
+      "presentation": {
+        "group": "HACTU8 MVP",
+        "order": 1
+      }
+    },
+    {
       "name": "Run all",
       "configurations": [
         "extension-api",
@@ -27,6 +40,58 @@
     }
   ],
   "configurations": [
+    {
+      "name": "MVP: Lamb",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "hactu8.lamb",
+      "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}/../..",
+      "justMyCode": true,
+      "presentation": {
+        "group": "HACTU8 MVP",
+        "order": 1
+      }
+    },
+    {
+      "name": "MVP: API",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "hactu8.api",
+      "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}/../..",
+      "justMyCode": true,
+      "presentation": {
+        "group": "HACTU8 MVP",
+        "order": 2
+      }
+    },
+    {
+      "name": "MVP: Console",
+      "type": "node",
+      "request": "launch",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": [
+        "run",
+        "dev",
+        "--",
+        "--host",
+        "127.0.0.1",
+        "--port",
+        "5173"
+      ],
+      "cwd": "${workspaceFolder}/iac-host",
+      "console": "integratedTerminal",
+      "serverReadyAction": {
+        "action": "openExternally",
+        "pattern": "Local:\\s+(https?://\\S+)",
+        "uriFormat": "%s"
+      },
+      "presentation": {
+        "group": "HACTU8 MVP",
+        "order": 3
+      }
+    },
     {
       "type": "node",
       "request": "launch",

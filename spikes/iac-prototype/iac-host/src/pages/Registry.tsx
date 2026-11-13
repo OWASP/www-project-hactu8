@@ -2,7 +2,7 @@
 //
 // Registry — an inventory of known intelligent components in the
 // environment: deployed agents, model integrations, MCP hosts, and
-// reference targets (e.g. AgenticGoat). Entries are metadata only;
+// reference targets (e.g. HACTU8 Lamb). Entries are metadata only;
 // registering one does not deploy or provision anything. Other areas of
 // the host (Testing projects, Monitoring) will reference entries by id.
 import React, { useMemo, useState } from 'react';
@@ -150,7 +150,7 @@ function EntryForm({ initial, onCancel, onSubmit }: EntryFormProps) {
 
       <div style={fieldWrapStyle}>
         <label style={labelStyle}>Name</label>
-        <input style={inputStyle} value={name} onChange={(e) => setName(e.target.value)} placeholder="e.g. AgenticGoat" />
+        <input style={inputStyle} value={name} onChange={(e) => setName(e.target.value)} placeholder="e.g. HACTU8 Lamb" />
       </div>
 
       <div style={fieldWrapStyle}>

@@ -13,9 +13,13 @@ dependencies = []
 
 [project.optional-dependencies]
 dev = ["jsonschema>=4"]
+lamb = ["mcp>=2,<3"]
+api = ["fastapi>=0.115,<1", "uvicorn>=0.31,<1"]
 
 [project.scripts]
 hactu8 = "hactu8.cli:main"
+hactu8-lamb = "hactu8.lamb.__main__:main"
+hactu8-api = "hactu8.api:main"
 
 [tool.setuptools.packages.find]
 include = ["hactu8*"]

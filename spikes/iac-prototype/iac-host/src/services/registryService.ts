@@ -6,7 +6,7 @@
  */
 
 import type { NewRegistryEntryInput, RegistryEntry } from '../types/registry';
-import { AGENTIC_GOAT_SEED } from '../data/agenticGoatSeed';
+import { LAMB_SEED, migrateLegacyLambSeed } from '../data/lambSeed';
 
 const STORAGE_KEY = 'iac-registry-entries';
 const SEEDED_KEY = 'iac-registry-seeded';
@@ -20,23 +20,25 @@ function generateId(): string {
 
 /**
  * Load registry entries from localStorage. On the very first load (seed
- * never applied), seeds with the AgenticGoat example entries. Deleting
+ * never applied), seeds with the HACTU8 Lamb example entries. Deleting
  * entries down to zero afterward does not trigger reseeding.
  */
 export function loadEntries(): RegistryEntry[] {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (raw) {
-      return JSON.parse(raw);
+      const entries = migrateLegacyLambSeed(JSON.parse(raw));
+      saveEntries(entries);
+      return entries;
     }
   } catch {
     // fall through to seed
   }
 
   if (!localStorage.getItem(SEEDED_KEY)) {
-    saveEntries(AGENTIC_GOAT_SEED);
+    saveEntries(LAMB_SEED);
     localStorage.setItem(SEEDED_KEY, 'true');
-    return AGENTIC_GOAT_SEED;
+    return LAMB_SEED;
   }
 
   return [];

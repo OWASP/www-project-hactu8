@@ -12,7 +12,7 @@ const TargetTab: React.FC<{
   if (targets.length === 0) {
     return (
       <p style={{ color: 'var(--iac-text-secondary)' }}>
-        No targets registered yet. Add one from the Registry (including AgenticGoat Internal,
+        No targets registered yet. Add one from the Registry (including HACTU8 Lamb,
         seeded there by default) before running this Project.
       </p>
     );

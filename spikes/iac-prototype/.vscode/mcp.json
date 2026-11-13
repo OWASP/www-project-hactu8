@@ -1,12 +1,18 @@
 {
-  "servers": {
-    "m365agentstoolkit": {
-      "command": "npx",
-      "args": [
-        "@microsoft/m365agentstoolkit-mcp@latest",
-        "server",
-        "start"
-      ]
-    }
-  }
+	"servers": {
+		"m365agentstoolkit": {
+			"command": "npx",
+			"args": [
+				"@microsoft/m365agentstoolkit-mcp@latest",
+				"server",
+				"start"
+			],
+			"type": "stdio"
+		},
+		"lamb": {
+			"url": "http://127.0.0.1:5500/mcp",
+			"type": "http"
+		}
+	},
+	"inputs": []
 }

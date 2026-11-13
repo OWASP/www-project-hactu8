@@ -171,19 +171,39 @@ class ClassifierTest(unittest.TestCase):
         with mock.patch.dict(os.environ, {"HACTU8_ENABLE_JEV": ""}):
             with self.assertRaisesRegex(RuntimeError, "disabled"):
                 classify.get_classifier("jev", {})
-        cfg = {"classifiers": {"jev": {"enabled": True, "url": "https://jev.invalid/classify"}}}
-        with mock.patch.dict(os.environ, {"JEV_API_KEY": ""}):
-            with self.assertRaisesRegex(RuntimeError, "JEV_API_KEY"):
+        cfg = {"classifiers": {"jev": {"enabled": True}}}
+        with mock.patch.dict(os.environ, {"TYPESAFE_API_KEY": "", "JEV_API_KEY": ""}):
+            with self.assertRaisesRegex(RuntimeError, "TYPESAFE_API_KEY"):
                 classify.get_classifier("jev", cfg)
-        with mock.patch.dict(os.environ, {"JEV_API_KEY": "k"}):
+        response = {
+            "model": "jev-1.13.0",
+            "answers": {
+                "verdict": {
+                    "type": "choice",
+                    "choice": "YELLOW",
+                    "probabilities": {"GREEN": 0.1, "YELLOW": 0.7, "RED": 0.2},
+                    "confidence": 0.55,
+                }
+            },
+        }
+        with mock.patch.dict(os.environ, {"TYPESAFE_API_KEY": "secret-token", "JEV_API_KEY": ""}):
             jev = classify.get_classifier("jev", cfg)
-            with mock.patch.object(jev._http, "_post", return_value={"label": "YELLOW", "confidence": 0.6}) as post:
-                v = jev.classify("q?", "answer", "GREEN")
-            self.assertEqual((v.verdict, v.source), ("YELLOW", "jev"))
-            self.assertEqual(post.call_args[0][2], {"Authorization": "Bearer k"})
-            self.assertNotIn("k", json.dumps(post.call_args[0][1]).replace("labels", ""))
+            with mock.patch.object(jev._http, "_post", return_value=response) as post:
+                v = jev.classify("q?", "answer", "GREEN", {"risk": "Prompt Injection"})
+            self.assertEqual((v.verdict, v.confidence, v.source), ("YELLOW", 0.55, "jev"))
+            self.assertIn("YELLOW=0.700", v.reason)
+            self.assertEqual(post.call_args[0][0], "https://api.typesafe.ai/v1/systemone")
+            self.assertEqual(post.call_args[0][2], {"Authorization": "Bearer secret-token"})
+            payload = post.call_args[0][1]
+            self.assertEqual(payload["model"], "jev-latest")
+            self.assertEqual(payload["state"], {"prompt": "q?", "evidence": "answer", "risk": "Prompt Injection"})
+            self.assertEqual(payload["questions"]["verdict"]["type"], "choice")
+            self.assertEqual(list(payload["questions"]["verdict"]["criteria"]), list(classify.VERDICTS))
+            self.assertNotIn("secret-token", json.dumps(payload))
             with mock.patch.object(jev._http, "_post", side_effect=OSError("down")):
                 self.assertIn("jev unavailable", jev.classify("q?", "answer", "GREEN").reason)
+            with mock.patch.object(jev._http, "_post", return_value={"answers": {}}):
+                self.assertIn("unparseable", jev.classify("q?", "answer", "GREEN").reason)
 
 
 class EvidenceTest(unittest.TestCase):

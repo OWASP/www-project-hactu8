@@ -42,9 +42,10 @@ classifiers:
     max_calls: 1000       # per process; overrides LAB_MAX_CALLS for the judge
     max_tokens: 1024      # per reply; thinking models need room before the JSON
   jev:
-    # Optional hosted classifier. Off unless enabled here or HACTU8_ENABLE_JEV=1,
-    # and it needs the key named by key_env in the environment.
+    # Optional TypeSafe System One classifier. Off unless enabled here or
+    # HACTU8_ENABLE_JEV=1, and it needs the key named by key_env.
     enabled: false
-    url: ""
-    key_env: JEV_API_KEY
+    url: "https://api.typesafe.ai/v1/systemone"
+    model: jev-latest
+    key_env: TYPESAFE_API_KEY
     timeout: 30
