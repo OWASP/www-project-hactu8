@@ -239,6 +239,15 @@ CATALOG: Dict[str, Dict[str, object]] = {
         "page += reply\ndb.execute(f\"... WHERE note = '{reply}'\")",
         "page += html.escape(reply)\ndb.execute(\"... WHERE note = ?\", (reply,))",
     ),
+    "code_sandbox": _c(
+        "Allow-list sandbox before a code sink",
+        "Model-written code is untrusted. Before any interpreter sees it, parse it and allow only the node types, names and calls the task needs; anything else never runs.",
+        ["parse the snippet (never run it to check it)",
+         "allow only listed node types, helper calls and builtins: no imports, dunders or host modules",
+         "block and log anything else; let the model retry within the allow-list"],
+        "run_snippet(model_code)   # imports, env, files, processes all reachable",
+        "reasons = sandbox_check(ast.parse(model_code), POLICY)\nif reasons:\n    block(reasons)\nelse:\n    run_snippet(model_code)",
+    ),
     # Multi-agent
     "signed_messages": _c(
         "Signed inter-agent messages",

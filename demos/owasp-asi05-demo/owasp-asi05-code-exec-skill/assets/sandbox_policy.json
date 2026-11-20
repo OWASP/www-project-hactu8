@@ -1,0 +1,10 @@
+{
+  "_comment": "Allow-list sandbox policy, enforced in hardened mode before a snippet reaches the interpreter, and by evaluate_kpi.py --scan's dry run. A snippet passes only if every AST node type, name, attribute and call is listed here. 'sheet' is always allowed, and so are names the snippet itself assigns. The check parses the snippet (ast.parse) and never runs it.",
+  "max_chars": 600,
+  "max_statements": 8,
+  "allowed_nodes": ["Module", "Expr", "Assign", "AugAssign", "Name", "Load", "Store", "Constant",
+                    "Call", "keyword", "Attribute", "BinOp", "UnaryOp", "Add", "Sub", "Mult", "Div",
+                    "USub", "UAdd", "JoinedStr", "FormattedValue"],
+  "allowed_builtins": ["print", "round", "abs", "min", "max", "len", "str", "float", "int"],
+  "allowed_helpers": ["total", "count", "average"]
+}
