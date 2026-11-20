@@ -237,21 +237,25 @@ function MyComponent() {
 ## Troubleshooting
 
 ### Wrong environment detected?
+
 1. Check `VITE_APP_ENV` environment variable
 2. Check hostname matches expected pattern
 3. Check for localStorage override: `localStorage.getItem('environmentOverride')`
 
 ### Environment message not showing?
+
 1. Verify `showOnLoad: true` in config
 2. Check SystemMessageContext is properly set up
 3. Ensure app is wrapped with SystemMessageProvider
 
 ### Colors not applying?
+
 1. Verify Navbar component receives backgroundColor and textColor props
 2. Check config values are valid CSS colors
 3. Clear browser cache
 
 ### Override not working?
+
 1. Ensure you reload the page after setting override
 2. Check localStorage value is valid environment name
 3. Try clearing override and setting again
@@ -266,6 +270,7 @@ function MyComponent() {
 ## Future Enhancements
 
 Potential improvements:
+
 1. Server-side environment detection
 2. Environment-specific feature flags
 3. Environment switching UI in settings

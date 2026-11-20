@@ -118,6 +118,7 @@ output (see `assets/poisoned_note.README.md`), and `run_demo.py` reports the
 numbers rather than asserting them.
 
 Limits:
+
 - `LAB_MAX_CALLS` (default 200) caps calls per process.
 - `LAB_MAX_TOKENS` (default 400) caps output tokens per call.
 - `OLLAMA_TIMEOUT`, `LLAMACPP_TIMEOUT` and `OPENROUTER_TIMEOUT` set
@@ -130,7 +131,7 @@ Echo and the local backends keep everything on the host.
 
 ## Architecture
 
-```
+```text
                  ┌───────────────────────────────────────────────┐
    "summarise" ─▶│  Billy (vulnerable_app.py :5210)              │
                  │   StubModel → summary (same in both modes)    │
@@ -265,7 +266,7 @@ rendered output and the SQLite error instead of a receiver log.
 
 ## Project layout
 
-```
+```text
 owasp-llm10-demo/
 ├── README.md                          # this lab guide
 ├── run_demo.py                        # all four acts in one process

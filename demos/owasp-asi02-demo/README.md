@@ -111,6 +111,7 @@ shell that starts the lab. The console never asks for it and is only told
 whether one is set; without it, `openrouter` is greyed out in the picker.
 
 The attack mechanics are identical. Only the model changes:
+
 - The model picks each tool call by replying with a small JSON object
   (`{"tool": ..., "args": {...}}`). The reply is parsed defensively; a
   malformed or unknown call means "no action" and ends the run. Model output
@@ -128,6 +129,7 @@ numbers rather than asserting them. To try your own wording, see
 `assets/request_note.README.md`.
 
 Limits:
+
 - `LAB_MAX_CALLS` (default 200) caps calls per process.
 - `LAB_MAX_TOKENS` (default 400) caps output tokens per call.
 - `OLLAMA_TIMEOUT`, `LLAMACPP_TIMEOUT` and `OPENROUTER_TIMEOUT` set
@@ -140,7 +142,7 @@ Echo and the local backends keep everything on the host.
 
 ## Architecture
 
-```
+```text
                  ┌───────────────────────────────────────────────┐
    operator ────▶│  Billy Finance (vulnerable_app.py :5302)      │──▶ answer
    "Process      │   • model plans: read → query → export (stub) │
@@ -267,7 +269,7 @@ authenticated request notes, channel separation and screening of tool output
 
 ## Project layout
 
-```
+```text
 owasp-asi02-demo/
 ├── README.md                          # this lab guide
 ├── run_demo.py                        # all four acts in one process

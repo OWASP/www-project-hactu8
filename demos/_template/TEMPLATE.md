@@ -74,7 +74,7 @@ verdict.
 
 Minimum shape for one demo (a single self-contained skill):
 
-```
+```text
 demos/<demo-slug>/
 ├── README.md                 # the lab guide (skeleton: ./README.md)
 ├── <skill-slug>/             # self-contained, copyable into .claude/skills/
@@ -265,6 +265,7 @@ stay in `scripts/evaluate_kpi.py`, and the console imports them, so the CLI and
 the console can never disagree. Tests call the functions directly.
 
 Server guards (host safety, applied to every request):
+
 - Reject a `Host` header other than `127.0.0.1:<PORT>` or `localhost:<PORT>`
   with 403. This guards against DNS rebinding.
 - Reject a POST whose `Content-Type` is not `application/json` with 415. A
@@ -295,6 +296,7 @@ never accepted from the console, a request body or a file. The console is told
 only whether one is set (`openrouter_key_set`).
 
 Per demo:
+
 - `Lab(..., backend="echo", model="")` and `Lab.set_backend(backend, model)`,
   which validates the model name (`providers.check_model`), builds the
   provider, and swaps the model under the lock without touching the lab's
@@ -322,7 +324,6 @@ Per demo:
   machine.
 
 Reference implementation: `owasp-llm01-demo` (`ProviderModel` in `vulnerable_app.py`, `BackendTest`).
-
 
 ## 14. Screening untrusted text (protectogw/)
 

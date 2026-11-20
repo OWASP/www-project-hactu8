@@ -28,18 +28,22 @@ The feature flag system consists of:
 ## Feature Flag Categories
 
 ### Navigation
+
 - `dashboard` - Dashboard page
 - `registry` - Registry page
 - `console` - Console page
 
 ### Monitoring
+
 - `logs` - Logs page
 - `events` - Events page
 
 ### Projects
+
 - `enabled` - Enable/disable entire projects section
 
 ### Testing Tools
+
 - `promptInjection` - Prompt Injection Tester
 - `trainingLeak` - Training Data Leak Detector
 - `misbehaviorMonitor` - Model Misbehavior Monitor
@@ -52,20 +56,24 @@ The feature flag system consists of:
 - `privacyCompliance` - Model Privacy Compliance Scanner
 
 ### Reporting
+
 - `assuranceResults` - Assurance Results page
 - `reports` - Reports page
 
 ### Other Features
+
 - `workbench` - Workbench page
 - `agents` - Agents page
 - `users` - Users & Access page
 
 ### User Menu
+
 - `extensions` - Extensions page
 - `profile` - Profile page
 - `settings` - Settings page
 
 ### Navigation Bar
+
 - `createNewResource` - "Create New Resource" button
 
 ## Usage
@@ -111,6 +119,7 @@ function MyComponent() {
 ### Managing Flags via UI
 
 Users can manage feature flags through the Settings page:
+
 1. Navigate to Settings (sidebar)
 2. Select "Feature Flags" section
 3. Toggle individual features on/off
@@ -129,28 +138,31 @@ By default, all features are enabled. You can modify the defaults in `src/config
 To add a new feature flag:
 
 1. Update the `FeatureFlags` interface in `src/config/featureFlags.ts`:
-```typescript
-export interface FeatureFlags {
-  // ... existing categories
-  myNewCategory: {
+
+   ```typescript
+   export interface FeatureFlags {
+     // ... existing categories
+     myNewCategory: {
     myNewFeature: boolean;
-  };
-}
-```
+     };
+   }
+   ```
 
 2. Add the default value:
-```typescript
-export const defaultFeatureFlags: FeatureFlags = {
-  // ... existing defaults
-  myNewCategory: {
+
+   ```typescript
+   export const defaultFeatureFlags: FeatureFlags = {
+     // ... existing defaults
+     myNewCategory: {
     myNewFeature: true,
-  },
-};
-```
+     },
+   };
+   ```
 
 3. Update the `loadFeatureFlags` function to include the new category in the merge logic.
 
 4. Use the flag in your components:
+
 ```typescript
 const { flags } = useFeatureFlags();
 if (flags.myNewCategory.myNewFeature) {

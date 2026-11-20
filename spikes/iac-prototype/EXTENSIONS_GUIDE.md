@@ -5,9 +5,11 @@ This guide summarizes how the extension system works in the IAC prototype: the r
 ## 1. Extension Registry
 
 The registry is a JSON file that lists all available extensions. In this prototype it lives at:
+
 - `extensions/registry.json`
 
 Each registry entry contains:
+
 - `manifest`: the extension metadata (id, name, type, category, permissions, settings, entry point, etc.)
 - `zipFile`: the packaged extension archive
 - `sha256`: integrity hash for the zip
@@ -18,6 +20,7 @@ The host fetches the registry from a configurable URL, defaulting to the repo-ho
 ## 2. Manifest Schema (What An Extension Declares)
 
 Each extension ships a `manifest.json` inside its zip. The manifest defines:
+
 - `id`: unique extension identifier
 - `name`, `description`, `author`, `license`
 - `version`: semver
@@ -34,6 +37,7 @@ Settings are schema-driven and support `string`, `number`, `boolean`, and `selec
 ## 3. How A User Adds An Extension
 
 User-facing flow (host UI):
+
 1. Open the Extensions page in the host.
 2. The host fetches the registry and lists "Available" extensions.
 3. Click Install on an entry.
@@ -41,6 +45,7 @@ User-facing flow (host UI):
 5. The extension appears under "Installed" and in the sidebar group based on its category.
 
 Developer flow (to publish a new extension):
+
 1. Build and zip the extension package (including `manifest.json` and entry point).
 2. Add the zip file alongside `extensions/registry.json`.
 3. Add a new registry entry (manifest + zip + hash + timestamps).
@@ -51,6 +56,7 @@ Developer flow (to publish a new extension):
 The host manages extension metadata and rendering, but extensions are executed separately.
 
 Key integration points:
+
 - **Install metadata**: stored in localStorage; includes assigned port and settings.
 - **Config injection**: the host generates a `config.json` for the extension at install path.
   - Contains `hostVersion`, `extensionId`, `port`, `resultsDir`, and resolved `settings`.
@@ -60,6 +66,7 @@ Key integration points:
 ## 5. Supported Extension Types
 
 Currently supported types (with future extensibility):
+
 - **streamlit**: Embedded Streamlit app running on a local port.
 - **iframe**: Generic embedded UI served from a URL.
 - **api**: Headless service accessed via base URL (future/placeholder).
@@ -69,6 +76,7 @@ The host uses the `type` field to determine runtime configuration and rendering 
 ## 6. Extension Categories (Sidebar Placement)
 
 Categories determine sidebar grouping:
+
 - `testing` -> Testing
 - `linting` -> Tools
 - `formatting` -> Tools
@@ -80,12 +88,14 @@ Categories determine sidebar grouping:
 ## 7. Testing Extensions And Assurance Results
 
 Testing extensions are expected to produce structured test run results. The schema is:
+
 - **TestRunResult**
   - `runId`, `extensionId`, `extensionName`, `timestamp`, `target`
   - `summary`: totals and duration
   - `results`: array of per-test results (`pass`, `fail`, `error`, `skip`)
 
 How results appear in the host:
+
 - A testing extension posts results to the host using:
   - `window.parent.postMessage({ type: 'iac-extension-results', payload: TestRunResult })`
 - The host stores the result in localStorage via `resultsService`.
@@ -100,6 +110,7 @@ The prompt injection extension is the reference implementation for this flow.
 ## 8. Example: Prompt Injection Testing Extension
 
 This extension demonstrates the full lifecycle:
+
 - Declares `type: streamlit`, `category: testing`, permissions (`network`, `hostConfig`, `reporting`).
 - Reads `config.json` for settings like `targetUrl`, `timeout`, and `verbose`.
 - Runs a predefined suite of prompt injection tests.
@@ -108,6 +119,7 @@ This extension demonstrates the full lifecycle:
 ## 9. What Features Can Be Added Next
 
 Common next steps supported by the current model:
+
 - More extension types (e.g., API-only scanners, iframe dashboards).
 - Additional registry metadata (badges, icons, tags).
 - Results ingestion from real filesystem path or backend API.

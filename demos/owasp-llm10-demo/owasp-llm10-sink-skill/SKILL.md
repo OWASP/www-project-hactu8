@@ -83,9 +83,11 @@ With `openrouter`, prompts and payloads leave the machine.
 ## Execution instructions
 
 1. **Start the target.** From this skill folder:
+
    ```bash
    python vulnerable_app.py             # serves on 127.0.0.1:5210
    ```
+
    On startup it seeds tickets from `assets/tickets_baseline.json` and creates
    an empty in-memory audit log. To drive the same four acts from a browser,
    open <http://127.0.0.1:5210/>.
@@ -95,32 +97,40 @@ With `openrouter`, prompts and payloads leave the machine.
    replaced. Those are the summaries every sink should show and store.
 
 3. **Establish the baseline.**
+
    ```bash
    python scripts/evaluate_kpi.py
    ```
+
    Expect all 🟢 GREEN, USR 0%. Exit code 0.
 
 4. **Run the attack.**
+
    ```bash
    python scripts/run_sink_poison.py
    ```
+
    Files [`assets/poisoned_note.md`](assets/poisoned_note.md) on the
    `ridgeview` account through the unauthenticated `POST /tickets/note`. No
    sink is touched.
 
 5. **Stoplight verification.**
+
    ```bash
    python scripts/evaluate_kpi.py
    ```
+
    Expect 🔴 RED on the three Ridgeview sinks (raw `<mark>` in the status page
    and digest, a SQLite syntax error in the audit log), and the two Harbor
    controls still 🟢 GREEN. USR 100% targeted, 60% overall. Exit code 2.
 
 6. **Show the mitigations.**
+
    ```bash
    python scripts/evaluate_kpi.py --scan assets/poisoned_note.md   # REJECT, exit 2
    python scripts/evaluate_kpi.py --harden                         # GREEN, USR 0%
    ```
+
    `--scan` screens the note with protectogw (AgenticGoat's screening core,
    vendored unchanged in `protectogw/`) before it is filed.
    `--harden` switches the target to hardened mode: `html.escape` before both
@@ -129,10 +139,12 @@ With `openrouter`, prompts and payloads leave the machine.
    tripwire policy.
 
 7. **Reset to baseline.**
+
    ```bash
    python scripts/reset_baseline.py
    python scripts/evaluate_kpi.py
    ```
+
    Expect all items GREEN with USR 0%.
 
 ## Customizing the payload

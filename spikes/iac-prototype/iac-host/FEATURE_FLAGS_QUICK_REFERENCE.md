@@ -3,12 +3,14 @@
 ## How to Use
 
 ### Via UI (Recommended)
+
 1. Open the application
 2. Click **Settings** in the sidebar
 3. Select **Feature Flags** section
 4. Toggle features or choose a preset
 
 ### Programmatically
+
 ```typescript
 import { useFeatureFlags } from './contexts/FeatureFlagContext';
 
@@ -58,6 +60,7 @@ const { flags, updateFlags, resetFlags, isEnabled } = useFeatureFlags();
 ## Code Examples
 
 ### Check if feature is enabled
+
 ```typescript
 // Method 1: Direct access
 if (flags.navigation.dashboard) {
@@ -71,6 +74,7 @@ if (isEnabled('testing', 'promptInjection')) {
 ```
 
 ### Enable/disable a feature
+
 ```typescript
 updateFlags({
   testing: { promptInjection: false }
@@ -78,6 +82,7 @@ updateFlags({
 ```
 
 ### Enable multiple features
+
 ```typescript
 updateFlags({
   testing: {
@@ -88,6 +93,7 @@ updateFlags({
 ```
 
 ### Load a preset
+
 ```typescript
 import { presets } from './config/featureFlagPresets';
 
@@ -95,6 +101,7 @@ updateFlags(presets.minimal);
 ```
 
 ### Reset to defaults
+
 ```typescript
 resetFlags();
 ```
@@ -104,12 +111,14 @@ resetFlags();
 Feature flags are stored at: `localStorage.featureFlags`
 
 ### View current flags
+
 ```javascript
 // In browser console
 console.log(JSON.parse(localStorage.getItem('featureFlags')));
 ```
 
 ### Clear all flags
+
 ```javascript
 // In browser console
 localStorage.removeItem('featureFlags');
@@ -123,15 +132,19 @@ All flags default to `true` (enabled).
 ## Common Tasks
 
 ### Hide all testing tools
+
 Settings > Feature Flags > Testing Tools > Uncheck all
 
 ### Show only dashboard
+
 Settings > Feature Flags > Click "Minimal" preset
 
 ### Enable everything
+
 Settings > Feature Flags > Click "Reset to Defaults" or "Full" preset
 
 ### Custom configuration
+
 1. Load a preset close to what you want
 2. Manually toggle individual features
 3. Changes auto-save to localStorage

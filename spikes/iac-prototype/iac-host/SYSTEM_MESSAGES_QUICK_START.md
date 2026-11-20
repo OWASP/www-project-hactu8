@@ -38,6 +38,7 @@ That's it! The message appears in the Navigation Bar and auto-dismisses after 5 
 ## Common Use Cases
 
 ### 1. Form Submission
+
 ```typescript
 const handleSubmit = async (data) => {
   try {
@@ -50,6 +51,7 @@ const handleSubmit = async (data) => {
 ```
 
 ### 2. Loading State
+
 ```typescript
 const loadData = async () => {
   showInfo('Loading...', 0); // 0 = don't auto-dismiss
@@ -59,6 +61,7 @@ const loadData = async () => {
 ```
 
 ### 3. Warning User
+
 ```typescript
 const deleteItem = () => {
   showWarning('This action cannot be undone', 10000); // Show for 10 seconds
@@ -67,6 +70,7 @@ const deleteItem = () => {
 ```
 
 ### 4. Quick Feedback
+
 ```typescript
 const copyToClipboard = (text) => {
   navigator.clipboard.writeText(text);
@@ -104,25 +108,26 @@ showWarning('Important notice', 0);
 1. Navigate to any page in the app
 2. Add this code to a component:
 
-```typescript
-import { useSystemMessage } from '../contexts/SystemMessageContext';
+   ```typescript
+   import { useSystemMessage } from '../contexts/SystemMessageContext';
 
-function TestButton() {
-  const { showSuccess } = useSystemMessage();
+   function TestButton() {
+     const { showSuccess } = useSystemMessage();
 
-  return (
+     return (
     <button onClick={() => showSuccess('It works!')}>
       Test System Message
     </button>
-  );
-}
-```
+     );
+   }
+   ```
 
 3. Click the button and watch the Navigation Bar!
 
 ## Live Examples
 
 To see all examples in action:
+
 1. Import the example component
 2. Add it to your route
 
@@ -136,12 +141,14 @@ import SystemMessageExample from './examples/SystemMessageExample';
 ## Best Practices
 
 ✅ **DO**
+
 - Use appropriate message types (info, warning, error, success)
 - Keep messages short and clear
 - Let transient messages auto-dismiss
 - Clear loading messages when done
 
 ❌ **DON'T**
+
 - Show multiple messages rapidly
 - Use long, complex messages
 - Forget to clear persistent messages
@@ -150,14 +157,17 @@ import SystemMessageExample from './examples/SystemMessageExample';
 ## Troubleshooting
 
 ### Message not appearing?
+
 - Check that `SystemMessageProvider` wraps your app (already done in App.tsx)
 - Verify you're using the hook inside a component, not at module level
 
 ### Message disappears too quickly?
+
 - Increase duration: `showInfo('Message', 10000)` for 10 seconds
 - Or make persistent: `showInfo('Message', 0)`
 
 ### Message won't clear?
+
 - Use `clearMessage()` to manually remove any message
 
 ## Next Steps

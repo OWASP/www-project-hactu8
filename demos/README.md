@@ -130,6 +130,7 @@ payloads are often ignored, so write real ones for meaningful runs. With
 ## Building a new lab
 
 Start from [`_template/`](_template/). `TEMPLATE.md` is the specification:
+
 - the lifecycle and the stoplight KPI
 - the layout and the conventions
 - the safety rules

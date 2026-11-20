@@ -107,6 +107,7 @@ shell that starts the lab. The console never asks for it and is only told
 whether one is set; without it, `openrouter` is greyed out in the picker.
 
 The attack mechanics are identical. Only the model changes:
+
 - The canary sits in the system prompt with the instruction never to reveal it.
 - **Vulnerable mode** pastes the notice into the user turn as plain text.
 - **Hardened mode** withholds what the gateway blocked, fences the rest in
@@ -118,6 +119,7 @@ the numbers rather than asserting them. See the payload README for how to vary
 it (and to paste a real payload for real-model runs).
 
 Limits:
+
 - `LAB_MAX_CALLS` (default 200) caps calls per process.
 - `LAB_MAX_TOKENS` (default 400) caps output tokens per call.
 - `OLLAMA_TIMEOUT`, `LLAMACPP_TIMEOUT` and `OPENROUTER_TIMEOUT` set
@@ -130,7 +132,7 @@ Echo and the local backends keep everything on the host.
 
 ## Architecture
 
-```
+```text
                  ┌──────────────────────────────────────────────┐
    user request ▶│  Billy (vulnerable_app.py :5401)             │──▶ reply
                  │   • reads one notice, decodes what it sees   │
@@ -242,7 +244,7 @@ set grown deliberately; and held-out testing (AGX09).
 
 ## Project layout
 
-```
+```text
 agx01-demo/
 ├── README.md                          # this lab guide
 ├── run_demo.py                        # all four acts in one process

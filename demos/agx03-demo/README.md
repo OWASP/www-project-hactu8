@@ -107,6 +107,7 @@ shell that starts the lab. The console never asks for it and is only told
 whether one is set; without it, `openrouter` is greyed out in the picker.
 
 The attack mechanics are identical. Only the model changes:
+
 - The canary sits in the system prompt with the instruction never to reveal it.
 - **Vulnerable mode** pastes the feed polls into the user turn as plain text.
 - **Hardened mode** withholds what the gateway blocked, fences the rest in
@@ -118,6 +119,7 @@ the numbers rather than asserting them. See the payload README for how to vary
 it (and to paste a real payload for real-model runs).
 
 Limits:
+
 - `LAB_MAX_CALLS` (default 200) caps calls per process.
 - `LAB_MAX_TOKENS` (default 400) caps output tokens per call.
 - `OLLAMA_TIMEOUT`, `LLAMACPP_TIMEOUT` and `OPENROUTER_TIMEOUT` set
@@ -130,7 +132,7 @@ Echo and the local backends keep everything on the host.
 
 ## Architecture
 
-```
+```text
                  ┌──────────────────────────────────────────────┐
    user request ▶│  Billy (vulnerable_app.py :5403)             │──▶ reply
                  │   • polls the feed 3× per request            │
@@ -189,7 +191,7 @@ turned hostile:
   `lab_directive` rule matches poll 3, the return is withheld, and the CLR falls
   to 0.
 
-A hostile *first* return is blocked even by the vulnerable gateway
+A hostile _first_ return is blocked even by the vulnerable gateway
 (`GatewayTest`): the ruleset was never the problem, its timing was. Disable
 either hardened layer in a test and the other still holds the CLR at 0.
 
@@ -244,7 +246,7 @@ is caught (ASI04).
 
 ## Project layout
 
-```
+```text
 agx03-demo/
 ├── README.md                          # this lab guide
 ├── run_demo.py                        # all four acts in one process

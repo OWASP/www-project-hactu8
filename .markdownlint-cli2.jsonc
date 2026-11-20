@@ -1,0 +1,13 @@
+{
+  // Lab payloads under assets/ are attack text, not documents: linting would
+  // change what the model sees. Their *.README.md files are still linted.
+  "ignores": [
+    "**/node_modules/**",
+    ".venv/**",
+    "demos/**/assets/!(*.README).md",
+    // Retrieval and prompt data for the targets, not documents.
+    "hactu8/lamb/okf_bundle/**",
+    "spikes/iac-prototype/iac-copilot-api/canned_projects/**/instructions.md",
+    "**/.github/copilot-instructions.md"
+  ]
+}

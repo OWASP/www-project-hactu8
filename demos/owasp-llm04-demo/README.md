@@ -103,6 +103,7 @@ whether one is set; without it, `openrouter` is greyed out in the picker.
 
 The attack mechanics are identical. Only the model changes, and it only
 writes the answer text:
+
 - **Vulnerable mode** puts the installed tool's description in the system
   prompt and its result in the user turn, both as plain text.
 - **Hardened mode** fences the description in `<untrusted_tool_definition>`
@@ -117,6 +118,7 @@ regardless of wording, and sampling catches drift without any rule.
 `run_demo.py` reports the numbers rather than asserting them.
 
 Limits:
+
 - `LAB_MAX_CALLS` (default 200) caps calls per process.
 - `LAB_MAX_TOKENS` (default 400) caps output tokens per call.
 - `OLLAMA_TIMEOUT`, `LLAMACPP_TIMEOUT` and `OPENROUTER_TIMEOUT` set
@@ -129,7 +131,7 @@ Echo and the local backends keep everything on the host.
 
 ## Architecture
 
-```
+```text
                  ┌──────────────────────────────────────────────┐
    user query ──▶│  Billy (vulnerable_app.py :5204)             │──▶ answer
                  │   • routes each query to one tool            │
@@ -263,7 +265,7 @@ sampling of live calls.
 
 ## Project layout
 
-```
+```text
 owasp-llm04-demo/
 ├── README.md                          # this lab guide
 ├── run_demo.py                        # all four acts in one process

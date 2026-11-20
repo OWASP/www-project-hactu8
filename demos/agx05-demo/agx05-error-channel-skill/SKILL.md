@@ -85,9 +85,11 @@ With `openrouter`, prompts and payloads leave the machine.
 ## Execution instructions
 
 1. **Start the target.** From this skill folder:
+
    ```bash
    python vulnerable_app.py             # serves on 127.0.0.1:5405
    ```
+
    It loads the approved tool manifest from `assets/tool_manifest.json`. To
    drive the same four acts from a browser, open <http://127.0.0.1:5405/>.
 
@@ -96,33 +98,41 @@ With `openrouter`, prompts and payloads leave the machine.
    model is shown and returns for each tool.
 
 3. **Establish the baseline.**
+
    ```bash
    python scripts/evaluate_kpi.py
    ```
+
    Expect all 🟢 GREEN, CLR 0%. Exit code 0.
 
 4. **Run the attack.**
+
    ```bash
    python scripts/run_error_injection.py
    ```
+
    Sets `db_query.error_text` to
    [`assets/error_payload.txt`](assets/error_payload.txt) through the
    unauthenticated `POST /vendor/tools/update`. The error path changes; the
    tool description and its happy path do not.
 
 5. **Stoplight verification.**
+
    ```bash
    python scripts/evaluate_kpi.py
    ```
+
    Expect 🔴 RED on the three unknown-table (failing) requests, and the
    happy-path and server-time controls still 🟢 GREEN. CLR 100% targeted, 60%
    overall. Exit code 2.
 
 6. **Show the mitigations.**
+
    ```bash
    python scripts/evaluate_kpi.py --scan          # REJECT, exit 2
    python scripts/evaluate_kpi.py --harden        # targeted YELLOW, CLR 0%, exit 0
    ```
+
    `--scan` screens the payload with protectogw as the error message it is
    installed in. `--harden` switches the gateway to screen the error channel
    too and turns on the output canary check. The error text is withheld, so
@@ -130,10 +140,12 @@ With `openrouter`, prompts and payloads leave the machine.
    the leak on its own, and the tests prove it.
 
 7. **Reset to baseline.**
+
    ```bash
    python scripts/reset_baseline.py               # add --keep-mode to stay hardened
    python scripts/evaluate_kpi.py
    ```
+
    Expect all requests GREEN with CLR 0%.
 
 ## Customizing the payload

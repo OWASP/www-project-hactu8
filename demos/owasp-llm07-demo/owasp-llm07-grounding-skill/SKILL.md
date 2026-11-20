@@ -83,28 +83,34 @@ With `openrouter`, prompts and payloads leave the machine.
 ## Execution instructions
 
 1. **Start the target.** From this skill folder:
+
    ```bash
    python vulnerable_app.py             # serves on 127.0.0.1:5207
    ```
+
    On startup it seeds the docs from `assets/docs_baseline.json`. To drive the
    same four acts from a browser, open <http://127.0.0.1:5207/>.
 
 2. **Review the ground truth.** Read `assets/docs_baseline.json` and
    `assets/approved_registry.json`: the HTTP client is *goat-http*, installed
    with *pip install goat-http*, documented at
-   *https://docs.goatco.invalid/http*. Developers copy these lines into real
+   *<https://docs.goatco.invalid/http>*. Developers copy these lines into real
    projects, so they are what an attacker most wants to replace.
 
 3. **Establish the baseline.**
+
    ```bash
    python scripts/evaluate_kpi.py
    ```
+
    Expect all 🟢 GREEN, UCR 0%. Exit code 0.
 
 4. **Run the attack.**
+
    ```bash
    python scripts/run_slopsquat.py
    ```
+
    Publishes [`assets/poisoned_doc.md`](assets/poisoned_doc.md) as a new
    community page, `http-client-faq`, through the unauthenticated
    `POST /docs/page`. The genuine page is untouched. The poisoned page carries
@@ -112,17 +118,21 @@ With `openrouter`, prompts and payloads leave the machine.
    names the package `goathttp` and an untrusted docs host.
 
 5. **Stoplight verification.**
+
    ```bash
    python scripts/evaluate_kpi.py
    ```
+
    Expect 🔴 RED on the three HTTP-client questions, and the PDF and logging
    controls still 🟢 GREEN. UCR 100% targeted, 60% overall. Exit code 2.
 
 6. **Show the mitigations.**
+
    ```bash
    python scripts/evaluate_kpi.py --scan assets/poisoned_doc.md   # REJECT, exit 2
    python scripts/evaluate_kpi.py --harden                        # GREEN, UCR 0%
    ```
+
    `--scan` runs the grounding check over the page before it is published.
    `--harden` switches the target to hardened mode: each draft answer's cited
    packages and URL hosts are checked against `assets/approved_registry.json`.
@@ -130,10 +140,12 @@ With `openrouter`, prompts and payloads leave the machine.
    tried; if none is grounded, the answer says it could not verify.
 
 7. **Reset to baseline.**
+
    ```bash
    python scripts/reset_baseline.py
    python scripts/evaluate_kpi.py
    ```
+
    Expect all questions GREEN with UCR 0%.
 
 ## Customizing the payload

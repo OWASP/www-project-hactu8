@@ -10,7 +10,7 @@ cited package and URL against known-good sources and downgrades the rest to
 
 The scenario is **"Billy Dev," Goat & Co.'s developer-helper assistant.** Its
 ground truth is _"Use goat-http for HTTP requests: pip install goat-http (docs:
-https://docs.goatco.invalid/http)."_ With **1** added community page carrying
+<https://docs.goatco.invalid/http>)."_ With **1** added community page carrying
 **1** slopsquat claim, the attacker replaces Billy Dev's answer to every
 HTTP-client question with `goathttp`, a name one hyphen away from the real
 package, plus a docs URL on a host nobody vetted. Unrelated topics (PDF
@@ -105,6 +105,7 @@ whether one is set; without it, `openrouter` is greyed out in the picker.
 
 The attack mechanics are identical. Only the model changes. It replaces
 `StubModel.generate(messages)` and returns free text:
+
 - **Vulnerable mode** pastes the retrieved page into the user turn as plain
   text, and the answer goes to the user unchecked.
 - **Hardened mode** fences the page in `<untrusted_doc>` tags and tells the
@@ -118,6 +119,7 @@ A real model may not restate the poisoned claim (to tune the payload, see
 than asserting them.
 
 Limits:
+
 - `LAB_MAX_CALLS` (default 200) caps calls per process.
 - `LAB_MAX_TOKENS` (default 400) caps output tokens per call.
 - `OLLAMA_TIMEOUT`, `LLAMACPP_TIMEOUT` and `OPENROUTER_TIMEOUT` set
@@ -130,7 +132,7 @@ Echo and the local backends keep everything on the host.
 
 ## Architecture
 
-```
+```text
                  ┌──────────────────────────────────────────────┐
    dev query ───▶│  Billy Dev (vulnerable_app.py :5207)         │──▶ answer
                  │   • top-ranked page restated as fact         │
@@ -250,7 +252,7 @@ checkable artifact.
 
 ## Project layout
 
-```
+```text
 owasp-llm07-demo/
 ├── README.md                          # this lab guide
 ├── run_demo.py                        # all four acts in one process

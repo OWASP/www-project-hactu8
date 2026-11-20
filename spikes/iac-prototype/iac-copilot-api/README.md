@@ -37,6 +37,7 @@ was never updated, resulting in the same "not enough information" response.
 ## Notes
 
 The API exposes:
+
 - `/api/copilot/chat`
 - `/api/copilot/documents`
 - `/api/copilot/sync/owasp`

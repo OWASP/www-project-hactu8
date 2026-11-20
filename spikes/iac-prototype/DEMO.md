@@ -85,7 +85,7 @@ cd iac-host
 npm run dev
 ```
 
-Open **http://localhost:5173**. The frontend is pre-configured (via
+Open **<http://localhost:5173>**. The frontend is pre-configured (via
 `iac-host/.env.development`) to talk to the backend at
 `http://localhost:8000` — no extra config needed if you used the default
 ports above.
@@ -151,6 +151,7 @@ Two coexisting concepts, worth explaining explicitly in a demo:
 Skills** and **Agent Skills** (the Skill Packages view).
 
 **Demo it:**
+
 1. `Skills Creator` — walk through scaffolding a new *Skill Package*: name,
    description, SKILL.md body, optionally a script. It zips client-side and
    uploads via `POST /api/skill-packages`.
@@ -173,6 +174,7 @@ between phases. **Only `kickoff`/`recon`/`risk` are implemented
 server-side** — later phases in the chain aren't wired up yet.
 
 **Demo it:**
+
 1. On `/agents`, fill in the scope form (target URL, objectives, team type)
    and click **Create Engagement**.
 2. Click **Run Recon Phase** — with a configured model provider, watch the

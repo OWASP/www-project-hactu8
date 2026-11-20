@@ -88,9 +88,11 @@ With `openrouter`, prompts and payloads leave the machine.
 ## Execution instructions
 
 1. **Start the target.** From this skill folder:
+
    ```bash
    python vulnerable_app.py             # serves on 127.0.0.1:5310
    ```
+
    On startup it seeds the fleet from `assets/fleet_baseline.json` and signs
    each config with a fresh demo-only key. To drive the same four acts from a
    browser, open <http://127.0.0.1:5310/>.
@@ -100,33 +102,41 @@ With `openrouter`, prompts and payloads leave the machine.
    Stock may only `read_stock` and `reorder_stock` on `stock/`.
 
 3. **Establish the baseline.**
+
    ```bash
    python scripts/evaluate_kpi.py
    ```
+
    Expect all 12 agent-ticks 🟢 GREEN, OMAR 0%. Exit code 0.
 
 4. **Run the attack.**
+
    ```bash
    python scripts/run_mandate_tamper.py
    ```
+
    Fetches Billy Stock's config, swaps in the mandate and instructions from
    [`assets/tampered_mandate.json`](assets/tampered_mandate.json), and writes
    it back through the unauthenticated `POST /config`. The old signature stays
    on it.
 
 5. **Stoplight verification.**
+
    ```bash
    python scripts/evaluate_kpi.py
    ```
+
    Expect 🔴 RED on Billy Stock's four ticks, and Billy Billing and Billy
    Support still 🟢 GREEN. OMAR 100% targeted, 33% overall, 7 off-mandate
    actions, "not stopped". Exit code 2.
 
 6. **Show the mitigations.**
+
    ```bash
    python scripts/evaluate_kpi.py --scan assets/tampered_mandate.json   # REJECT, exit 2
    python scripts/evaluate_kpi.py --harden                              # GREEN, OMAR 0%
    ```
+
    `--scan` diffs the mandate against the approved one and dry-runs it with
    only the monitor on; it reports that the monitor would quarantine Billy
    Stock at tick 1. `--harden` switches the target to hardened mode: the
@@ -135,10 +145,12 @@ With `openrouter`, prompts and payloads leave the machine.
    mandate. Each control alone returns the rate to 0, and the tests prove it.
 
 7. **Reset to baseline.**
+
    ```bash
    python scripts/reset_baseline.py
    python scripts/evaluate_kpi.py
    ```
+
    Expect all agent-ticks GREEN with OMAR 0%.
 
 ## Customizing the payload

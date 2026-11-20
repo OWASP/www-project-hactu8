@@ -50,7 +50,7 @@ python run_demo.py                     # all four acts in one process, stdlib on
 
 ## Why this matters (ASI10 in one paragraph)
 
-Excessive agency is an agent that was *given* too much. A rogue agent leaves
+Excessive agency is an agent that was _given_ too much. A rogue agent leaves
 the scope it was given, and keeps going. In a fleet, the operator's picture of
 each agent is its declared mandate; if the agent reloads that mandate from a
 store an attacker can write, and the only scope check is the agent's own,
@@ -109,6 +109,7 @@ mandate) and the tick's scheduled job, and asks it to reply with
 plans no action, and the agent's self-check still drops anything the loaded
 mandate does not allow. Nothing the model returns is executed; it only
 becomes entries in the simulated action log.
+
 - **Vulnerable mode** hands the model whatever config the store holds,
   tampered instructions included, as its own operating instructions.
 - **Hardened mode** sends the same prompt shape, but the signature check
@@ -122,6 +123,7 @@ numbers rather than asserting them. To try your own wording, see
 `assets/tampered_mandate.README.md`.
 
 Limits:
+
 - `LAB_MAX_CALLS` (default 200) caps calls per process. A 4-tick run makes
   up to 12 calls (3 agents x 4 ticks).
 - `LAB_MAX_TOKENS` (default 400) caps output tokens per call.
@@ -135,7 +137,7 @@ Echo and the local backends keep everything on the host.
 
 ## Architecture
 
-```
+```text
                  ┌──────────────────────────────────────────────┐
    scheduler ───▶│  Billy Fleet (vulnerable_app.py :5310)       │──▶ action log
    (ticks 1-4)   │   billy-billing · billy-stock · billy-support│   (simulated)
@@ -177,7 +179,7 @@ and the offline `dry_run` config check.
 
 The model is a deterministic stub with one fixed contract: it plans the job
 the scheduler gave it, adds any standing order in its instructions whose tick
-has come, then drops anything its *loaded* mandate does not allow. That
+has come, then drops anything its _loaded_ mandate does not allow. That
 contract never changes between acts. What changes is **which config is
 loaded and whether anything checks the plan**:
 
@@ -231,7 +233,7 @@ curl -s localhost:5310/api/state                           # signatures_valid: b
 |----------------|----------------|----------------------|------------------|
 | `POST /config` + hot reload | Tampered mandate config | Agent acts on a scope nobody approved | Signed configs, verified on every load |
 | `from tick N` standing orders | Gradual drift | Off-mandate actions grow over ticks; never stopped | Runtime monitor + kill switch at first violation |
-| Agent self-check | Self-policing against mutable config | Check passes because it reads the edited mandate | Monitor checks the *signed* mandate |
+| Agent self-check | Self-policing against mutable config | Check passes because it reads the edited mandate | Monitor checks the _signed_ mandate |
 | `assets/tampered_mandate.json` | Unreviewed config change | Widening reaches the fleet unchecked | `--scan`: mandate diff + monitor dry run |
 | Billy Billing / Billy Support | — | Attack is one agent, not a fleet outage | — |
 
@@ -257,7 +259,7 @@ release from quarantine, and tamper-evident logs.
 
 ## Project layout
 
-```
+```text
 owasp-asi10-demo/
 ├── README.md                          # this lab guide
 ├── run_demo.py                        # all four acts in one process

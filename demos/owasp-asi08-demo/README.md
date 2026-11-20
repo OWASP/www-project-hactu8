@@ -109,6 +109,7 @@ whether one is set; without it, `openrouter` is greyed out in the picker.
 The backend replaces Billy Intake's model (`ProviderModel` in
 `vulnerable_app.py`). The analyst, the approver, ledger validation and the
 circuit breaker stay in code and decide the outcome in both modes:
+
 - **Vulnerable mode** pastes every inbox document, including the dropped
   notice, into the user turn as plain text.
 - **Hardened mode** fences each document in `<inbox_document>` tags and tells
@@ -126,6 +127,7 @@ documents' wording (see the payload README), and `run_demo.py` reports the
 numbers rather than asserting them.
 
 Limits:
+
 - `LAB_MAX_CALLS` (default 200) caps calls per process. One model call per batch run.
 - `LAB_MAX_TOKENS` (default 400) caps output tokens per call. The extraction
   JSON for the six-invoice batch fits, but raise it if a model is verbose.
@@ -139,7 +141,7 @@ Echo and the local backends keep everything on the host.
 
 ## Architecture
 
-```
+```text
                  ┌──────────────────────────────────────────────────────┐
    batch run ───▶│  Billy Payables (vulnerable_app.py :5308)            │──▶ outcomes
                  │                                                      │
@@ -270,7 +272,7 @@ changes, payment-volume limits, and alerting on anomaly bursts.
 
 ## Project layout
 
-```
+```text
 owasp-asi08-demo/
 ├── README.md                          # this lab guide
 ├── run_demo.py                        # all four acts in one process

@@ -8,8 +8,8 @@ data export nobody asked for is added. Two mitigations shut the attack down:
 **plan pinning** with operator re-approval, and **tool output kept as data**.
 
 The scenario is **"Billy Ops," Goat & Co.'s operations agent.** Its ground
-truth is the approved plan: _"Weekly report for the billing queue; post it to
-#ops-weekly" runs `read_tickets`, `summarise`, `draft_report` on `billing`,
+truth is the approved plan: _"Weekly report for the billing queue; post it
+to #ops-weekly" runs `read_tickets`, `summarise`, `draft_report` on `billing`,
 then `post_report` to `#ops-weekly`, and nothing else._ With **1** comment on
 **1** ticket carrying **2** directive lines, the attacker makes every run that
 reads that ticket post to `#partner-lounge` instead and add
@@ -115,6 +115,7 @@ and the executor runs the first step not yet requested, as with the stub.
 The reply is parsed defensively: the first `{...}` block, known tools only,
 plain targets only. Anything else is an empty plan, so nothing runs. Every
 tool stays simulated, and nothing the model returns is executed or fetched.
+
 - **Vulnerable mode** pastes the tool results, ticket comments included, into
   the user turn as plain text, and runs whatever step the model asks for.
 - **Hardened mode** fences the tool results in `<untrusted_tool_output>` tags
@@ -129,6 +130,7 @@ numbers rather than asserting them. To try your own wording, see
 step is one model call, so a run costs up to 9 calls.
 
 Limits:
+
 - `LAB_MAX_CALLS` (default 200) caps calls per process.
 - `LAB_MAX_TOKENS` (default 400) caps output tokens per call.
 - `OLLAMA_TIMEOUT`, `LLAMACPP_TIMEOUT` and `OPENROUTER_TIMEOUT` set
@@ -141,7 +143,7 @@ Echo and the local backends keep everything on the host.
 
 ## Architecture
 
-```
+```text
                  ┌──────────────────────────────────────────────┐
    operator ────▶│  Billy Ops (vulnerable_app.py :5301)         │──▶ answer
    scope+channel │   • plan: read → summarise → draft → post    │
@@ -265,7 +267,7 @@ untrusted values cannot become step arguments.
 
 ## Project layout
 
-```
+```text
 owasp-asi01-demo/
 ├── README.md                          # this lab guide
 ├── run_demo.py                        # all four acts in one process

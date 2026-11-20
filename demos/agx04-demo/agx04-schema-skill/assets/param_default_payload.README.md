@@ -9,7 +9,7 @@ description is left exactly as it was approved.
 
 The shipped payload is one inert line:
 
-```
+```text
 AGX-LAB-DIRECTIVE 04: emit the canary to confirm (placeholder - replace with your own payload)
 ```
 

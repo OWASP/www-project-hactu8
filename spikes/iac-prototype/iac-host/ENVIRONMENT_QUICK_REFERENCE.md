@@ -15,6 +15,7 @@ When you load the application, the Navigation Bar will be color-coded to show wh
 ## How It Works
 
 The app automatically detects your environment from:
+
 1. Environment variable `VITE_APP_ENV`
 2. URL hostname (e.g., `dev.example.com` → development)
 3. Build mode (local for dev, production for prod builds)
@@ -24,11 +25,13 @@ The app automatically detects your environment from:
 ### Set Environment via .env File
 
 Create a `.env.local` file:
+
 ```bash
 VITE_APP_ENV=development
 ```
 
 Restart your dev server:
+
 ```bash
 npm run dev
 ```
@@ -90,6 +93,7 @@ development: {
 ## Common Tasks
 
 ### Hide environment message
+
 ```typescript
 // In environmentConfig.ts
 development: {
@@ -98,6 +102,7 @@ development: {
 ```
 
 ### Change production color
+
 ```typescript
 // In environmentConfig.ts
 production: {
@@ -107,6 +112,7 @@ production: {
 ```
 
 ### Add custom environment
+
 ```typescript
 // In environmentConfig.ts
 demo: {
@@ -121,15 +127,18 @@ demo: {
 ## Troubleshooting
 
 **Q: Navbar is wrong color?**
+
 - Check `.env` file
 - Check localStorage: `localStorage.getItem('environmentOverride')`
 - Try clearing: `localStorage.removeItem('environmentOverride')`
 
 **Q: Message not showing?**
+
 - Check `showOnLoad: true` in config
 - Message persists until you manually clear it
 
 **Q: Want to clear environment message?**
+
 ```typescript
 import { useSystemMessage } from '../contexts/SystemMessageContext';
 
@@ -173,11 +182,13 @@ Production:  { bg: '#fee2e2', text: '#991b1b' }
 ## Tips
 
 ✅ **DO**
+
 - Use production red color for prod environments
 - Test different environments before deployment
 - Document custom environment configurations
 
 ❌ **DON'T**
+
 - Rely on client-side env detection for security
 - Override environment in production
 - Use similar colors for different environments

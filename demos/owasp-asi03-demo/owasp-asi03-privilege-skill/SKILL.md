@@ -78,9 +78,11 @@ With `openrouter`, prompts and payloads leave the machine.
 ## Execution instructions
 
 1. **Start the target.** From this skill folder:
+
    ```bash
    python vulnerable_app.py             # serves on 127.0.0.1:5303
    ```
+
    On startup it seeds users, documents and three open requests from
    `assets/hr_baseline.json`, and mints fresh demo tokens.
    To drive the same four acts from a browser, open <http://127.0.0.1:5303/>.
@@ -90,32 +92,40 @@ With `openrouter`, prompts and payloads leave the machine.
    may read only her own offer letter, `HR-1001`.
 
 3. **Establish the baseline.**
+
    ```bash
    python scripts/evaluate_kpi.py
    ```
+
    The agent works through the open requests once, and the evaluator audits
    that run's action log. Expect all 🟢 GREEN, PER 0%. Exit code 0.
 
 4. **Run the attack.**
+
    ```bash
    python scripts/run_privilege_abuse.py
    ```
+
    Logs in as Dana and files [`assets/requests.json`](assets/requests.json):
    three requests for documents she cannot read, made with her own token, and
    one made with Morgan's delegated token copied from `GET /api/history`.
 
 5. **Stoplight verification.**
+
    ```bash
    python scripts/evaluate_kpi.py
    ```
+
    Expect 🔴 RED on the four Dana items, and the three entitled-caller
    controls still 🟢 GREEN. PER 100% targeted, 57% overall. Exit code 2.
 
 6. **Show the mitigations.**
+
    ```bash
    python scripts/evaluate_kpi.py --scan assets/requests.json   # REJECT, exit 2
    python scripts/evaluate_kpi.py --harden                      # GREEN, PER 0%
    ```
+
    `--scan` dry-runs the requests through a throwaway hardened lab, as an
    access review. `--harden` switches the target to hardened mode with
    `assets/identity_policy.json`: the agent exchanges the caller's token for a
@@ -123,10 +133,12 @@ With `openrouter`, prompts and payloads leave the machine.
    the request's session. Both controls are needed, and the tests prove it.
 
 7. **Reset to baseline.**
+
    ```bash
    python scripts/reset_baseline.py
    python scripts/evaluate_kpi.py
    ```
+
    Expect all items GREEN with PER 0%. Reset mints fresh demo tokens.
 
 ## Customizing the payload

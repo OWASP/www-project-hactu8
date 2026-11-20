@@ -111,6 +111,7 @@ asks the model for each next tool call as a JSON object,
 defensively (a known tool, string arguments, a target, no repeats); anything
 else means no call. A valid call only ever reaches the lab's simulated tools
 and the action log; nothing the model returns is executed.
+
 - **Vulnerable mode** pastes tool results, customer notes included, into the
   user turn as plain text, and every call the model asks for runs.
 - **Hardened mode** fences tool results in `<untrusted_tool_output>` tags and
@@ -124,6 +125,7 @@ numbers rather than asserting them. To try your own wording, see
 `assets/ticket_note.README.md`.
 
 Limits:
+
 - `LAB_MAX_CALLS` (default 200) caps calls per process. One agent request
   makes up to 9 calls (8 tool decisions and the answer).
 - `LAB_MAX_TOKENS` (default 400) caps output tokens per call.
@@ -137,7 +139,7 @@ Echo and the local backends keep everything on the host.
 
 ## Architecture
 
-```
+```text
                  ┌──────────────────────────────────────────────┐
    operator ────▶│  Billy Support (vulnerable_app.py :5203)     │──▶ answer
    task+request  │   • model plans tool calls (stub)            │
@@ -257,7 +259,7 @@ limits on irreversible tools.
 
 ## Project layout
 
-```
+```text
 owasp-llm03-demo/
 ├── README.md                          # this lab guide
 ├── run_demo.py                        # all four acts in one process

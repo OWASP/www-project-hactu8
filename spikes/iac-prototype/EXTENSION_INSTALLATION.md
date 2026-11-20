@@ -4,7 +4,7 @@ This guide explains how to install extensions to `~/.iac` directory with automat
 
 ## Architecture
 
-```
+```text
 User clicks "Install" on Extensions page
     ↓
 Frontend calls POST /api/extensions/install
@@ -30,7 +30,7 @@ Frontend updates sidebar with installed extension
 
 Set the API base URL in your `.env` file:
 
-```
+```text
 VITE_API_BASE_URL=http://localhost:5000
 # or for production:
 # VITE_API_BASE_URL=https://api.example.com
@@ -39,6 +39,7 @@ VITE_API_BASE_URL=http://localhost:5000
 ### 2. ExtensionService Already Updated
 
 The frontend is now configured to:
+
 - Call `POST /api/extensions/install` when installing
 - Wait for the backend to download/extract
 - Update local state after success
@@ -121,6 +122,7 @@ if __name__ == "__main__":
 ### POST /api/extensions/install
 
 **Request:**
+
 ```json
 {
   "extensionId": "prompt-injection-tests",
@@ -138,6 +140,7 @@ if __name__ == "__main__":
 ```
 
 **Success Response (200):**
+
 ```json
 {
   "success": true,
@@ -147,6 +150,7 @@ if __name__ == "__main__":
 ```
 
 **Error Response (400/500):**
+
 ```json
 {
   "error": "SHA256 mismatch: expected abc123..., got def456..."
@@ -155,7 +159,7 @@ if __name__ == "__main__":
 
 ## Directory Structure After Installation
 
-```
+```text
 ~/.iac/
 ├── extensions/
 │   └── prompt-injection-tests/
@@ -198,21 +202,25 @@ If the downloaded file doesn't match, installation fails with a clear error mess
 ## Troubleshooting
 
 ### "Failed to download zip"
+
 - Check registry.zipFile URL is accessible
 - Verify firewall/proxy settings allow HTTP access
 - Check CORS headers if frontend and backend are on different domains
 
 ### "SHA256 mismatch"
+
 - Verify registry.json has correct hash
 - Check if zip file was corrupted during download
 - Regenerate hash if registry entry updated: `sha256sum file.zip`
 
 ### "Installation failed: [errno 13] Permission denied"
+
 - Ensure `~/.iac` directory is writable by the backend process
 - Check user permissions: `ls -la ~/.iac/`
 - May need to run backend with `sudo` or adjust directory ownership
 
 ### Extension doesn't appear in sidebar
+
 - Check backend returned `success: true`
 - Verify `installPath` in response matches expected location
 - Check browser console for network errors

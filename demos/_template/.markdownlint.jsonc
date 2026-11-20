@@ -1,0 +1,5 @@
+{
+  // The template's <Placeholder> markers look like HTML tags; they are filled in per lab.
+  "extends": "../../.markdownlint.jsonc",
+  "MD033": false
+}

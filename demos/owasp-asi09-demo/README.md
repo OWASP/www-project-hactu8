@@ -115,6 +115,7 @@ The attack mechanics are identical. Only the summary writer changes:
 field. The tool, vendor and value always come from the request, never from
 the reply; a field the request did not ask for is dropped, and a reply that
 does not parse plans no action. Request selection stays in code.
+
 - **Vulnerable mode** pastes the vendor's notes into the prompt as ordinary
   request text, and the card shows the model's summary.
 - **Hardened mode** fences the notes in `<untrusted_vendor_notes>` tags and
@@ -127,6 +128,7 @@ A real model may still ignore the payload's wording. To write your own, see
 than asserting them.
 
 Limits:
+
 - `LAB_MAX_CALLS` (default 200) caps calls per process.
 - `LAB_MAX_TOKENS` (default 400) caps output tokens per call.
 - `OLLAMA_TIMEOUT`, `LLAMACPP_TIMEOUT` and `OPENROUTER_TIMEOUT` set
@@ -139,7 +141,7 @@ Echo and the local backends keep everything on the host.
 
 ## Architecture
 
-```
+```text
                  ┌──────────────────────────────────────────────┐
    operator ────▶│  Billy Payables (vulnerable_app.py :5309)    │──▶ answer
    task          │   1. read change requests                    │
@@ -275,7 +277,7 @@ on how many approval prompts one person sees.
 
 ## Project layout
 
-```
+```text
 owasp-asi09-demo/
 ├── README.md                          # this lab guide
 ├── run_demo.py                        # all four acts in one process

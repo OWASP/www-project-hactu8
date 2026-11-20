@@ -31,9 +31,10 @@ few as **3** documents — then measures the impact and shows the fix.
 ## When to use
 
 Trigger this skill when the task is to:
+
 - run or reproduce a RAG data-poisoning demo,
 - quantify how injected documents shift model output (Poison Success Rate),
-- explain *why* low-volume poisoning works (semantic collision), or
+- explain _why_ low-volume poisoning works (semantic collision), or
 - contrast the vulnerable pipeline with the hardened one.
 
 ## Prerequisites
@@ -48,11 +49,14 @@ Trigger this skill when the task is to:
 
 1. **Confirm authorization and a valid target.** Default target is the local demo
    server at `http://127.0.0.1:5101`. If it isn't running, start it:
+
    ```bash
    python -m llm05_demo.server
    # Another port: LLM05_SRC_PORT=5111 python -m llm05_demo.server
    ```
+
 2. **Run the attack + evaluation.** From this skill folder:
+
    ```bash
    # Against the running vulnerable server (needs `requests`):
    python scripts/run_task.py --target http://127.0.0.1:5101
@@ -60,19 +64,21 @@ Trigger this skill when the task is to:
    # Or fully in-process, no server needed (uses the llm05_demo package):
    python scripts/run_task.py --local
    ```
+
    The script establishes a clean baseline, injects the adversarial documents
    from [`assets/poisoned-docs.md`](assets/poisoned-docs.md), re-queries, and
    prints the stoplight table and Poison Success Rate.
 3. **Interpret the KPI.** 🟢 GREEN = correct/unpoisoned, 🟡 YELLOW = drift,
    🔴 RED = material exposure. A successful demo shows **100% targeted PSR** on
    data-export queries while control topics (MFA, IT approval) stay GREEN — the
-   signature of *targeted* steering. See
+   signature of _targeted_ steering. See
    [`references/ATTACK_TECHNIQUE.md`](references/ATTACK_TECHNIQUE.md).
 4. **Show the remediation.** Re-run the demo's hardened pipeline
    (`python run_demo.py` from the project root, Act 4) to show source scoring and
    anomaly detection returning the system to all-GREEN. Map each defense with
    [`references/LLM05_MAPPING.md`](references/LLM05_MAPPING.md).
 5. **Validate the setup** any time with:
+
    ```bash
    bash scripts/validate.sh
    ```

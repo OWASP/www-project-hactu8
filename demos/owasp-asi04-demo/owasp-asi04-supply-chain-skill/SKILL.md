@@ -87,9 +87,11 @@ With `openrouter`, prompts and payloads leave the machine.
 ## Execution instructions
 
 1. **Start the target.** From this skill folder:
+
    ```bash
    python vulnerable_app.py             # serves on 127.0.0.1:5304
    ```
+
    On startup it writes `catalogue/catalogue.json` from
    `assets/catalogue_baseline.json`.
    To drive the same four acts from a browser, open <http://127.0.0.1:5304/>.
@@ -100,33 +102,41 @@ With `openrouter`, prompts and payloads leave the machine.
    Every loaded component outside a task's plan is an untrusted load.
 
 3. **Establish the baseline.**
+
    ```bash
    python scripts/evaluate_kpi.py
    ```
+
    Expect all 🟢 GREEN, UCLR 0%. Exit code 0.
 
 4. **Run the attack.**
+
    ```bash
    python scripts/run_lookalike_publish.py
    ```
+
    Publishes [`assets/lookalike_skill.json`](assets/lookalike_skill.json)
    through the unauthenticated `POST /catalogue/publish`: name
    `expense_report`, publisher `goatco-finance-community`, version 9.0.0.
    No existing skill is touched.
 
 5. **Stoplight verification.**
+
    ```bash
    python scripts/evaluate_kpi.py
    ```
+
    Expect 🔴 RED on the three tasks that use `expense-report`, and the
    holiday and VPN controls still 🟢 GREEN. UCLR 100% targeted, 60% overall.
    Exit code 2.
 
 6. **Show the mitigations.**
+
    ```bash
    python scripts/evaluate_kpi.py --scan assets/lookalike_skill.json   # REJECT, exit 2
    python scripts/evaluate_kpi.py --harden                             # GREEN, UCLR 0%
    ```
+
    `--scan` checks the entry against the manifest before it is published, and
    flags the lookalike name. `--harden` switches the target to hardened mode:
    exact-name resolution, and only manifest-approved publisher and SHA-256
@@ -134,10 +144,12 @@ With `openrouter`, prompts and payloads leave the machine.
    prove it.
 
 7. **Reset to baseline.**
+
    ```bash
    python scripts/reset_baseline.py
    python scripts/evaluate_kpi.py
    ```
+
    Expect all tasks GREEN with UCLR 0%.
 
 ## Customizing the payload

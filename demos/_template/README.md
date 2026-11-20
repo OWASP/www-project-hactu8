@@ -24,7 +24,7 @@ pip install -r requirements.txt
 python vulnerable_app.py
 ```
 
-Open <http://127.0.0.1:<PORT>>. Use **Run full attack** for the guided sequence
+Open <<http://127.0.0.1>:<PORT>>. Use **Run full attack** for the guided sequence
 or run each step separately. **Reset baseline** restores a clean state.
 
 ---
@@ -68,7 +68,7 @@ The attack mechanics are identical; only the model implementation changes.
 
 ## Architecture
 
-```
+```text
                  ┌──────────────────────────────────────────────┐
    user query ──▶│  Vulnerable <target> (<file>)                │──▶ answer
                  │   • <missing check 1>                        │
@@ -145,7 +145,7 @@ Further hardening discussed in the references (not all coded here): <list>.
 
 ## Project layout
 
-```
+```text
 <demo-slug>/
 ├── <skill-slug>/
 │   ├── SKILL.md              #   metadata + instructions

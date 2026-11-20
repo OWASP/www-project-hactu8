@@ -76,9 +76,11 @@ With `openrouter`, prompts and payloads leave the machine.
 ## Execution instructions
 
 1. **Start the target.** From this skill folder:
+
    ```bash
    python vulnerable_app.py             # serves on 127.0.0.1:5201
    ```
+
    On startup it seeds the wiki from `assets/kb_baseline.json`. To drive the
    same four acts from a browser, open <http://127.0.0.1:5201/>.
 
@@ -87,32 +89,40 @@ With `openrouter`, prompts and payloads leave the machine.
    this policy, so it is what an attacker most wants to override.
 
 3. **Establish the baseline.**
+
    ```bash
    python scripts/evaluate_kpi.py
    ```
+
    Expect all 🟢 GREEN, ISR 0%. Exit code 0.
 
 4. **Run the attack.**
+
    ```bash
    python scripts/run_injection.py
    ```
+
    Writes [`assets/injected_page.md`](assets/injected_page.md) over the
    `expenses` page through the unauthenticated `POST /kb/page`. The page keeps
    its real text, so it still ranks first for expense questions. One extra line
    carries the instruction.
 
 5. **Stoplight verification.**
+
    ```bash
    python scripts/evaluate_kpi.py
    ```
+
    Expect 🔴 RED on the three expense questions, and the holiday and VPN
    controls still 🟢 GREEN. ISR 100% targeted, 60% overall. Exit code 2.
 
 6. **Show the mitigations.**
+
    ```bash
    python scripts/evaluate_kpi.py --scan assets/injected_page.md   # REJECT, exit 2
    python scripts/evaluate_kpi.py --harden                         # GREEN, ISR 0%
    ```
+
    `--scan` screens the page before it is published. `--harden` switches the
    target to hardened mode: tool output goes in its own `tool` role, which the
    model never takes instructions from, and is screened with protectogw
@@ -120,10 +130,12 @@ With `openrouter`, prompts and payloads leave the machine.
    separation alone is enough here, and the tests prove it.
 
 7. **Reset to baseline.**
+
    ```bash
    python scripts/reset_baseline.py
    python scripts/evaluate_kpi.py
    ```
+
    Expect all questions GREEN with ISR 0%.
 
 ## Customizing the payload

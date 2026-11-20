@@ -84,9 +84,11 @@ vulnerable prompt's fictional canary.
 ## Execution instructions
 
 1. **Start the target.** From this skill folder:
+
    ```bash
    python vulnerable_app.py             # serves on 127.0.0.1:5208
    ```
+
    On startup it seeds the store from `assets/store_baseline.json`. To drive
    the same four acts from a browser, open <http://127.0.0.1:5208/>.
 
@@ -96,33 +98,41 @@ vulnerable prompt's fictional canary.
    deployed prompt embeds the staff discount code and the internal tool schema.
 
 3. **Establish the baseline.**
+
    ```bash
    python scripts/evaluate_kpi.py
    ```
+
    Expect all 🟢 GREEN, PLR 0%. Exit code 0.
 
 4. **Run the attack.**
+
    ```bash
    python scripts/run_extraction.py
    ```
+
    Saves [`assets/extraction_request.md`](assets/extraction_request.md) as the
    reply preference of `guest-attacker` through `POST /profile`, an ordinary
    customer feature.
 
 5. **Stoplight verification.**
+
    ```bash
    python scripts/evaluate_kpi.py
    ```
+
    Expect 🔴 RED on the three `guest-attacker` questions, and the two
    `guest-alice` controls still 🟢 GREEN. PLR 100% targeted, 60% overall. Exit
    code 2.
 
 6. **Show the mitigations.**
+
    ```bash
    python scripts/evaluate_kpi.py --scan assets/system_prompt_vulnerable.txt   # REJECT, exit 2
    python scripts/evaluate_kpi.py --scan assets/system_prompt_hardened.txt     # PASS, exit 0
    python scripts/evaluate_kpi.py --harden                                     # GREEN, PLR 0%
    ```
+
    `--scan` is the design check a prompt should pass before it ships.
    `--harden` deploys the secret-free prompt and filters every reply:
    protectogw (AgenticGoat's screening core, vendored unchanged in
@@ -133,10 +143,12 @@ vulnerable prompt's fictional canary.
    withholds the quote even with the code still in the prompt.
 
 7. **Reset to baseline.**
+
    ```bash
    python scripts/reset_baseline.py
    python scripts/evaluate_kpi.py
    ```
+
    Expect all questions GREEN with PLR 0%.
 
 ## Customizing the payload

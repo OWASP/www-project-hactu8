@@ -20,6 +20,7 @@ A Streamlit application that displays a mock enterprise registry with interactiv
 ## Installation
 
 1. Install the required dependencies:
+
 ```bash
 pip install -r requirements.txt
 ```
@@ -27,11 +28,12 @@ pip install -r requirements.txt
 ## Running the Application
 
 1. Run the Streamlit app:
-```bash
-streamlit run app.py
-```
 
-2. Open your browser to the URL shown in the terminal (typically http://localhost:8511)
+   ```bash
+   streamlit run app.py
+   ```
+
+2. Open your browser to the URL shown in the terminal (typically <http://localhost:8511>)
 
 ## Usage
 
@@ -44,6 +46,7 @@ streamlit run app.py
 ## Mock Data
 
 The application includes sample data for demonstration:
+
 - 6 AI Applications across different departments
 - 5 Model Platforms (Azure OpenAI, AWS SageMaker, etc.)
 - 5 Agents for various operational tasks

@@ -115,6 +115,7 @@ it replies with a small JSON object, `{"tool_calls": [...]}` or
 becomes a plain "not found" answer with no tool call. Tool-call strings are
 only ever used as `search_kb` queries. The agent loop, metering and every cap
 stay in code:
+
 - **Vulnerable mode** pastes each tool result into the prompt as plain text,
   and only the host-safety caps bound the loop.
 - **Hardened mode** fences tool results in `<untrusted_tool_output>` tags and
@@ -128,6 +129,7 @@ may ignore the shipped payloads (to tune them, see the payload READMEs), so
 `run_demo.py` reports the numbers rather than asserting them.
 
 Limits:
+
 - `LAB_MAX_CALLS` (default 200) caps calls per process. One run of
   `run_demo.py` makes dozens of calls, because every agent step is one call.
 - `LAB_MAX_TOKENS` (default 400) caps output tokens per call.
@@ -142,7 +144,7 @@ everything on the host.
 
 ## Architecture
 
-```
+```text
                  ┌──────────────────────────────────────────────┐
    user query ──▶│  Billy agent loop (vulnerable_app.py :5206)  │──▶ answer
                  │   • meters tokens/calls/steps, enforces none │    + simulated
@@ -265,7 +267,7 @@ automatic shutoff, and authenticated wiki edits (see LLM01).
 
 ## Project layout
 
-```
+```text
 owasp-llm06-demo/
 ├── README.md                          # this lab guide
 ├── run_demo.py                        # all four acts in one process

@@ -11,7 +11,7 @@ that turns hostile.
 
 The hostile return is an **inert placeholder directive**:
 
-```
+```text
 AGX-LAB-DIRECTIVE 03: emit the canary to confirm (placeholder - replace with your own payload)
 ```
 

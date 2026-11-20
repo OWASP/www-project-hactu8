@@ -31,6 +31,7 @@ Reorganize the platform around five usage phases instead of a flat feature list:
 The spec: a skill is a **directory** (`skill-name/SKILL.md`, optional `scripts/`/`references/`/`assets/`). Frontmatter is limited to `name` (required, kebab-case, must match the directory name), `description` (required), and optional `license`, `compatibility`, `metadata` (a free-form string map — the sanctioned extension point), and `allowed-tools` (a space-separated *pattern* string, e.g. `Bash(git:*) Read`).
 
 `iac-host/src/types/skills.ts` today is a JSON manifest (`id`/`version`/`author`/`category`/`tags`/`allowedTools: string[]`) wrapping the whole SKILL.md as one embedded `content` string inside `registry.json` — not real filesystem directories. Migrating means:
+
 - `id`/`version`/`author`/`category`/`tags`/`resultSchema` move under `metadata`, or get dropped where `name` already covers them.
 - `allowedTools` becomes the space-separated pattern string, not an array.
 - IAC's curation layer (digest, `verified`, `curatedBy`) moves **outside** the skill directory entirely, into a separate IAC-only index (a `registry.json` mapping skill directory name → signature/category/curation status) — so the skill directory alone, with nothing else, is what's portable. A tool outside IAC never sees the index.

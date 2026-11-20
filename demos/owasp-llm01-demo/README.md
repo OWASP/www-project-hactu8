@@ -99,6 +99,7 @@ shell that starts the lab. The console never asks for it and is only told
 whether one is set; without it, `openrouter` is greyed out in the picker.
 
 The attack mechanics are identical. Only the model changes:
+
 - **Vulnerable mode** pastes the tool output into the user turn as plain text.
 - **Hardened mode** screens it, fences it in `<untrusted_tool_output>` tags,
   and tells the model never to follow instructions inside them
@@ -109,6 +110,7 @@ A real model may ignore the payload. Rewrite it if needed
 numbers rather than asserting them.
 
 Limits:
+
 - `LAB_MAX_CALLS` (default 200) caps calls per process.
 - `LAB_MAX_TOKENS` (default 400) caps output tokens per call.
 - `OLLAMA_TIMEOUT`, `LLAMACPP_TIMEOUT` and `OPENROUTER_TIMEOUT` set
@@ -121,7 +123,7 @@ Echo and the local backends keep everything on the host.
 
 ## Architecture
 
-```
+```text
                  ┌──────────────────────────────────────────────┐
    user query ──▶│  Billy (vulnerable_app.py :5201)             │──▶ answer
                  │   • tool output inlined into one flat context│
@@ -233,7 +235,7 @@ adversarial testing.
 
 ## Project layout
 
-```
+```text
 owasp-llm01-demo/
 ├── README.md                          # this lab guide
 ├── run_demo.py                        # all four acts in one process

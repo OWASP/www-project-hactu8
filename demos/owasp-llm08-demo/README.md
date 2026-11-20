@@ -104,6 +104,7 @@ whether one is set; without it, `openrouter` is greyed out in the picker.
 
 The attack mechanics are identical. Only the model changes. It replaces
 `StubModel.generate(messages)` and returns free text:
+
 - **Vulnerable mode** sends the secret-bearing system prompt, and the saved
   preference sits in the user turn as ordinary text. The reply goes out
   unchecked.
@@ -119,6 +120,7 @@ sometimes, which the verbatim n-gram filter will miss. The design fix (no
 secret in the prompt) is what holds then.
 
 Limits:
+
 - `LAB_MAX_CALLS` (default 200) caps calls per process.
 - `LAB_MAX_TOKENS` (default 400) caps output tokens per call.
 - `OLLAMA_TIMEOUT`, `LLAMACPP_TIMEOUT` and `OPENROUTER_TIMEOUT` set
@@ -132,7 +134,7 @@ backends keep everything on the host.
 
 ## Architecture
 
-```
+```text
                  ┌──────────────────────────────────────────────┐
    customer ────▶│  Billy Shop (vulnerable_app.py :5208)        │──▶ reply
    question      │   • system prompt embeds code + tool schema  │    (unchecked)
@@ -263,7 +265,7 @@ sat in a prompt, and adversarial testing with held-out extraction phrasings.
 
 ## Project layout
 
-```
+```text
 owasp-llm08-demo/
 ├── README.md                          # this lab guide
 ├── run_demo.py                        # all four acts in one process

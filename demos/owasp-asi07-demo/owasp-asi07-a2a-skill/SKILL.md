@@ -95,9 +95,11 @@ With `openrouter`, prompts and payloads leave the machine.
 ## Execution instructions
 
 1. **Start the target.** From this skill folder:
+
    ```bash
    python vulnerable_app.py             # serves on 127.0.0.1:5307
    ```
+
    On startup it generates demo-only keys for `planner`, `executor` and
    `notifier`, seeds records from `assets/ops_baseline.json`, and puts one
    old genuine planner order (refund of `A-0907`, 3 days old) on the bus log.
@@ -109,34 +111,42 @@ With `openrouter`, prompts and payloads leave the machine.
    `pay_invoice:INV-3001`.
 
 3. **Establish the baseline.**
+
    ```bash
    python scripts/evaluate_kpi.py
    ```
+
    Expect all 🟢 GREEN, FMAR 0%. Exit code 0.
 
 4. **Run the attack.**
+
    ```bash
    python scripts/run_bus_forgery.py
    ```
+
    Publishes [`assets/forged_order.md`](assets/forged_order.md) as a retained
    work order on `payments` and `inventory` with `sender: planner` and no
    signature, then copies the old `refunds` order from `GET /bus/log` and
    publishes it again unchanged. No tool is called yet.
 
 5. **Stoplight verification.**
+
    ```bash
    python scripts/evaluate_kpi.py
    ```
+
    Expect 🔴 RED on the `payments` and `inventory` jobs (simulated
    `pay_invoice:INV-3999` and `cancel_order:A-1002`) and on the `refunds` job
    (a second `issue_refund:A-0907`). The `shipping` and `reports` controls stay
    🟢 GREEN. FMAR 100% targeted, 60% overall. Exit code 2.
 
 6. **Show the mitigations.**
+
    ```bash
    python scripts/evaluate_kpi.py --scan assets/forged_order.md   # REJECT, exit 2
    python scripts/evaluate_kpi.py --harden                        # GREEN, FMAR 0%
    ```
+
    `--scan` sends the payload as a spoofed planner order into a throwaway,
    verifying executor and lists the steps it refuses. `--harden` switches the
    target to hardened mode: each work order must carry a valid HMAC-SHA256
@@ -148,10 +158,12 @@ With `openrouter`, prompts and payloads leave the machine.
    execute.
 
 7. **Reset to baseline.**
+
    ```bash
    python scripts/reset_baseline.py
    python scripts/evaluate_kpi.py
    ```
+
    Expect all jobs GREEN with FMAR 0%.
 
 ## Customizing the payload

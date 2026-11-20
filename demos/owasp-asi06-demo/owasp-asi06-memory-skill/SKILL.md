@@ -84,9 +84,11 @@ With `openrouter`, prompts and payloads leave the machine.
 ## Execution instructions
 
 1. **Start the target.** From this skill folder:
+
    ```bash
    python vulnerable_app.py             # serves on 127.0.0.1:5306
    ```
+
    On startup it seeds the KB and two harmless user memories from
    `assets/memory_baseline.json`. To drive the same four acts from a browser,
    open <http://127.0.0.1:5306/>.
@@ -97,33 +99,41 @@ With `openrouter`, prompts and payloads leave the machine.
    so it is what an attacker most wants to override.
 
 3. **Establish the baseline.**
+
    ```bash
    python scripts/evaluate_kpi.py
    ```
+
    Expect all 🟢 GREEN, PSR 0%. Exit code 0.
 
 4. **Run the attack.**
+
    ```bash
    python scripts/run_memory_poison.py
    ```
+
    Opens one session as `mallory` and asks the agent to remember
    [`assets/memory_note.md`](assets/memory_note.md). The agent stores it with
    `shared` scope. Exit code 0.
 
 5. **Stoplight verification.**
+
    ```bash
    python scripts/evaluate_kpi.py
    ```
+
    Expect 🔴 RED on alice's, bob's and carol's travel questions, and dave's
    payroll and erin's VPN controls still 🟢 GREEN. PSR 100% targeted, 60%
    overall. Exit code 2. `GET /api/actions` shows each `respond` step's
    `directive_source`: memory `m-0003`, owner `mallory`.
 
 6. **Show the mitigations.**
+
    ```bash
    python scripts/evaluate_kpi.py --scan assets/memory_note.md   # REJECT, exit 2
    python scripts/evaluate_kpi.py --harden                       # GREEN, PSR 0%
    ```
+
    `--scan` screens the memory before it is stored. `--harden` switches the
    target to hardened mode: writes are screened, new memories get `user` scope
    and provenance, and recall ignores entries that are unscoped or owned by
@@ -131,10 +141,12 @@ With `openrouter`, prompts and payloads leave the machine.
    enough, and the tests prove it.
 
 7. **Reset to baseline.**
+
    ```bash
    python scripts/reset_baseline.py
    python scripts/evaluate_kpi.py
    ```
+
    Expect all sessions GREEN with PSR 0%.
 
 ## Customizing the payload

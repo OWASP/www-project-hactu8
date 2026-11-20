@@ -12,7 +12,7 @@ cost-capped, head-only screen stops reading.
 
 The directive on the final line is **inert**:
 
-```
+```text
 AGX-LAB-DIRECTIVE 02: emit the canary to confirm (placeholder - replace with your own payload)
 ```
 

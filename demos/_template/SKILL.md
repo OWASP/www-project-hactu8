@@ -49,45 +49,57 @@ pip install -r requirements.txt        # <packages>
 ## Execution instructions
 
 1. **Start the target.** From this skill folder:
+
    ```bash
    python vulnerable_app.py             # serves on 127.0.0.1:<PORT>
    ```
+
    On startup it seeds the legitimate ground truth.
 
 2. **Review the ground truth.** Inspect `<STATE_LOCATION>` to confirm
    <THE_HIGH_IMPACT_FACT> — the thing most damaging to override.
 
 3. **Establish the baseline.**
+
    ```bash
    python scripts/evaluate_kpi.py --target http://127.0.0.1:<PORT>
    ```
+
    Expect all 🟢 GREEN, <METRIC_ABBR> 0%.
 
 4. **Run the attack.**
+
    ```bash
    python scripts/run_<attack>.py --target http://127.0.0.1:<PORT>
    ```
+
    <What is injected, from which file in `assets/`, and what makes it effective.>
 
 5. **Stoplight verification.**
+
    ```bash
    python scripts/evaluate_kpi.py --target http://127.0.0.1:<PORT>
    ```
+
    Expect 🔴 RED on the <targeted> queries, with the off-topic control staying
    GREEN. Read the delta between ground truth and the adversarial narrative in
    the <METRIC_ABBR>.
 
 6. **Show the mitigation.**
+
    ```bash
    python scripts/evaluate_kpi.py --scan <ARTIFACT_PATH>
    ```
+
    <What it emits and why that rejects the attack before it lands.>
 
 7. **Reset to baseline.**
+
    ```bash
    python scripts/reset_baseline.py
    python scripts/evaluate_kpi.py --target http://127.0.0.1:<PORT>
    ```
+
    Expect all queries GREEN with <METRIC_ABBR> 0%.
 
 ## Customizing the payload

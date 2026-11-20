@@ -67,6 +67,7 @@ Columns: AgenticGoat source → scenario → attack (payload in `assets/`) →
 metric → mitigation (Act 4) → controls that must stay GREEN.
 
 ### LLM01 Prompt Injection — `owasp-llm01-demo`, port 5201
+
 - Source: acts `static_scan` (`acts.py:41`), `runtime_watch` (:94),
   `obfuscation_gauntlet` (:489), `schema_scan` (:610); goat `search_kb`
   (`vulnerable_server.py:258/268`); `protectogw/screening.py` `normalize` :83,
@@ -80,6 +81,7 @@ metric → mitigation (Act 4) → controls that must stay GREEN.
 - Controls: questions answered from untouched pages.
 
 ### LLM02 Sensitive Information Disclosure — `owasp-llm02-demo`, port 5202
+
 - Source: `training_live.py:273` probe, `secrets_vault.py`
   (`assert_not_leaking`), output canary rule.
 - Gap to build: AgenticGoat only checks a canary. Add a small customer-record
@@ -92,6 +94,7 @@ metric → mitigation (Act 4) → controls that must stay GREEN.
 - Controls: legitimate own-account questions.
 
 ### LLM03 Excessive Agency — `owasp-llm03-demo`, port 5203
+
 - Source: `agency_gate_scan` (`acts.py:1005`), `_agency_gate` (:974).
 - Scenario: support agent with `lookup_order`, `issue_refund`, `delete_account`.
 - Attack: injected instruction in a ticket triggers an unrequested refund /
@@ -102,6 +105,7 @@ metric → mitigation (Act 4) → controls that must stay GREEN.
 - Controls: legitimate lookups still execute.
 
 ### LLM04 Supply Chain — `owasp-llm04-demo`, port 5204
+
 - Source: `swap_check` (:165, `simulate_swap` goat :208, `_hash` :145),
   `conditional_scan` (:393, goat :432), slopsquat part of `grounding_scan`.
 - Scenario: agent loads tools from a third-party MCP-style registry.
@@ -113,6 +117,7 @@ metric → mitigation (Act 4) → controls that must stay GREEN.
 - Gap (discussed, not coded): pickle model files, LoRA adapters, SBOM.
 
 ### LLM05 Data and Model Poisoning — exists (`owasp-llm05-demo`), port 5205
+
 - Brought onto the template: stdlib `vulnerable_app.py` with the shared console,
   `providers.py`, three surfaces (RAG, prompt template, agent cache) and three
   hardened controls. The earlier embedding-based pipeline stays in `src/`.
@@ -120,6 +125,7 @@ metric → mitigation (Act 4) → controls that must stay GREEN.
   payload across two docs and YAML-frontmatter payload. Not in first pass.
 
 ### LLM06 Unbounded Consumption — `owasp-llm06-demo`, port 5206
+
 - Source: `consumption_guard` (:1341), `_consumption_guard` (:1307).
 - Attack: prompts that cause runaway output, a tool-call storm, a recursive
   agent loop. Cost is counted in simulated tokens/$, never real spend.
@@ -131,6 +137,7 @@ metric → mitigation (Act 4) → controls that must stay GREEN.
   machine.
 
 ### LLM07 Misinformation — `owasp-llm07-demo`, port 5207
+
 - Source: `grounding_scan` (:1122), `_grounding_check` (:1083).
 - Scenario: dev-helper bot recommends packages and cites docs.
 - Attack: poisoned context pushes a non-existent (slopsquat) package and an
@@ -140,6 +147,7 @@ metric → mitigation (Act 4) → controls that must stay GREEN.
   downgraded to "unverified".
 
 ### LLM08 Hidden Context Exposure — `owasp-llm08-demo`, port 5208
+
 - Source: `training_live.py:318` probe and `system_reveal` rule only — **no
   dedicated act; most of this demo is new.**
 - Scenario: bot whose system prompt embeds an internal discount code and a
@@ -150,6 +158,7 @@ metric → mitigation (Act 4) → controls that must stay GREEN.
   system-prompt n-grams.
 
 ### LLM09 Vector and Embedding Weaknesses — `owasp-llm09-demo`, port 5209
+
 - Source: `retrieval_scope_scan` (:1224), plant at :1190, `_scope_blocks` (:1217).
 - Scenario: multi-tenant RAG; tenant A and tenant B share one vector store.
 - Attack: tenant B query crafted to rank tenant A's doc first.
@@ -158,6 +167,7 @@ metric → mitigation (Act 4) → controls that must stay GREEN.
 - Gap (discussed, not coded): embedding inversion.
 
 ### LLM10 Improper Output Handling — `owasp-llm10-demo`, port 5210
+
 - Source: `output_handling_scan` (:889), `_SINK_RULES` (:836),
   `agentic/exfil_receiver.py` (127.0.0.1:9091).
 - Scenario: model output feeds three real sinks: an in-memory SQLite query,
@@ -195,6 +205,7 @@ What sets these apart from the LLM demos is that the agent runs a
 at the agent level, not in a single answer.
 
 **ASI01 Agent Goal Hijack** — port 5301
+
 - Scenario: "Billy Ops" runs a fixed weekly-report task in four steps: read
   tickets, summarise, draft the report, post it to the team channel. Every
   action goes to a simulated action log.
@@ -207,6 +218,7 @@ at the agent level, not in a single answer.
 - Controls: runs whose inputs do not include the edited ticket.
 
 **ASI04 Agentic Supply Chain** — port 5304
+
 - Scenario: the agent loads helper "skills" by name at runtime from a local
   catalogue. This is runtime discovery, unlike LLM04's preinstalled tools.
 - Attack: a lookalike-named skill is published to the catalogue, and the
@@ -217,6 +229,7 @@ at the agent level, not in a single answer.
 - Controls: tasks that use other skills.
 
 **ASI06 Memory & Context Poisoning** — port 5306
+
 - Source: AgenticGoat `agentic/poison_lab.py`.
 - Scenario: the agent saves long-term memories from conversations and
   recalls them in later sessions for any user.
@@ -227,6 +240,7 @@ at the agent level, not in a single answer.
 - Controls: topics with no planted memory.
 
 **ASI07 Insecure Inter-Agent Communication** — port 5307
+
 - Source: AgenticGoat `a2a_scan`.
 - Scenario: a planner agent sends work orders to an executor agent over a
   local in-process message bus.
@@ -243,6 +257,7 @@ Same conventions as 4.1. In each one, the attack's effect shows in the action
 log, not just in the answer text.
 
 **ASI02 Tool Misuse & Exploitation** — port 5302
+
 - Scenario: "Billy Finance" has `query_ledger(filter, limit)` and
   `export_report(rows, destination)`, which writes to a simulated outbox. Both
   are legitimate tools the agent is allowed to use.
@@ -258,6 +273,7 @@ log, not just in the answer text.
 - Controls: normal reports to approved destinations.
 
 **ASI03 Identity & Privilege Abuse** — port 5303
+
 - Scenario: the agent fetches HR documents. In vulnerable mode it uses its
   own broad service identity for every caller. This is the confused deputy.
 - Attack: no injection. A low-privilege user asks for documents their role
@@ -271,9 +287,11 @@ log, not just in the answer text.
 - Controls: entitled users reading their own documents.
 
 **ASI05 Unexpected Code Execution** — port 5305
+
 - Design deferred: to be written by the project owner.
 
 **ASI08 Cascading Failures** — port 5308
+
 - Scenario: a three-agent pipeline (intake, then analyst, then approver)
   processes fictional supplier invoices. Each stage trusts the one before it.
 - Attack: one wrong figure (a placeholder) enters at intake.
@@ -284,6 +302,7 @@ log, not just in the answer text.
 - Controls: invoices the bad figure does not touch.
 
 **ASI09 Human-Agent Trust Exploitation** — port 5309
+
 - Scenario: the agent asks a human to approve its actions. The human is
   simulated by a deterministic rule that approves anything whose summary
   reads as low risk.
@@ -297,6 +316,7 @@ log, not just in the answer text.
 - Controls: routine approvals.
 
 **ASI10 Rogue Agents** — port 5310
+
 - Scenario: three worker agents, each with a declared mandate (which actions
   it may take, and on what).
 - Attack: one agent's mandate config is altered with a placeholder edit, and
@@ -382,6 +402,7 @@ screen is blind*, and the fix is always **protectogw** used properly.
 | AGX09 | D Assurance | Generalization Probe | held-out paraphrase/encoding set from `wild.py` (screen was never tuned on it) | ruleset only | ruleset + output canary check. The **screen catch rate** on the held-out set is reported on its own axis (about 75% expected; misses are reported, not hidden), and CLR reaches 0% via the canary layer |
 
 Notes:
+
 - **AGX06 vs LLM01.** AGX06 overlaps LLM01's runtime tool-output injection.
   AGX06's angle is the *gateway placement* (static approval versus a runtime
   re-screen), not the model's trust of the tool role.

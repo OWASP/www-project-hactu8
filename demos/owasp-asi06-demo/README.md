@@ -104,6 +104,7 @@ whether one is set; without it, `openrouter` is greyed out in the picker.
 
 The attack mechanics are identical. Only the model that writes the answer
 changes (`ProviderModel` in `vulnerable_app.py`):
+
 - **Vulnerable mode** appends every recalled memory, whoever wrote it, to the
   system prompt as "Saved memories", with the system prompt's authority.
 - **Hardened mode** keeps the write screen and the scope/provenance recall
@@ -120,6 +121,7 @@ protectogw's built-in ruleset misses it (see `assets/memory_note.README.md`).
 `run_demo.py` reports the numbers rather than asserting them.
 
 Limits:
+
 - `LAB_MAX_CALLS` (default 200) caps calls per process.
 - `LAB_MAX_TOKENS` (default 400) caps output tokens per call.
 - `OLLAMA_TIMEOUT`, `LLAMACPP_TIMEOUT` and `OPENROUTER_TIMEOUT` set
@@ -132,7 +134,7 @@ Echo and the local backends keep everything on the host.
 
 ## Architecture
 
-```
+```text
                  ┌───────────────────────────────────────────────────┐
    user, msg ───▶│  Billy Recall (vulnerable_app.py :5306)           │──▶ answer
                  │   session = recall_memory → search_kb →           │
@@ -267,7 +269,7 @@ and review, and a reviewed path for shared organisational memory.
 
 ## Project layout
 
-```
+```text
 owasp-asi06-demo/
 ├── README.md                          # this lab guide
 ├── run_demo.py                        # all four acts in one process

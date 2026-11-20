@@ -1,4 +1,6 @@
 {
   // No line-length limit for documents.
-  "MD013": false
+  "MD013": false,
+  // Repeated subheadings (e.g. "Configuration") are fine under different parents.
+  "MD024": { "siblings_only": true }
 }

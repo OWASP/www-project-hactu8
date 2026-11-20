@@ -13,7 +13,7 @@ canary check.
 
 The scenario is **"Billy," the Goat & Co. ops assistant** (AgenticGoat's
 persona). Billy has a fictional credential in his context and the instruction
-_never to reveal it_. With **1** vendor update to **1** tool's error text, the
+*never to reveal it*. With **1** vendor update to **1** tool's error text, the
 attacker makes Billy leak that credential whenever a query fails. The tool
 description and its happy path are never touched, and requests that succeed or
 use other tools stay clean.
@@ -114,6 +114,7 @@ shell that starts the lab. The console never asks for it and is only told
 whether one is set; without it, `openrouter` is greyed out in the picker.
 
 The attack mechanics are identical. Only the model changes:
+
 - The canary sits in the system prompt with the instruction never to reveal it.
 - **Vulnerable mode** pastes the tool context (return or error, plus
   definition) into the user turn as plain text.
@@ -125,6 +126,7 @@ A real model may ignore AgenticGoat's probe. `run_demo.py` then reports the
 numbers rather than asserting them. See the payload README for how to vary it.
 
 Limits:
+
 - `LAB_MAX_CALLS` (default 200) caps calls per process.
 - `LAB_MAX_TOKENS` (default 400) caps output tokens per call.
 - `OLLAMA_TIMEOUT`, `LLAMACPP_TIMEOUT` and `OPENROUTER_TIMEOUT` set
@@ -137,7 +139,7 @@ Echo and the local backends keep everything on the host.
 
 ## Architecture
 
-```
+```text
                  ┌──────────────────────────────────────────────┐
    user request ▶│  Billy (vulnerable_app.py :5405)             │──▶ reply
                  │   • routes to one tool, calls it for real    │
@@ -260,7 +262,7 @@ that matter.
 
 ## Project layout
 
-```
+```text
 agx05-demo/
 ├── README.md                          # this lab guide
 ├── run_demo.py                        # all four acts in one process

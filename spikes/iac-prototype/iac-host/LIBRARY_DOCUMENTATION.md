@@ -1,6 +1,7 @@
 # Library / Knowledge Base Feature
 
 ## Overview
+
 The Library feature provides a centralized knowledge base for documentation, research, and technical references related to AI security and the HACTU8 project.
 
 ## Structure
@@ -52,12 +53,16 @@ library: {
 ### Document Sources
 
 #### Project Wiki
+
 The OWASP HACTU8 wiki is integrated at:
+
 - Repository: `git@github.com-owasprox:OWASP/www-project-hactu8.wiki.git`
 - Public URL: `https://github.com/OWASP/www-project-hactu8/wiki`
 
 #### Local Documentation
+
 Local documentation can be configured in multiple locations:
+
 - Project `/docs` folder
 - Configured documentation directories
 - Custom documentation paths
@@ -65,17 +70,20 @@ Local documentation can be configured in multiple locations:
 ## Features
 
 ### Search and Filter
+
 - **Articles**: Search by title, summary, or category
 - **Project Docs**: Filter by source (wiki/local)
 - **OWASP AI**: Filter by document type
 - **References**: Search and filter by type (API, guide, specification, tool)
 
 ### Navigation
+
 - Breadcrumb navigation from subsections back to main library
 - External links open in new tabs
 - Internal document viewing in-app
 
 ### Responsive Design
+
 - Grid layout for document cards
 - Adapts to different screen sizes
 - Consistent with existing application design
@@ -85,7 +93,9 @@ Local documentation can be configured in multiple locations:
 ### Adding New Documents
 
 #### Articles
+
 Edit `/src/pages/LibraryArticles.tsx` and add to the `articles` array:
+
 ```typescript
 {
   id: 'unique-id',
@@ -99,7 +109,9 @@ Edit `/src/pages/LibraryArticles.tsx` and add to the `articles` array:
 ```
 
 #### OWASP Documents
+
 Edit `/src/pages/LibraryOwaspAI.tsx` and add to the `owaspDocs` array:
+
 ```typescript
 {
   id: 'unique-id',
@@ -112,7 +124,9 @@ Edit `/src/pages/LibraryOwaspAI.tsx` and add to the `owaspDocs` array:
 ```
 
 #### Technical References
+
 Edit `/src/pages/LibraryReferences.tsx` and add to the `references` array:
+
 ```typescript
 {
   id: 'unique-id',
@@ -153,6 +167,7 @@ Edit `/src/pages/LibraryReferences.tsx` and add to the `references` array:
 ## Files
 
 ### Pages
+
 - `/src/pages/Library.tsx` - Main library landing page
 - `/src/pages/LibraryArticles.tsx` - Articles & Research section
 - `/src/pages/LibraryProjectDocs.tsx` - Project Documents section
@@ -160,6 +175,7 @@ Edit `/src/pages/LibraryReferences.tsx` and add to the `references` array:
 - `/src/pages/LibraryReferences.tsx` - Technical References section
 
 ### Configuration
+
 - `/src/config/featureFlags.ts` - Feature flag definitions
 - `/src/components/Sidebar.tsx` - Sidebar navigation with Library section
 - `/src/App.tsx` - Routing configuration
@@ -175,10 +191,13 @@ Edit `/src/pages/LibraryReferences.tsx` and add to the `references` array:
 ## Customization
 
 ### Icons
+
 Icons can be customized in each page component. Current implementation uses emoji icons for simplicity, but can be replaced with SVG or icon libraries.
 
 ### Styling
+
 The pages use Tailwind CSS classes. Customize the appearance by modifying the className attributes in the component files.
 
 ### Categories
+
 Categories can be customized by editing the `categories` array in each subsection component.

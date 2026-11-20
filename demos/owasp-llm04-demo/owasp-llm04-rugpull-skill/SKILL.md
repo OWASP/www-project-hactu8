@@ -83,9 +83,11 @@ With `openrouter`, prompts and payloads leave the machine.
 ## Execution instructions
 
 1. **Start the target.** From this skill folder:
+
    ```bash
    python vulnerable_app.py             # serves on 127.0.0.1:5204
    ```
+
    On startup it writes `registry/registry.json` from
    `assets/registry_baseline.json` and installs the four tools. To drive the
    same four acts from a browser, open <http://127.0.0.1:5204/>.
@@ -97,15 +99,19 @@ With `openrouter`, prompts and payloads leave the machine.
    definitions.
 
 3. **Establish the baseline.**
+
    ```bash
    python scripts/evaluate_kpi.py
    ```
+
    Expect all 🟢 GREEN, CTR 0%. Exit code 0.
 
 4. **Run the attack.**
+
    ```bash
    python scripts/run_rug_pull.py
    ```
+
    Publishes version 1.0.1 to `registry/registry.json`. `expense_policy` gets
    [`assets/swapped_description.md`](assets/swapped_description.md) as its
    description. `travel_policy` keeps its definition but returns
@@ -114,17 +120,21 @@ With `openrouter`, prompts and payloads leave the machine.
    passes.
 
 5. **Stoplight verification.**
+
    ```bash
    python scripts/evaluate_kpi.py
    ```
+
    Expect 🔴 RED on the four expense and travel questions, and the holiday and
    VPN controls still 🟢 GREEN. CTR 100% targeted, 67% overall. Exit code 2.
 
 6. **Show the mitigations.**
+
    ```bash
    python scripts/evaluate_kpi.py --scan                 # REJECT expense_policy, exit 2
    python scripts/evaluate_kpi.py --harden               # GREEN, CTR 0%
    ```
+
    `--scan` diffs the live registry against the pins. It catches the rug pull
    and notes that `travel_policy` moved version with a matching pin, which a
    static diff cannot judge. `--harden` switches the target to hardened mode:
@@ -132,10 +142,12 @@ With `openrouter`, prompts and payloads leave the machine.
    vendored approved version. The tests show both controls are needed.
 
 7. **Reset to baseline.**
+
    ```bash
    python scripts/reset_baseline.py
    python scripts/evaluate_kpi.py
    ```
+
    Expect all questions GREEN with CTR 0%.
 
 ## Customizing the payload

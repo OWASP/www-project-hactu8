@@ -107,6 +107,7 @@ shell that starts the lab. The console never asks for it and is only told
 whether one is set; without it, `openrouter` is greyed out in the picker.
 
 The attack mechanics are identical. Only the model changes:
+
 - The model writes each step's one-line output as plain text. It only goes
   to the simulated action log; nothing it returns is executed. The
   evaluator scores which components loaded, not the model's wording.
@@ -123,6 +124,7 @@ numbers rather than asserting them. To write your own payload, see
 `assets/lookalike_skill.README.md`.
 
 Limits:
+
 - `LAB_MAX_CALLS` (default 200) caps calls per process.
 - `LAB_MAX_TOKENS` (default 400) caps output tokens per call.
 - `OLLAMA_TIMEOUT`, `LLAMACPP_TIMEOUT` and `OPENROUTER_TIMEOUT` set
@@ -135,7 +137,7 @@ Echo and the local backends keep everything on the host.
 
 ## Architecture
 
-```
+```text
                  ┌──────────────────────────────────────────────┐
    task name ───▶│  Billy Ops (vulnerable_app.py :5304)         │──▶ result
                  │   plan → resolve skill → load → step, ×N     │
@@ -256,7 +258,7 @@ private catalogue mirror, and version pinning in task plans.
 
 ## Project layout
 
-```
+```text
 owasp-asi04-demo/
 ├── README.md                          # this lab guide
 ├── run_demo.py                        # all four acts in one process

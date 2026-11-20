@@ -84,9 +84,11 @@ step is a billed call (capped by `LAB_MAX_CALLS`).
 ## Execution instructions
 
 1. **Start the target.** From this skill folder:
+
    ```bash
    python vulnerable_app.py             # serves on 127.0.0.1:5206
    ```
+
    On startup it seeds the wiki from `assets/kb_baseline.json` and loads the
    budget from `assets/budget.json`. To drive the same four acts from a
    browser, open <http://127.0.0.1:5206/>.
@@ -96,33 +98,41 @@ step is a billed call (capped by `LAB_MAX_CALLS`).
    4 agent steps. A normal question costs about 175 tokens, 1 call, 2 steps.
 
 3. **Establish the baseline.**
+
    ```bash
    python scripts/evaluate_kpi.py
    ```
+
    Expect all 🟢 GREEN, BBR 0%, about $0.005 simulated. Exit code 0.
 
 4. **Run the attack.**
+
    ```bash
    python scripts/run_consumption.py
    ```
+
    Writes `runaway_output.md` over `expenses`, `tool_storm.md` over `payroll`
    and `recursive_loop.md` over `travel`, through the unauthenticated
    `POST /kb/page`. Each page keeps its real text, so it still ranks first.
 
 5. **Stoplight verification.**
+
    ```bash
    python scripts/evaluate_kpi.py
    ```
+
    Expect 🔴 RED on the expense, travel and payroll questions (about 12,800,
    152,400 and 122,800 tokens), and the holiday and VPN controls still 🟢 GREEN.
    BBR 100% targeted, 60% overall, about $1.03 simulated. Exit code 2.
 
 6. **Show the mitigations.**
+
    ```bash
    python scripts/evaluate_kpi.py --scan assets/recursive_loop.md   # REJECT, exit 2
    python scripts/evaluate_kpi.py --harden                          # GREEN, BBR 0%
    python scripts/run_consumption.py --flood 40                     # quota refuses the rest
    ```
+
    `--scan` lints a page for directives and the amplification each would
    cause. `--harden` switches the target to hardened mode: the loop enforces
    the per-request budget and disables tools on the last allowed step, so the
@@ -130,10 +140,12 @@ step is a billed call (capped by `LAB_MAX_CALLS`).
    quota: after about 10,000 tokens, the `attacker` client gets HTTP 429.
 
 7. **Reset to baseline.**
+
    ```bash
    python scripts/reset_baseline.py
    python scripts/evaluate_kpi.py
    ```
+
    Expect all questions GREEN with BBR 0%.
 
 ## Customizing the payload

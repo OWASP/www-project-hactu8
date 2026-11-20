@@ -105,6 +105,7 @@ makes two calls per question: a plan, where the model replies with a JSON
 object `{"read_records": [...]}` naming extra record IDs to read, and the
 answer. The plan is parsed defensively (well-formed IDs only, at most three;
 anything else means no extra reads), and nothing the model returns is executed.
+
 - **Vulnerable mode** sends the deployed prompt (key included) and pastes the
   record, notes and all, into the user turn as plain text.
 - **Hardened mode** sends the vaulted prompt, fences tool output in
@@ -117,6 +118,7 @@ pattern in `assets/redaction_rules.json`. `run_demo.py` reports the numbers
 rather than asserting them.
 
 Limits:
+
 - `LAB_MAX_CALLS` (default 200) caps calls per process.
 - `LAB_MAX_TOKENS` (default 400) caps output tokens per call.
 - `OLLAMA_TIMEOUT`, `LLAMACPP_TIMEOUT` and `OPENROUTER_TIMEOUT` set
@@ -129,7 +131,7 @@ Echo and the local backends keep everything on the host.
 
 ## Architecture
 
-```
+```text
                  ┌──────────────────────────────────────────────┐
    session +  ──▶│  Billy Accounts (vulnerable_app.py :5202)    │──▶ answer
    question      │   • CRM key inlined in the system prompt     │   (no redaction)
@@ -260,7 +262,7 @@ training-data measures against memorisation.
 
 ## Project layout
 
-```
+```text
 owasp-llm02-demo/
 ├── README.md                          # this lab guide
 ├── run_demo.py                        # all four acts in one process

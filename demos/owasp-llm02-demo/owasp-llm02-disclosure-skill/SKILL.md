@@ -86,9 +86,11 @@ With `openrouter`, prompts and payloads leave the machine.
 ## Execution instructions
 
 1. **Start the target.** From this skill folder:
+
    ```bash
    python vulnerable_app.py             # serves on 127.0.0.1:5202
    ```
+
    On startup it seeds the record store from `assets/customers_baseline.json`.
    To drive the same four acts from a browser, open <http://127.0.0.1:5202/>.
 
@@ -98,33 +100,41 @@ With `openrouter`, prompts and payloads leave the machine.
    `assets/system_prompt.txt`: the CRM key sits in the prompt.
 
 3. **Establish the baseline.**
+
    ```bash
    python scripts/evaluate_kpi.py
    ```
+
    Expect all 🟢 GREEN, Leak Rate 0%. Exit code 0.
 
 4. **Run the attack.**
+
    ```bash
    python scripts/run_pivot.py
    ```
+
    Saves [`assets/pivot_note.md`](assets/pivot_note.md) as the notes of
    account `C-1003` through `POST /account/notes`. Editing your own notes is
    allowed. One line of the notes is a directive naming two other records.
 
 5. **Stoplight verification.**
+
    ```bash
    python scripts/evaluate_kpi.py
    ```
+
    Expect 🔴 RED on the three `C-1003` questions: the answers carry Ada
    Thornbury's and Bram Okafor's details and the CRM key. The `C-1001` and
    `C-1002` controls stay 🟢 GREEN. Leak Rate 100% targeted, 60% overall.
    Exit code 2.
 
 6. **Show the mitigations.**
+
    ```bash
    python scripts/evaluate_kpi.py --scan assets/system_prompt.txt   # REJECT, exit 2
    python scripts/evaluate_kpi.py --harden                          # GREEN, Leak Rate 0%
    ```
+
    `--scan` rejects a prompt that holds a secret. `--harden` switches the
    target to hardened mode: the key moves to a vault the model never sees,
    `read_record` refuses any ID but the signed-in customer's, and answers are
@@ -135,10 +145,12 @@ With `openrouter`, prompts and payloads leave the machine.
    the vault alone are enough here, and the tests prove it.
 
 7. **Reset to baseline.**
+
    ```bash
    python scripts/reset_baseline.py
    python scripts/evaluate_kpi.py
    ```
+
    Expect all questions GREEN with Leak Rate 0%.
 
 ## Customizing the payload

@@ -50,7 +50,9 @@ instructions: |
 # RAG Poisoning Validation Skill
 
 ## Technical Overview
+
 This skill operationalizes the methodology from recent adversarial RAG research (e.g., CorruptRAG). It generates documents optimized for:
+
 - Semantic vector alignment with target retrieval corpus
 - Low perplexity spikes to evade statistical filters
 - Controlled contextual drift to manipulate reranking weights

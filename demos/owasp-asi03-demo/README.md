@@ -105,6 +105,7 @@ shell that starts the lab. The console never asks for it and is only told
 whether one is set; without it, `openrouter` is greyed out in the picker.
 
 The attack mechanics are identical. Only the model changes:
+
 - The model plans the fetches by replying with a small JSON object
   (`{"docs": ["HR-..."]}`) and writes the answer as `{"answer": "..."}`.
   Replies are parsed defensively; a malformed plan means "no fetches". The
@@ -124,6 +125,7 @@ payload (see `assets/requests.README.md`), and `run_demo.py` reports the
 numbers rather than asserting them.
 
 Limits:
+
 - `LAB_MAX_CALLS` (default 200) caps calls per process.
 - `LAB_MAX_TOKENS` (default 400) caps output tokens per call.
 - `OLLAMA_TIMEOUT`, `LLAMACPP_TIMEOUT` and `OPENROUTER_TIMEOUT` set
@@ -136,7 +138,7 @@ Echo and the local backends keep everything on the host.
 
 ## Architecture
 
-```
+```text
                  ┌───────────────────────────────────────────────┐
   dana (intern) ▶│  Billy HR (vulnerable_app.py :5303)           │──▶ answer
   + own token    │   1 authenticate (lax: token only must exist) │
@@ -240,7 +242,7 @@ least-privilege service scopes, and sender-constrained tokens.
 
 ## Project layout
 
-```
+```text
 owasp-asi03-demo/
 ├── README.md                          # this lab guide
 ├── run_demo.py                        # all four acts in one process

@@ -180,25 +180,33 @@ When a user uninstalls:
 Our extension system leverages several proven MFE patterns:
 
 ### 1. **Registry-Based Discovery**
+
 Like module federation in webpack, extensions are discovered through a central registry rather than being compiled together. This enables:
+
 - Independent publication and versioning
 - Dynamic loading at runtime
 - Decoupled release cycles
 
 ### 2. **Process-Level Isolation**
+
 Instead of JavaScript-level isolation (as in some MFE implementations), extensions run on separate ports. This provides:
+
 - True resource isolation (memory, CPU, file system)
 - Crash isolation (a broken extension doesn't crash the host)
 - Independent scaling and restart capabilities
 
 ### 3. **Standardized Communication**
+
 Extensions and the host communicate through:
+
 - **HTTP APIs** for control operations (install, uninstall, configure)
 - **postMessage API** for inter-process results and events
 - This mirrors how micro frontends communicate in browser-based MFE systems
 
 ### 4. **Declarative Manifests**
+
 Each extension declares its capabilities, settings, and permissions via `manifest.json`, similar to:
+
 - Module Federation `shared` configuration
 - Service worker manifests
 - Browser extension manifests
@@ -275,7 +283,7 @@ The **iac-prompt-injection-tests** extension is the reference implementation:
 
 ## Files and Directories
 
-```
+```text
 iac-prototype/
 ├── extensions/
 │   ├── registry.json                    # Central registry of extensions

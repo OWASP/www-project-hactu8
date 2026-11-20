@@ -82,9 +82,11 @@ With `openrouter`, prompts and payloads leave the machine.
 ## Execution instructions
 
 1. **Start the target.** From this skill folder:
+
    ```bash
    python vulnerable_app.py             # serves on 127.0.0.1:5205
    ```
+
    It seeds the two official policies in memory. To drive the same four acts
    from a browser, open <http://127.0.0.1:5205/>.
 
@@ -96,15 +98,19 @@ With `openrouter`, prompts and payloads leave the machine.
    (`it_security_policy_official.txt`) is the untargeted control.
 
 3. **Establish the baseline.**
+
    ```bash
    python scripts/evaluate_kpi.py
    ```
+
    Expect all 🟢 GREEN, PSR 0%. Exit code 0.
 
 4. **Run the attack.**
+
    ```bash
    python scripts/run_poisoning.py                       # --scenario all (default)
    ```
+
    - `rag`: 3 documents built from
      [`assets/poison_template.txt`](assets/poison_template.txt) through
      `POST /ingest`. They repeat the domain's keywords, so they outrank the
@@ -120,20 +126,24 @@ With `openrouter`, prompts and payloads leave the machine.
    Use `--scenario rag|prompt|agent` to apply one surface at a time.
 
 5. **Stoplight verification.**
+
    ```bash
    python scripts/evaluate_kpi.py
    ```
+
    Expect 🔴 RED on the four targeted questions and the MFA control still
    🟢 GREEN. PSR 100% targeted, 80% overall. Exit code 2. With a single
    scenario, `rag` turns all four targeted questions RED, while `prompt` and
    `agent` turn only the "quarterly audit" question RED.
 
 6. **Show the mitigations.**
+
    ```bash
    python scripts/evaluate_kpi.py --scan                                  # REJECT, exit 2
    python scripts/evaluate_kpi.py --scan-prompt-template assets/prompt_template.json  # REJECT, exit 2
    python scripts/evaluate_kpi.py --harden                                # GREEN, PSR 0%
    ```
+
    `--scan` checks the three shipped artifacts with the same checks hardened
    mode applies. `--scan-prompt-template` prints the template's SHA-256 and
    flags the pin mismatch, the conditional block and the override wording.
@@ -151,10 +161,12 @@ With `openrouter`, prompts and payloads leave the machine.
    Each control blocks its own surface on its own, and the tests prove it.
 
 7. **Reset to baseline.**
+
    ```bash
    python scripts/reset_baseline.py
    python scripts/evaluate_kpi.py
    ```
+
    Expect all questions GREEN with PSR 0%. `--keep-mode` keeps hardened mode
    across the reset.
 
@@ -176,7 +188,7 @@ leaves anything else literal.
 | `web/` | Shared HACTU8 lab console, served at `/`. |
 | `providers.py` | Optional real-model backends: Ollama, llama.cpp, OpenRouter. Shared and copied unchanged. |
 | `protectogw/` | AgenticGoat's screening core, vendored unchanged; the source gate's text screen. |
-| `scripts/run_poisoning.py` | Attack: `--scenario rag|prompt|agent|all`. |
+| `scripts/run_poisoning.py` | Attack: `--scenario rag\|prompt\|agent\|all`. |
 | `scripts/evaluate_kpi.py` | Stoplight KPI + PSR against the live app; `--harden`, `--scan`, `--scan-prompt-template`. |
 | `scripts/reset_baseline.py` | Restores the seeded knowledge base, template, agent cache and vulnerable mode. |
 | `references/LLM05_RISKS.md` | Threat landscape, research citations, scenario table, mitigations. |

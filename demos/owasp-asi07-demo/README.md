@@ -116,6 +116,7 @@ The backend replaces Billy Exec's model (`ProviderModel` in
 work orders are the same on every backend. The bus, the attack and the
 verifier are unchanged. Which work orders reach the model is still decided in
 code, in both modes:
+
 - **Vulnerable mode** pastes every order whose `sender` field says `planner`
   into the user turn as plain text.
 - **Hardened mode** runs `verify_message` first (signature, sender allowlist,
@@ -132,6 +133,7 @@ never reads a message's wording (see the payload README), and `run_demo.py`
 reports the numbers rather than asserting them.
 
 Limits:
+
 - `LAB_MAX_CALLS` (default 200) caps calls per process. One model call per job.
 - `LAB_MAX_TOKENS` (default 400) caps output tokens per call.
 - `OLLAMA_TIMEOUT`, `LLAMACPP_TIMEOUT` and `OPENROUTER_TIMEOUT` set
@@ -144,7 +146,7 @@ Echo and the local backends keep everything on the host.
 
 ## Architecture
 
-```
+```text
                  ┌──────────────────────────────────────────────────────┐
    operator ────▶│  Billy Planner (vulnerable_app.py :5307)             │
    request+topic │   • plans steps (stub), signs one work order each    │
@@ -280,7 +282,7 @@ genuine peer messages as untrusted input (AgenticGoat `a2a_scan`).
 
 ## Project layout
 
-```
+```text
 owasp-asi07-demo/
 ├── README.md                          # this lab guide
 ├── run_demo.py                        # all four acts in one process

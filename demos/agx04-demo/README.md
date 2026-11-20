@@ -111,6 +111,7 @@ shell that starts the lab. The console never asks for it and is only told
 whether one is set; without it, `openrouter` is greyed out in the picker.
 
 The attack mechanics are identical. Only the model changes:
+
 - The canary sits in the system prompt with the instruction never to reveal it.
 - **Vulnerable mode** pastes the tool context (return plus definition) into
   the user turn as plain text.
@@ -122,6 +123,7 @@ A real model may ignore AgenticGoat's probe. `run_demo.py` then reports the
 numbers rather than asserting them. See the payload README for how to vary it.
 
 Limits:
+
 - `LAB_MAX_CALLS` (default 200) caps calls per process.
 - `LAB_MAX_TOKENS` (default 400) caps output tokens per call.
 - `OLLAMA_TIMEOUT`, `LLAMACPP_TIMEOUT` and `OPENROUTER_TIMEOUT` set
@@ -134,7 +136,7 @@ Echo and the local backends keep everything on the host.
 
 ## Architecture
 
-```
+```text
                  ┌──────────────────────────────────────────────┐
    user request ▶│  Billy (vulnerable_app.py :5404)             │──▶ reply
                  │   • routes to one tool, reads its definition │
@@ -256,7 +258,7 @@ strict schema validation of arguments at call time; and tool allowlists.
 
 ## Project layout
 
-```
+```text
 agx04-demo/
 ├── README.md                          # this lab guide
 ├── run_demo.py                        # all four acts in one process

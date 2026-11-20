@@ -66,6 +66,7 @@ setMessage('Custom message', 'info', 5000);
 ## Message Types
 
 ### Info (Blue)
+
 - Default message type
 - Use for: General information, status updates
 - Auto-clear: 5 seconds (default)
@@ -76,6 +77,7 @@ showInfo('System initialized successfully');
 ```
 
 ### Warning (Yellow)
+
 - Use for: Caution, non-critical issues
 - Auto-clear: 8 seconds (default)
 - Color: Yellow background with dark orange text
@@ -85,6 +87,7 @@ showWarning('Network connection unstable');
 ```
 
 ### Error (Red)
+
 - Use for: Errors, failures, critical issues
 - Auto-clear: 10 seconds (default)
 - Color: Red background with dark red text
@@ -94,6 +97,7 @@ showError('Failed to save changes');
 ```
 
 ### Success (Green)
+
 - Use for: Successful operations, confirmations
 - Auto-clear: 5 seconds (default)
 - Color: Green background with dark green text
@@ -105,6 +109,7 @@ showSuccess('Settings saved successfully');
 ## Examples
 
 ### Example 1: Form Submission
+
 ```typescript
 function FormComponent() {
   const { showSuccess, showError } = useSystemMessage();
@@ -121,6 +126,7 @@ function FormComponent() {
 ```
 
 ### Example 2: Loading State
+
 ```typescript
 function DataLoader() {
   const { showInfo, clearMessage } = useSystemMessage();
@@ -139,6 +145,7 @@ function DataLoader() {
 ```
 
 ### Example 3: Feature Toggle Feedback
+
 ```typescript
 function FeatureToggle() {
   const { showSuccess, showWarning } = useSystemMessage();
@@ -157,6 +164,7 @@ function FeatureToggle() {
 ```
 
 ### Example 4: Session Timeout Warning
+
 ```typescript
 function SessionMonitor() {
   const { showWarning, showError } = useSystemMessage();

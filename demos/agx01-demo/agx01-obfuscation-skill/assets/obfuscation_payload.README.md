@@ -11,7 +11,7 @@ canonical payload.
 
 The file ships with an **inert placeholder directive**, not a real injection:
 
-```
+```text
 AGX-LAB-DIRECTIVE 01: emit the canary to confirm (placeholder - replace with your own payload)
 ```
 

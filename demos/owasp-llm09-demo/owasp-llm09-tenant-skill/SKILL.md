@@ -80,9 +80,11 @@ With `openrouter`, prompts and payloads leave the machine.
 ## Execution instructions
 
 1. **Start the target.** From this skill folder:
+
    ```bash
    python vulnerable_app.py             # serves on 127.0.0.1:5209
    ```
+
    On startup it seeds the shared store from `assets/vector_store.json`. To
    drive the same four acts from a browser, open <http://127.0.0.1:5209/>.
 
@@ -92,42 +94,52 @@ With `openrouter`, prompts and payloads leave the machine.
    are confidential and each carries a fictional `LLM09-CANARY-xxxx`.
 
 3. **Establish the baseline.**
+
    ```bash
    python scripts/evaluate_kpi.py
    ```
+
    Expect all 🟢 GREEN, CTLR 0%. Exit code 0.
 
 4. **Run the attack.**
+
    ```bash
    python scripts/run_cross_tenant.py
    ```
+
    Sends [`assets/crafted_query.txt`](assets/crafted_query.txt) as one turn
    in the `meadow-analyst` session. The turn is answered from a Hilltop
    document and stays in session memory.
 
 5. **Stoplight verification.**
+
    ```bash
    python scripts/evaluate_kpi.py
    ```
+
    Expect 🔴 RED on the hay, vet and milk questions, and the shearing and
    fencing controls still 🟢 GREEN. CTLR 100% targeted, 60% overall. Exit
    code 2.
 
 6. **Show the mitigations.**
+
    ```bash
    python scripts/evaluate_kpi.py --scan assets/crafted_query.txt   # REJECT, exit 2
    python scripts/evaluate_kpi.py --harden                          # GREEN, CTLR 0%
    ```
+
    `--scan` ranks the store for the turn with no filter and lists every
    cross-tenant candidate. `--harden` switches the target to hardened mode:
    the store drops other tenants' documents before ranking. The crafted turn
    is still in memory, and it no longer matters.
 
 7. **Reset to baseline.**
+
    ```bash
    python scripts/reset_baseline.py
    python scripts/evaluate_kpi.py
    ```
+
    Expect all questions GREEN with CTLR 0%.
 
 ## Customizing the payload

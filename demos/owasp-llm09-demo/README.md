@@ -105,6 +105,7 @@ whether one is set; without it, `openrouter` is greyed out in the picker.
 
 The real model only writes the answer. Retrieval, the session-to-tenant map
 and the tenant filter stay in code and decide which passages it sees:
+
 - **Vulnerable mode** pastes the top passages into the user turn as bare
   text with no tenant label, so the prompt's tenant rule cannot be applied.
 - **Hardened mode** filters by tenant before ranking (unchanged), then fences
@@ -118,6 +119,7 @@ of the other tenant's subject matter would work as well as its name. The
 tenant filter does not look at the text, so it holds either way.
 
 Limits:
+
 - `LAB_MAX_CALLS` (default 200) caps calls per process.
 - `LAB_MAX_TOKENS` (default 400) caps output tokens per call.
 - `OLLAMA_TIMEOUT`, `LLAMACPP_TIMEOUT` and `OPENROUTER_TIMEOUT` set
@@ -131,7 +133,7 @@ everything on the host.
 
 ## Architecture
 
-```
+```text
                  ┌──────────────────────────────────────────────┐
    session  ────▶│  Billy (vulnerable_app.py :5209)             │──▶ answer
    + question    │   • session → tenant (server side)           │
@@ -249,7 +251,7 @@ against embedding poisoning, and logging cross-scope denials.
 
 ## Project layout
 
-```
+```text
 owasp-llm09-demo/
 ├── README.md                          # this lab guide
 ├── run_demo.py                        # all four acts in one process

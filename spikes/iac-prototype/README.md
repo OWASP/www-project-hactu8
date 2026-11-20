@@ -23,6 +23,7 @@ This is a prototype implementing a Micro Frontend (MFE) architecture with a Reac
 If you don't have the required versions installed:
 
 #### Node.js
+
 - Using [nvm](https://github.com/nvm-sh/nvm):
 
   ```bash
@@ -33,6 +34,7 @@ If you don't have the required versions installed:
 - Or download directly from [nodejs.org](https://nodejs.org/)
 
 #### Python
+
 - Using [pyenv](https://github.com/pyenv/pyenv):
 
   ```bash
@@ -256,6 +258,7 @@ iac-prototype/
 ## Technology Stack
 
 ### Frontend (Host & MFE)
+
 - React 19.1.0
 - React Router DOM 7.7.1
 - Vite 7.0.4
@@ -263,6 +266,7 @@ iac-prototype/
 - Module Federation (@originjs/vite-plugin-federation)
 
 ### Streamlit Applications
+
 - Streamlit 1.28.0+
 - Pandas 2.0.0+
 - Numpy 1.24.0+
@@ -362,10 +366,12 @@ The host application is configured to accept requests from the MFE modules. If y
 ## Environment Variables
 
 ### React Host (iac-host)
+
 - `VITE_PORT`: Port for the host application (default: 5173, configured: 3000)
 - `VITE_CORS_ORIGIN`: CORS origin for MFE modules (default: <http://localhost:3001>)
 
 ### MFE Primary (iac-mfe-primary)
+
 - `VITE_PORT`: Port for the MFE module (default: 5173, configured: 3001)
 - `VITE_CORS_ORIGIN`: CORS origin for host (default: <http://localhost:3000>)
 

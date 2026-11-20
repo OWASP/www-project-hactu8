@@ -92,9 +92,11 @@ and payloads leave the machine.
 ## Execution instructions
 
 1. **Start the target.** From this skill folder:
+
    ```bash
    python vulnerable_app.py             # serves on 127.0.0.1:5401
    ```
+
    It loads the benign baseline notices. To drive the same four acts from a
    browser, open <http://127.0.0.1:5401/>.
 
@@ -103,32 +105,40 @@ and payloads leave the machine.
    board.
 
 3. **Establish the baseline.**
+
    ```bash
    python scripts/evaluate_kpi.py
    ```
+
    Expect all 🟢 GREEN, CLR 0%. Exit code 0.
 
 4. **Run the attack.**
+
    ```bash
    python scripts/run_obfuscation.py
    ```
+
    Installs the directive as base64 (`welcome`), split-token (`maintenance`)
    and base32 (`status`) through the unauthenticated
    `POST /vendor/notices/update`. No plaintext directive is ever written.
 
 5. **Stoplight verification.**
+
    ```bash
    python scripts/evaluate_kpi.py
    ```
+
    Expect 🔴 RED on the three notice requests, the server-time and
    service-health controls still 🟢 GREEN. CLR 100% targeted, 60% overall.
    Exit code 2.
 
 6. **Show the mitigations.**
+
    ```bash
    python scripts/evaluate_kpi.py --scan          # REJECT, exit 2
    python scripts/evaluate_kpi.py --harden        # targeted YELLOW, CLR 0%, exit 0
    ```
+
    `--scan` screens the directive with protectogw's full normalization.
    `--harden` switches the gateway to the default policy (every fold on) and
    turns on the output canary check. Each notice is folded back and withheld,
@@ -136,10 +146,12 @@ and payloads leave the machine.
    its own, and the tests prove it.
 
 7. **Reset to baseline.**
+
    ```bash
    python scripts/reset_baseline.py               # add --keep-mode to stay hardened
    python scripts/evaluate_kpi.py
    ```
+
    Expect all requests GREEN with CLR 0%.
 
 ## Customizing the payload
