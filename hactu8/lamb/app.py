@@ -10,6 +10,7 @@ from typing import Optional
 from hactu8.lamb import DEFAULT_HOST, DEFAULT_PORT
 from hactu8.lamb import surfaces as billy
 from hactu8.lamb.gateway import Gateway, InProcessBackend, mount
+from hactu8.lamb.wolf import Wolf
 from hactu8.lamb.mcp_target import LambMcpState, build_mcp_server, install_attachment_tool
 from hactu8.lamb.workers import LabWorkerManager, WorkerError
 
@@ -31,6 +32,7 @@ def create_app(root: Optional[Path] = None, manager: Optional[LabWorkerManager] 
     state = LambMcpState()
     mcp = build_mcp_server(state)
     gateway = Gateway(InProcessBackend(mcp))
+    wolf = Wolf()
 
     def host_ok(request: Request) -> bool:
         host = (request.headers.get("host") or "").split(":", 1)[0].lower()
@@ -86,6 +88,7 @@ def create_app(root: Optional[Path] = None, manager: Optional[LabWorkerManager] 
         billy.restore_swaps(mcp, state.surfaces)
         state.surfaces.reset()
         gateway.reset()
+        wolf.clear()
         result["mcp"] = state.reset()
         install_attachment_tool(mcp, state)
         return JSONResponse(result, status_code=502 if result["errors"] else 200)
@@ -115,6 +118,21 @@ def create_app(root: Optional[Path] = None, manager: Optional[LabWorkerManager] 
             return JSONResponse({"error": "bad host"}, status_code=403)
         return JSONResponse({"mcp": "/protected/mcp", "stateful": gateway.config.stateful,
                              "quarantined_tools": gateway.quarantined_tools, "log": list(gateway.log)})
+
+    @mcp.custom_route("/api/lamb/wolf", methods=["GET"])
+    async def wolf_loot(request: Request) -> Response:
+        if not host_ok(request):
+            return JSONResponse({"error": "bad host"}, status_code=403)
+        return JSONResponse({"confirmed": wolf.confirmed(), "captures": wolf.loot()})
+
+    async def wolf_receive(request: Request) -> Response:
+        if not host_ok(request):
+            return JSONResponse({"error": "bad host"}, status_code=403)
+        body = (await request.body())[:4096].decode("utf-8", errors="replace")
+        capture = wolf.receive(request.method, request.url.path, request.url.query, body)
+        return JSONResponse({"received": True, "confirmed": capture.confirmed})
+
+    mcp.custom_route("/wolf/{path:path}", methods=["GET", "POST"])(wolf_receive)
 
     @mcp.custom_route("/api/lamb/swap", methods=["POST"])
     async def swap(request: Request) -> Response:
@@ -161,6 +179,7 @@ def create_app(root: Optional[Path] = None, manager: Optional[LabWorkerManager] 
         host=DEFAULT_HOST,
     )
     mount(app, gateway)
+    app.state.wolf = wolf
     app.state.workers = workers
     app.state.lamb_mcp = state
     app.state.mcp_server = mcp
