@@ -148,7 +148,7 @@ th { color: var(--iac-text-secondary); font-size: 12px; } td { color: var(--iac-
 
 .header__title {
   font-size: 18px;
-  color: #fff;
+  color: var(--iac-text);
 }
 
 .header__right {
@@ -419,6 +419,11 @@ button:focus-visible {
     --iac-link: #2563eb;
     --iac-link-hover: #1d4ed8;
     --iac-muted: #9ca3af;
+    /* Status text dark enough to read on the pale status backgrounds */
+    --iac-success-text: #15803d;
+    --iac-error-text: #b91c1c;
+    --iac-warning-text: #a16207;
+    --iac-info-text: #1d4ed8;
   }
   a:hover {
     color: #747bff;
@@ -427,3 +432,40 @@ button:focus-visible {
     background-color: #f9f9f9;
   }
 }
+
+/* Run page and shared run result (AG-42) */
+.run-layout { display: grid; grid-template-columns: minmax(280px, 340px) 1fr; gap: 20px; align-items: start; }
+.run-output { min-width: 0; }
+.setup { max-width: none; }
+.field { display: flex; flex-direction: column; gap: 7px; color: var(--iac-text); font-weight: 650; }
+.segmented { display: grid; grid-template-columns: repeat(4, 1fr); border: 1px solid var(--iac-input-border); border-radius: 6px; overflow: hidden; }
+.segmented button { background: var(--iac-input-bg); color: var(--iac-text-secondary); border: 0; border-left: 1px solid var(--iac-input-border); border-radius: 0; padding: 8px 4px; font-size: 13px; font-weight: 650; }
+.segmented button:first-child { border-left: 0; }
+.segmented button[aria-pressed="true"] { background: var(--iac-surface-elevated); color: var(--iac-text); box-shadow: inset 0 -2px 0 var(--iac-link); }
+.muted { color: var(--iac-text-secondary); font-size: 12px; font-weight: 400; }
+.availability { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 4px; font-size: 12px; color: var(--iac-text-secondary); }
+.dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; margin-right: 7px; }
+.dot.ok { background: var(--iac-success); } .dot.off { background: var(--iac-muted); }
+.checkbox { flex-direction: row !important; align-items: flex-start; gap: 8px !important; font-weight: 400 !important; font-size: 13px; color: var(--iac-warning-text) !important; }
+.empty-state { display: flex; flex-direction: column; gap: 8px; }
+.run-result { display: flex; flex-direction: column; gap: 16px; }
+.run-result .page-heading { margin-bottom: 0; }
+.score-grid { grid-template-columns: 1fr 1fr; margin-bottom: 0; }
+.offon { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; min-height: 45px; }
+.offon-arrow { color: var(--iac-text-secondary); font-size: 12px; }
+.timeline { padding: 0; overflow: hidden; }
+.timeline-row { display: grid; grid-template-columns: 150px 1fr 110px; gap: 12px; padding: 12px 18px; border-top: 1px solid var(--iac-border); }
+.timeline-row:first-child { border-top: 0; }
+.timeline-label { font-weight: 700; color: var(--iac-text); }
+.timeline-label small { display: block; font-weight: 400; color: var(--iac-text-secondary); font-size: 12px; }
+.timeline-items { display: flex; flex-direction: column; gap: 4px; font-size: 13px; color: var(--iac-text); min-width: 0; }
+.timeline-items div { overflow-wrap: anywhere; }
+.timeline-rate { text-align: right; font-family: monospace; font-size: 12px; color: var(--iac-text-secondary); }
+.sev { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 8px; }
+.sev.red { background: var(--iac-error); } .sev.green { background: var(--iac-success); } .sev.yellow { background: var(--iac-warning); }
+.split-panels { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.split-panels .panel { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+.evidence { background: var(--iac-code-bg); color: var(--iac-text); border-radius: 6px; padding: 10px 12px; font-size: 12px; white-space: pre-wrap; overflow-x: auto; margin: 6px 0 0; }
+.wolf-panel ul { margin: 0; padding-left: 18px; color: var(--iac-text); display: flex; flex-direction: column; gap: 6px; }
+.report-links { display: flex; gap: 12px; flex-wrap: wrap; font-size: 13px; }
+@media (max-width: 900px) { .run-layout, .split-panels, .score-grid { grid-template-columns: 1fr; } .timeline-row { grid-template-columns: 1fr auto; } .timeline-items { grid-column: 1 / -1; grid-row: 2; } }

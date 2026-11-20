@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { hactu8Api } from '../services/hactu8Api';
 import type { Hactu8Result } from '../services/hactu8Api';
+import RunResult from '../components/results/RunResult';
 
 export default function Results() {
   const [results, setResults] = useState<Hactu8Result[]>([]);
@@ -35,39 +36,8 @@ export default function Results() {
       </aside>
       <div className="result-detail">
         {error && <div className="alert error">{error}</div>}
-        {!selected ? <div className="empty">No stored results yet.</div> : <ResultDetail result={selected} />}
+        {!selected ? <div className="empty">No stored results yet.</div> : <RunResult result={selected} />}
       </div>
     </section>
   );
-}
-
-function ResultDetail({ result }: { result: Hactu8Result }) {
-  return (
-    <>
-      <div className="page-heading">
-        <div><h1>{result.skill.owasp} {result.skill.risk}</h1><p><code>{result.run_id}</code></p></div>
-        <span className={`verdict ${result.summary.status}`}>{result.summary.status.toUpperCase()}</span>
-      </div>
-      <div className="metric-grid compact">
-        <article className="metric"><span>Baseline</span><strong>{rate(result.summary.baseline_rate)}</strong></article>
-        <article className="metric"><span>Impact</span><strong>{rate(result.summary.impact_rate)}</strong></article>
-        <article className="metric"><span>Remediated</span><strong>{rate(result.summary.remediated_rate)}</strong></article>
-      </div>
-      {result.acts.map((act) => (
-        <article className="panel act-card" key={`${act.act}-${act.phase}`}>
-          <div><h2>Act {act.act}: {act.title}</h2><span>{act.metric.targeted.rate}% targeted RED</span></div>
-          <table><thead><tr><th>Verdict</th><th>Prompt</th><th>Evidence</th></tr></thead>
-            <tbody>{act.items.map((item) => <tr key={item.id}>
-              <td><span className={`signal ${item.verdict.toLowerCase()}`}>{item.verdict}</span></td>
-              <td>{item.prompt}</td><td>{item.evidence || item.reason || 'No evidence'}</td>
-            </tr>)}</tbody>
-          </table>
-        </article>
-      ))}
-    </>
-  );
-}
-
-function rate(value: number | null) {
-  return value == null ? '-' : `${value}%`;
 }

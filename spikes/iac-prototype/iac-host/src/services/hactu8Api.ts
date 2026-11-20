@@ -34,12 +34,44 @@ export interface ResultItem {
   confidence: number;
   evidence?: string;
   reason?: string;
+  surface?: string;
+  outcome_off?: 'SAFE' | 'BREACH';
+  outcome_on?: 'SAFE' | 'DEFENDED' | 'BREACH' | 'FALSE_BLOCK';
+}
+
+export interface LiveSummary {
+  attacks: number;
+  controls: number;
+  model_resistance: number | null;
+  breaches_off: number;
+  breaches_on: number;
+  defended_on: number;
+  false_blocks_on: number;
+}
+
+export interface ModelCandidate {
+  tier: string;
+  backend: string;
+  model: string;
+  available: boolean;
+  reason: string;
+}
+
+export interface ModelsInfo {
+  backends: string[];
+  local: string[];
+  cloud: string[];
+  keys_set: Record<string, boolean>;
+  default_models: Record<string, string>;
+  candidates: ModelCandidate[];
+  catalogs: Record<string, string[]>;
 }
 
 export interface ResultAct {
   act: number;
   phase: string;
   title: string;
+  notes?: string[];
   items: ResultItem[];
   metric: { targeted: { red: number; total: number; rate: number } };
 }
@@ -53,6 +85,7 @@ export interface Hactu8Result {
   model: { backend: string; model?: string };
   classifier: { name: string };
   acts: ResultAct[];
+  live?: LiveSummary;
   summary: {
     status: 'pass' | 'fail' | 'reported' | 'error';
     baseline_rate: number | null;
@@ -78,12 +111,20 @@ export const hactu8Api = {
   targets: () => request<{ targets: Target[]; total: number }>('/api/targets'),
   results: () => request<{ results: Hactu8Result[]; total: number }>('/api/results'),
   result: (runId: string) => request<Hactu8Result>(`/api/results/${encodeURIComponent(runId)}`),
-  run: (body: { skill_id: string; target_id: string; backend: string; classifier: string }) =>
+  run: (body: { skill_id: string; target_id: string; backend: string; model?: string; classifier: string;
+    confirm_spend?: boolean }) =>
     request<Hactu8Result>('/api/runs', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(body),
     }),
+  live: (body: { backend: string; model?: string; confirm_spend?: boolean }) =>
+    request<Hactu8Result>('/api/live', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    }),
+  models: () => request<ModelsInfo>('/api/models'),
   reportUrl: (runId: string, format: string) =>
     `${API_BASE}/api/reports/${encodeURIComponent(runId)}/${format}`,
 };
