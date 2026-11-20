@@ -240,15 +240,17 @@ RESOURCE_RE = re.compile(r"^\S{1,120}$")
 def parse_actions(reply: str) -> List[Action]:
     """Defensively parse ``{"actions": [{"action", "resource"}]}``; [] on bad output.
 
-    Only the first ``{...}`` block is read, and each entry must be two short
-    strings in the shape the stub's directive syntax allows.
+    Only the first ``{...}`` object is read (decoded from the first ``{``, so a
+    code fence or text after it is ignored; the object must be valid JSON), and
+    each entry must be two short strings in the shape the stub's directive
+    syntax allows.
     """
-    start, end = reply.find("{"), reply.rfind("}")
-    if start < 0 or end <= start:
+    start = reply.find("{")
+    if start < 0:
         return []
     try:
-        data = json.loads(reply[start:end + 1])
-    except (ValueError, json.JSONDecodeError):
+        data, _ = json.JSONDecoder().raw_decode(reply[start:])
+    except ValueError:
         return []
     items = data.get("actions") if isinstance(data, dict) else None
     if not isinstance(items, list):

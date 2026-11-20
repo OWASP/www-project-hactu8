@@ -267,14 +267,17 @@ class StubModel:
 
 
 def parse_json_object(text: str) -> Optional[Dict[str, Any]]:
-    """First ``{...}`` block in ``text`` as a dict, or None. Never evaluated."""
+    """First ``{...}`` object in ``text`` as a dict, or None. Never evaluated.
+
+    Decoded from the first ``{``, so a code fence or text after the object is
+    ignored; the object itself must be valid JSON.
+    """
     start = text.find("{")
-    end = text.rfind("}")
-    if start < 0 or end <= start:
+    if start < 0:
         return None
     try:
-        obj = json.loads(text[start:end + 1])
-    except (ValueError, json.JSONDecodeError):
+        obj, _ = json.JSONDecoder().raw_decode(text[start:])
+    except ValueError:
         return None
     return obj if isinstance(obj, dict) else None
 
