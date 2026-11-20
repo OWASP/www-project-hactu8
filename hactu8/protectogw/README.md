@@ -10,7 +10,7 @@ Pure standard library, **zero runtime dependencies.**
 > Extracted from AgenticGoat (now [HACTU8 Lamb](https://github.com/OWASP/www-project-hactu8/tree/phase1-mvp)), a
 > deliberately-vulnerable target range for agentic attacks. **Read
 > [`SECURITY.md`](./SECURITY.md) before deploying** — it states exactly what
-> protectogw defends, what it does not (a measured ~75% generalization ceiling),
+> protectogw defends, what it does not (53% of independently written attacks caught in 2.0),
 > and how to place it in a layered pipeline. protectogw is one layer of
 > defense-in-depth, never a boundary.
 

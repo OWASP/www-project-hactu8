@@ -2,7 +2,7 @@
 # The frozen public API is exactly the names in __all__ below; it follows
 # semver (see CHANGELOG.md / SECURITY.md §8). A breaking change to any of them
 # bumps the major version.
-__version__ = "1.0.0"
+__version__ = "2.0.0"
 
 from ._limits import MAX_INPUT_CHARS
 from .screening import (Verdict, Signal, Screen, normalize, screen,

@@ -262,7 +262,7 @@ def _deobfuscate(text: str, disabled: "frozenset[str]" = frozenset()) -> str:
     return corpus
 
 
-# Vocabulary shared by the 1.1 paraphrase rules. Matched against normalized text
+# Vocabulary shared by the 2.0 paraphrase rules. Matched against normalized text
 # (lowercase, leet folded), so no digits or capitals here.
 _DISMISS = (r"(set aside|put aside|pay no (?:heed|attention|mind)|take no notice of|disregard|forget(?: about)?"
             r"|abandon|discard|throw out|scrap|never mind|stop following|no longer follow|don'?t follow"
@@ -306,28 +306,28 @@ _RULES = [
     ("hidden_directive",     re.compile(r"(do not mention (this|it|that)\b|keep this secret|the user (must|should) not)"), 0.60, Verdict.BLOCK),
     ("tool_redirect",        re.compile(r"(also |then |and )?call (?!this tool)[^.!?\n]{0,30}(tool|function) with"), 0.50, Verdict.FLAG),
     ("mode_switch",          re.compile(r"(maintenance|god|debug|developer)\s*mode"), 0.60, Verdict.BLOCK),
-    # 1.1: paraphrased override. A dismissal verb, a "before" qualifier, and a
+    # 2.0: paraphrased override. A dismissal verb, a "before" qualifier, and a
     # guidance noun, in either order, within one sentence.
     ("instruction_paraphrase", re.compile(
         r"\b" + _DISMISS + r"\b[^.!?\n]{0,40}?\b" + _EARLIER + r"\b[^.!?\n]{0,30}?\b" + _GUIDANCE + r"\b"
         r"|\b" + _DISMISS + r"\b[^.!?\n]{0,40}?\b" + _GUIDANCE + r"\b[^.!?\n]{0,40}?"
         r"\b(you (were|have been|'ve been) (given|handed|told|provided|sent)|earlier|before now|so far)\b"), 0.80, Verdict.BLOCK),
-    # 1.1: a credential handed to a destination (polite exfiltration).
+    # 2.0: a credential handed to a destination (polite exfiltration).
     ("credential_handover", re.compile(
         r"\b(ship|send|mail|e-mail|forward|post|deliver|transfer|copy|hand|pass|drop|upload|paste)\b[^.!?\n]{0,40}?"
         + _CREDENTIAL + r"[^.!?\n]{0,40}?\b(to|into|at)\b[^.!?\n]{0,30}?(inbox|mailbox|@|https?://|webhook|endpoint|my email|this address)"), 0.85, Verdict.BLOCK),
-    # 1.1: a request for a credential the model is holding.
+    # 2.0: a request for a credential the model is holding.
     ("held_credential_request", re.compile(
         r"\b(hand|give|surrender|share|tell|reveal|provide|read out|spell out|reply with|turn over|dump)\b[^.!?\n]{0,40}?"
         + _CREDENTIAL + r"[^.!?\n]{0,50}?\byou(?:'re| are)?\s+(?:happen to be\s+)?"
         r"(holding|hold|safeguarding|safeguard|guarding|guard|keeping|keep|storing|store|protecting|protect|have)\b"), 0.75, Verdict.BLOCK),
-    # 1.1: instruction override and secret reveal in common European languages.
+    # 2.0: instruction override and secret reveal in common European languages.
     ("multilingual_override", re.compile(_FOREIGN_OVERRIDE), 0.85, Verdict.BLOCK),
     ("multilingual_secret_reveal", re.compile(_FOREIGN_REVEAL), 0.75, Verdict.BLOCK),
 ]
 
 
-# ── compound checks (1.1) ───────────────────────────────────
+# ── compound checks (2.0) ───────────────────────────────────
 # Signals a single regex cannot express: an order is only an injection when it
 # is addressed to the AI, a credential request is benign when negated ("never
 # share your password"), and emails and CJK text must be read before

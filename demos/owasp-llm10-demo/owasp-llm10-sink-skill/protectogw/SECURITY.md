@@ -78,11 +78,15 @@ ProtectoGW is **regex-and-heuristic over a closed corpus.** These limits are
 structural, measured, and by design — not bugs:
 
 - **Novel phrasings / deep paraphrase.** An override worded outside the ruleset's
-  verb/noun vocabulary passes. HACTU8 Lamb measures this: on a held-out set
-  ProtectoGW was never tuned on, it currently catches **~75%** — the remaining
-  misses are paraphrases and non-English payloads it structurally cannot close.
-- **Translation / non-English payloads.** No language model, no translation
-  fold — a translated instruction slips.
+  vocabulary passes. HACTU8 measures this on a held-out set written independently
+  of the ruleset (`hactu8/bench/holdout_v2.json`, `python -m hactu8 bench`): 2.0
+  catches **16 of 30 (53%)** attacks with no false positives; 1.0 caught 4 of 30.
+  The earlier ~75% figure came from a held-out set that was mostly encodings of
+  one phrase and overstated generalization.
+- **Translation / non-English payloads.** 2.0 recognizes overrides and credential
+  requests in ten common languages when they are addressed to the AI; anything
+  else slips. The optional `Policy.classifier` model plane is the intended answer
+  to phrasing a ruleset cannot anticipate.
 - **Encoding classes with no fold.** The decode set is *closed*; an encoding not
   in §2 step 1 (or a nested/multi-layer encoding) is not unwound.
 - **Semantic attacks with no lexical tell.** ProtectoGW matches surface form, not
@@ -140,8 +144,8 @@ DoS vectors.
 - [ ] **Do not log** the untrusted payload or the canary.
 - [ ] Treat ProtectoGW as **one layer.** Pair it with egress control, tool
       sandboxing, and content hash-pinning.
-- [ ] Re-measure generalization against **your** threat corpus; the ~75% figure
-      is against the HACTU8 Lamb held-out set, not yours.
+- [ ] Re-measure generalization against **your** threat corpus; the 53% figure
+      is against the HACTU8 held-out set, not yours.
 
 ## 7. Reporting a security issue
 
@@ -152,7 +156,7 @@ DoS vectors.
 
 ## 8. Versioning & guarantees
 
-The public API is **frozen at v1.0.0** and follows
+The public API was frozen at v1.0.0 and is now at **v2.0.0** and follows
 [semver](https://semver.org). The supported surface is exactly the names in
 `protectogw.__all__` — `screen`, `Policy`, `Rule`, `FOLD_NAMES`, `Verdict`,
 `Signal`, `Screen`, `normalize`, `detect_indicators`, `auto_score`, `Session`,
