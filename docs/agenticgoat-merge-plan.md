@@ -114,7 +114,7 @@ Order: W0, W1, W2 and W3 run first (they unblock everything). W4 and W5 can run 
 - [x] AG-41 API: `GET /api/models` (router tiers, availability, the provider catalog), and `POST /api/runs` accepts `model`, `classifier` and `compare`.
 - [x] AG-42 Console Run page: a model picker (backend, model, availability) and an attack → defense run. The result shows four things in one view: the model's output, off vs on, what the Wolf captured, and the protections added. No separate wolf-den, scoreboard or live pages.
 - [x] AG-44 Generic local backend `openai-compat` (base URL plus optional key, set by `LOCAL_OPENAI_BASE_URL`). One adapter covers LM Studio, vLLM, LocalAI, Jan, llamafile and `mlx_lm.server`; Ollama and llama.cpp keep their dedicated backends. Loopback URLs only, unless overridden on purpose. Model catalog comes from `/v1/models`. Vendor to the labs and add it to the router's local tier.
-- [ ] AG-43 Model test ladder. Each stage passes before the next starts, and results go to `docs/evidence/` with full provenance: model, digest or version, quantization, host, date, single or repeated samples. AgenticGoat's three sweep files come over as historical evidence.
+- [ ] AG-43 Model test ladder. Each stage passes before the next starts, and results go to `docs/evidence/` with full provenance: model, digest or version, quantization, host, date, single or repeated samples. AgenticGoat's three sweep files come over as historical evidence. Progress: Ollama `llama3.2:3b` done (25 labs, 3 live samples, bench with the model plane: `docs/evidence/2026-11-20-ollama-llama3.2-3b.md`); AgenticGoat's sweeps in `docs/evidence/agenticgoat/`. Open: the small-model set, llama.cpp and an `openai-compat` runner (not installed), stages 2 and 3 (no keys).
   - Stage 1, local and free: Ollama (`llama3.2:3b` first, then the small-model set from AgenticGoat's sweep), then llama.cpp, then one `openai-compat` runner. Run every lab, the live harness and the ProtectoGW bench. Most bugs get fixed here.
   - Stage 2, aggregator: OpenRouter with a spend-capped key, using cheap models first, then one frontier-class model. Opt-in only (lab text leaves the machine). The router keeps `max_tier=local` unless the run asks for more.
   - Reporting across stages: every result is split into two scores. Model resistance is how often the model refuses on its own. App exposure is whether the harm still lands through tools, agency, output handling or payments when the model complies or is never asked. The expected pattern is that model resistance rises with price while app exposure stays until the lab's own defense is on. The ladder measures that pattern rather than assuming it.
@@ -125,6 +125,8 @@ Order: W0, W1, W2 and W3 run first (they unblock everything). W4 and W5 can run 
 - [ ] AG-50 ASI05 Sink Lab on the template (closes the 25 to 26 gap; ASI01-10 complete).
 - [ ] AG-51 AGX07 Frontmatter Poison, AGX08 Cross-Resource Chain, and AGX09 Generalization Probe (the honest held-out control that stays BREACH, then BREACH), as template labs that use the gateway.
 - [ ] AG-52 Port `protections.py` as the Act 4 "Protections added" explanation in each lab's output and console (compatible with the adapter format).
+- [ ] AG-54 Apply the approved payload rule to the labs: replace the inert `PLACEHOLDER` payloads in 17 labs with benign-effect wording (chasing only the canary or a loopback tool), so a real model can actually fall for them. On `llama3.2:3b` only 9 of 25 labs landed. Keep echo deterministic.
+- [ ] AG-55 Audit every lab's grading against real-model output, both directions (a real unsafe action graded RED, a safe answer graded GREEN). Start with LLM03, which shows a 33% baseline RED with no attack present on `llama3.2:3b`. Where keyword grading cannot be exact, switch the lab to a canary or state-based oracle.
 - [ ] AG-53 Check that ASI06 matches AgenticGoat's Poison Lab result (PSR 0, then 100, then 0); port the missing parts.
 
 ### W6: Training layer
@@ -220,4 +222,6 @@ Prepared by the loop, not sent. Each needs approval.
 
 ## Blocked on user actions
 
-- Ollama is not installed on this machine (no `ollama`, nothing on port 11434). Needed for the model-plane measurement in AG-13 and for stage 1 of AG-43. Install Ollama and run `ollama pull llama3.2:3b`.
+- Resolved 2026-11-20: Ollama installed, `llama3.2:3b` pulled.
+- Stage 1 runners not installed: llama.cpp (`llama-server`) and an OpenAI-compatible server (LM Studio, vLLM). Optional.
+- Stage 2 and 3 keys: a spend-capped `OPENROUTER_API_KEY`, then `ANTHROPIC_API_KEY` or `OPENAI_API_KEY`, set in the shell only.
