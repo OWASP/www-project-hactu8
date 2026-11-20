@@ -67,6 +67,11 @@ def create_app(root: Optional[Path] = None):
         values = list(reversed(store.list_runs()))
         return {"results": values, "total": len(values)}
 
+    @app.get("/api/scoreboard")
+    def scoreboard():
+        rows = store.scoreboard()
+        return {"scoreboard": rows, "total": len(rows)}
+
     @app.get("/api/results/{run_id}")
     def result(run_id: str):
         value = store.load(run_id)

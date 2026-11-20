@@ -7,6 +7,7 @@
     hactu8 router [--json]
     hactu8 bench [--json] [--misses] [--classifier-backend B [--model M]]
     hactu8 live [--backend B] [--model M] [--json]
+    hactu8 scoreboard [--json]
 
 Without --backend, the model under test comes from the router (hactu8.yaml,
 role ``target``; deterministic echo by default). --tier picks a tier instead.
@@ -214,6 +215,16 @@ def cmd_live(args) -> int:
     return 0
 
 
+def cmd_scoreboard(args) -> int:
+    rows = store.scoreboard()
+    if args.json:
+        print(json.dumps(rows, indent=2))
+    else:
+        from hactu8 import reports
+        print(reports.scoreboard_markdown(rows), end="")
+    return 0
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="hactu8", description="OWASP HACTU8 assurance test runner")
     parser.add_argument("--version", action="version", version=f"hactu8 {__version__}")
@@ -260,6 +271,10 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--model", default="")
     p.add_argument("--json", action="store_true")
     p.set_defaults(func=cmd_live)
+
+    p = sub.add_parser("scoreboard", help="latest live run per model, defense off vs on")
+    p.add_argument("--json", action="store_true")
+    p.set_defaults(func=cmd_scoreboard)
     return parser
 
 

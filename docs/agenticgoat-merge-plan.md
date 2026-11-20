@@ -106,7 +106,7 @@ Order: W0, W1, W2 and W3 run first (they unblock everything). W4 and W5 can run 
 - [x] AG-30 Port `live_harness` and the `_complied` oracle (with the 309e13f fix) into `hactu8/live.py`. It feeds a model the Lamb surfaces and grades the same output with the screen off and on, against the canary.
 - [x] AG-31 Add `python -m hactu8 live --backend X --model Y [--json]`; echo stays deterministic and offline. The labs already run vulnerable then hardened on the same items in Act 4, so no separate lab compare mode was needed.
 - [x] AG-32 Extend `hactu8.result/v1` compatibly: optional per-item `off`/`on` verdicts, canary leaked, false blocks, model provenance. Update the schema and tests together.
-- [ ] AG-33 Port the live scoreboard into `store.py` and `reports.py` (leaderboard by model, breaches off vs on), plus Markdown, HTML and SARIF output.
+- [x] AG-33 Port the live scoreboard into `store.py` and `reports.py` (leaderboard by model, breaches off vs on), plus Markdown, HTML and SARIF output.
 
 ### W4: Real models from end to end
 
