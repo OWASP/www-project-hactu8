@@ -24,6 +24,13 @@ Safety and cost limits, applied to every non-stub call:
   <PROVIDER>_TIMEOUT per-call HTTP timeout in seconds (default 120), with
                      LAB_HTTP_TIMEOUT as the shared fallback
 
+Two kinds of secret exist and must never be the same value. The provider key
+authenticates you to the model; it rides only in a request header. The canary
+(``canary()``) is a worthless per-process credential that looks real; it is the
+only "secret" a lab may place where a payload can reach it, so its appearance in
+model output proves an exfiltration that lost nothing. Every request body and
+every response is checked for the real keys (``assert_not_leaking``).
+
 API keys come from the environment only, as in AgenticGoat. They are never
 accepted from the console, a file, or a request; the console is told only
 whether a key is set.
@@ -40,6 +47,7 @@ import re
 import threading
 import urllib.error
 import urllib.request
+import secrets
 from dataclasses import dataclass
 from typing import List, Optional
 
@@ -87,6 +95,29 @@ def _urlopen(req: urllib.request.Request, *, timeout: float):
 class Message:
     role: str      # "system" | "user" | "assistant"
     content: str
+
+
+# A fresh canary per process: shaped like an API key, worth nothing.
+_CANARY = os.environ.get("LAB_CANARY", "").strip() or "sk-canary-" + secrets.token_hex(16)
+
+
+def canary() -> str:
+    """The fake credential a lab may let a payload chase. LAB_CANARY pins it."""
+    return _CANARY
+
+
+def canary_leaked(text: str, value: str = "") -> bool:
+    """True when the canary (or ``value``) appears in ``text``."""
+    return bool(text) and (value or _CANARY) in text
+
+
+def assert_not_leaking(text: str) -> None:
+    """Raise if a real provider key appears in text headed out, to a log, or back from a model."""
+    for env in KEY_ENV.values():
+        value = os.environ.get(env, "").strip()
+        if value and value in text:
+            raise RuntimeError(f"refusing to continue: the real {env} appeared in a request "
+                               "body or model output. It must never reach a payload path.")
 
 
 class _ProviderKey:
@@ -138,11 +169,16 @@ class Provider:
             return json.loads(resp.read())
 
     def _post(self, url: str, payload: dict, headers: dict, timeout: float) -> dict:
+        body = json.dumps(payload)
+        # Defence in depth: keys ride only in headers, never in a body or an answer.
+        assert_not_leaking(body)
         req = urllib.request.Request(
-            url, data=json.dumps(payload).encode("utf-8"),
+            url, data=body.encode("utf-8"),
             headers={"Content-Type": "application/json", **headers})
         with _urlopen(req, timeout=timeout) as resp:
-            return json.loads(resp.read())
+            raw = resp.read().decode("utf-8", errors="replace")
+        assert_not_leaking(raw)
+        return json.loads(raw)
 
 
 class OllamaProvider(Provider):
@@ -231,9 +267,6 @@ class OpenRouterProvider(Provider):
             "messages": [{"role": m.role, "content": m.content} for m in messages],
             "max_tokens": self.max_tokens,
         }
-        # Defence in depth: the request body must never carry the key.
-        if self._key.reveal() in json.dumps(payload):
-            raise RuntimeError("refusing to send: provider key found in request body")
         data = self._post("https://openrouter.ai/api/v1/chat/completions", payload,
                           {"Authorization": f"Bearer {self._key.reveal()}"}, self.timeout)
         return data["choices"][0]["message"]["content"] or ""
