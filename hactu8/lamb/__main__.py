@@ -17,7 +17,11 @@ def main(argv=None) -> int:
         import uvicorn
     except ModuleNotFoundError:
         parser.error("Lamb needs the optional dependency: pip install 'hactu8[lamb]'")
-    app = create_app()
+    from hactu8.lamb._mcp import McpUnavailable
+    try:
+        app = create_app()
+    except McpUnavailable as exc:
+        parser.error(str(exc))
     print(f"HACTU8 Lamb on http://{DEFAULT_HOST}:{args.port}")
     print("Intentionally vulnerable. Loopback only. Payloads and side effects are inert.")
     try:

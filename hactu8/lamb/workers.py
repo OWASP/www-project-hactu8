@@ -24,9 +24,11 @@ class WorkerError(RuntimeError):
 
 class LabWorkerManager:
     def __init__(self, root: Optional[Path] = None, skills: Optional[Iterable[Skill]] = None,
-                 startup_timeout: float = 8.0) -> None:
+                 startup_timeout: Optional[float] = None) -> None:
         discovered = list(skills) if skills is not None else catalog.discover(root)
         self.skills: Dict[str, Skill] = {skill.id: skill for skill in discovered}
+        if startup_timeout is None:
+            startup_timeout = float(os.environ.get("HACTU8_WORKER_STARTUP_TIMEOUT", "15"))
         self.startup_timeout = startup_timeout
         self._processes: Dict[str, subprocess.Popen] = {}
         self._logs = {}

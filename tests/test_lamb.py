@@ -37,7 +37,7 @@ class WorkerTest(unittest.TestCase):
 
     def test_lazy_worker_proxy_and_reset(self):
         skill = dataclasses.replace(catalog.get("llm01", ROOT), port=str(free_port()))
-        workers = LabWorkerManager(skills=[skill], startup_timeout=5)
+        workers = LabWorkerManager(skills=[skill])
         self.addCleanup(workers.close)
         self.assertEqual(workers.running_ids(), [])
         status, _, body = workers.request("llm01", "GET", "/health", {}, b"")
@@ -82,6 +82,16 @@ class McpTargetTest(unittest.TestCase):
         install_attachment_tool(mcp, state)
         tools = {tool.name: tool for tool in __import__("asyncio").run(mcp.list_tools())}
         self.assertNotIn("PLACEHOLDER_TOOL_DESCRIPTION_INJECTION", tools["summarize_attachment"].description)
+
+    def test_v1_sdk_reports_upgrade_hint(self):
+        import sys
+        import types
+        from unittest import mock
+        from hactu8.lamb._mcp import McpUnavailable, server_class
+        fake_server = types.ModuleType("mcp.server")
+        with mock.patch.dict(sys.modules, {"mcp": types.ModuleType("mcp"), "mcp.server": fake_server}):
+            with self.assertRaisesRegex(McpUnavailable, "MCP v2 SDK"):
+                server_class()
 
 
 if __name__ == "__main__":

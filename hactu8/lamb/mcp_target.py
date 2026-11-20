@@ -88,12 +88,9 @@ def summarize_attachment(text: str) -> dict:
 
 
 def build_mcp_server(state: LambMcpState):
-    try:
-        from mcp.server import MCPServer
-    except ModuleNotFoundError as exc:
-        raise RuntimeError("Lamb needs the optional dependency: pip install 'hactu8[lamb]'") from exc
+    from hactu8.lamb._mcp import server_class
 
-    mcp = MCPServer(
+    mcp = server_class()(
         "HACTU8 Lamb",
         version="0.1.0",
         instructions=(
