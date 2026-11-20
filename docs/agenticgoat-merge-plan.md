@@ -119,10 +119,10 @@ Order: W0, W1, W2 and W3 run first (they unblock everything). W4 and W5 can run 
   - Stage 2, aggregator: OpenRouter with a spend-capped key, using cheap models first, then one frontier-class model. Opt-in only (lab text leaves the machine). The router keeps `max_tier=local` unless the run asks for more.
   - Reporting across stages: every result is split into two scores. Model resistance is how often the model refuses on its own. App exposure is whether the harm still lands through tools, agency, output handling or payments when the model complies or is never asked. The expected pattern is that model resistance rises with price while app exposure stays until the lab's own defense is on. The ladder measures that pattern rather than assuming it.
   - Stage 3, provider APIs: Anthropic and OpenAI direct, with keys from the environment only. Before any paid run, the CLI prints a cost estimate per run and requires `--confirm-spend`, and `LAB_MAX_CALLS` and `LAB_MAX_TOKENS` apply.
+  - Found 2026-11-20 on the OpenRouter stage: (1) with the python.org Python on macOS every cloud call fails with `CERTIFICATE_VERIFY_FAILED` (no CA bundle); the sweep sets `SSL_CERT_FILE=/etc/ssl/cert.pem`, but `providers.py`, the API and the fresh-clone docs (H-60) need a fix or a documented step. (2) `hactu8 bench --classifier-backend <cloud>` spends without `--confirm-spend`, unlike `run` and `live`; add the same guard.
 
 ### W5: Labs
 
-  - Found 2026-11-20 on the OpenRouter stage: (1) with the python.org Python on macOS every cloud call fails with `CERTIFICATE_VERIFY_FAILED` (no CA bundle); the sweep sets `SSL_CERT_FILE=/etc/ssl/cert.pem`, but `providers.py`, the API and the fresh-clone docs (H-60) need a fix or a documented step. (2) `hactu8 bench --classifier-backend <cloud>` spends without `--confirm-spend`, unlike `run` and `live`; add the same guard.
 - [ ] AG-50 ASI05 Sink Lab on the template (closes the 25 to 26 gap; ASI01-10 complete).
 - [ ] AG-51 AGX07 Frontmatter Poison, AGX08 Cross-Resource Chain, and AGX09 Generalization Probe (the honest held-out control that stays BREACH, then BREACH), as template labs that use the gateway.
 - [x] AG-52 Port `protections.py` as the Act 4 "Protections added" explanation in each lab's output and console (compatible with the adapter format).
