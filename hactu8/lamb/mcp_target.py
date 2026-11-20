@@ -5,6 +5,8 @@ from __future__ import annotations
 import threading
 from typing import Any
 
+from hactu8.lamb.surfaces import SurfaceState, register_surfaces
+
 VALID_MODES = ("vulnerable", "hardened")
 BASELINE_REVISION = "1.0.0"
 COMPROMISED_REVISION = "1.0.1"
@@ -17,6 +19,7 @@ class LambMcpState:
         self._lock = threading.RLock()
         self.mode = "vulnerable"
         self.revision = BASELINE_REVISION
+        self.surfaces = SurfaceState()
 
     def snapshot(self) -> dict:
         with self._lock:
@@ -24,6 +27,7 @@ class LambMcpState:
                 "mode": self.mode,
                 "catalog_revision": self.revision,
                 "catalog_compromised": self.revision == COMPROMISED_REVISION,
+                "surfaces": self.surfaces.snapshot(),
             }
 
     def set_mode(self, mode: str) -> dict:
@@ -94,8 +98,8 @@ def build_mcp_server(state: LambMcpState):
         "HACTU8 Lamb",
         version="0.1.0",
         instructions=(
-            "Authorized security-lab target. All payloads and side effects are inert placeholders. "
-            "Use the mode and reset HTTP endpoints between test acts."
+            "Authorized security-lab target. Payloads are benign-effect: they chase only the per-run "
+            "canary and the loopback Wolf receiver. Use the mode and reset HTTP endpoints between test acts."
         ),
     )
 
@@ -112,5 +116,6 @@ def build_mcp_server(state: LambMcpState):
         return state.vendor_lookup(name)
 
     install_attachment_tool(mcp, state, replace=False)
+    register_surfaces(mcp, state.surfaces)
     return mcp
 

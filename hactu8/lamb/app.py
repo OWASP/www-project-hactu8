@@ -8,6 +8,7 @@ from pathlib import Path
 from typing import Optional
 
 from hactu8.lamb import DEFAULT_HOST, DEFAULT_PORT
+from hactu8.lamb import surfaces as billy
 from hactu8.lamb.mcp_target import LambMcpState, build_mcp_server, install_attachment_tool
 from hactu8.lamb.workers import LabWorkerManager, WorkerError
 
@@ -79,6 +80,8 @@ def create_app(root: Optional[Path] = None, manager: Optional[LabWorkerManager] 
         ):
             return JSONResponse({"error": "skills must be an array of skill ids"}, status_code=400)
         result = await asyncio.to_thread(workers.reset, requested)
+        billy.restore_swaps(mcp, state.surfaces)
+        state.surfaces.reset()
         result["mcp"] = state.reset()
         install_attachment_tool(mcp, state)
         return JSONResponse(result, status_code=502 if result["errors"] else 200)
@@ -94,6 +97,19 @@ def create_app(root: Optional[Path] = None, manager: Optional[LabWorkerManager] 
             return JSONResponse({"error": str(exc)}, status_code=400)
         install_attachment_tool(mcp, state)
         return JSONResponse(result)
+
+    @mcp.custom_route("/api/lamb/manifest", methods=["GET"])
+    async def manifest(request: Request) -> Response:
+        if not host_ok(request):
+            return JSONResponse({"error": "bad host"}, status_code=403)
+        return JSONResponse({"targets": {target: dict(meta, attack=billy.truth(target, state.surfaces))
+                                         for target, meta in billy.ATTACK_MANIFEST.items()}})
+
+    @mcp.custom_route("/api/lamb/swap", methods=["POST"])
+    async def swap(request: Request) -> Response:
+        if not host_ok(request):
+            return JSONResponse({"error": "bad host"}, status_code=403)
+        return JSONResponse(billy.simulate_swap(mcp, state.surfaces))
 
     async def proxy(request: Request) -> Response:
         if not host_ok(request):

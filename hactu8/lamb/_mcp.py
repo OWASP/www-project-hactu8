@@ -24,6 +24,12 @@ def server_class():
     return MCPServer
 
 
+def tool_error_class():
+    """The SDK exception whose message reaches the client as an error result."""
+    from mcp.server.mcpserver.exceptions import ToolError
+    return ToolError
+
+
 def _installed_version() -> str:
     try:
         from importlib.metadata import version

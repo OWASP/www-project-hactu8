@@ -96,7 +96,7 @@ Order: W0, W1, W2 and W3 run first (they unblock everything). W4 and W5 can run 
 
 ### W2: Lamb MCP surface and gateway
 
-- [ ] AG-20 Expand `hactu8/lamb/mcp_target.py` with AgenticGoat's poisoned surfaces (tools, resources, prompts, RAG, A2A, output), with an `ATTACK_MANIFEST` ground truth and clean controls, on the `mcp` SDK. Payloads per D1.
+- [x] AG-20 Expand `hactu8/lamb/mcp_target.py` with AgenticGoat's poisoned surfaces (tools, resources, prompts, RAG, A2A, output), with an `ATTACK_MANIFEST` ground truth and clean controls, on the `mcp` SDK. Payloads per D1.
 - [ ] AG-21 Port `gateway_mcp.py` as `hactu8/lamb/gateway.py`: a ProtectoGW screening proxy in front of the Lamb MCP target, with bearer and scope auth, optional TLS 1.2+, and 127.0.0.1 only. Mount it at `/mcp-protected` beside the raw `/mcp`.
 - [ ] AG-22 Port the exfil receiver as Lamb's wolf den (`/wolf`, loopback only): it records what an attacker captured, and `POST /api/reset` clears it.
 - [ ] AG-23 Port the tests (`test_gateway_mcp`, `test_gateway_tls` without the TLS 1.1 warning, `test_exfil_receiver`) into `tests/`.
