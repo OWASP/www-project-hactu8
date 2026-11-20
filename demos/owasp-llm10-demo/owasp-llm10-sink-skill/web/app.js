@@ -206,6 +206,7 @@ function backendNote(name) {
     echo: "echo: the lab's deterministic offline model. No network, no key.",
     ollama: "ollama: local model server (OLLAMA_HOST). Nothing leaves this machine.",
     llamacpp: "llamacpp: local llama.cpp server (LLAMACPP_HOST). Nothing leaves this machine.",
+    "openai-compat": "openai-compat: local OpenAI-compatible server such as LM Studio or vLLM (LOCAL_OPENAI_BASE_URL). Nothing leaves this machine.",
   }[name] || "";
 }
 

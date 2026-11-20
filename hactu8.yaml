@@ -28,6 +28,8 @@ tiers:
       model: llama3.2:3b
     - backend: llamacpp
       model: local
+    - backend: openai-compat   # LM Studio, vLLM, LocalAI, Jan, llamafile, mlx_lm.server
+      model: local
   cloud:
     - backend: anthropic
       model: claude-haiku-5-5

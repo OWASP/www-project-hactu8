@@ -12,6 +12,10 @@ or switched at runtime from the web console through ``POST /api/backend``):
               Named as in AgenticGoat; ``stub`` is accepted as an alias.
   ollama      local. OLLAMA_HOST (default http://localhost:11434).
   llamacpp    local llama.cpp server. LLAMACPP_HOST (default http://localhost:8080).
+  openai-compat  any local OpenAI-compatible server: LM Studio, vLLM, LocalAI, Jan,
+              llamafile, mlx_lm.server. LOCAL_OPENAI_BASE_URL (default
+              http://localhost:1234/v1), optional LOCAL_OPENAI_API_KEY. Loopback
+              only unless LOCAL_OPENAI_ALLOW_REMOTE=1.
   openrouter  remote. OPENROUTER_API_KEY required. The key is sent only in the
               Authorization header, never logged and never placed in a prompt.
   anthropic   remote. ANTHROPIC_API_KEY required (x-api-key header only).
@@ -52,9 +56,9 @@ from dataclasses import dataclass
 from typing import List, Optional
 
 # BACKENDS is what the lab console offers; ALL_BACKENDS is kept as an alias for older callers.
-BACKENDS = ("echo", "ollama", "llamacpp", "openrouter", "anthropic", "openai")
+BACKENDS = ("echo", "ollama", "llamacpp", "openai-compat", "openrouter", "anthropic", "openai")
 ALL_BACKENDS = BACKENDS
-LOCAL = ("ollama", "llamacpp")
+LOCAL = ("ollama", "llamacpp", "openai-compat")
 KEY_ENV = {"openrouter": "OPENROUTER_API_KEY", "anthropic": "ANTHROPIC_API_KEY", "openai": "OPENAI_API_KEY"}
 OFFLINE = "echo"
 _ALIASES = {"stub": "echo"}
@@ -62,6 +66,7 @@ MODEL_RE = re.compile(r"[A-Za-z0-9._:/@+-]{1,120}")
 DEFAULT_MODELS = {
     "ollama": "llama3.2:3b",
     "llamacpp": "local",
+    "openai-compat": "local",
     "openrouter": "meta-llama/llama-3.2-3b-instruct",
     "anthropic": "claude-haiku-5-5",
     "openai": "gpt-4.1-mini",
@@ -247,6 +252,49 @@ class LlamaCppProvider(Provider):
         return [d["embedding"] for d in sorted(data["data"], key=lambda d: d.get("index", 0))]
 
 
+_LOOPBACK = re.compile(r"^https?://(localhost|127\.\d+\.\d+\.\d+|\[::1\])(:\d+)?(/|$)", re.I)
+
+
+class OpenAICompatProvider(Provider):
+    """Any local server that speaks the OpenAI chat-completions API."""
+
+    name = "openai-compat"
+
+    def __init__(self) -> None:
+        super().__init__()
+        self.base = os.environ.get("LOCAL_OPENAI_BASE_URL", "http://localhost:1234/v1").rstrip("/")
+        if not _LOOPBACK.match(self.base) and os.environ.get("LOCAL_OPENAI_ALLOW_REMOTE") != "1":
+            raise RuntimeError(
+                f"openai-compat is for local servers; {self.base} is not loopback. Set "
+                "LOCAL_OPENAI_ALLOW_REMOTE=1 to use it anyway (lab text will leave the machine).")
+        raw = os.environ.get("LOCAL_OPENAI_API_KEY", "").strip()
+        self._key = _ProviderKey(raw) if raw else None
+        self.timeout = http_timeout("LOCAL_OPENAI_TIMEOUT")
+
+    def _headers(self) -> dict:
+        return {"Authorization": f"Bearer {self._key.reveal()}"} if self._key else {}
+
+    def chat(self, messages: List[Message], *, model: str = "") -> str:
+        self._count_call()
+        data = self._post(f"{self.base}/chat/completions", {
+            "model": model or DEFAULT_MODELS["openai-compat"],
+            "messages": [{"role": m.role, "content": m.content} for m in messages],
+            "max_tokens": self.max_tokens,
+            "stream": False,
+        }, self._headers(), self.timeout)
+        return data["choices"][0]["message"]["content"] or ""
+
+    def list_models(self) -> List[str]:
+        data = self._get(f"{self.base}/models", self._headers(), min(self.timeout, 10.0))
+        return sorted(m["id"] for m in data.get("data", []) if m.get("id"))
+
+    def embed(self, texts: List[str], *, model: str) -> List[List[float]]:
+        self._count_call()
+        data = self._post(f"{self.base}/embeddings", {"model": model, "input": list(texts)},
+                          self._headers(), self.timeout)
+        return [d["embedding"] for d in sorted(data["data"], key=lambda d: d.get("index", 0))]
+
+
 class OpenRouterProvider(Provider):
     name = "openrouter"
 
@@ -372,13 +420,15 @@ def get_provider(name: str) -> Optional[Provider]:
         return OllamaProvider()
     if name == "llamacpp":
         return LlamaCppProvider()
+    if name == "openai-compat":
+        return OpenAICompatProvider()
     if name == "openrouter":
         return OpenRouterProvider()
     if name == "anthropic":
         return AnthropicProvider()
     if name == "openai":
         return OpenAIProvider()
-    raise ValueError(f"unknown backend {name!r}; use one of {', '.join(ALL_BACKENDS)}")
+    raise ValueError(f"unknown backend {name!r}; use one of {', '.join(BACKENDS)}")
 
 
 def describe(name: str, model: str) -> str:

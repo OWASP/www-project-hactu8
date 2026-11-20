@@ -117,6 +117,8 @@ class Router:
     def _probe_local(self, backend: str) -> Tuple[bool, str]:
         if backend == "ollama":
             url = os.environ.get("OLLAMA_HOST", "http://localhost:11434").rstrip("/") + "/api/tags"
+        elif backend == "openai-compat":
+            url = os.environ.get("LOCAL_OPENAI_BASE_URL", "http://localhost:1234/v1").rstrip("/") + "/models"
         else:
             url = os.environ.get("LLAMACPP_HOST", "http://localhost:8080").rstrip("/") + "/v1/models"
         try:
