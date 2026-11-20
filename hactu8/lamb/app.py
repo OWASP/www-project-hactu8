@@ -9,6 +9,7 @@ from typing import Optional
 
 from hactu8.lamb import DEFAULT_HOST, DEFAULT_PORT
 from hactu8.lamb import surfaces as billy
+from hactu8.lamb.gateway import Gateway, InProcessBackend, mount
 from hactu8.lamb.mcp_target import LambMcpState, build_mcp_server, install_attachment_tool
 from hactu8.lamb.workers import LabWorkerManager, WorkerError
 
@@ -29,6 +30,7 @@ def create_app(root: Optional[Path] = None, manager: Optional[LabWorkerManager] 
     workers = manager or LabWorkerManager(root)
     state = LambMcpState()
     mcp = build_mcp_server(state)
+    gateway = Gateway(InProcessBackend(mcp))
 
     def host_ok(request: Request) -> bool:
         host = (request.headers.get("host") or "").split(":", 1)[0].lower()
@@ -46,6 +48,7 @@ def create_app(root: Optional[Path] = None, manager: Optional[LabWorkerManager] 
             "warning": "Intentionally vulnerable authorized security-lab target",
             "labs": "/api/labs",
             "mcp": "/mcp",
+            "protected_mcp": "/protected/mcp",
         })
 
     @mcp.custom_route("/health", methods=["GET"])
@@ -82,6 +85,7 @@ def create_app(root: Optional[Path] = None, manager: Optional[LabWorkerManager] 
         result = await asyncio.to_thread(workers.reset, requested)
         billy.restore_swaps(mcp, state.surfaces)
         state.surfaces.reset()
+        gateway.reset()
         result["mcp"] = state.reset()
         install_attachment_tool(mcp, state)
         return JSONResponse(result, status_code=502 if result["errors"] else 200)
@@ -104,6 +108,13 @@ def create_app(root: Optional[Path] = None, manager: Optional[LabWorkerManager] 
             return JSONResponse({"error": "bad host"}, status_code=403)
         return JSONResponse({"targets": {target: dict(meta, attack=billy.truth(target, state.surfaces))
                                          for target, meta in billy.ATTACK_MANIFEST.items()}})
+
+    @mcp.custom_route("/api/lamb/gateway", methods=["GET"])
+    async def gateway_log(request: Request) -> Response:
+        if not host_ok(request):
+            return JSONResponse({"error": "bad host"}, status_code=403)
+        return JSONResponse({"mcp": "/protected/mcp", "stateful": gateway.config.stateful,
+                             "quarantined_tools": gateway.quarantined_tools, "log": list(gateway.log)})
 
     @mcp.custom_route("/api/lamb/swap", methods=["POST"])
     async def swap(request: Request) -> Response:
@@ -149,6 +160,7 @@ def create_app(root: Optional[Path] = None, manager: Optional[LabWorkerManager] 
         max_sessions=100,
         host=DEFAULT_HOST,
     )
+    mount(app, gateway)
     app.state.workers = workers
     app.state.lamb_mcp = state
     app.state.mcp_server = mcp

@@ -97,7 +97,7 @@ Order: W0, W1, W2 and W3 run first (they unblock everything). W4 and W5 can run 
 ### W2: Lamb MCP surface and gateway
 
 - [x] AG-20 Expand `hactu8/lamb/mcp_target.py` with AgenticGoat's poisoned surfaces (tools, resources, prompts, RAG, A2A, output), with an `ATTACK_MANIFEST` ground truth and clean controls, on the `mcp` SDK. Payloads per D1.
-- [ ] AG-21 Port `gateway_mcp.py` as `hactu8/lamb/gateway.py`: a ProtectoGW screening proxy in front of the Lamb MCP target, with bearer and scope auth, optional TLS 1.2+, and 127.0.0.1 only. Mount it at `/mcp-protected` beside the raw `/mcp`.
+- [x] AG-21 Port `gateway_mcp.py` as `hactu8/lamb/gateway.py` on the MCP v2 low-level server: ProtectoGW screening of tool definitions (description and schema), results (including error and structured content), resources and prompts; stateful Session; tool pinning (trust on first use or a pins file) and shadowing; optional bearer auth with scopes and a TLS 1.2+ floor when run standalone. Mounted in Lamb at `/protected/mcp` (not `/mcp-protected`: Starlette mounts need a sub-path). The bench's 33 control items: the rug pull is enforced by pinning here; agency, grounding, retrieval scope and consumption are app-layer controls already shown by the LLM03, LLM09, LLM08 and LLM06 labs. Known, documented gateway miss: the OKF runbook split across two concepts.
 - [ ] AG-22 Port the exfil receiver as Lamb's wolf den (`/wolf`, loopback only): it records what an attacker captured, and `POST /api/reset` clears it.
 - [ ] AG-23 Port the tests (`test_gateway_mcp`, `test_gateway_tls` without the TLS 1.1 warning, `test_exfil_receiver`) into `tests/`.
 
