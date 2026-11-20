@@ -122,6 +122,7 @@ Order: W0, W1, W2 and W3 run first (they unblock everything). W4 and W5 can run 
 
 ### W5: Labs
 
+  - Found 2026-11-20 on the OpenRouter stage: (1) with the python.org Python on macOS every cloud call fails with `CERTIFICATE_VERIFY_FAILED` (no CA bundle); the sweep sets `SSL_CERT_FILE=/etc/ssl/cert.pem`, but `providers.py`, the API and the fresh-clone docs (H-60) need a fix or a documented step. (2) `hactu8 bench --classifier-backend <cloud>` spends without `--confirm-spend`, unlike `run` and `live`; add the same guard.
 - [ ] AG-50 ASI05 Sink Lab on the template (closes the 25 to 26 gap; ASI01-10 complete).
 - [ ] AG-51 AGX07 Frontmatter Poison, AGX08 Cross-Resource Chain, and AGX09 Generalization Probe (the honest held-out control that stays BREACH, then BREACH), as template labs that use the gateway.
 - [x] AG-52 Port `protections.py` as the Act 4 "Protections added" explanation in each lab's output and console (compatible with the adapter format).
