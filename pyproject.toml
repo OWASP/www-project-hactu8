@@ -25,4 +25,4 @@ hactu8-api = "hactu8.api:main"
 include = ["hactu8*"]
 
 [tool.setuptools.package-data]
-hactu8 = ["schemas/*.json"]
+hactu8 = ["schemas/*.json", "bench/*.json"]

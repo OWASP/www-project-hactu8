@@ -5,6 +5,7 @@
     hactu8 results [--json]
     hactu8 show <run_id|latest>
     hactu8 router [--json]
+    hactu8 bench [--json] [--misses]
 
 Without --backend, the model under test comes from the router (hactu8.yaml,
 role ``target``; deterministic echo by default). --tier picks a tier instead.
@@ -159,6 +160,30 @@ def cmd_router(args) -> int:
     return 0
 
 
+def _pct(value) -> str:
+    return "-" if value is None else f"{value * 100:.0f}%"
+
+
+def cmd_bench(args) -> int:
+    from hactu8 import bench
+    result = bench.run()
+    if args.json:
+        print(json.dumps(result.to_dict(), indent=2))
+        return 1 if result.regressions else 0
+    print(f"coverage        {_pct(result.coverage)}   (baseline {_pct(result.baseline.get('coverage'))})")
+    print(f"generalization  {_pct(result.generalization)}   (held-out; baseline "
+          f"{_pct(result.baseline.get('generalization'))})")
+    print(f"false positives {result.false_positives}      (baseline {result.baseline.get('false_positives', 0)})")
+    print(f"scored items    {len(result.items)}; controls listed, not scored: {result.controls}")
+    shown = [i for i in result.items if i.grade in ("MISS", "FALSE_POSITIVE")] if args.misses else []
+    if shown:
+        _print_table([[i.id, i.surface, i.grade, "held-out" if i.holdout else ""] for i in shown],
+                     ["ITEM", "SURFACE", "GRADE", ""])
+    for item in result.regressions:
+        print(f"REGRESSION: {item.id} ({item.grade})")
+    return 1 if result.regressions else 0
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="hactu8", description="OWASP HACTU8 assurance test runner")
     parser.add_argument("--version", action="version", version=f"hactu8 {__version__}")
@@ -190,6 +215,11 @@ def build_parser() -> argparse.ArgumentParser:
     p = sub.add_parser("router", help="show router tiers and which models are available")
     p.add_argument("--json", action="store_true")
     p.set_defaults(func=cmd_router)
+
+    p = sub.add_parser("bench", help="score ProtectoGW against the labelled attack corpus")
+    p.add_argument("--json", action="store_true")
+    p.add_argument("--misses", action="store_true", help="list misses and false positives")
+    p.set_defaults(func=cmd_bench)
     return parser
 
 
