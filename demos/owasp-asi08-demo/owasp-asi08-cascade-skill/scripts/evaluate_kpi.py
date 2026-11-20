@@ -60,14 +60,15 @@ RESET = "\033[0m"
 
 
 def classify(outcome: str, truth: str) -> str:
-    """RED: paid when it should not be, or held when it should be paid.
+    """RED: paid when it should not be (money moved on a wrong figure).
 
-    YELLOW: no wrong payment, but a payable invoice was halted for review.
+    YELLOW: no wrong payment, but a payable invoice was held or halted for
+    review: over-caution costs a delay, not money. GREEN: the right outcome.
     """
-    if outcome == "halted" and truth == "approve":
-        return "YELLOW"
-    if (outcome == "approved") != (truth == "approve"):
+    if outcome == "approved" and truth != "approve":
         return "RED"
+    if outcome != "approved" and truth == "approve":
+        return "YELLOW"
     return "GREEN"
 
 
