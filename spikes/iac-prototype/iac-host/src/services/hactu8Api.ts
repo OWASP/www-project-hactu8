@@ -67,12 +67,22 @@ export interface ModelsInfo {
   catalogs: Record<string, string[]>;
 }
 
+export interface Protection {
+  id: string;
+  title: string;
+  idea: string;
+  steps: string[];
+  before: string;
+  after: string;
+}
+
 export interface ResultAct {
   act: number;
   phase: string;
   title: string;
   notes?: string[];
   items: ResultItem[];
+  protections?: Protection[];
   metric: { targeted: { red: number; total: number; rate: number } };
 }
 
@@ -108,6 +118,7 @@ export const hactu8Api = {
   baseUrl: API_BASE,
   branding: () => request<Branding>('/api/branding'),
   skills: () => request<{ skills: Skill[]; total: number }>('/api/skills'),
+  protections: () => request<{ protections: Protection[]; total: number }>('/api/protections'),
   targets: () => request<{ targets: Target[]; total: number }>('/api/targets'),
   results: () => request<{ results: Hactu8Result[]; total: number }>('/api/results'),
   result: (runId: string) => request<Hactu8Result>(`/api/results/${encodeURIComponent(runId)}`),

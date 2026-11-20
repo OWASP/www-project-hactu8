@@ -1,4 +1,4 @@
-import type { Hactu8Result, ResultItem } from '../../services/hactu8Api';
+import type { Hactu8Result, Protection, ResultItem } from '../../services/hactu8Api';
 import { hactu8Api } from '../../services/hactu8Api';
 
 const ON_SIGNAL: Record<string, string> = { SAFE: 'green', DEFENDED: 'green', BREACH: 'red', FALSE_BLOCK: 'yellow' };
@@ -86,7 +86,28 @@ export default function RunResult({ result }: { result: Hactu8Result }) {
           </div>
         </article>
       </div>
+
+      {remediation?.protections?.length ? <ProtectionsAdded controls={remediation.protections} /> : null}
     </div>
+  );
+}
+
+function ProtectionsAdded({ controls }: { controls: Protection[] }) {
+  return (
+    <article className="panel protections">
+      <h2>Protections added</h2>
+      {controls.map((c) => (
+        <section key={c.id} className="protection">
+          <h3>{c.title}</h3>
+          <p>{c.idea}</p>
+          <ol>{c.steps.map((step) => <li key={step}>{step}</li>)}</ol>
+          <div className="before-after">
+            <div><small>Before</small><pre className="evidence">{c.before}</pre></div>
+            <div><small>After</small><pre className="evidence">{c.after}</pre></div>
+          </div>
+        </section>
+      ))}
+    </article>
   );
 }
 

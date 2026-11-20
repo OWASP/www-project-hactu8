@@ -20,6 +20,7 @@ metadata:
   hactu8.metric-name: "Untrusted Component Load Rate"
   hactu8.target: "lab"
   hactu8.port: "5304"
+  hactu8.protections: "exact_name,provenance,hash_pin"
   objective: Demonstrate a lookalike skill loaded by runtime discovery
   version: 2026.1
 ---

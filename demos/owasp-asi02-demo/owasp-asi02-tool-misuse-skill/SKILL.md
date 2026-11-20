@@ -20,6 +20,7 @@ metadata:
   hactu8.metric-name: "Unsafe Invocation Rate"
   hactu8.target: "lab"
   hactu8.port: "5302"
+  hactu8.protections: "param_policy"
   objective: Demonstrate permitted tools called with unsafe parameters and the tool-boundary policy that stops it
   version: 2026.1
 ---

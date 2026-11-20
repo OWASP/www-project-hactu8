@@ -30,6 +30,7 @@ import sys
 import time
 from typing import List, Optional, Union
 
+from hactu8 import protections
 from hactu8.classify import Classifier, get_classifier
 from hactu8.result import PHASES, envelope, now_iso, rate, summarize
 
@@ -100,6 +101,18 @@ def parse(output: str, classifier: Union[str, Classifier] = "keyword", context: 
     return acts
 
 
+def attach_protections(acts: List[dict], ids: List[str]) -> None:
+    """Put the lab's declared controls on its remediation act (Act 4 "Protections added").
+
+    Unknown ids are skipped here so one typo cannot break a run; the test suite
+    fails on any unknown id in a SKILL.md.
+    """
+    known = [cid for cid in ids if cid in protections.CATALOG]
+    for act in acts:
+        if act["phase"] == "remediation" and known:
+            act["protections"] = protections.resolve(known)
+
+
 def run(skill, backend: str = "echo", model: str = "", classifier: Union[str, Classifier] = "keyword",
         timeout: int = 300, tier: str = "") -> dict:
     if isinstance(classifier, str):
@@ -121,6 +134,7 @@ def run(skill, backend: str = "echo", model: str = "", classifier: Union[str, Cl
     doc["duration_ms"] = int((time.monotonic() - start) * 1000)
     doc["finished_at"] = now_iso()
     doc["acts"] = parse(output, classifier, {"risk": skill.risk, "metric": skill.metric_name})
+    attach_protections(doc["acts"], getattr(skill, "protections", []))
     doc["classifier"] = classifier.info()
     doc["summary"] = summarize(doc["acts"], backend)
     doc["exit_code"] = code

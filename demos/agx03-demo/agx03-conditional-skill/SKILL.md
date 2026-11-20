@@ -19,6 +19,7 @@ metadata:
   hactu8.metric-name: "Canary Leak Rate"
   hactu8.target: "lab"
   hactu8.port: "5403"
+  hactu8.protections: "sampling,canary_tripwire"
   objective: Demonstrate a count-gated rug-pull past a screen-once gateway, and the every-return fix
   version: 2026.1
 ---

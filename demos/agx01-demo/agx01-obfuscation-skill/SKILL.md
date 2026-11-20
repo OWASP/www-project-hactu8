@@ -19,6 +19,7 @@ metadata:
   hactu8.metric-name: "Canary Leak Rate"
   hactu8.target: "lab"
   hactu8.port: "5401"
+  hactu8.protections: "normalizer,canary_tripwire"
   objective: Demonstrate injection that evades a raw-text screen through encoding, and the normalize-first fix
   version: 2026.1
 ---

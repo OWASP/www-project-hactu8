@@ -300,6 +300,13 @@
                 "$ref": "#/$defs/rate"
               }
             }
+          },
+          "protections": {
+            "type": "array",
+            "description": "Remediation act: the controls the hardened mode adds (Act 4 \"Protections added\"), resolved from hactu8/protections.py",
+            "items": {
+              "$ref": "#/$defs/protection"
+            }
           }
         }
       }
@@ -421,6 +428,43 @@
           "type": "number",
           "minimum": 0,
           "maximum": 100
+        }
+      }
+    },
+    "protection": {
+      "type": "object",
+      "required": [
+        "id",
+        "title",
+        "idea",
+        "steps",
+        "before",
+        "after"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z0-9_]+$"
+        },
+        "title": {
+          "type": "string"
+        },
+        "idea": {
+          "type": "string"
+        },
+        "steps": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "before": {
+          "type": "string",
+          "description": "Pseudocode sketch without the control"
+        },
+        "after": {
+          "type": "string",
+          "description": "Pseudocode sketch with the control"
         }
       }
     }

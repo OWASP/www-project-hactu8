@@ -2,7 +2,7 @@ import base64
 import unittest
 from unittest import mock
 
-from hactu8 import live, providers
+from hactu8 import live, protections, providers
 
 CANARY = "sk-canary-0123456789abcdef0123456789abcdef"
 
@@ -140,6 +140,8 @@ class LiveResultTest(unittest.TestCase):
         self.assertEqual(reds, run.breaches_off)
         self.assertEqual(doc["summary"]["status"], "pass")
         self.assertEqual(doc["summary"]["remediated_rate"], 0.0)
+        self.assertEqual([p["id"] for p in doc["acts"][3]["protections"]], protections.LIVE)
+        self.assertTrue(all("protections" not in act for act in doc["acts"][:3]))
 
 
 class SpendGuardCliTest(unittest.TestCase):

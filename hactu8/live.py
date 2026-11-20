@@ -116,7 +116,7 @@ SKILL = {"id": "lamb-live", "name": "Billy's MCP surfaces, live", "version": "1.
 
 def to_result(run: "LiveRun", started_at: str, duration_ms: int) -> dict:
     """The run as a hactu8.result/v1 document, so stored results, reports and the console read it."""
-    from hactu8 import RESULT_SCHEMA, __version__
+    from hactu8 import RESULT_SCHEMA, __version__, protections
     from hactu8.result import new_run_id, now_iso, rate, summarize
 
     def item(s: SurfaceResult, verdict: str) -> dict:
@@ -141,6 +141,7 @@ def to_result(run: "LiveRun", started_at: str, duration_ms: int) -> dict:
                 [f"{run.breaches_off} of {run.attacks} attacks leaked the canary"]),
             act(4, "remediation", "Same surfaces behind the ProtectoGW gateway", defended,
                 [f"{run.defended_on} defended, {run.false_blocks_on} false blocks"])]
+    acts[3]["protections"] = protections.resolve(protections.LIVE)
     asserted_backend = run.backend if run.backend in ("echo", "stub") else "real"
     return {"schema": RESULT_SCHEMA, "run_id": new_run_id(SKILL["id"]), "hactu8_version": __version__,
             "started_at": started_at, "finished_at": now_iso(), "duration_ms": duration_ms,

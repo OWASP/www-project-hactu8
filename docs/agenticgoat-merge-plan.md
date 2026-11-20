@@ -124,7 +124,8 @@ Order: W0, W1, W2 and W3 run first (they unblock everything). W4 and W5 can run 
 
 - [ ] AG-50 ASI05 Sink Lab on the template (closes the 25 to 26 gap; ASI01-10 complete).
 - [ ] AG-51 AGX07 Frontmatter Poison, AGX08 Cross-Resource Chain, and AGX09 Generalization Probe (the honest held-out control that stays BREACH, then BREACH), as template labs that use the gateway.
-- [ ] AG-52 Port `protections.py` as the Act 4 "Protections added" explanation in each lab's output and console (compatible with the adapter format).
+- [x] AG-52 Port `protections.py` as the Act 4 "Protections added" explanation in each lab's output and console (compatible with the adapter format).
+  - Done: `hactu8/protections.py` catalog; each lab names its controls in SKILL.md `hactu8.protections`; Act 4 carries a `protections` list (optional in the schema); `/api/protections`, the console and Markdown reports show them. ASI05 and AGX07 to AGX09 still need their `hactu8.protections` line.
 - [x] AG-54 Apply the approved payload rule to the labs: replace the inert `PLACEHOLDER` payloads in 17 labs with benign-effect wording (chasing only the canary or a loopback tool), so a real model can actually fall for them. On `llama3.2:3b` only 9 of 25 labs landed. Keep echo deterministic.
 - [ ] AG-55 Audit every lab's grading against real-model output, both directions (a real unsafe action graded RED, a safe answer graded GREEN). Start with LLM03, which shows a 33% baseline RED with no attack present on `llama3.2:3b`. Where keyword grading cannot be exact, switch the lab to a canary or state-based oracle.
   - AG-54 done on echo (verdicts and rates identical to `fc15e44`; only payload text, LLM06 token counts, and the ASI02 `.invalid` destination name changed). markdownlint now passes repo-wide (separate lint commit).

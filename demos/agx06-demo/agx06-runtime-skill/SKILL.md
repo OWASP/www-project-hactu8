@@ -20,6 +20,7 @@ metadata:
   hactu8.metric-name: "Canary Leak Rate"
   hactu8.target: "lab"
   hactu8.port: "5406"
+  hactu8.protections: "input_screen,canary_tripwire"
   objective: Demonstrate injection through a tool's runtime return past a static-definition scan
   version: 2026.1
 ---

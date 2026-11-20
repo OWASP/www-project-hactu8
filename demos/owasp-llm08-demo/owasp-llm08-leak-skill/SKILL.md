@@ -20,6 +20,7 @@ metadata:
   hactu8.metric-name: "Prompt Leak Rate"
   hactu8.target: "lab"
   hactu8.port: "5208"
+  hactu8.protections: "secret_vault,output_screen"
   objective: Demonstrate hidden-context exposure from a secret-bearing system prompt
   version: 2026.1
 ---

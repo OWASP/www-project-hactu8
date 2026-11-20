@@ -2,17 +2,19 @@
 
 Phase 1 discovers the labs under ``demos/``: every ``<lab>/run_demo.py`` whose
 ``SKILL_DIR`` points at a skill directory with a ``SKILL.md``. HACTU8 facts come
-from the skill's ``metadata.hactu8.*`` keys.
+from the skill's ``metadata.hactu8.*`` keys; ``hactu8.protections`` lists the
+Act 4 controls by id from ``hactu8/protections.py``.
 """
 
 from __future__ import annotations
 
 import os
 import re
-from dataclasses import asdict, dataclass
+from dataclasses import asdict, dataclass, field
 from pathlib import Path
 from typing import List, Optional
 
+from hactu8.protections import parse_ids
 from hactu8.skillmeta import read_frontmatter
 
 _SKILL_DIR_RE = re.compile(r'SKILL_DIR = os\.path\.join\(HERE, "([^"]+)"\)')
@@ -32,6 +34,7 @@ class Skill:
     lab_dir: str
     skill_dir: str
     description: str
+    protections: List[str] = field(default_factory=list)
 
     def to_dict(self) -> dict:
         return asdict(self)
@@ -84,6 +87,7 @@ def discover(root: Optional[Path] = None) -> List[Skill]:
             lab_dir=str(lab),
             skill_dir=str(skill_dir),
             description=str(fm.get("description", "")),
+            protections=parse_ids(meta.get("hactu8.protections", "")),
         ))
     return skills
 

@@ -1,9 +1,9 @@
-"""FastAPI service for HACTU8 skills, runs, results, targets, branding, and reports."""
+"""FastAPI service for HACTU8 skills, protections, runs, results, targets, branding, and reports."""
 
 from pathlib import Path
 from typing import Optional
 
-from hactu8 import branding, catalog, config, providers, reports, spend, store
+from hactu8 import branding, catalog, config, protections, providers, reports, spend, store
 from hactu8.adapters import lab
 from hactu8.classify import get_classifier
 from hactu8.router import Router, RouterError
@@ -53,6 +53,11 @@ def create_app(root: Optional[Path] = None):
     def skills():
         values = [skill.to_dict() for skill in catalog.discover(root)]
         return {"skills": values, "total": len(values)}
+
+    @app.get("/api/protections")
+    def protection_library():
+        values = protections.library()
+        return {"protections": values, "total": len(values)}
 
     @app.get("/api/targets")
     def targets():

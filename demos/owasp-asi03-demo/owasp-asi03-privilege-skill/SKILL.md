@@ -20,6 +20,7 @@ metadata:
   hactu8.metric-name: "Privilege Escalation Rate"
   hactu8.target: "lab"
   hactu8.port: "5303"
+  hactu8.protections: "delegated_token"
   objective: Demonstrate confused-deputy privilege abuse by an agent
   version: 2026.1
 ---

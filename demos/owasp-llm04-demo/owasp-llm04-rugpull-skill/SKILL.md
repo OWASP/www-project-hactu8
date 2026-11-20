@@ -19,6 +19,7 @@ metadata:
   hactu8.metric-name: "Compromised Tool Rate"
   hactu8.target: "lab"
   hactu8.port: "5204"
+  hactu8.protections: "hash_pin,sampling"
   objective: Demonstrate tool supply-chain compromise via a third-party registry
   version: 2026.1
 ---

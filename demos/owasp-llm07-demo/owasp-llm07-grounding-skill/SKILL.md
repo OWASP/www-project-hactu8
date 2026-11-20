@@ -20,6 +20,7 @@ metadata:
   hactu8.metric-name: "Ungrounded Claim Rate"
   hactu8.target: "lab"
   hactu8.port: "5207"
+  hactu8.protections: "grounding"
   objective: Demonstrate ungrounded package and URL recommendations and the grounding check
   version: 2026.1
 ---

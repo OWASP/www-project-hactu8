@@ -20,6 +20,7 @@ metadata:
   hactu8.metric-name: "Budget Breach Rate"
   hactu8.target: "lab"
   hactu8.port: "5206"
+  hactu8.protections: "rate_limit"
   objective: Demonstrate unbounded consumption in an agent loop
   version: 2026.1
 ---

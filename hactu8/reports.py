@@ -63,6 +63,13 @@ def markdown(doc: dict, brand: dict) -> str:
         for item in doc["acts"][3]["items"]:
             kind = "attack" if item["targeted"] else "control"
             lines.append(f"| `{item['id']}` | {kind} | {item.get('outcome_off', '')} | {item.get('outcome_on', '')} |")
+    added = [p for act in doc["acts"] if act["phase"] == "remediation" for p in act.get("protections", [])]
+    if added:
+        lines += ["", "## Protections added", "", "What the remediation act (Act 4) adds:"]
+        for p in added:
+            lines += ["", f"### {p['title']}", "", p["idea"], ""]
+            lines += [f"{n}. {step}" for n, step in enumerate(p["steps"], 1)]
+            lines += ["", "```text", "before:", p["before"], "", "after:", p["after"], "```"]
     lines += ["", "## Findings", ""]
     findings = list(_findings(doc))
     if not findings:
@@ -92,7 +99,7 @@ def markdown(doc: dict, brand: dict) -> str:
 
 def html_report(doc: dict, brand: dict) -> str:
     body = markdown(doc, brand)
-    rendered = "\n".join(_markdown_line(line) for line in body.splitlines())
+    rendered = "\n".join(_render_lines(body.splitlines()))
     primary = _safe_color(brand["primary_color"], "#213547")
     accent = _safe_color(brand["accent_color"], "#fbbf24")
     return f"""<!doctype html>
@@ -195,6 +202,19 @@ def _safe_color(value: str, fallback: str) -> str:
     if len(value) in (4, 7) and value.startswith("#") and all(c in "0123456789abcdefABCDEF" for c in value[1:]):
         return value
     return fallback
+
+
+def _render_lines(lines: list) -> Iterable[str]:
+    """Markdown lines to HTML; text inside a code fence stays literal."""
+    in_code = False
+    for line in lines:
+        if line.startswith("```"):
+            in_code = not in_code
+            yield "<pre>" if in_code else "</pre>"
+        elif in_code:
+            yield html.escape(line)
+        else:
+            yield _markdown_line(line)
 
 
 def _markdown_line(line: str) -> str:

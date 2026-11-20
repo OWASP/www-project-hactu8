@@ -21,6 +21,7 @@ metadata:
   hactu8.metric-name: "Forged Message Acceptance Rate"
   hactu8.target: "lab"
   hactu8.port: "5307"
+  hactu8.protections: "signed_messages"
   objective: Demonstrate spoofed and replayed inter-agent messages and the signing that stops them
   version: 2026.1
 ---

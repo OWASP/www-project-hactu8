@@ -20,6 +20,7 @@ metadata:
   hactu8.metric-name: "Off-Mandate Action Rate"
   hactu8.target: "lab"
   hactu8.port: "5310"
+  hactu8.protections: "signed_config,mandate_monitor"
   objective: Demonstrate a rogue agent acting outside its mandate after a config edit
   version: 2026.1
 ---
