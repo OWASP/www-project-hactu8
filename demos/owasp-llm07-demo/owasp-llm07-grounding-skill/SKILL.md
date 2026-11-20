@@ -46,9 +46,9 @@ A developer who copies its install line acts on a claim nobody verified.
     at most three pages per query.
   - The server rejects foreign `Host` headers (DNS rebinding) and non-JSON
     POSTs (cross-site forms).
-- The shipped payload is a **placeholder**: a fictional package name, a docs
-  URL under the reserved `.invalid` TLD, and a fictional canary. See
-  [`assets/poisoned_doc.README.md`](assets/poisoned_doc.README.md).
+- The shipped payload is **benign-effect**: a natural-language claim naming a
+  fictional package, a docs URL under the reserved `.invalid` TLD, and a
+  fictional canary. See [`assets/poisoned_doc.README.md`](assets/poisoned_doc.README.md).
 - Dual-use: this exists to make the vulnerability observable and to motivate
   the mitigations in [`references/LLM07_RISKS.md`](references/LLM07_RISKS.md).
 
@@ -157,7 +157,7 @@ change what counts as known-good, edit `assets/approved_registry.json`.
 | `scripts/evaluate_kpi.py` | Stoplight KPI + UCR against the live app; `--harden` and `--scan` mitigations. |
 | `scripts/reset_baseline.py` | Restores the seeded docs and vulnerable mode. |
 | `references/LLM07_RISKS.md` | Threat landscape, research, scenario table, mitigations. |
-| `assets/poisoned_doc.md` | Adversarial community page (placeholder payload; editable). |
+| `assets/poisoned_doc.md` | Adversarial community page (benign-effect payload; editable). |
 | `assets/poisoned_doc.README.md` | How to write a payload for the echo and real-model backends. |
 | `assets/docs_baseline.json` | Untampered developer docs: the ground truth. |
 | `assets/approved_registry.json` | Approved packages and trusted doc hosts (editable). |

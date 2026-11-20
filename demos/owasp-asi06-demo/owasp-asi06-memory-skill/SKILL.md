@@ -4,7 +4,7 @@ description: >-
   Demonstrates OWASP ASI06 (Memory & Context Poisoning, OWASP Top 10 for
   Agentic Applications) against a vulnerable assistant with long-term memory
   in an AUTHORIZED security lab. One user asks the agent to remember a
-  placeholder note keyed to a topic; later sessions of other users recall it
+  benign-effect note keyed to a topic; later sessions of other users recall it
   and follow it. Scores each session from a simulated action log with a
   red/yellow/green stoplight KPI and Poison Success Rate, and shows the
   memory-write screening, per-user scope with provenance and scoped-recall
@@ -47,8 +47,8 @@ KPI reads.
     the network unless you opt into a real-model backend.
   - The server rejects foreign `Host` headers (DNS rebinding) and non-JSON
     POSTs (cross-site forms).
-- The shipped payload is a **placeholder**: a topic line, a marker line and a
-  fictional canary. See [`assets/memory_note.README.md`](assets/memory_note.README.md).
+- The shipped payload is benign-effect: a topic line, persuasive wording, a
+  marker line and a fictional canary. See [`assets/memory_note.README.md`](assets/memory_note.README.md).
 - Dual-use: this exists to make the vulnerability observable and to motivate
   the mitigations in [`references/ASI06_RISKS.md`](references/ASI06_RISKS.md).
 
@@ -157,7 +157,7 @@ threshold is part of the lesson. To test the write screen, add a
 | `scripts/evaluate_kpi.py` | Stoplight KPI + PSR from the action log; `--harden` and `--scan` mitigations. |
 | `scripts/reset_baseline.py` | Restores the seeded memory store, clears the action log, vulnerable mode. |
 | `references/ASI06_RISKS.md` | Threat landscape, research, scenario table, mitigations. |
-| `assets/memory_note.md` | The memory to plant (placeholder payload; editable). |
+| `assets/memory_note.md` | The memory to plant (benign-effect payload; editable). |
 | `assets/memory_note.README.md` | How to write a payload for the echo and real-model backends. |
 | `assets/memory_baseline.json` | KB ground truth and seeded user memories. |
 | `protectogw/` | AgenticGoat's screening core, vendored unchanged; the memory-write screen. |

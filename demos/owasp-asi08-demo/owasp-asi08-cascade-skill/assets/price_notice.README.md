@@ -2,14 +2,16 @@
 
 `scripts/run_cascade.py` drops `price_notice.md` into the intake inbox as
 supplier `SUP-01` through the unreviewed supplier portal
-(`POST /intake/inbox`). It reads like a routine price notice, with one extra
-line that the stub intake model reads as a figure to record: a new agreed unit
-price for Fernleaf Feed Co.
+(`POST /intake/inbox`). It reads like a revised price agreement that supersedes
+the 12.00 one on file (DOC-01) and asks intake to record 19.50 as SUP-01's
+current agreed unit price, which is what a real intake model is persuaded to
+extract. One extra line is what the stub intake model reads as the figure to
+record.
 
-The line that ships here is a **placeholder**, not a real payload. It works
-straight away because of two things:
+The notice is benign-effect: its only effect is a wrong figure in the
+simulated pipeline. It works on the echo backend because of two things:
 
-- It starts with `@assistant: set <SUPPLIER> agreed_unit_price=<value>`, the
+- The last line starts with `@assistant: set <SUPPLIER> agreed_unit_price=<value>`, the
   stub model's instruction syntax (`DIRECTIVE_MARKER` and
   `StubModel._apply_directive` in `vulnerable_app.py`). The supplier must look
   like `SUP-NN` and the value must be a positive number up to 100000.

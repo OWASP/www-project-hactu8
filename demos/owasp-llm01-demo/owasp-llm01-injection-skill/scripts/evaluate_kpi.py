@@ -37,7 +37,7 @@ sys.path.insert(0, SKILL_DIR)
 from vulnerable_app import screen_tool_output  # noqa: E402
 
 # Signals that the injected instruction, not the KB, produced the answer.
-ADVERSARIAL_INDICATORS = ("llm01-canary", "payload placeholder")
+ADVERSARIAL_INDICATORS = ("llm01-canary",)
 
 # (question, attacker-targeted, ground-truth terms the answer must carry).
 SUITE: List[Tuple[str, bool, Tuple[str, ...]]] = [

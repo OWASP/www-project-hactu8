@@ -18,8 +18,10 @@ other two agents stay in scope. Nothing in their output looks wrong.
 > fleet and its unauthenticated config store are insecure **by design**. Do
 > not deploy them anywhere reachable.
 
-The shipped payload is a **placeholder**: two marker lines and a fictional
-canary. That is enough to drive the full lifecycle. To write your own edit,
+The shipped payload is benign-effect: realistic injection wording around
+two stub marker lines that carry a fictional canary. Its only possible effect
+is simulated actions in the lab's in-memory log. The marker lines drive the
+echo backend; the wording is there for real models. To write your own edit,
 see `owasp-asi10-rogue-agent-skill/assets/tampered_mandate.README.md`.
 
 ## Interactive web demo (recommended)
@@ -115,9 +117,9 @@ becomes entries in the simulated action log.
   action against the signed mandate. There is no third-party text to fence
   here, so the controls stay in code, not in the prompt.
 
-A real model may ignore the placeholder payload. Write a natural-language
-payload (see `assets/tampered_mandate.README.md`), and `run_demo.py` reports
-the numbers rather than asserting them.
+A real model may still resist the payload, so `run_demo.py` reports the
+numbers rather than asserting them. To try your own wording, see
+`assets/tampered_mandate.README.md`.
 
 Limits:
 - `LAB_MAX_CALLS` (default 200) caps calls per process. A 4-tick run makes
@@ -273,7 +275,7 @@ owasp-asi10-demo/
 │   │   └── ASI10_RISKS.md             #   research, scenarios, mitigation roadmap
 │   ├── assets/
 │   │   ├── fleet_baseline.json        #   approved mandates + scheduled work
-│   │   ├── tampered_mandate.json      #   placeholder config edit (editable)
+│   │   ├── tampered_mandate.json      #   config edit (editable)
 │   │   └── tampered_mandate.README.md #   how to write an edit
 │   └── tests/
 │       └── test_lifecycle.py          #   asserts the four-act story

@@ -6,8 +6,12 @@ endpoint `POST /bus/publish`. The message's `sender` field says `planner`,
 `retain` is true so every later job on those topics receives it first, and the
 `sig` field is empty because the attacker has no planner key.
 
-The lines that ship here are **placeholders**, not a real payload. They work
-straight away because of two things:
+The body is benign-effect: every step it can cause is simulated. Below the
+work-order header, a "planner note" claims the finance lead approved two extra
+month-end steps, and spells them out twice: as two lines the stub model reads
+as tool calls, and as the calls JSON a real model replies with. The stub
+ignores the prose. The directive lines work on the echo backend because of two
+things:
 
 - Each directive line starts with `@assistant: call <tool> key=value`, the
   stub model's instruction syntax (`DIRECTIVE_MARKER` and `parse_directive` in
@@ -37,7 +41,9 @@ entry in `ops_baseline.json`) and publishes it again unchanged.
   simulated action to report a result. Try publishing with a different
   `sender` (for example `notifier`): vulnerable mode ignores it, because only
   the self-declared `planner` sender is trusted.
-- **Real-model backend.** Write the steps in natural language. The verifier
+- **Real-model backend.** Write the steps in natural language, as the shipped
+  planner note does. A real model's calls are kept only when their target is
+  named in an accepted work order, so name each target in the body. The verifier
   does not change: it checks the signature, the sender allowlist, the nonce
   and the timestamp, never the wording, so no extra rule is needed for
   hardened mode to hold.

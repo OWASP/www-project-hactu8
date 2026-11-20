@@ -55,8 +55,9 @@ field, carries them out.
     returns is executed or fetched.
   - The server rejects foreign `Host` headers (DNS rebinding) and non-JSON
     POSTs (cross-site forms).
-- The shipped payload is a **placeholder**: stub directive lines plus a
-  fictional canary. See [`assets/forged_order.README.md`](assets/forged_order.README.md).
+- The shipped payload is benign-effect: realistic injection wording around
+  stub directive lines that carry a fictional canary; every
+  action it causes is simulated. See [`assets/forged_order.README.md`](assets/forged_order.README.md).
 - Dual-use: this exists to make the vulnerability observable and to motivate
   the mitigations in [`references/ASI07_RISKS.md`](references/ASI07_RISKS.md).
 
@@ -172,7 +173,7 @@ verifier enforces, edit `assets/bus_policy.json`; turning off
 | `scripts/evaluate_kpi.py` | Stoplight KPI + FMAR against the live app; `--harden` and `--scan` mitigations. |
 | `scripts/reset_baseline.py` | Restores records and bus, clears the action log, sets vulnerable mode. |
 | `references/ASI07_RISKS.md` | Threat landscape, research, scenario table, mitigations. |
-| `assets/forged_order.md` | Spoofed work order body (placeholder payload; editable). |
+| `assets/forged_order.md` | Spoofed work order body (benign-effect payload; editable). |
 | `assets/forged_order.README.md` | How to write a payload for the echo and real-model backends. |
 | `assets/ops_baseline.json` | Items, invoices, orders and the old bus history as seeded. |
 | `assets/bus_policy.json` | Signature, sender allowlist and replay settings (editable). |

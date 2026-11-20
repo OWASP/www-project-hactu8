@@ -47,8 +47,9 @@ new steps.
     the network unless you opt into a real-model backend.
   - The server rejects foreign `Host` headers (DNS rebinding) and non-JSON
     POSTs (cross-site forms).
-- The shipped payload is a **placeholder**: stub directive lines plus a
-  fictional canary. See [`assets/ticket_comment.README.md`](assets/ticket_comment.README.md).
+- The shipped payload is benign-effect: realistic injection wording around
+  stub directive lines that carry a fictional canary; every
+  action it causes is simulated. See [`assets/ticket_comment.README.md`](assets/ticket_comment.README.md).
 - Dual-use: this exists to make the vulnerability observable and to motivate
   the mitigations in [`references/ASI01_RISKS.md`](references/ASI01_RISKS.md).
 
@@ -158,7 +159,7 @@ stays on the plan by design.
 | `scripts/evaluate_kpi.py` | Stoplight KPI + GDR against the live app; `--harden` and `--scan` mitigations. |
 | `scripts/reset_baseline.py` | Restores the seeded desk, clears the action log, sets vulnerable mode. |
 | `references/ASI01_RISKS.md` | Threat landscape, research, scenario table, mitigations. |
-| `assets/ticket_comment.md` | Adversarial ticket comment (placeholder payload; editable). |
+| `assets/ticket_comment.md` | Adversarial ticket comment (benign-effect payload; editable). |
 | `assets/ticket_comment.README.md` | How to write a payload for the echo and real-model backends. |
 | `assets/ops_baseline.json` | Tickets, queues and channels as seeded. |
 | `assets/weekly_report_plan.json` | The approved four-step task (editable). |

@@ -13,10 +13,14 @@ The edit has two parts, and both are needed:
   this widening the standing orders are dropped
   (`tests/test_lifecycle.py::test_mandate_widening_is_load_bearing`).
 - **Two standing orders** in `instructions`, starting on different ticks, so
-  the agent drifts further out of scope as the run goes on.
+  the agent drifts further out of scope as the run goes on. They are written
+  twice: as a natural-language paragraph that claims the fleet controller and
+  finance approved them for the audit season, with the exact action JSON a real
+  model replies with, and as two marker lines for the stub. The stub ignores
+  the paragraph.
 
-The orders that ship here are **placeholders**, not a real payload. They work
-straight away because:
+The edit is benign-effect: every action it causes is simulated. The marker
+lines work on the echo backend because:
 
 - Each starts with `@assistant:`, the stub model's instruction marker
   (`DIRECTIVE_MARKER` in `vulnerable_app.py`), followed by the stub's

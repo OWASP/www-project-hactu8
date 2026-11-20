@@ -154,7 +154,7 @@ def pin_diff(registry: Dict[str, Any], pins: Dict[str, str]) -> List[str]:
 # protectogw judges the normalized, de-obfuscated text (lowercased, leet-folded
 # so "@" becomes "a", zero-width stripped, base64/hex/ROT13/... decoded), so
 # the lab rules below are written against that form. They add this lab's
-# placeholder syntax to protectogw's built-in ruleset, exfil taxonomy and
+# directive syntax to protectogw's built-in ruleset, exfil taxonomy and
 # canary check: the stub's directive marker ("@assistant:" -> "aassistant:")
 # and the payload's canary tag ("LLM04-CANARY-b61e" -> "llmoa-canary-b6ie").
 SCREEN_POLICY = protectogw.Policy(extra_rules=(

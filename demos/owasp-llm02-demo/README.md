@@ -18,8 +18,8 @@ nobody whose data leaked sees anything wrong.
 > assistant and its unscoped record tool are insecure **by design**. Do not
 > deploy them anywhere reachable.
 
-All records are fictional, and the shipped payload is a **placeholder**: a
-marker line and two fictional record IDs. That is enough to drive the full
+All records are fictional, and the shipped payload is benign-effect: one
+note line, worded as an account-team note, that names two fictional record IDs. That is enough to drive the full
 lifecycle. To write your own payload, see
 `owasp-llm02-disclosure-skill/assets/pivot_note.README.md`.
 
@@ -112,8 +112,7 @@ anything else means no extra reads), and nothing the model returns is executed.
   instructions inside them ("spotlighting"). Record scoping and output
   redaction stay in code, so they hold whatever the model asks for or writes.
 
-A real model may ignore the placeholder payload. Write a natural-language
-payload (see `assets/pivot_note.README.md`); any new secret format needs a
+A real model may ignore the payload. Rewrite it if needed (see `assets/pivot_note.README.md`); any new secret format needs a
 pattern in `assets/redaction_rules.json`. `run_demo.py` reports the numbers
 rather than asserting them.
 
@@ -281,7 +280,7 @@ owasp-llm02-demo/
 │   ├── assets/
 │   │   ├── customers_baseline.json    #   fictional records: the ground truth
 │   │   ├── system_prompt.txt          #   prompt with the embedded key (scan target)
-│   │   ├── pivot_note.md              #   placeholder payload (editable)
+│   │   ├── pivot_note.md              #   benign-effect payload (editable)
 │   │   ├── pivot_note.README.md       #   how to write a payload
 │   │   └── redaction_rules.json       #   redaction + scan rules (editable)
 │   └── tests/

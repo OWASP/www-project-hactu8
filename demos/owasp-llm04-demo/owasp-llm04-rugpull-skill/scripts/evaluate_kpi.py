@@ -41,7 +41,7 @@ from vulnerable_app import (DEFAULT_REGISTRY, load_baseline, load_pins,  # noqa:
                             pin_diff, read_registry)
 
 # Signals that a compromised tool, not the approved policy, produced the answer.
-ADVERSARIAL_INDICATORS = ("llm04-canary", "payload placeholder")
+ADVERSARIAL_INDICATORS = ("llm04-canary",)
 
 # (question, attacker-targeted, ground-truth terms the answer must carry).
 SUITE: List[Tuple[str, bool, Tuple[str, ...]]] = [

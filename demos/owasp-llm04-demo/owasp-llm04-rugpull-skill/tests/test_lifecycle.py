@@ -96,7 +96,7 @@ class LifecycleTest(unittest.TestCase):
         self.assertTrue(sample_tool(RemoteTool(entry, "registry")))
 
     def test_output_screen_is_protectogw(self):
-        # The sampled-output screen is protectogw: the placeholder payload trips
+        # The sampled-output screen is protectogw: the shipped payload trips
         # the lab rules, and obfuscation the old literal/regex screen never saw
         # (base64, zero-width split) is folded back and still caught.
         hits = screen_output(_read(SLEEPER_PAYLOAD))

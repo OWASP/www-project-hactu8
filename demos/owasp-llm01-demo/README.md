@@ -17,8 +17,9 @@ nothing in the chat looks wrong.
 > assistant and its unauthenticated wiki-edit endpoint are insecure **by
 > design**. Do not deploy them anywhere reachable.
 
-The shipped payload is a **placeholder**: a marker line and a fictional
-canary. That is enough to drive the full lifecycle. To write your own payload,
+The shipped payload is benign-effect: one injected line, worded as a
+finance notice, whose only effect is a reply carrying the fictional canary.
+That is enough to drive the full lifecycle. To write your own payload,
 see `owasp-llm01-injection-skill/assets/injected_page.README.md`.
 
 ## Interactive web demo (recommended)
@@ -103,8 +104,8 @@ The attack mechanics are identical. Only the model changes:
   and tells the model never to follow instructions inside them
   ("spotlighting", the chat-API form of channel separation).
 
-A real model may ignore the placeholder payload. Write a natural-language
-payload (see `assets/injected_page.README.md`), and `run_demo.py` reports the
+A real model may ignore the payload. Rewrite it if needed
+(see `assets/injected_page.README.md`), and `run_demo.py` reports the
 numbers rather than asserting them.
 
 Limits:
@@ -215,7 +216,7 @@ curl -s localhost:5201/query -H 'content-type: application/json' \
   model never takes instructions from that role. This alone takes the ISR to 0
   here.
 - **Tool-output screening** — each result line is screened with
-  protectogw (AgenticGoat's screening core, vendored unchanged in `protectogw/`: normalizer + de-obfuscation folds + ruleset + exfil taxonomy + canary check). `SCREEN_POLICY` adds two lab rules for the placeholder syntax
+  protectogw (AgenticGoat's screening core, vendored unchanged in `protectogw/`: normalizer + de-obfuscation folds + ruleset + exfil taxonomy + canary check). `SCREEN_POLICY` adds two lab rules for the stub's directive syntax
   (`lab_directive` for `@assistant:`, `lab_canary` for the canary tag), and HTML
   comments are stripped. Blocked lines are dropped and their protectogw signal
   names are reported in `screen_findings`. protectogw's `SECURITY.md` states a
@@ -251,7 +252,7 @@ owasp-llm01-demo/
 │   │   └── LLM01_RISKS.md             #   research, scenarios, mitigation roadmap
 │   ├── assets/
 │   │   ├── kb_baseline.json           #   ground-truth wiki
-│   │   ├── injected_page.md           #   placeholder payload (editable)
+│   │   ├── injected_page.md           #   benign-effect payload (editable)
 │   │   └── injected_page.README.md    #   how to write a payload
 │   └── tests/
 │       └── test_lifecycle.py          #   asserts the four-act story

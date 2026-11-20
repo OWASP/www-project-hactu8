@@ -11,7 +11,7 @@ The scenario is **"Billy," Goat & Co.'s ticket-summary assistant.** Its
 ground truth for the Ridgeview account is _"Ridgeview printer queue restored
 and ticket closed by the night shift."_ Billy's summary feeds three sinks: the
 account's HTML status page, a markdown weekly digest and a SQLite audit log.
-With **1** filed note carrying **1** placeholder line, all three Ridgeview
+With **1** filed note carrying **1** directive line, all three Ridgeview
 sinks mishandle the output. The Harbor account goes through the same sinks
 and stays untouched.
 
@@ -19,9 +19,10 @@ and stays untouched.
 > assistant, its sinks and its unauthenticated ticket endpoint are insecure
 > **by design**. Do not deploy them anywhere reachable.
 
-The shipped payload is a **placeholder**: a marker line, a harmless `<mark>`
-highlight tag, an apostrophe and a fictional canary. That is enough to drive
-the full lifecycle. To write your own payload, see
+The shipped payload is **benign-effect**: a line asking the model to copy a
+status summary verbatim, then that summary, with a harmless `<mark>` highlight
+tag, an apostrophe and a fictional canary. That is enough to drive the full
+lifecycle. To write your own payload, see
 `owasp-llm10-sink-skill/assets/poisoned_note.README.md`.
 
 ## Interactive web demo (recommended)
@@ -76,7 +77,7 @@ You'll see four acts:
 | Act | What happens | Result |
 |-----|--------------|--------|
 | **1 — Clean baseline** | Render five (account, sink) items from untouched tickets | 🟢 all GREEN, USR 0% |
-| **2 — Ticket note** | File 1 note on `ridgeview` with 1 placeholder line | 1 note added, no sink touched |
+| **2 — Ticket note** | File 1 note on `ridgeview` with 1 directive line | 1 note added, no sink touched |
 | **3 — Post-attack impact** | Re-render the exact same items | 🔴 targeted RED, **USR 100% targeted / 60% overall** |
 | **4 — Remediation** | Scan the note; switch to hardened mode | 🟢 back to GREEN, USR 0% |
 
@@ -112,7 +113,7 @@ stub's text. Hardened mode escapes it for HTML and binds it as a SQL
 parameter, so it holds whatever a real model writes. Nothing the model
 returns is fetched or executed.
 
-A real model may not echo the placeholder payload. Write your own test
+A real model may not copy the summary verbatim. Write your own test
 output (see `assets/poisoned_note.README.md`), and `run_demo.py` reports the
 numbers rather than asserting them.
 
@@ -148,7 +149,7 @@ Echo and the local backends keep everything on the host.
                          │ POST /tickets/note (no auth)
                  ┌───────┴───────────────────────────────────────┐
    attacker ────▶│  Attack skill (scripts/run_sink_poison.py)    │
-                 │   1 note, 1 placeholder line                  │
+                 │   1 note, 1 directive line                    │
                  └───────────────────────────────────────────────┘
 ```
 
@@ -283,7 +284,7 @@ owasp-llm10-demo/
 │   │   └── LLM10_RISKS.md             #   research, scenarios, mitigation roadmap
 │   ├── assets/
 │   │   ├── tickets_baseline.json      #   ground-truth tickets
-│   │   ├── poisoned_note.md           #   placeholder payload (editable)
+│   │   ├── poisoned_note.md           #   benign-effect payload (editable)
 │   │   └── poisoned_note.README.md    #   how to write a payload
 │   └── tests/
 │       └── test_lifecycle.py          #   asserts the four-act story

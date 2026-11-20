@@ -19,8 +19,9 @@ reply preference is an ordinary customer feature.
 > vulnerable assistant is insecure **by design**. Do not deploy it anywhere
 > reachable.
 
-The shipped payload is a **placeholder**: a marker line and the stub model's
-echo slot. That is enough to drive the full lifecycle. To write your own
+The shipped payload is benign-effect: one saved preference, worded as an
+accessibility request, that asks Billy to repeat its setup text (the stub
+model's echo slot). That is enough to drive the full lifecycle. To write your own
 payload, see `owasp-llm08-leak-skill/assets/extraction_request.README.md`.
 
 ## Interactive web demo (recommended)
@@ -283,7 +284,7 @@ owasp-llm08-demo/
 │   │   ├── store_baseline.json        #   ground-truth help centre + accounts
 │   │   ├── system_prompt_vulnerable.txt  # deployed prompt with the embedded secret
 │   │   ├── system_prompt_hardened.txt #   secret-free prompt (design fix)
-│   │   ├── extraction_request.md      #   placeholder payload (editable)
+│   │   ├── extraction_request.md      #   benign-effect payload (editable)
 │   │   ├── extraction_request.README.md  # how to write a payload
 │   │   └── filter_rules.json          #   design-check rules + output n-gram size (editable)
 │   └── tests/

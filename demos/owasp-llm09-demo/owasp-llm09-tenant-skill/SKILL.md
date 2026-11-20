@@ -43,8 +43,9 @@ skill shows how to detect it and harden against it.
     the network unless you opt into a real-model backend.
   - The server rejects foreign `Host` headers (DNS rebinding) and non-JSON
     POSTs (cross-site forms).
-- Both tenants and all documents are fictional. The shipped payload is a
-  **placeholder**. See [`assets/crafted_query.README.md`](assets/crafted_query.README.md).
+- Both tenants and all documents are fictional. The shipped payload is
+  **benign-effect** (fictional canaries only). See
+  [`assets/crafted_query.README.md`](assets/crafted_query.README.md).
 - Dual-use: this exists to make the vulnerability observable and to motivate
   the mitigations in [`references/LLM09_RISKS.md`](references/LLM09_RISKS.md).
 
@@ -148,7 +149,7 @@ longer targeted.
 | `scripts/evaluate_kpi.py` | Stoplight KPI + CTLR against the live app; `--harden` and `--scan` mitigations. |
 | `scripts/reset_baseline.py` | Restores the store, clears session memory, vulnerable mode. |
 | `references/LLM09_RISKS.md` | Threat landscape, research, scenario table, mitigations. |
-| `assets/crafted_query.txt` | Crafted turn (placeholder payload; editable). |
+| `assets/crafted_query.txt` | Crafted turn (benign-effect payload; editable). |
 | `assets/crafted_query.README.md` | How to write a payload for the echo and real-model backends. |
 | `assets/vector_store.json` | Tenants, sessions and the shared store: the ground truth. |
 | `tests/test_lifecycle.py` | Asserts the four-act story in-process. |

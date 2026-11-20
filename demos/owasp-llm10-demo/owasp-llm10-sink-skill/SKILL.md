@@ -46,8 +46,8 @@ a SQL audit log, and in vulnerable mode each sink treats it as code.
   - Nothing fetches images or URLs, runs a shell, or writes files.
   - The model is a deterministic stub by default, so the lab cannot reach
     the network unless you opt into a real-model backend.
-- The shipped payload is a **placeholder**: a marker line, a harmless `<mark>`
-  tag, an apostrophe and a fictional canary. See
+- The shipped payload is **benign-effect**: a copy-this-verbatim request, a
+  harmless `<mark>` tag, an apostrophe and a fictional canary. See
   [`assets/poisoned_note.README.md`](assets/poisoned_note.README.md).
 - Dual-use: this exists to make the vulnerability observable and to motivate
   the mitigations in [`references/LLM10_RISKS.md`](references/LLM10_RISKS.md).
@@ -154,7 +154,7 @@ a `protectogw.Rule` to `SINK_POLICY` in `vulnerable_app.py`.
 | `scripts/evaluate_kpi.py` | Stoplight KPI + USR against the live app; `--harden` and `--scan` mitigations. |
 | `scripts/reset_baseline.py` | Restores the seeded tickets, an empty log, and vulnerable mode. |
 | `references/LLM10_RISKS.md` | Threat landscape, research, scenario table, mitigations. |
-| `assets/poisoned_note.md` | Adversarial note (placeholder payload; editable). |
+| `assets/poisoned_note.md` | Adversarial note (benign-effect payload; editable). |
 | `assets/poisoned_note.README.md` | How to write a payload for the echo and real-model backends. |
 | `assets/tickets_baseline.json` | Untampered tickets: the ground truth. |
 | `protectogw/` | AgenticGoat's screening core, vendored unchanged; the output-sink tripwire. |

@@ -46,8 +46,8 @@ Billy gives them then quotes its hidden context.
     POSTs (cross-site forms).
 - The "secret" is a fictional canary, `LLM08-CANARY-5e1d`, and the internal
   endpoint uses the reserved `.invalid` domain.
-- The shipped payload is a **placeholder**: a marker line and the stub's echo
-  slot. See [`assets/extraction_request.README.md`](assets/extraction_request.README.md).
+- The shipped payload is benign-effect: one preference line asking Billy to
+  repeat its setup text, with the stub's echo slot. See [`assets/extraction_request.README.md`](assets/extraction_request.README.md).
 - Dual-use: this exists to make the vulnerability observable and to motivate
   the mitigations in [`references/LLM08_RISKS.md`](references/LLM08_RISKS.md).
 
@@ -158,7 +158,7 @@ the PLR falls to 0. To test the filter, change `output.ngram` in
 | `scripts/evaluate_kpi.py` | Stoplight KPI + PLR against the live app; `--harden` and `--scan` mitigations. |
 | `scripts/reset_baseline.py` | Restores the seeded store and vulnerable mode. |
 | `references/LLM08_RISKS.md` | Threat landscape, research, scenario table, mitigations. |
-| `assets/extraction_request.md` | Attacker's reply preference (placeholder payload; editable). |
+| `assets/extraction_request.md` | Attacker's reply preference (benign-effect payload; editable). |
 | `assets/extraction_request.README.md` | How to write a payload for the echo and real-model backends. |
 | `assets/system_prompt_vulnerable.txt` | Deployed prompt with the embedded secret and tool schema. |
 | `assets/system_prompt_hardened.txt` | Secret-free prompt deployed in hardened mode. |

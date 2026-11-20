@@ -48,8 +48,8 @@ system prompt holds the key, so whatever Billy is talked into reciting leaks.
   - The server rejects foreign `Host` headers (DNS rebinding) and non-JSON
     POSTs (cross-site forms).
 - All records are fictional (`example.invalid` addresses, `555-01xx` numbers),
-  and the key is a fictional canary. The shipped payload is a **placeholder**:
-  a marker line and two fictional record IDs. See
+  and the key is a fictional canary. The shipped payload is benign-effect:
+  one note line naming two fictional record IDs. See
   [`assets/pivot_note.README.md`](assets/pivot_note.README.md).
 - Dual-use: this exists to make the vulnerability observable and to motivate
   the mitigations in [`references/LLM02_RISKS.md`](references/LLM02_RISKS.md).
@@ -161,7 +161,7 @@ a new secret format, put it in `assets/system_prompt.txt` and extend
 | `scripts/evaluate_kpi.py` | Stoplight KPI + Leak Rate against the live app; `--harden` and `--scan` mitigations. |
 | `scripts/reset_baseline.py` | Restores the seeded records and vulnerable mode. |
 | `references/LLM02_RISKS.md` | Threat landscape, research, scenario table, mitigations. |
-| `assets/pivot_note.md` | Attacker's notes (placeholder payload; editable). |
+| `assets/pivot_note.md` | Attacker's notes (benign-effect payload; editable). |
 | `assets/pivot_note.README.md` | How to write a payload for the echo and real-model backends. |
 | `assets/customers_baseline.json` | Fictional customer records: the ground truth. |
 | `assets/system_prompt.txt` | Deployed prompt with the embedded CRM key (the scan target). |

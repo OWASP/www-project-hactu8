@@ -377,7 +377,7 @@ CONSOLE_META = {
     "metric_abbr": "USR",
     "attack_label": "File one ticket note",
     "attack_description": ("Append assets/poisoned_note.md to the ridgeview tickets "
-                           "(unauthenticated note, 1 placeholder line)."),
+                           "(unauthenticated note, 1 directive line)."),
     "scan_label": "Output-sink screen of the note",
     "harden_label": "Escape HTML, parameterise SQL",
     "harden_description": "Sinks treat model output as data: html.escape and ? placeholders.",

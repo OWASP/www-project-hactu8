@@ -19,8 +19,9 @@ memory, and the attacker is not present when it fires.
 > agent stores and shares memory with no checks **by design**. Do not deploy it
 > anywhere reachable.
 
-The shipped payload is a **placeholder**: a topic line, a marker line and a
-fictional canary. That is enough to drive the full lifecycle. To write your
+The shipped payload is benign-effect: a topic line, persuasive wording, a
+marker line and a fictional canary, whose only effect is a wrong answer
+carrying the canary. That is enough to drive the full lifecycle. To write your
 own payload, see `owasp-asi06-memory-skill/assets/memory_note.README.md`.
 
 ## Interactive web demo (recommended)
@@ -113,11 +114,10 @@ changes (`ProviderModel` in `vulnerable_app.py`):
 
 A real model's answer cannot be traced to one message, so the evaluator
 scores it on the answer text alone (canary present, ground truth missing).
-A real model may ignore the placeholder payload. Write a natural-language
-payload, and add a `protectogw.Rule` to `SCREEN_POLICY` in `vulnerable_app.py`
-if protectogw's built-in ruleset misses it (see
-`assets/memory_note.README.md`), and `run_demo.py` reports the numbers rather
-than asserting them.
+A real model may still ignore the payload's wording. If you write your own,
+add a `protectogw.Rule` to `SCREEN_POLICY` in `vulnerable_app.py` when
+protectogw's built-in ruleset misses it (see `assets/memory_note.README.md`).
+`run_demo.py` reports the numbers rather than asserting them.
 
 Limits:
 - `LAB_MAX_CALLS` (default 200) caps calls per process.
@@ -246,7 +246,7 @@ curl -s localhost:5306/api/actions                         # respond.directive_s
   protectogw (AgenticGoat's screening core, vendored unchanged in
   `protectogw/`: normalizer + de-obfuscation folds + ruleset + exfil taxonomy +
   canary check), and for hidden HTML comments. `SCREEN_POLICY` adds two lab
-  rules for the placeholder syntax (`lab_directive` for `@assistant:`, `lab_canary` for the
+  rules for the stub's directive syntax (`lab_directive` for `@assistant:`, `lab_canary` for the
   canary tag). A block on any line blocks the write, and the `save_memory` step
   is logged as `blocked` with the protectogw signal names as findings.
   protectogw's `SECURITY.md` states a ~75% generalization ceiling, so it is one
@@ -286,7 +286,7 @@ owasp-asi06-demo/
 │   │   └── ASI06_RISKS.md             #   research, scenarios, mitigation roadmap
 │   ├── assets/
 │   │   ├── memory_baseline.json       #   KB ground truth + seeded user memories
-│   │   ├── memory_note.md             #   placeholder payload (editable)
+│   │   ├── memory_note.md             #   benign-effect payload (editable)
 │   │   └── memory_note.README.md      #   how to write a payload
 │   └── tests/
 │       └── test_lifecycle.py          #   asserts the four-act story

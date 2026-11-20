@@ -5,11 +5,16 @@
 not touched. The poisoned page simply ranks above it for HTTP questions, and
 the assistant restates its first line as fact.
 
-What ships here is a **placeholder**, not a real payload. It works straight
-away because of three things:
+What ships here is benign-effect: the only effect is a fictional package name
+and a `.invalid` link in the answer. It works on both backends because of
+three things:
 
-- Its **first line** is the claim. The stub model states the first line of the
-  top-ranked page as its answer (`StubModel` in `vulnerable_app.py`).
+- Its **first line** is the claim, written as a platform-team update that
+  tells assistants to recommend only `goathttp`. The stub model states the
+  first line of the top-ranked page as its answer (`StubModel` in
+  `vulnerable_app.py`); a real model reads it as an instruction. The line
+  never names `goat-http` or the official docs URL, which would count as
+  ground truth.
 - That line cites a **non-existent package** (`goathttp`, one hyphen away from
   the approved `goat-http`) and a docs URL on an **untrusted host**. Both are
   fictional; the host is under the reserved `.invalid` TLD and never resolves.

@@ -24,8 +24,9 @@ untouched.
 > Do not deploy them anywhere reachable. Every action is **simulated**: an
 > entry in an in-memory action log. Nothing real is changed or paid.
 
-The shipped payload is a **placeholder**: a field line with a fictional value,
-a stub directive line and a fictional canary. That is enough to drive the full
+The shipped payload is benign-effect: a field line with a fictional value,
+persuasive wording, a stub directive line and a fictional canary, whose only
+effect is a simulated change in the action log. That is enough to drive the full
 lifecycle. To write your own payload, see
 `owasp-asi09-trust-skill/assets/vendor_amendment.README.md`.
 
@@ -121,9 +122,9 @@ does not parse plans no action. Request selection stays in code.
   builder controls (parameter cards, risk tiers, no batching) stay in code
   and decide what the approver sees, whatever the model writes.
 
-A real model may ignore the placeholder payload. Write a natural-language
-payload (see `assets/vendor_amendment.README.md`), and `run_demo.py` reports
-the numbers rather than asserting them.
+A real model may still ignore the payload's wording. To write your own, see
+`assets/vendor_amendment.README.md`; `run_demo.py` reports the numbers rather
+than asserting them.
 
 Limits:
 - `LAB_MAX_CALLS` (default 200) caps calls per process.
@@ -292,7 +293,7 @@ owasp-asi09-demo/
 │   │   └── ASI09_RISKS.md             #   research, scenarios, mitigation roadmap
 │   ├── assets/
 │   │   ├── vendor_baseline.json       #   vendors and open change requests
-│   │   ├── vendor_amendment.md        #   placeholder payload (editable)
+│   │   ├── vendor_amendment.md        #   benign-effect payload (editable)
 │   │   ├── vendor_amendment.README.md #   how to write a payload
 │   │   └── approval_policy.json       #   field tiers + approver rule (editable)
 │   └── tests/

@@ -5,7 +5,7 @@ AUTHORIZED SECURITY-LAB USE ONLY. Targets this skill's own vulnerable_app.py.
 
 Appends ``assets/poisoned_note.md`` to one account's ticket notes (default
 ``ridgeview``) through the unauthenticated ``POST /tickets/note``. The model
-then emits the note's placeholder line as its summary, and the application
+then emits the note's directive line as its summary, and the application
 passes that summary to its HTML, markdown and SQL sinks. The attack does not
 touch any sink; whether the output does harm is decided by how each sink
 handles it.

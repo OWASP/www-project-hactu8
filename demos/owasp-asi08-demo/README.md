@@ -22,8 +22,9 @@ other suppliers' invoices, including a genuine price variance, stay untouched.
 > deploy them anywhere reachable. Every payment is **simulated**: an entry in
 > an in-memory action log. No money moves.
 
-The shipped payload is a **placeholder**: one stub directive line and a
-fictional canary. That is enough to drive the full lifecycle. To write your own
+The shipped payload is benign-effect: a persuasive price notice, one stub
+directive line and a fictional canary, whose only effect is a wrong figure in
+the simulated pipeline. That is enough to drive the full lifecycle. To write your own
 payload, see `owasp-asi08-cascade-skill/assets/price_notice.README.md`.
 
 ## Interactive web demo (recommended)
@@ -289,7 +290,7 @@ owasp-asi08-demo/
 │   │   ├── po_ledger.json             #   source of truth
 │   │   ├── intake_inbox.json          #   baseline inbox: letters + invoices
 │   │   ├── pipeline_policy.json       #   tolerance, limit, validation, breaker
-│   │   ├── price_notice.md            #   placeholder payload (editable)
+│   │   ├── price_notice.md            #   benign-effect payload (editable)
 │   │   └── price_notice.README.md     #   how to write a payload
 │   └── tests/
 │       └── test_lifecycle.py          #   asserts the four-act story

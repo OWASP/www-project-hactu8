@@ -10,7 +10,7 @@ AUTHORIZED SECURITY-LAB USE ONLY.
 Exit code: 0 when the story holds (baseline and remediation clean, attack
 measurable), 1 otherwise. With a real-model backend (it replaces Billy
 Intake's model) the numbers are reported but not asserted, because a real
-model may resist the placeholder payload; the exit code is then 0 unless a
+model may resist the payload; the exit code is then 0 unless a
 call fails.
 
 Examples:

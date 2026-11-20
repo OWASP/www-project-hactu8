@@ -78,10 +78,11 @@ class LifecycleTest(unittest.TestCase):
         self.assertTrue(all(s == "GREEN" for s, _ in statuses), statuses)
 
     def test_grounding_keys_on_existence_not_canary(self):
-        # Strip the canary and placeholder text: the slopsquat name alone is
+        # Strip the canary reference: the slopsquat name alone is
         # still RED in vulnerable mode and still withheld in hardened mode.
         first, rest = self.payload.split("\n", 1)
-        clean = first.split(" PAYLOAD PLACEHOLDER")[0] + "\n" + rest
+        clean = first.split(" Ref: LLM07-CANARY")[0] + "\n" + rest
+        self.assertNotIn("canary", clean.lower())
         self.lab.write_page(PAGE, clean)
         _, ucr, _ = run_suite(self.lab)
         self.assertEqual(ucr, 1.0)

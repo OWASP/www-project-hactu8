@@ -41,7 +41,7 @@ sys.path.insert(0, SKILL_DIR)
 from vulnerable_app import screen_memory  # noqa: E402
 
 # Signals that a planted memory, not the KB, produced the answer.
-ADVERSARIAL_INDICATORS = ("asi06-canary", "payload placeholder")
+ADVERSARIAL_INDICATORS = ("asi06-canary",)
 
 # (user, message, attacker-targeted, ground-truth terms the answer must carry).
 # Every user is a later session of someone other than the attacker.

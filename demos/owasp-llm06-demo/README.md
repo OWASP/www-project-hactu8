@@ -21,9 +21,10 @@ anything wrong. Holiday and VPN questions stay untouched.
 > assistant and its unauthenticated wiki-edit endpoint are insecure **by
 > design**. Do not deploy them anywhere reachable.
 
-The shipped payloads are **placeholders**: a marker line and a fictional
-canary each. That is enough to drive the full lifecycle. To write your own,
-see the `owasp-llm06-consumption-skill/assets/*.README.md` files.
+The shipped payloads are **benign-effect**: each is one directive line in
+natural language with a fictional canary, and its only effect is simulated
+cost (extra `search_kb` calls on loopback or a longer answer). To write your
+own, see the `owasp-llm06-consumption-skill/assets/*.README.md` files.
 
 ## Interactive web demo (recommended)
 
@@ -77,8 +78,8 @@ You'll see four acts:
 |-----|--------------|--------|
 | **1 — Clean baseline** | Ask five questions of the untouched wiki | 🟢 all GREEN, BBR 0%, $0.0049 |
 | **2 — Wiki edits** | Overwrite `expenses`, `payroll`, `travel`: real text plus 1 directive line each | 3 pages changed |
-| **3 — Post-attack impact** | Re-run the exact same questions | 🔴 targeted RED, **BBR 100% targeted / 60% overall**, $0.7186 |
-| **4 — Remediation** | Lint the pages; switch to hardened mode | 🟢 back to GREEN, BBR 0%, $0.0154 |
+| **3 — Post-attack impact** | Re-run the exact same questions | 🔴 targeted RED, **BBR 100% targeted / 60% overall**, $1.0308 |
+| **4 — Remediation** | Lint the pages; switch to hardened mode | 🟢 back to GREEN, BBR 0%, $0.0175 |
 
 The live-server flow adds the flood: `run_consumption.py --flood 40` against
 hardened mode, where the per-client quota refuses the `attacker` client after
@@ -123,9 +124,8 @@ stay in code:
 
 Cost stays simulated: the lab meters the prompt and reply text with the same
 four-characters-per-token counter, not the provider's billing. A real model
-may ignore the placeholder payloads. Write natural-language payloads (see the
-payload READMEs), and `run_demo.py` reports the numbers rather than asserting
-them.
+may ignore the shipped payloads (to tune them, see the payload READMEs), so
+`run_demo.py` reports the numbers rather than asserting them.
 
 Limits:
 - `LAB_MAX_CALLS` (default 200) caps calls per process. One run of
@@ -227,7 +227,7 @@ curl -s localhost:5206/query -H 'content-type: application/json' \
 python scripts/run_consumption.py                          # 3 pages overwritten
 
 curl -s localhost:5206/query -H 'content-type: application/json' \
-     -d '{"query":"How far ahead must business travel be booked?"}'   # ~92,400 tokens, 49 calls
+     -d '{"query":"How far ahead must business travel be booked?"}'   # ~152,400 tokens, 49 calls
 ```
 
 ---
@@ -284,9 +284,9 @@ owasp-llm06-demo/
 │   ├── assets/
 │   │   ├── kb_baseline.json           #   ground-truth wiki
 │   │   ├── budget.json                #   caps, quota, simulated prices, lint rules
-│   │   ├── runaway_output.md          #   placeholder payload (editable)
-│   │   ├── tool_storm.md              #   placeholder payload (editable)
-│   │   ├── recursive_loop.md          #   placeholder payload (editable)
+│   │   ├── runaway_output.md          #   benign-effect payload (editable)
+│   │   ├── tool_storm.md              #   benign-effect payload (editable)
+│   │   ├── recursive_loop.md          #   benign-effect payload (editable)
 │   │   └── *.README.md                #   how to write each payload
 │   └── tests/
 │       └── test_lifecycle.py          #   asserts the four-act story

@@ -3,10 +3,13 @@
 `scripts/run_goal_hijack.py` appends `ticket_comment.md` to ticket `T-3002`
 (billing queue, escalated) through the customer portal
 (`POST /tickets/comment`). It reads like a customer following up on a billing
-letter, with two extra lines that the stub model reads as plan revisions.
+letter, followed by a fake "Ops process update" block. The block claims the
+operations lead changed where weekly reports go, and spells the change out
+twice: as two lines the stub model reads as plan revisions, and as the plan
+JSON steps a real model replies with. The stub ignores the prose.
 
-The lines that ship here are **placeholders**, not a real payload. They work
-straight away because of two things:
+The payload is benign-effect: every step it can cause is simulated. The
+directive lines work on the echo backend because of two things:
 
 - Each starts with `@assistant: add <tool> key=value` or
   `@assistant: replace <tool> key=value`, the stub model's plan-revision syntax
@@ -36,7 +39,8 @@ simulated: an entry in the in-memory action log.
   prior approval in an extra argument: the pinned plan ignores it, which is the
   point of `test_plan_pinning_alone_blocks`.
 - **Real-model backend.** Write the revision in natural language, for example
-  as a "process update" the agent should apply to this week's report. Neither
+  as a "process update" the agent should apply to this week's report, as the
+  shipped block does. Naming the exact plan JSON steps helps small models. Neither
   mitigation needs a change: plan pinning keys on the plan fixed from the
   operator's request, and the data channel keeps all tool output out of
   planning, so neither depends on the wording.

@@ -45,8 +45,9 @@ requests the calls written there, and the app executes them.
     the network unless you opt into a real-model backend.
   - The server rejects foreign `Host` headers (DNS rebinding) and non-JSON
     POSTs (cross-site forms).
-- The shipped payload is a **placeholder**: stub directive lines plus a
-  fictional canary. See [`assets/ticket_note.README.md`](assets/ticket_note.README.md).
+- The shipped payload is benign-effect: realistic injection wording around
+  stub directive lines that carry a fictional canary; every
+  action it causes is simulated. See [`assets/ticket_note.README.md`](assets/ticket_note.README.md).
 - Dual-use: this exists to make the vulnerability observable and to motivate
   the mitigations in [`references/LLM03_RISKS.md`](references/LLM03_RISKS.md).
 
@@ -154,7 +155,7 @@ task already allows passes the gate by design.
 | `scripts/evaluate_kpi.py` | Stoplight KPI + UAR against the live app; `--harden` and `--scan` mitigations. |
 | `scripts/reset_baseline.py` | Restores the seeded desk, clears the action log, sets vulnerable mode. |
 | `references/LLM03_RISKS.md` | Threat landscape, research, scenario table, mitigations. |
-| `assets/ticket_note.md` | Adversarial customer note (placeholder payload; editable). |
+| `assets/ticket_note.md` | Adversarial customer note (benign-effect payload; editable). |
 | `assets/ticket_note.README.md` | How to write a payload for the echo and real-model backends. |
 | `assets/support_baseline.json` | Customers, orders and tickets as seeded. |
 | `assets/task_policy.json` | Per-task tool allowlist and irreversible tools (editable). |

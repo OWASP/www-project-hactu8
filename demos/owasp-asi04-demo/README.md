@@ -21,8 +21,9 @@ wrong.
 > agent and its unauthenticated catalogue endpoint are insecure **by
 > design**. Do not deploy them anywhere reachable.
 
-The shipped payload is a **placeholder**: a marker line and a fictional
-canary. Skills are inert JSON data entries; nothing in them is ever executed.
+The shipped payload is benign-effect: persuasive skill instructions whose only
+effect is a fictional canary in the step output. Skills are inert JSON data
+entries; nothing in them is ever executed.
 To write your own payload, see
 `owasp-asi04-supply-chain-skill/assets/lookalike_skill.README.md`.
 
@@ -116,9 +117,10 @@ The attack mechanics are identical. Only the model changes:
   spotlighting here: a loaded skill is meant to be followed, and the control
   is which skill gets loaded, decided in code before any model call.
 
-A real model may ignore the placeholder payload. Write a natural-language
-payload (see `assets/lookalike_skill.README.md`), and `run_demo.py` reports the
-numbers rather than asserting them.
+The evaluator scores which skill loaded, so the verdict does not depend on
+whether a real model follows the lookalike's wording; `run_demo.py` reports the
+numbers rather than asserting them. To write your own payload, see
+`assets/lookalike_skill.README.md`.
 
 Limits:
 - `LAB_MAX_CALLS` (default 200) caps calls per process.
@@ -274,7 +276,7 @@ owasp-asi04-demo/
 │   │   ├── catalogue_baseline.json    #   ground-truth skill catalogue
 │   │   ├── task_plans.json            #   approved multi-step tasks
 │   │   ├── skill_manifest.json        #   allowlist: publisher + SHA-256 pins
-│   │   ├── lookalike_skill.json       #   placeholder payload (editable)
+│   │   ├── lookalike_skill.json       #   benign-effect payload (editable)
 │   │   └── lookalike_skill.README.md  #   how to write a payload
 │   ├── catalogue/                     #   live catalogue file, written at runtime (git-ignored)
 │   └── tests/

@@ -45,8 +45,8 @@ tool turn hostile from its second call. Billy itself is never touched.
     the network unless you opt into a real-model backend.
   - The server rejects foreign `Host` headers (DNS rebinding) and non-JSON
     POSTs (cross-site forms).
-- The shipped payloads are **placeholders**: a marker line plus a fictional
-  canary. See [`assets/swapped_description.README.md`](assets/swapped_description.README.md)
+- The shipped payloads are benign-effect: their only effect is a reply
+  carrying a fictional canary. See [`assets/swapped_description.README.md`](assets/swapped_description.README.md)
   and [`assets/sleeper_output.README.md`](assets/sleeper_output.README.md).
 - Dual-use: this exists to make the vulnerability observable and to motivate
   the mitigations in [`references/LLM04_RISKS.md`](references/LLM04_RISKS.md).
@@ -158,9 +158,9 @@ with `run_rug_pull.py --trigger 6` to see the sampler's blind spot.
 | `references/LLM04_RISKS.md` | Threat landscape, research, scenario table, mitigations. |
 | `assets/registry_baseline.json` | Approved tool package: the ground truth and the vendored fallback. |
 | `assets/tool_pins.json` | SHA-256 pins of the approved tool definitions. |
-| `assets/swapped_description.md` | Rug-pull description (placeholder payload; editable). |
+| `assets/swapped_description.md` | Rug-pull description (benign-effect payload; editable). |
 | `assets/swapped_description.README.md` | How to write a rug-pull payload. |
-| `assets/sleeper_output.md` | Sleeper's hostile output (placeholder payload; editable). |
+| `assets/sleeper_output.md` | Sleeper's hostile output (benign-effect payload; editable). |
 | `assets/sleeper_output.README.md` | How to write a sleeper payload. |
 | `protectogw/` | AgenticGoat's screening core, vendored unchanged; the output screen used by sampling. |
 | `tests/test_lifecycle.py` | Asserts the four-act story in-process. |

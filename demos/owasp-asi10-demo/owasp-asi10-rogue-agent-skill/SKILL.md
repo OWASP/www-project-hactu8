@@ -50,8 +50,9 @@ untouched.
     `secrets`, and never written anywhere.
   - The server rejects foreign `Host` headers (DNS rebinding) and non-JSON
     POSTs (cross-site forms).
-- The shipped payload is a **placeholder**: two standing-order marker lines
-  with a fictional canary. See
+- The shipped payload is benign-effect: realistic injection wording around
+  two standing-order marker lines that carry a fictional canary; every
+  action it causes is simulated. See
   [`assets/tampered_mandate.README.md`](assets/tampered_mandate.README.md).
 - Dual-use: this exists to make the vulnerability observable and to motivate
   the mitigations in [`references/ASI10_RISKS.md`](references/ASI10_RISKS.md).
@@ -160,7 +161,7 @@ an attacker who forgets to edit it.
 | `scripts/evaluate_kpi.py` | Stoplight KPI + OMAR + ticks until stopped; `--harden` and `--scan` mitigations. |
 | `scripts/reset_baseline.py` | Restores the signed baseline configs and vulnerable mode. |
 | `references/ASI10_RISKS.md` | Threat landscape, research, scenario table, mitigations. |
-| `assets/tampered_mandate.json` | The config edit (placeholder payload; editable). |
+| `assets/tampered_mandate.json` | The config edit (benign-effect payload; editable). |
 | `assets/tampered_mandate.README.md` | How to write an edit for the echo and real-model backends. |
 | `assets/fleet_baseline.json` | Approved mandates and scheduled work: the ground truth. |
 | `tests/test_lifecycle.py` | Asserts the four-act story in-process. |

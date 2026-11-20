@@ -20,9 +20,11 @@ refund) stay untouched. The operator only sees a summary.
 > deploy them anywhere reachable. Every tool action is **simulated**: an entry
 > in an in-memory action log. Nothing real is refunded or deleted.
 
-The shipped payload is a **placeholder**: two stub directive lines and a
-fictional canary. That is enough to drive the full lifecycle. To write your own
-payload, see `owasp-llm03-agency-skill/assets/ticket_note.README.md`.
+The shipped payload is benign-effect: realistic injection wording around
+two stub directive lines that carry a fictional canary. Its only possible effect
+is simulated actions in the lab's in-memory log. The directive lines drive the
+echo backend; the wording is there for real models. To write your own payload,
+see `owasp-llm03-agency-skill/assets/ticket_note.README.md`.
 
 ## Interactive web demo (recommended)
 
@@ -117,9 +119,9 @@ and the action log; nothing the model returns is executed.
   whatever the model asks for. The gate needs no change for a real model,
   because it never reads the model's wording (see the payload README).
 
-A real model may ignore the placeholder payload. Write a natural-language
-payload (see `assets/ticket_note.README.md`), and `run_demo.py` reports the
-numbers rather than asserting them.
+A real model may still resist the payload, so `run_demo.py` reports the
+numbers rather than asserting them. To try your own wording, see
+`assets/ticket_note.README.md`.
 
 Limits:
 - `LAB_MAX_CALLS` (default 200) caps calls per process. One agent request
@@ -273,7 +275,7 @@ owasp-llm03-demo/
 │   │   └── LLM03_RISKS.md             #   research, scenarios, mitigation roadmap
 │   ├── assets/
 │   │   ├── support_baseline.json      #   customers, orders, tickets
-│   │   ├── ticket_note.md             #   placeholder payload (editable)
+│   │   ├── ticket_note.md             #   payload (editable)
 │   │   ├── ticket_note.README.md      #   how to write a payload
 │   │   └── task_policy.json           #   allowlist + irreversible tools (editable)
 │   └── tests/

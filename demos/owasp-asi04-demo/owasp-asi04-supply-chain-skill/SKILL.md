@@ -50,8 +50,8 @@ the newest version, so the attacker's entry wins.
     executed.
   - The server rejects foreign `Host` headers (DNS rebinding) and non-JSON
     POSTs (cross-site forms).
-- The shipped payload is a **placeholder**: a marker line plus a fictional
-  canary. See [`assets/lookalike_skill.README.md`](assets/lookalike_skill.README.md).
+- The shipped payload is benign-effect: its only effect is a fictional
+  canary in the step output. See [`assets/lookalike_skill.README.md`](assets/lookalike_skill.README.md).
 - Dual-use: this exists to make the vulnerability observable and to motivate
   the mitigations in [`references/ASI04_RISKS.md`](references/ASI04_RISKS.md).
 
@@ -162,7 +162,7 @@ never resolved and the UCLR stays at 0. That threshold is part of the lesson.
 | `assets/catalogue_baseline.json` | Untampered skill catalogue. |
 | `assets/task_plans.json` | Approved multi-step task plans. |
 | `assets/skill_manifest.json` | Allowlisted manifest: publisher and SHA-256 pin per skill name. |
-| `assets/lookalike_skill.json` | Lookalike skill entry (placeholder payload; editable). |
+| `assets/lookalike_skill.json` | Lookalike skill entry (benign-effect payload; editable). |
 | `assets/lookalike_skill.README.md` | How to write a payload for the echo and real-model backends. |
 | `catalogue/` | Live catalogue file(s), written at runtime; git-ignored. |
 | `tests/test_lifecycle.py` | Asserts the four-act story in-process. |

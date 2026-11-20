@@ -21,9 +21,11 @@ operator sees a report that says it was posted.
 > not deploy them anywhere reachable. Every tool action is **simulated**: an
 > entry in an in-memory action log. Nothing is posted or exported.
 
-The shipped payload is a **placeholder**: two stub directive lines and a
-fictional canary. That is enough to drive the full lifecycle. To write your own
-payload, see `owasp-asi01-goal-hijack-skill/assets/ticket_comment.README.md`.
+The shipped payload is benign-effect: realistic injection wording around
+two stub directive lines that carry a fictional canary. Its only possible effect
+is simulated actions in the lab's in-memory log. The directive lines drive the
+echo backend; the wording is there for real models. To write your own payload,
+see `owasp-asi01-goal-hijack-skill/assets/ticket_comment.README.md`.
 
 ## Interactive web demo (recommended)
 
@@ -121,9 +123,9 @@ tool stays simulated, and nothing the model returns is executed or fetched.
   operator's request before any tool data is read, and an off-plan step is
   held whatever the model says.
 
-A real model may ignore the placeholder directive lines. Write a
-natural-language payload (see `assets/ticket_comment.README.md`), and
-`run_demo.py` reports the numbers rather than asserting them. Each planning
+A real model may still resist the payload, so `run_demo.py` reports the
+numbers rather than asserting them. To try your own wording, see
+`assets/ticket_comment.README.md`. Each planning
 step is one model call, so a run costs up to 9 calls.
 
 Limits:
@@ -282,7 +284,7 @@ owasp-asi01-demo/
 │   ├── assets/
 │   │   ├── ops_baseline.json          #   tickets, queues, channels
 │   │   ├── weekly_report_plan.json    #   the approved four-step task (editable)
-│   │   ├── ticket_comment.md          #   placeholder payload (editable)
+│   │   ├── ticket_comment.md          #   payload (editable)
 │   │   └── ticket_comment.README.md   #   how to write a payload
 │   └── tests/
 │       └── test_lifecycle.py          #   asserts the four-act story

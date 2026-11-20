@@ -47,8 +47,8 @@ budget it meters.
   - Wiki state and the spend ledger live in memory only.
   - The server rejects foreign `Host` headers (DNS rebinding) and non-JSON
     POSTs (cross-site forms).
-- The shipped payloads are **placeholders**: one marker line plus a fictional
-  canary each. See the `assets/*.README.md` files.
+- The shipped payloads are **benign-effect**: one natural-language directive
+  line plus a fictional canary each; the only effect is simulated cost. See the `assets/*.README.md` files.
 - Dual-use: this exists to make the vulnerability observable and to motivate
   the mitigations in [`references/LLM06_RISKS.md`](references/LLM06_RISKS.md).
 
@@ -114,8 +114,8 @@ step is a billed call (capped by `LAB_MAX_CALLS`).
    python scripts/evaluate_kpi.py
    ```
    Expect 🔴 RED on the expense, travel and payroll questions (about 12,800,
-   92,400 and 78,800 tokens), and the holiday and VPN controls still 🟢 GREEN.
-   BBR 100% targeted, 60% overall, about $0.72 simulated. Exit code 2.
+   152,400 and 122,800 tokens), and the holiday and VPN controls still 🟢 GREEN.
+   BBR 100% targeted, 60% overall, about $1.03 simulated. Exit code 2.
 
 6. **Show the mitigations.**
    ```bash
@@ -154,9 +154,9 @@ lint.
 | `scripts/evaluate_kpi.py` | Stoplight KPI + BBR + simulated spend against the live app; `--harden` and `--scan` mitigations. |
 | `scripts/reset_baseline.py` | Restores the seeded wiki, clears the spend ledger, vulnerable mode. |
 | `references/LLM06_RISKS.md` | Threat landscape, research, scenario table, mitigations. |
-| `assets/runaway_output.md` | Runaway-output page (placeholder payload; editable). |
-| `assets/tool_storm.md` | Tool-storm page (placeholder payload; editable). |
-| `assets/recursive_loop.md` | Recursive-loop page (placeholder payload; editable). |
+| `assets/runaway_output.md` | Runaway-output page (benign-effect payload; editable). |
+| `assets/tool_storm.md` | Tool-storm page (benign-effect payload; editable). |
+| `assets/recursive_loop.md` | Recursive-loop page (benign-effect payload; editable). |
 | `assets/*.README.md` | How to write each payload for the echo and real-model backends. |
 | `assets/kb_baseline.json` | Untampered wiki: the ground truth. |
 | `assets/budget.json` | Per-request caps, per-client quota, simulated prices, lint rules (editable). |

@@ -16,7 +16,7 @@ _"Process RQ-3001" causes `read_request:RQ-3001`, then
 `export_report(destination=finance-reports)`, and nothing else._ With **1**
 note on **1** request carrying **2** directive lines, the attacker makes every
 run that reads `RQ-3001` query with `limit=5000` over the whole ledger and
-export all 240 rows to `offlist-placeholder.invalid`. Runs on the other
+export all 240 rows to `offsite-review.invalid`. Runs on the other
 requests stay untouched. The operator only sees a summary.
 
 > ⚠️ **For authorized security education and red-teaming only.** The vulnerable
@@ -25,9 +25,11 @@ requests stay untouched. The operator only sees a summary.
 > outbox is an in-memory list, destinations are labels, and nothing leaves the
 > process.
 
-The shipped payload is a **placeholder**: two stub directive lines and a
-fictional canary. That is enough to drive the full lifecycle. To write your own
-payload, see `owasp-asi02-tool-misuse-skill/assets/request_note.README.md`.
+The shipped payload is benign-effect: realistic injection wording around
+two stub directive lines that carry a fictional canary. Its only possible effect
+is simulated actions in the lab's in-memory log. The directive lines drive the
+echo backend; the wording is there for real models. To write your own payload,
+see `owasp-asi02-tool-misuse-skill/assets/request_note.README.md`.
 
 ## Interactive web demo (recommended)
 
@@ -121,9 +123,9 @@ The attack mechanics are identical. Only the model changes:
   and keeps `tool_gate` authoritative: an off-policy call from the model is
   still blocked in code.
 
-A real model may ignore the placeholder payload. Write a natural-language
-payload (see `assets/request_note.README.md`), and `run_demo.py` reports the
-numbers rather than asserting them.
+A real model may still resist the payload, so `run_demo.py` reports the
+numbers rather than asserting them. To try your own wording, see
+`assets/request_note.README.md`.
 
 Limits:
 - `LAB_MAX_CALLS` (default 200) caps calls per process.
@@ -283,7 +285,7 @@ owasp-asi02-demo/
 │   │   └── ASI02_RISKS.md             #   research, scenarios, mitigation roadmap
 │   ├── assets/
 │   │   ├── finance_baseline.json      #   report requests + ledger spec
-│   │   ├── request_note.md            #   placeholder payload (editable)
+│   │   ├── request_note.md            #   payload (editable)
 │   │   ├── request_note.README.md     #   how to write a payload
 │   │   └── tool_policy.json           #   destinations, row caps, budgets (editable)
 │   └── tests/

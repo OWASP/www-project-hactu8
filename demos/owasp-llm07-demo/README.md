@@ -21,9 +21,9 @@ correct one.
 > assistant and its unauthenticated docs endpoint are insecure **by design**.
 > Do not deploy them anywhere reachable.
 
-The shipped payload is a **placeholder**: a fictional package name, a docs URL
-under the reserved `.invalid` TLD, and a fictional canary. Nothing is
-installed or fetched. That is enough to drive the full lifecycle. To write your
+The shipped payload is **benign-effect**: a natural-language "platform team
+update" naming a fictional package, a docs URL under the reserved `.invalid`
+TLD, and a fictional canary. Nothing is installed or fetched. That is enough to drive the full lifecycle. To write your
 own payload, see `owasp-llm07-grounding-skill/assets/poisoned_doc.README.md`.
 
 ## Interactive web demo (recommended)
@@ -113,9 +113,9 @@ The attack mechanics are identical. Only the model changes. It replaces
   package or URL host, not the wording, it applies unchanged to a real
   model's paraphrase.
 
-A real model may not restate the placeholder claim. Write a natural-language
-payload (see `assets/poisoned_doc.README.md`), and `run_demo.py` reports the
-numbers rather than asserting them.
+A real model may not restate the poisoned claim (to tune the payload, see
+`assets/poisoned_doc.README.md`), so `run_demo.py` reports the numbers rather
+than asserting them.
 
 Limits:
 - `LAB_MAX_CALLS` (default 200) caps calls per process.
@@ -269,7 +269,7 @@ owasp-llm07-demo/
 │   ├── assets/
 │   │   ├── docs_baseline.json         #   ground-truth developer docs
 │   │   ├── approved_registry.json     #   approved packages + trusted hosts (editable)
-│   │   ├── poisoned_doc.md            #   placeholder payload (editable)
+│   │   ├── poisoned_doc.md            #   benign-effect payload (editable)
 │   │   └── poisoned_doc.README.md     #   how to write a payload
 │   └── tests/
 │       └── test_lifecycle.py          #   asserts the four-act story

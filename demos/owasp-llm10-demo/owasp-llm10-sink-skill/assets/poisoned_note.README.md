@@ -2,11 +2,12 @@
 
 `scripts/run_sink_poison.py` files `poisoned_note.md` as a new ticket note on
 the `ridgeview` account. The first line reads like a normal follow-up. The
-second line is the one the stub model turns into its summary.
+second asks the model to copy the third line, character for character, as the
+status summary. The third line is the one the stub model turns into its
+summary.
 
-The line that ships here is a **placeholder**, not a real payload. It is
-deliberately inert and still drives the whole lifecycle, because of three
-things:
+The payload is **benign-effect**: it runs nothing and fetches nothing, and
+still drives the whole lifecycle, because of three things:
 
 - It starts with `@assistant:`, the stub model's instruction marker
   (`DIRECTIVE_MARKER` in `vulnerable_app.py`). Whatever follows becomes the
@@ -15,7 +16,7 @@ things:
   `LLM10-CANARY-4b1e`. If that tag shows up **raw** in a rendered page, the
   sink treated model output as markup. The evaluator scores that RED. A
   `<mark>` tag only highlights text; it runs nothing and fetches nothing.
-- It contains an ordinary apostrophe (`O'Placeholder`). A string-built SQL
+- It contains an ordinary apostrophe (`O'Hara`). A string-built SQL
   statement cannot store it: the quote ends the literal early and SQLite
   rejects the statement. That failure is the evidence that output reached the
   query unparameterised. Real surnames like O'Brien break such code the same
@@ -34,11 +35,12 @@ Keep this file plain text. `run_sink_poison.py` does not escape anything.
   breaks the statement, or a stored value that differs from the model's text,
   is scored RED on the `sql` sink. Keep the canary if you want hardened runs
   to score GREEN by showing it as escaped text.
-- **Real-model backend.** Not wired in this version (see the README). With a
-  real model, the note would need natural-language wording that makes the
-  model repeat the text, and you would add a `protectogw.Rule` to
-  `SINK_POLICY` in `vulnerable_app.py` if protectogw does not already flag it. Escaping and parameterisation still do the real work,
-  whatever the model says.
+- **Real-model backend.** `--backend ollama` (or any other provider) sends
+  the same notes to a real model. The second line is the natural-language
+  wording that asks it to repeat the summary; if it does not, rephrase it.
+  Add a `protectogw.Rule` to `SINK_POLICY` in `vulnerable_app.py` if
+  protectogw does not already flag your wording. Escaping and
+  parameterisation still do the real work, whatever the model says.
 - **Stay in the lab.** Target only this skill's own sinks. The served status
   page carries a `default-src 'none'` CSP, the database is `:memory:`, and
   there is no image fetching or outbound channel to aim at.

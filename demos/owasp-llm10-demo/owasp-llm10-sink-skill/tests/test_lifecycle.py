@@ -115,7 +115,7 @@ class LifecycleTest(unittest.TestCase):
         self.assertEqual(usr, 0)
         row = self.lab.render("ridgeview", "sql")
         self.assertIsNone(row["error"])
-        self.assertIn("O'Placeholder", row["output"])
+        self.assertIn("O'Hara", row["output"])
 
     def test_reset_restores_baseline(self):
         self.lab.add_note("ridgeview", self.payload)

@@ -91,7 +91,7 @@ class ScreenResult:
 # protectogw judges the normalized, de-obfuscated text (lowercased, leet-folded
 # so "@" becomes "a", zero-width stripped, base64/hex/ROT13/... decoded), so
 # the lab rules below are written against that form. They add this lab's
-# placeholder syntax to protectogw's built-in ruleset, exfil taxonomy and
+# directive syntax to protectogw's built-in ruleset, exfil taxonomy and
 # canary check: the stub's directive marker ("@assistant:" -> "aassistant:")
 # and the payload's canary tag ("LLM01-CANARY-7f2c" -> "llmoi-canary-7f2c").
 SCREEN_POLICY = protectogw.Policy(extra_rules=(

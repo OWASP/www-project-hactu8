@@ -19,9 +19,9 @@ questions from Hilltop Creamery's confidential documents. Unrelated topics
 > assistant and its tenant-blind store are insecure **by design**. Do not
 > deploy them anywhere reachable.
 
-The shipped payload is a **placeholder**: two words naming the other tenant,
-plus a placeholder tag. That is enough to drive the full lifecycle. To write
-your own payload, see
+The shipped payload is **benign-effect**: one ordinary-sounding chat turn that
+names the other tenant; its only effect is retrieving fictional documents and
+canaries. To write your own payload, see
 `owasp-llm09-tenant-skill/assets/crafted_query.README.md`.
 
 ## Interactive web demo (recommended)
@@ -267,7 +267,7 @@ owasp-llm09-demo/
 │   │   └── LLM09_RISKS.md             #   research, scenarios, mitigation roadmap
 │   ├── assets/
 │   │   ├── vector_store.json          #   tenants, sessions, shared store (ground truth)
-│   │   ├── crafted_query.txt          #   placeholder payload (editable)
+│   │   ├── crafted_query.txt          #   benign-effect payload (editable)
 │   │   └── crafted_query.README.md    #   how to write a payload
 │   └── tests/
 │       └── test_lifecycle.py          #   asserts the four-act story

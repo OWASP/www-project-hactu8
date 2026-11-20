@@ -19,8 +19,8 @@ description (a **rug pull**), and one turns hostile from its second call (a
 > assistant installs third-party updates on trust **by design**. Do not deploy
 > it anywhere reachable.
 
-The shipped payloads are **placeholders**: a marker line and a fictional
-canary. That is enough to drive the full lifecycle. To write your own, see
+The shipped payloads are benign-effect: each is one injected line whose only
+effect is a reply carrying a fictional canary. That is enough to drive the full lifecycle. To write your own, see
 `owasp-llm04-rugpull-skill/assets/swapped_description.README.md` and
 `owasp-llm04-rugpull-skill/assets/sleeper_output.README.md`.
 
@@ -111,8 +111,8 @@ writes the answer text:
   gate stays in code, so a swapped or sleeper tool never reaches the model,
   whatever the model would do with it.
 
-A real model may ignore the placeholder payloads. Write natural-language
-payloads (see the payload READMEs). Pinning catches any description change
+A real model may ignore the payloads. Rewrite them if needed (see the
+payload READMEs). Pinning catches any description change
 regardless of wording, and sampling catches drift without any rule.
 `run_demo.py` reports the numbers rather than asserting them.
 
@@ -245,7 +245,7 @@ curl -s localhost:5204/query -H 'content-type: application/json' \
   whose definition matches its pin. The output screen is protectogw
   (AgenticGoat's screening core, vendored unchanged in `protectogw/`:
   normalizer + de-obfuscation folds + ruleset + exfil taxonomy + canary check),
-  with `SCREEN_POLICY` adding lab rules for the placeholder syntax
+  with `SCREEN_POLICY` adding lab rules for the stub's directive syntax
   (`lab_directive`, `lab_canary`). Its `SECURITY.md` states a ~75%
   generalization ceiling, so it is one layer, never the boundary: the drift
   check needs no rule at all.
@@ -283,9 +283,9 @@ owasp-llm04-demo/
 │   ├── assets/
 │   │   ├── registry_baseline.json     #   approved package: ground truth + fallback
 │   │   ├── tool_pins.json             #   SHA-256 pins of approved definitions
-│   │   ├── swapped_description.md     #   rug-pull payload placeholder (editable)
+│   │   ├── swapped_description.md     #   rug-pull payload (editable)
 │   │   ├── swapped_description.README.md  # how to write it
-│   │   ├── sleeper_output.md          #   sleeper payload placeholder (editable)
+│   │   ├── sleeper_output.md          #   sleeper payload (editable)
 │   │   └── sleeper_output.README.md   #   how to write it
 │   ├── registry/                      #   live registry file (generated, gitignored)
 │   └── tests/

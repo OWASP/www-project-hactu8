@@ -47,8 +47,8 @@ inbox, and three overbilled invoices are approved and paid.
     nothing it returns is executed or fetched.
   - The server rejects foreign `Host` headers (DNS rebinding) and non-JSON
     POSTs (cross-site forms).
-- The shipped payload is a **placeholder**: one stub directive line and a
-  fictional canary. See [`assets/price_notice.README.md`](assets/price_notice.README.md).
+- The shipped payload is benign-effect: a persuasive price notice, one stub
+  directive line and a fictional canary. See [`assets/price_notice.README.md`](assets/price_notice.README.md).
 - Dual-use: this exists to make the vulnerability observable and to motivate
   the mitigations in [`references/ASI08_RISKS.md`](references/ASI08_RISKS.md).
 
@@ -154,7 +154,7 @@ lesson. To tune the containment, edit `assets/pipeline_policy.json`.
 | `scripts/evaluate_kpi.py` | Stoplight KPI, Propagation Rate and blast radius against the live app; `--harden` and `--scan` mitigations. |
 | `scripts/reset_baseline.py` | Restores the seeded inbox, clears the action log, sets vulnerable mode. |
 | `references/ASI08_RISKS.md` | Threat landscape, research, scenario table, mitigations. |
-| `assets/price_notice.md` | Attacker's intake document (placeholder payload; editable). |
+| `assets/price_notice.md` | Attacker's intake document (benign-effect payload; editable). |
 | `assets/price_notice.README.md` | How to write a payload for the echo and real-model backends. |
 | `assets/po_ledger.json` | Purchase-order ledger: the source of truth. |
 | `assets/intake_inbox.json` | Baseline inbox: supplier price letters and six invoices. |

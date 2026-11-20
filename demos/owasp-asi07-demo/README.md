@@ -13,7 +13,7 @@ Planner" turns an operator's request into work orders and publishes them on an
 in-process message bus; "Billy Exec" carries out the work orders it receives.
 Its ground truth is the operator's intent: _"Pay invoice INV-3001" causes one
 step, `pay_invoice:INV-3001`, and nothing else._ With **2** spoofed work
-orders (one placeholder body with **2** directive lines) and **1** replayed
+orders (one body with **2** directive lines) and **1** replayed
 genuine order, the attacker makes every job on `payments` and `inventory` also
 pay `INV-3999` and cancel `A-1002`, and every job on `refunds` repeat an old
 refund of `A-0907`. Jobs on `shipping` and `reports` stay untouched. The
@@ -26,9 +26,11 @@ operator only sees each job finish.
 > **simulated**: an entry in an in-memory action log. Nothing real is paid,
 > refunded or cancelled.
 
-The shipped payload is a **placeholder**: two stub directive lines and a
-fictional canary. That is enough to drive the full lifecycle. To write your own
-payload, see `owasp-asi07-a2a-skill/assets/forged_order.README.md`.
+The shipped payload is benign-effect: realistic injection wording around
+two stub directive lines that carry a fictional canary. Its only possible effect
+is simulated actions in the lab's in-memory log. The directive lines drive the
+echo backend; the wording is there for real models. To write your own payload,
+see `owasp-asi07-a2a-skill/assets/forged_order.README.md`.
 
 ## Interactive web demo (recommended)
 
@@ -296,7 +298,7 @@ owasp-asi07-demo/
 │   │   └── ASI07_RISKS.md             #   research, scenarios, mitigation roadmap
 │   ├── assets/
 │   │   ├── ops_baseline.json          #   items, invoices, orders, bus history
-│   │   ├── forged_order.md            #   placeholder payload (editable)
+│   │   ├── forged_order.md            #   payload (editable)
 │   │   ├── forged_order.README.md     #   how to write a payload
 │   │   └── bus_policy.json            #   signature + replay settings (editable)
 │   └── tests/

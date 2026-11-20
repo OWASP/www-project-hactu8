@@ -48,8 +48,8 @@ own prose, and the risky line is batched below what the human reads.
     backend. The approver and the card builder stay in code either way.
   - The server rejects foreign `Host` headers (DNS rebinding) and non-JSON
     POSTs (cross-site forms).
-- The shipped payload is a **placeholder**: one field line with a fictional
-  value, one stub directive line and a fictional canary. See
+- The shipped payload is benign-effect: one field line with a fictional
+  value, persuasive wording, one stub directive line and a fictional canary. See
   [`assets/vendor_amendment.README.md`](assets/vendor_amendment.README.md).
 - Dual-use: this exists to make the vulnerability observable and to motivate
   the mitigations in [`references/ASI09_RISKS.md`](references/ASI09_RISKS.md).
@@ -159,7 +159,7 @@ of a card the approver reads, edit `assets/approval_policy.json`.
 | `scripts/evaluate_kpi.py` | Stoplight KPI + MAR against the live app; `--harden` and `--scan` mitigations. |
 | `scripts/reset_baseline.py` | Restores the seeded vendors and requests, clears the action log, sets vulnerable mode. |
 | `references/ASI09_RISKS.md` | Threat landscape, research, scenario table, mitigations. |
-| `assets/vendor_amendment.md` | Adversarial amendment (placeholder payload; editable). |
+| `assets/vendor_amendment.md` | Adversarial amendment (benign-effect payload; editable). |
 | `assets/vendor_amendment.README.md` | How to write a payload for the echo and real-model backends. |
 | `assets/vendor_baseline.json` | Vendors and open change requests as seeded. |
 | `assets/approval_policy.json` | Field tiers and the simulated approver rule (editable). |

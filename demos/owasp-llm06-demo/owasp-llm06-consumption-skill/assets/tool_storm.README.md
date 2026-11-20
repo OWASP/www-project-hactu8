@@ -5,14 +5,16 @@ page. It looks like the real page, but has one extra line that the stub model
 reads as an instruction to issue many `search_kb` calls at once. Every result
 is the same page, which asks again, so the storm feeds itself.
 
-The line that ships here is a **placeholder**, not a real payload. It works
-straight away because of three things:
+The line that ships here is benign-effect: its only effect is simulated
+cost. It works on both backends because of four things:
 
 - It starts with `@assistant:`, the stub model's instruction marker
   (`DIRECTIVE_MARKER` in `vulnerable_app.py`).
 - Its first word after the marker is `fanout 24`, which the stub obeys
   (clamped at `STUB_MAX_FANOUT`, a host-safety cap).
 - It contains the canary `LLM06-CANARY-9c07`, which `--scan` flags.
+- The rest of the line, for a real model, is an audit notice asking it to
+  call `search_kb` 24 times in one step, once per region code.
 
 Keep this file plain text. `run_consumption.py` does not escape anything.
 
