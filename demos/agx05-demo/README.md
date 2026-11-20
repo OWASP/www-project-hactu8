@@ -22,8 +22,8 @@ use other tools stay clean.
 > assistant and its unauthenticated vendor-update endpoint are insecure **by
 > design**. Do not deploy them anywhere reachable.
 
-The shipped payload is an **inert placeholder directive**, not real attack
-text; it is a benign error message followed by a placeholder line, and it
+The shipped payload is a **benign-effect directive**: realistic wording
+whose only effect is printing the lab's fictional credential; it is a benign error message followed by a directive line, and it
 follows AgenticGoat's "emit the canary to confirm" convention so the offline
 echo model reacts to it. The lab adds one screening rule that catches it. Paste
 your own real payload (for example AgenticGoat's AGX05 probe) for real-model
@@ -281,7 +281,7 @@ agx05-demo/
 │   │   └── AGX05_RISKS.md             #   research, scenarios, mitigation roadmap
 │   ├── assets/
 │   │   ├── tool_manifest.json         #   approved tool definitions (ground truth)
-│   │   ├── error_payload.txt          #   inert placeholder directive (editable)
+│   │   ├── error_payload.txt          #   benign-effect directive (editable)
 │   │   └── error_payload.README.md    #   source and how to vary it
 │   └── tests/
 │       └── test_lifecycle.py          #   asserts the four-act story

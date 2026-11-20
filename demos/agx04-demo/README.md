@@ -20,11 +20,11 @@ time, service health) stay clean.
 > assistant and its unauthenticated vendor-update endpoint are insecure **by
 > design**. Do not deploy them anywhere reachable.
 
-The shipped payload is an **inert placeholder directive**, not real attack
-text; it follows AgenticGoat's "emit the canary to confirm" convention so the
+The shipped payload is a **benign-effect directive**: realistic wording
+whose only effect is printing the lab's fictional credential; it follows AgenticGoat's "emit the canary to confirm" convention so the
 offline echo model reacts to it, and the lab adds one screening rule that
-catches it. Paste your own real payload (for example AgenticGoat's AGX04
-probe) for real-model runs. See
+catches it. Rephrase it, or paste AgenticGoat's AGX04 probe, to try other wording on a
+real model. See
 `agx04-schema-skill/assets/param_default_payload.README.md`.
 
 ## Interactive web demo (recommended)
@@ -277,7 +277,7 @@ agx04-demo/
 │   │   └── AGX04_RISKS.md             #   research, scenarios, mitigation roadmap
 │   ├── assets/
 │   │   ├── tool_manifest.json         #   approved tool definitions (ground truth)
-│   │   ├── param_default_payload.txt  #   inert placeholder directive (editable)
+│   │   ├── param_default_payload.txt  #   benign-effect directive (editable)
 │   │   └── param_default_payload.README.md  # source and how to vary it
 │   └── tests/
 │       └── test_lifecycle.py          #   asserts the four-act story

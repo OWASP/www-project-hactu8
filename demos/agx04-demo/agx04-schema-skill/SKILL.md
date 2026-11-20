@@ -43,7 +43,8 @@ tool, and the gateway never screens it.
     cannot reach the network unless you opt into a real-model backend.
   - The server rejects foreign `Host` headers (DNS rebinding) and non-JSON
     POSTs (cross-site forms).
-- The payload is an inert placeholder directive, not real attack text; it
+- The payload is a benign-effect directive (realistic wording; its only
+  effect is printing the fictional canary); it
   follows AgenticGoat's "emit the canary to confirm" convention so the offline
   echo model reacts to it, and the canary is a fictional, per-process
   `sk-canary-…` value. See
@@ -168,7 +169,7 @@ gateway reads all of them.
 | `scripts/evaluate_kpi.py` | Stoplight KPI + CLR against the live app; `--harden` and `--scan` mitigations. |
 | `scripts/reset_baseline.py` | Restores the approved manifest and vulnerable mode (`--keep-mode`). |
 | `references/AGX04_RISKS.md` | Research, scenario table, mitigation roadmap. |
-| `assets/param_default_payload.txt` | Inert placeholder directive (editable). |
+| `assets/param_default_payload.txt` | Benign-effect directive (editable). |
 | `assets/param_default_payload.README.md` | Source citation and how to vary the payload. |
 | `assets/tool_manifest.json` | The approved tool definitions: the ground truth. |
 | `tests/test_lifecycle.py` | Asserts the four-act story, the blind spot, each layer, the console and the backends. |

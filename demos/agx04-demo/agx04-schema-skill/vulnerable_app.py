@@ -82,14 +82,15 @@ COVERAGE = {
 SCHEMA_FIELDS = ("description", "title", "enum", "default")
 VALID_MODES = ("vulnerable", "hardened")
 
-# The shipped payload is an inert placeholder (assets/param_default_payload.txt),
-# so protectogw's built-in rules do not match it. The lab adds one rule that
-# does, written against the normalized, de-obfuscated form the screen sees (see
-# protectogw.normalize / screening._deobfuscate). It is part of the policy in
-# BOTH modes: the vulnerable gateway still leaks because of WHERE it screens
-# (never the parameter schema), not because the rule is missing. Replace the
-# placeholder with a real payload and this rule — or an extension of it — keeps
-# the hardened gateway catching it.
+# The shipped payload (assets/param_default_payload.txt) is benign-effect
+# wording that protectogw's built-in rules do not match (a generalization gap).
+# The lab adds one rule that does, written against the normalized, de-
+# obfuscated form the screen sees (see protectogw.normalize /
+# screening._deobfuscate). It is part of the policy in BOTH modes: the
+# vulnerable gateway still leaks because of WHERE it screens (never the
+# parameter schema), not because the rule is missing. If you rephrase the
+# payload, this rule (or an extension of it) keeps the hardened gateway
+# catching it.
 LAB_RULE = protectogw.Rule("lab_directive", r"agx\W*lab\W*directive")
 SCREEN_POLICY = protectogw.Policy(extra_rules=(LAB_RULE,))
 

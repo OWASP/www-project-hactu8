@@ -3,7 +3,7 @@
 
 AUTHORIZED SECURITY-LAB USE ONLY. Targets this skill's own vulnerable_app.py.
 
-Reads the canonical placeholder directive from
+Reads the canonical directive from
 ``assets/obfuscation_payload.txt`` and installs encoded copies of it into the
 notice board through the unauthenticated ``POST /vendor/notices/update``: by
 default base64 into the ``welcome`` notice, split-token into ``maintenance``,

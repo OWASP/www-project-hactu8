@@ -45,7 +45,7 @@ definition never changes; only its behaviour by poll count.
     cannot reach the network unless you opt into a real-model backend.
   - The server rejects foreign `Host` headers (DNS rebinding) and non-JSON
     POSTs (cross-site forms).
-- The hostile poll returns an **inert placeholder directive**, and the canary
+- The hostile poll returns a **benign-effect directive**, and the canary
   is a fictional, per-process `sk-canary-…` value. See
   [`assets/feed_poll_payload.README.md`](assets/feed_poll_payload.README.md).
 - Dual-use: this exists to make the blind spot observable and to motivate the
@@ -171,6 +171,6 @@ request makes and which one turns hostile (both default to 3).
 | `scripts/evaluate_kpi.py` | Stoplight KPI + CLR against the live app; `--harden` and `--scan` mitigations. |
 | `scripts/reset_baseline.py` | Disarms the feed, drops the trust cache, restores vulnerable mode (`--keep-mode`). |
 | `references/AGX03_RISKS.md` | Research, scenario table, mitigation roadmap. |
-| `assets/feed_poll_payload.txt` | The inert directive the armed feed serves on the hostile poll (editable). |
+| `assets/feed_poll_payload.txt` | The benign-effect directive the armed feed serves on the hostile poll (editable). |
 | `assets/feed_poll_payload.README.md` | Source citation and how to vary the payload. |
 | `tests/test_lifecycle.py` | Asserts the four-act story, the blind spot, each layer, the console and the backends. |

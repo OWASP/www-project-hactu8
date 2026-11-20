@@ -22,7 +22,7 @@ clean.
 > assistant and its unauthenticated vendor-arm endpoint are insecure **by
 > design**. Do not deploy them anywhere reachable.
 
-The hostile poll returns an **inert placeholder directive**. See
+The hostile poll returns a **benign-effect directive**. See
 `agx03-conditional-skill/assets/feed_poll_payload.README.md`.
 
 ## Interactive web demo (recommended)
@@ -114,7 +114,7 @@ The attack mechanics are identical. Only the model changes:
   `<untrusted_tool_output>` tags (spotlighting), and screens the reply for the
   canary before it leaves.
 
-A real model may ignore the placeholder directive. `run_demo.py` then reports
+A real model may ignore the directive. `run_demo.py` then reports
 the numbers rather than asserting them. See the payload README for how to vary
 it (and to paste a real payload for real-model runs).
 
@@ -264,7 +264,7 @@ agx03-demo/
 │   ├── references/
 │   │   └── AGX03_RISKS.md             #   research, scenarios, mitigation roadmap
 │   ├── assets/
-│   │   ├── feed_poll_payload.txt      #   the inert directive the hostile poll returns (editable)
+│   │   ├── feed_poll_payload.txt      #   the directive the hostile poll returns (editable)
 │   │   └── feed_poll_payload.README.md  # source and how to vary it
 │   └── tests/
 │       └── test_lifecycle.py          #   asserts the four-act story

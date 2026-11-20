@@ -45,7 +45,7 @@ walks straight past it. Billy's model, like a real LLM, decodes it and acts.
     cannot reach the network unless you opt into a real-model backend.
   - The server rejects foreign `Host` headers (DNS rebinding) and non-JSON
     POSTs (cross-site forms).
-- The payload is an **inert placeholder directive**, encoded at attack time,
+- The payload is a **benign-effect directive**, encoded at attack time,
   and the canary is a fictional, per-process `sk-canary-…` value. See
   [`assets/obfuscation_payload.README.md`](assets/obfuscation_payload.README.md).
 - Dual-use: this exists to make the blind spot observable and to motivate the
@@ -174,6 +174,6 @@ raw-text blind spot (the README explains).
 | `scripts/evaluate_kpi.py` | Stoplight KPI + CLR against the live app; `--harden` and `--scan` mitigations. |
 | `scripts/reset_baseline.py` | Restores the baseline notices and vulnerable mode (`--keep-mode`). |
 | `references/AGX01_RISKS.md` | Research, scenario table, mitigation roadmap. |
-| `assets/obfuscation_payload.txt` | The inert placeholder directive the attack encodes. |
+| `assets/obfuscation_payload.txt` | The benign-effect directive the attack encodes. |
 | `assets/obfuscation_payload.README.md` | Source citation, the encodings, and how to vary it. |
 | `tests/test_lifecycle.py` | Asserts the four-act story, the blind spot, each layer, the console and the backends. |

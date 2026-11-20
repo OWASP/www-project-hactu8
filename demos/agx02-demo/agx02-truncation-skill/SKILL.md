@@ -44,7 +44,7 @@ the whole return, so the directive reaches the model unscreened.
     cannot reach the network unless you opt into a real-model backend.
   - The server rejects foreign `Host` headers (DNS rebinding) and non-JSON
     POSTs (cross-site forms).
-- The payload is an **inert placeholder directive** on the artifact's last
+- The payload is a **benign-effect directive** on the artifact's last
   line, and the canary is a fictional, per-process `sk-canary-…` value. See
   [`assets/export_log_payload.README.md`](assets/export_log_payload.README.md).
 - Dual-use: this exists to make the blind spot observable and to motivate the
@@ -170,7 +170,7 @@ it past the directive's offset makes even the vulnerable gateway catch it.
 | `scripts/evaluate_kpi.py` | Stoplight KPI + CLR against the live app; `--harden` and `--scan` mitigations. |
 | `scripts/reset_baseline.py` | Restores the baseline artifact and vulnerable mode (`--keep-mode`). |
 | `references/AGX02_RISKS.md` | Research, scenario table, mitigation roadmap. |
-| `assets/export_log_payload.txt` | Benign padding with the inert directive in the tail (editable). |
+| `assets/export_log_payload.txt` | Benign padding with the directive in the tail (editable). |
 | `assets/export_log_baseline.txt` | The benign artifact `reset` restores. |
 | `assets/export_log_payload.README.md` | Source citation and how to vary the payload. |
 | `tests/test_lifecycle.py` | Asserts the four-act story, the blind spot, each layer, the console and the backends. |

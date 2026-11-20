@@ -21,7 +21,7 @@ health) stay clean.
 > assistant and its unauthenticated vendor-update endpoint are insecure **by
 > design**. Do not deploy them anywhere reachable.
 
-The payload is an **inert placeholder directive**, encoded at attack time. See
+The payload is a **benign-effect directive**, encoded at attack time. See
 `agx01-obfuscation-skill/assets/obfuscation_payload.README.md`.
 
 ## Interactive web demo (recommended)
@@ -114,7 +114,7 @@ The attack mechanics are identical. Only the model changes:
   `<untrusted_tool_output>` tags (spotlighting), and screens the reply for the
   canary before it leaves.
 
-A real model may ignore the placeholder directive. `run_demo.py` then reports
+A real model may ignore the directive. `run_demo.py` then reports
 the numbers rather than asserting them. See the payload README for how to vary
 it (and to paste a real payload for real-model runs).
 
@@ -262,7 +262,7 @@ agx01-demo/
 │   ├── references/
 │   │   └── AGX01_RISKS.md             #   research, scenarios, mitigation roadmap
 │   ├── assets/
-│   │   ├── obfuscation_payload.txt    #   the inert placeholder directive (editable)
+│   │   ├── obfuscation_payload.txt    #   the benign-effect directive (editable)
 │   │   └── obfuscation_payload.README.md  # source, encodings, how to vary it
 │   └── tests/
 │       └── test_lifecycle.py          #   asserts the four-act story

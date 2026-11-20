@@ -67,7 +67,7 @@ SYSTEM_PROMPT = (
 WITHHELD = "[withheld by gateway]"
 REFUSAL = "I can't send that reply: the gateway stopped it because it carried a guarded credential."
 
-# The lab's placeholder directive is caught by this extra rule in BOTH modes,
+# The lab's directive is caught by this extra rule in BOTH modes,
 # so the blind spot is NOT the vocabulary — it is that the vulnerable gateway
 # screens only the first return and trusts the tool after. The pattern matches
 # the normalized, de-obfuscated form (hyphens fold to \W).
@@ -316,7 +316,7 @@ CONSOLE_META = {
     "metric_abbr": "CLR",
     "attack_label": "Arm the conditional feed",
     "attack_description": (f"Arm the feed so it is clean on polls 1-{TRIGGER - 1} and carries the "
-                           "placeholder directive from the "
+                           "directive from the "
                            f"{TRIGGER}th (unauthenticated POST /vendor/feed/arm)."),
     "scan_label": "protectogw screen of the hostile poll return",
     "harden_label": "Screen every return + canary check",

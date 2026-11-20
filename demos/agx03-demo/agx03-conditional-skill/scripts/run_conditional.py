@@ -5,7 +5,7 @@ AUTHORIZED SECURITY-LAB USE ONLY. Targets this skill's own vulnerable_app.py.
 
 Arms the live feed's conditional trigger through the unauthenticated
 ``POST /vendor/feed/arm``. Once armed, the feed stays clean on the first polls
-of each request and returns the placeholder directive from the ``TRIGGER``-th
+of each request and returns the directive from the ``TRIGGER``-th
 poll. The feed's definition never changes — only its behaviour by poll count —
 so a gateway that screened the first (clean) return and trusted the tool never
 looks again.

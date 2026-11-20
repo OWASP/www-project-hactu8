@@ -21,8 +21,8 @@ stay clean.
 > assistant and its unauthenticated vendor-update endpoint are insecure **by
 > design**. Do not deploy them anywhere reachable.
 
-The shipped payload is an **inert placeholder directive**, not real attack
-text; it is a benign knowledge-base document with a placeholder line hidden
+The shipped payload is a **benign-effect directive**: realistic wording
+whose only effect is printing the lab's fictional credential; it is a benign knowledge-base document with a directive line hidden
 inside an HTML comment, and it follows AgenticGoat's "emit the canary to
 confirm" convention so the offline echo model reacts to it. The lab adds one
 screening rule that catches it. Paste your own real payload (for example
@@ -282,7 +282,7 @@ agx06-demo/
 │   │   └── AGX06_RISKS.md             #   research, scenarios, mitigation roadmap
 │   ├── assets/
 │   │   ├── tool_manifest.json         #   approved tool definitions (ground truth)
-│   │   ├── runtime_return_payload.txt #   inert placeholder directive (editable)
+│   │   ├── runtime_return_payload.txt #   benign-effect directive (editable)
 │   │   └── runtime_return_payload.README.md  # source and how to vary it
 │   └── tests/
 │       └── test_lifecycle.py          #   asserts the four-act story

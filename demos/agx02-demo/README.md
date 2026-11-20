@@ -21,7 +21,7 @@ Billy leak that credential on every log request. Requests that use other tools
 > assistant and its unauthenticated vendor-update endpoint are insecure **by
 > design**. Do not deploy them anywhere reachable.
 
-The payload is an **inert placeholder directive** on the artifact's last line.
+The payload is a **benign-effect directive** on the artifact's last line.
 See `agx02-truncation-skill/assets/export_log_payload.README.md`.
 
 ## Interactive web demo (recommended)
@@ -112,7 +112,7 @@ The attack mechanics are identical. Only the model changes:
   `<untrusted_tool_output>` tags (spotlighting), and screens the reply for the
   canary before it leaves.
 
-A real model may ignore the placeholder directive. `run_demo.py` then reports
+A real model may ignore the directive. `run_demo.py` then reports
 the numbers rather than asserting them. See the payload README for how to vary
 it (and to paste a real payload for real-model runs).
 
@@ -259,7 +259,7 @@ agx02-demo/
 │   ├── references/
 │   │   └── AGX02_RISKS.md             #   research, scenarios, mitigation roadmap
 │   ├── assets/
-│   │   ├── export_log_payload.txt     #   benign padding + inert directive in the tail
+│   │   ├── export_log_payload.txt     #   benign padding + benign-effect directive in the tail
 │   │   ├── export_log_baseline.txt    #   the benign artifact reset restores
 │   │   └── export_log_payload.README.md  # source and how to vary it
 │   └── tests/
