@@ -67,5 +67,46 @@ class ApiTest(unittest.TestCase):
         self.assertEqual(response.status_code, 400)
 
 
+
+@unittest.skipIf(TestClient is None, "API optional dependencies not installed")
+class ApiModelsAndLiveTest(unittest.TestCase):
+    def setUp(self):
+        self.home = tempfile.TemporaryDirectory()
+        self.env = patch.dict(os.environ, {"HACTU8_HOME": self.home.name})
+        self.env.start()
+        for key in ("OPENROUTER_API_KEY", "ANTHROPIC_API_KEY", "OPENAI_API_KEY"):
+            os.environ.pop(key, None)
+        self.client = TestClient(create_app(ROOT))
+
+    def tearDown(self):
+        self.env.stop()
+        self.home.cleanup()
+
+    def test_models_lists_backends_and_never_keys(self):
+        data = self.client.get("/api/models").json()
+        self.assertIn("openai-compat", data["backends"])
+        self.assertEqual(set(data["cloud"]), {"openrouter", "anthropic", "openai"})
+        self.assertEqual(data["keys_set"], {"openrouter": False, "anthropic": False, "openai": False})
+        self.assertTrue(any(c["backend"] == "echo" and c["available"] for c in data["candidates"]))
+
+    def test_cloud_runs_need_confirm_spend(self):
+        live = self.client.post("/api/live", json={"backend": "openrouter"})
+        self.assertEqual(live.status_code, 402)
+        self.assertIn("LAB_MAX_CALLS", live.json()["detail"])
+        run = self.client.post("/api/runs", json={"skill_id": "llm01", "backend": "anthropic"})
+        self.assertEqual(run.status_code, 402)
+
+    def test_live_run_on_echo_is_stored_and_scored(self):
+        try:
+            from hactu8.lamb.mcp_target import LambMcpState, build_mcp_server
+            build_mcp_server(LambMcpState())
+        except (ModuleNotFoundError, RuntimeError):
+            self.skipTest("Lamb extra not installed")
+        doc = self.client.post("/api/live", json={"backend": "echo"}).json()
+        self.assertEqual((doc["live"]["breaches_off"], doc["live"]["breaches_on"]), (8, 0))
+        board = self.client.get("/api/scoreboard").json()
+        self.assertEqual(board["scoreboard"][0]["run_id"], doc["run_id"])
+
+
 if __name__ == "__main__":
     unittest.main()

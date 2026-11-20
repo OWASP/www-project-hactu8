@@ -85,6 +85,11 @@ def cmd_run(args) -> int:
     except (KeyError, RuntimeError, RouterError) as exc:
         print(f"error: {exc}", file=sys.stderr)
         return 2
+    from hactu8 import spend
+    chosen = args.backend or label.split(":", 1)[0]
+    if spend.is_cloud(chosen) and not args.confirm_spend:
+        print(spend.estimate(chosen, spend.lab_calls(len(ids))) + " Re-run with --confirm-spend.", file=sys.stderr)
+        return 2
     for skill_id in ids:
         try:
             skill = catalog.get(skill_id)
@@ -192,6 +197,10 @@ def cmd_live(args) -> int:
     import time
 
     from hactu8.result import now_iso
+    from hactu8 import spend
+    if spend.is_cloud(args.backend) and not args.confirm_spend:
+        print(spend.estimate(args.backend, spend.LIVE_CALLS) + " Re-run with --confirm-spend.", file=sys.stderr)
+        return 2
     started, clock = now_iso(), time.monotonic()
     try:
         from hactu8 import live
@@ -242,6 +251,7 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--tier", default="", help="router tier for the model under test: deterministic | local | cloud")
     p.add_argument("--classifier", default="", help="keyword (default) | llm-judge | jev")
     p.add_argument("--timeout", type=int, default=300)
+    p.add_argument("--confirm-spend", action="store_true", help="allow a paid cloud backend")
     p.add_argument("--json", action="store_true")
     p.set_defaults(func=cmd_run)
 
@@ -269,6 +279,7 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--backend", default="echo", help="echo (default, offline) | ollama | llamacpp | "
                    "openrouter | anthropic | openai")
     p.add_argument("--model", default="")
+    p.add_argument("--confirm-spend", action="store_true", help="allow a paid cloud backend")
     p.add_argument("--json", action="store_true")
     p.set_defaults(func=cmd_live)
 

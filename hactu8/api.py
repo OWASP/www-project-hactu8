@@ -3,7 +3,7 @@
 from pathlib import Path
 from typing import Optional
 
-from hactu8 import branding, catalog, config, reports, store
+from hactu8 import branding, catalog, config, providers, reports, spend, store
 from hactu8.adapters import lab
 from hactu8.classify import get_classifier
 from hactu8.router import Router, RouterError
@@ -26,6 +26,12 @@ def create_app(root: Optional[Path] = None):
         model: str = ""
         classifier: str = "keyword"
         target_id: str = "hactu8-lamb"
+        confirm_spend: bool = False
+
+    class LiveRequest(BaseModel):
+        backend: str = "echo"
+        model: str = ""
+        confirm_spend: bool = False
 
     app = FastAPI(title="HACTU8 API", version="0.1.0")
     app.add_middleware(
@@ -57,7 +63,8 @@ def create_app(root: Optional[Path] = None):
                 "kind": "lamb",
                 "targetUrl": "http://127.0.0.1:5500",
                 "mcpUrl": "http://127.0.0.1:5500/mcp",
-                "riskNotes": "Intentionally vulnerable; loopback-only; inert payloads and side effects.",
+                "riskNotes": "Intentionally vulnerable; loopback-only; payloads are benign-effect (canary and loopback only).",
+                "protectedMcpUrl": "http://127.0.0.1:5500/protected/mcp",
             }],
             "total": 1,
         }
@@ -66,6 +73,39 @@ def create_app(root: Optional[Path] = None):
     def results_list():
         values = list(reversed(store.list_runs()))
         return {"results": values, "total": len(values)}
+
+    @app.get("/api/models")
+    def models():
+        try:
+            router = Router.from_config(config.load(root / "hactu8.yaml"))
+        except (config.ConfigError, ValueError) as exc:
+            raise HTTPException(500, str(exc)) from exc
+        candidates = router.describe()
+        catalogs = {}
+        for name in providers.BACKENDS:
+            ready = name == providers.OFFLINE or any(c["backend"] == name and c["available"] for c in candidates)
+            catalogs[name] = providers.available_models(name) if ready and name != providers.OFFLINE else []
+        return {"backends": list(providers.BACKENDS), "local": list(providers.LOCAL), "cloud": list(spend.CLOUD),
+                "keys_set": {name: providers.key_set(name) for name in providers.KEY_ENV},
+                "default_models": dict(providers.DEFAULT_MODELS), "candidates": candidates,
+                "catalogs": catalogs}
+
+    @app.post("/api/live")
+    def live_run(request: LiveRequest):
+        import time
+
+        from hactu8 import live
+        from hactu8.result import now_iso
+        if spend.is_cloud(request.backend) and not request.confirm_spend:
+            raise HTTPException(402, spend.estimate(request.backend, spend.LIVE_CALLS) + " Set confirm_spend.")
+        started, clock = now_iso(), time.monotonic()
+        try:
+            run = live.run(request.backend, request.model)
+        except (RuntimeError, ValueError) as exc:
+            raise HTTPException(400, str(exc)) from exc
+        doc = live.to_result(run, started, int((time.monotonic() - clock) * 1000))
+        store.save(doc)
+        return doc
 
     @app.get("/api/scoreboard")
     def scoreboard():
@@ -83,6 +123,8 @@ def create_app(root: Optional[Path] = None):
     def run(request: RunRequest):
         if request.target_id != "hactu8-lamb":
             raise HTTPException(400, f"unknown target: {request.target_id}")
+        if spend.is_cloud(request.backend) and not request.confirm_spend:
+            raise HTTPException(402, spend.estimate(request.backend, spend.lab_calls(1)) + " Set confirm_spend.")
         try:
             skill = catalog.get(request.skill_id, root)
             cfg = config.load(root / "hactu8.yaml")

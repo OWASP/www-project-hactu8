@@ -140,3 +140,13 @@ class LiveResultTest(unittest.TestCase):
         self.assertEqual(reds, run.breaches_off)
         self.assertEqual(doc["summary"]["status"], "pass")
         self.assertEqual(doc["summary"]["remediated_rate"], 0.0)
+
+
+class SpendGuardCliTest(unittest.TestCase):
+    def test_cloud_live_and_run_need_confirm_spend(self):
+        import subprocess
+        import sys
+        for argv in (["live", "--backend", "openrouter"], ["run", "llm01", "--backend", "openai"]):
+            out = subprocess.run([sys.executable, "-m", "hactu8", *argv], capture_output=True, text=True)
+            self.assertEqual(out.returncode, 2, argv)
+            self.assertIn("--confirm-spend", out.stderr)
