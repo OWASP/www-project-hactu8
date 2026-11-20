@@ -17,14 +17,17 @@ class BenchTest(unittest.TestCase):
         self.assertLessEqual(kinds, {"screen", "screen_any", "session", "control"})
         ids = [item["id"] for item in self.corpus["items"]]
         self.assertEqual(len(ids), len(set(ids)))
-        self.assertTrue(any(item["holdout"] for item in self.corpus["items"]))
+        holdout = bench.load(bench.HOLDOUT)
+        self.assertTrue(any(i["attack"] for i in holdout["items"]))
+        self.assertTrue(any(not i["attack"] for i in holdout["items"]))
         self.assertTrue(any(not item["attack"] for item in self.corpus["items"]))
 
     def test_no_regression_against_baseline(self):
         self.assertEqual([i.id for i in self.result.regressions], [])
         baseline = self.corpus["baseline"]
         self.assertGreaterEqual(self.result.coverage, baseline["coverage"])
-        self.assertGreaterEqual(self.result.generalization, baseline["generalization"])
+        independent = baseline["independent"]
+        self.assertGreaterEqual(self.result.generalization, independent["caught"] / independent["attacks"])
         self.assertLessEqual(self.result.false_positives, baseline["false_positives"])
 
     def test_holdout_is_scored_separately(self):

@@ -18,7 +18,7 @@ import unicodedata
 import urllib.parse
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import List
+from typing import Callable, List, Optional
 
 from ._limits import MAX_INPUT_CHARS
 from .indicators import detect_indicators, CRITICAL_INDICATORS
@@ -262,6 +262,33 @@ def _deobfuscate(text: str, disabled: "frozenset[str]" = frozenset()) -> str:
     return corpus
 
 
+# Vocabulary shared by the 1.1 paraphrase rules. Matched against normalized text
+# (lowercase, leet folded), so no digits or capitals here.
+_DISMISS = (r"(set aside|put aside|pay no (?:heed|attention|mind)|take no notice of|disregard|forget(?: about)?"
+            r"|abandon|discard|throw out|scrap|never mind|stop following|no longer follow|don'?t follow"
+            r"|bypass|ignore|drop)")
+_EARLIER = r"(earlier|previous|prior|preceding|original|initial|above|former|existing|old|you were|you'?ve been)"
+_GUIDANCE = (r"(directions?|guidance|instructions?|guidelines?|rules|orders|prompt|polic(?:y|ies)"
+             r"|constraints|restrictions|briefing)")
+_CREDENTIAL = (r"\b(passphrase|password|passcode|credentials?|api key|access key|secret key|private key"
+               r"|master key|tokens?|secrets?)\b")
+_FOREIGN_OVERRIDE = (
+    r"\b(ignora|ignore|olvida|olvide|omite|descarta|haz caso omiso de)\s+(todas\s+|todos\s+)?(las\s+|los\s+)?"
+    r"(instrucciones|indicaciones|reglas|[oó]rdenes)"                                   # es
+    r"|\b(ignore|ignorez|oublie|oubliez|ne tiens pas compte|ne tenez pas compte)\s+(de\s+|des\s+)?"
+    r"(toutes\s+|tous\s+)?(les\s+|vos\s+|tes\s+)?(instructions|consignes|r[eè]gles|directives)"  # fr
+    r"|\b(ignoriere|ignorier|vergiss|vergessen sie|missachte)\s+(alle\s+|die\s+|deine\s+|ihre\s+)?"
+    r"(vorherigen\s+|bisherigen\s+|fr[uü]heren\s+|obigen\s+)?(anweisungen|instruktionen|regeln|vorgaben)"  # de
+    r"|\b(ignore|ignora|esque[cç]a|desconsidere|descarte)\s+(todas\s+|todos\s+)?(as\s+|os\s+)?"
+    r"(instru[cç][oõ]es|regras|orienta[cç][oõ]es|diretrizes)"                          # pt
+    r"|\b(ignora|ignori|dimentica|dimentichi|trascura)\s+(tutte\s+|tutti\s+)?(le\s+|i\s+)?"
+    r"(istruzioni|regole|indicazioni|direttive)"                                          # it
+    r"|\b(negeer|vergeet)\s+(alle\s+)?(eerdere\s+|vorige\s+)?(instructies|regels|aanwijzingen)")  # nl
+_FOREIGN_REVEAL = (
+    r"\b(revela|revele|divulga|divulgue|r[eé]v[eè]le|verrate|rivela|onthul|toon|mostra|mostre|muestra)\b"
+    r"[^.!?\n]{0,30}?\b(token|clave|contrase[nñ]a|secreto|jeton|mot de passe|secret|passwort|schl[uü]ssel"
+    r"|geheimnis|senha|chave|segredo|chiave|password|segreto|wachtwoord|sleutel|geheim)\b")
+
 # ── ruleset ─────────────────────────────────────────────────
 # Each rule: (name, compiled pattern, risk weight, verdict-on-hit).
 
@@ -279,6 +306,24 @@ _RULES = [
     ("hidden_directive",     re.compile(r"(do not mention|keep this secret|the user (must|should) not)"), 0.60, Verdict.BLOCK),
     ("tool_redirect",        re.compile(r"(also |then |and )?call .{0,30}(tool|function) with"), 0.50, Verdict.FLAG),
     ("mode_switch",          re.compile(r"(maintenance|god|debug|developer)\s*mode"), 0.60, Verdict.BLOCK),
+    # 1.1: paraphrased override. A dismissal verb, a "before" qualifier, and a
+    # guidance noun, in either order, within one sentence.
+    ("instruction_paraphrase", re.compile(
+        r"\b" + _DISMISS + r"\b[^.!?\n]{0,40}?\b" + _EARLIER + r"\b[^.!?\n]{0,30}?\b" + _GUIDANCE + r"\b"
+        r"|\b" + _DISMISS + r"\b[^.!?\n]{0,40}?\b" + _GUIDANCE + r"\b[^.!?\n]{0,40}?"
+        r"\b(you (were|have been|'ve been) (given|handed|told|provided|sent)|earlier|before now|so far)\b"), 0.80, Verdict.BLOCK),
+    # 1.1: a credential handed to a destination (polite exfiltration).
+    ("credential_handover", re.compile(
+        r"\b(ship|send|mail|e-mail|forward|post|deliver|transfer|copy|hand|pass|drop|upload|paste)\b[^.!?\n]{0,40}?"
+        + _CREDENTIAL + r"[^.!?\n]{0,40}?\b(to|into|at)\b[^.!?\n]{0,30}?(inbox|mailbox|@|https?://|webhook|endpoint|my email|this address)"), 0.85, Verdict.BLOCK),
+    # 1.1: a request for a credential the model is holding.
+    ("held_credential_request", re.compile(
+        r"\b(hand|give|surrender|share|tell|reveal|provide|read out|spell out|reply with|turn over|dump)\b[^.!?\n]{0,40}?"
+        + _CREDENTIAL + r"[^.!?\n]{0,50}?\byou(?:'re| are)?\s+(?:happen to be\s+)?"
+        r"(holding|hold|safeguarding|safeguard|guarding|guard|keeping|keep|storing|store|protecting|protect|have)\b"), 0.75, Verdict.BLOCK),
+    # 1.1: instruction override and secret reveal in common European languages.
+    ("multilingual_override", re.compile(_FOREIGN_OVERRIDE), 0.85, Verdict.BLOCK),
+    ("multilingual_secret_reveal", re.compile(_FOREIGN_REVEAL), 0.75, Verdict.BLOCK),
 ]
 
 
@@ -316,6 +361,11 @@ class Policy:
       block" rollout SECURITY.md calls for).
     - use_indicator_taxonomy: fold the CRITICAL exfil taxonomy in as BLOCK.
     - max_chars: per-policy input cap (screen(..., max_chars=) still overrides).
+    - classifier: optional callable(text) -> score in [0, 1], an extra plane for
+      phrasing a regex cannot anticipate (for example a small local model). Off by
+      default, so screen() stays deterministic and offline. A score at or above
+      classifier_flag adds a FLAG; at or above classifier_block, a BLOCK. If the
+      callable raises, screening continues and a FLAG records the failure.
     """
     extra_rules: "tuple[Rule, ...]" = ()
     replace_rules: bool = False
@@ -325,6 +375,9 @@ class Policy:
     flag_only: bool = False
     use_indicator_taxonomy: bool = True
     max_chars: int = MAX_INPUT_CHARS
+    classifier: "Optional[Callable[[str], float]]" = None
+    classifier_flag: float = 0.5
+    classifier_block: float = 0.8
 
 
 _DEFAULT_POLICY = Policy()
@@ -395,6 +448,21 @@ def screen(text: str, canaries: "List[str] | None" = None,
                                           f"exfil taxonomy: {cat}"))
                     risk += 0.85
                     worst = Verdict.BLOCK
+
+        if pol.classifier is not None:
+            try:
+                score = float(pol.classifier(text))
+            except Exception as exc:  # a classifier outage must not break screening
+                signals.append(Signal("classifier_error", Verdict.FLAG, 0.0, type(exc).__name__))
+                if worst == Verdict.ALLOW:
+                    worst = Verdict.FLAG
+            else:
+                if score >= pol.classifier_flag:
+                    verdict = Verdict.BLOCK if score >= pol.classifier_block else Verdict.FLAG
+                    signals.append(Signal("classifier", verdict, score, f"classifier score {score:.2f}"))
+                    risk += score
+                    if verdict.value > worst.value:
+                        worst = verdict
 
     risk = min(risk, 1.0)
     # A single BLOCK rule is decisive; accumulated FLAGs can also tip.

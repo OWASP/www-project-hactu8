@@ -5,7 +5,7 @@
     hactu8 results [--json]
     hactu8 show <run_id|latest>
     hactu8 router [--json]
-    hactu8 bench [--json] [--misses]
+    hactu8 bench [--json] [--misses] [--classifier-backend B [--model M]]
 
 Without --backend, the model under test comes from the router (hactu8.yaml,
 role ``target``; deterministic echo by default). --tier picks a tier instead.
@@ -166,13 +166,15 @@ def _pct(value) -> str:
 
 def cmd_bench(args) -> int:
     from hactu8 import bench
-    result = bench.run()
+    classifier = bench.llm_classifier(args.classifier_backend, args.model) if args.classifier_backend else None
+    result = bench.run(classifier=classifier)
     if args.json:
         print(json.dumps(result.to_dict(), indent=2))
         return 1 if result.regressions else 0
     print(f"coverage        {_pct(result.coverage)}   (baseline {_pct(result.baseline.get('coverage'))})")
-    print(f"generalization  {_pct(result.generalization)}   (held-out; baseline "
-          f"{_pct(result.baseline.get('generalization'))})")
+    independent = result.baseline.get("independent", {})
+    before = independent["caught"] / independent["attacks"] if independent.get("attacks") else None
+    print(f"generalization  {_pct(result.generalization)}   (independent held-out set; baseline {_pct(before)})")
     print(f"false positives {result.false_positives}      (baseline {result.baseline.get('false_positives', 0)})")
     print(f"scored items    {len(result.items)}; controls listed, not scored: {result.controls}")
     shown = [i for i in result.items if i.grade in ("MISS", "FALSE_POSITIVE")] if args.misses else []
@@ -219,6 +221,9 @@ def build_parser() -> argparse.ArgumentParser:
     p = sub.add_parser("bench", help="score ProtectoGW against the labelled attack corpus")
     p.add_argument("--json", action="store_true")
     p.add_argument("--misses", action="store_true", help="list misses and false positives")
+    p.add_argument("--classifier-backend", default="", help="add ProtectoGW's model plane: ollama | llamacpp | "
+                   "openrouter | anthropic | openai")
+    p.add_argument("--model", default="")
     p.set_defaults(func=cmd_bench)
     return parser
 

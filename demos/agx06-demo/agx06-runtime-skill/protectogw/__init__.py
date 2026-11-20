@@ -9,8 +9,10 @@ from .screening import (Verdict, Signal, Screen, normalize, screen,
                         Rule, Policy, FOLD_NAMES)
 from .indicators import detect_indicators, auto_score
 from .session import Session, SessionResult
+from .pinning import ToolPins, fingerprint, shadowing
 
 __all__ = ["Verdict", "Signal", "Screen", "normalize", "screen",
            "Rule", "Policy", "FOLD_NAMES",
            "detect_indicators", "auto_score", "Session", "SessionResult",
+           "ToolPins", "fingerprint", "shadowing",
            "MAX_INPUT_CHARS", "__version__"]

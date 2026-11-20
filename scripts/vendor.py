@@ -25,7 +25,7 @@ from typing import List, Tuple
 ROOT = Path(__file__).resolve().parents[1]
 CORE = ROOT / "hactu8"
 DEMOS = ROOT / "demos"
-PROTECTOGW_FILES = ("__init__.py", "_limits.py", "indicators.py", "screening.py", "session.py",
+PROTECTOGW_FILES = ("__init__.py", "_limits.py", "indicators.py", "pinning.py", "screening.py", "session.py",
                     "README.md", "SECURITY.md", "CHANGELOG.md", "LICENSE")
 
 
