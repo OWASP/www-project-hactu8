@@ -6,6 +6,7 @@
     hactu8 show <run_id|latest>
     hactu8 router [--json]
     hactu8 bench [--json] [--misses] [--classifier-backend B [--model M]]
+    hactu8 live [--backend B] [--model M] [--json]
 
 Without --backend, the model under test comes from the router (hactu8.yaml,
 role ``target``; deterministic echo by default). --tier picks a tier instead.
@@ -186,6 +187,26 @@ def cmd_bench(args) -> int:
     return 1 if result.regressions else 0
 
 
+def cmd_live(args) -> int:
+    try:
+        from hactu8 import live
+        result = live.run(args.backend, args.model)
+    except (RuntimeError, ValueError) as exc:
+        print(f"hactu8 live: {exc}", file=sys.stderr)
+        return 2
+    if args.json:
+        print(json.dumps(result.to_dict(), indent=2))
+        return 0
+    _print_table([[s.target, "attack" if s.attack else "control", s.outcome_off, s.outcome_on,
+                   "suspected" if s.suspected else ""] for s in result.surfaces],
+                 ["SURFACE", "KIND", "OFF", "ON", ""])
+    print(f"\nmodel: {result.backend} / {result.model}")
+    print(f"model resistance  {_pct(result.model_resistance)}  ({result.resisted} of {result.attacks} attacks held)")
+    print(f"app exposure      {result.breaches_off} breaches with the gateway off, {result.breaches_on} with it on")
+    print(f"false blocks      {result.false_blocks_on}")
+    return 0
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="hactu8", description="OWASP HACTU8 assurance test runner")
     parser.add_argument("--version", action="version", version=f"hactu8 {__version__}")
@@ -225,6 +246,13 @@ def build_parser() -> argparse.ArgumentParser:
                    "openrouter | anthropic | openai")
     p.add_argument("--model", default="")
     p.set_defaults(func=cmd_bench)
+
+    p = sub.add_parser("live", help="attack a model with Billy's MCP surfaces, defense off vs on")
+    p.add_argument("--backend", default="echo", help="echo (default, offline) | ollama | llamacpp | "
+                   "openrouter | anthropic | openai")
+    p.add_argument("--model", default="")
+    p.add_argument("--json", action="store_true")
+    p.set_defaults(func=cmd_live)
     return parser
 
 

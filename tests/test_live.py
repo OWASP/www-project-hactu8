@@ -91,3 +91,19 @@ class LiveRunTest(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+@unittest.skipUnless(HAVE_MCP, "Lamb extra not installed")
+class LiveCliTest(unittest.TestCase):
+    def test_cli_json_on_echo(self):
+        import json
+        import subprocess
+        import sys
+        import os
+        pinned = "sk-canary-pinnedforthisclitest0000000000"
+        out = subprocess.run([sys.executable, "-m", "hactu8", "live", "--json"], capture_output=True, text=True,
+                             check=True, env={**os.environ, "LAB_CANARY": pinned})
+        data = json.loads(out.stdout)
+        self.assertEqual((data["breaches_off"], data["breaches_on"]), (8, 0))
+        self.assertNotIn(pinned, out.stdout)
+        self.assertIn("<canary>", out.stdout)
