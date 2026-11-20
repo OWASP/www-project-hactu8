@@ -40,6 +40,10 @@ scripts/    seed-issues.sh
 - Safety: every target binds to `127.0.0.1`. Payloads are benign-effect: realistic injection wording is allowed only when its sole possible effect is emitting a per-run canary or calling a Lamb tool on loopback. Never add payloads that harm a real system, real data, or a real account.
 - The sacrificial target is named HACTU8 Lamb (formerly AgenticGoat). The fictional company Billy, Goat & Co. stays in the labs.
 
+## Accuracy
+
+- The defenses taught in the labs may miss attacks or block safe text; report that openly. HACTU8's own grading must not be wrong: ground truth, oracles, classifiers' bookkeeping, the bench, reports and tests must be correct and deterministic. Test every oracle in both directions.
+
 ## Done means
 
 1. `python -m unittest discover -s tests -t .` passes.

@@ -54,6 +54,13 @@ Current health issues on this machine: `tests/test_lamb.py` errors because mcp 1
   - The demo script runs end to end on a local model, with a recorded fallback.
 - Approved mockup: <https://claude.ai/artifact/7mW3rhE5k7iWDgPGpzS4Dy> (Learn and Run pages). AG-42 and the Learn page are built to it, using the existing iac-host theme (`--iac-*` tokens and the `.page`, `.panel`, `.metric`, `.signal`, `.primary-button` classes in `iac-host/src/index.css`). No new design system.
 
+## Accuracy principle
+
+Two different standards apply.
+
+- The defenses being taught (ProtectoGW rules, lab hardening, the model plane) may miss attacks and block safe text. That is realistic, and the labs show it openly: misses and false blocks are reported, explained in the lessons, and never hidden or tuned away on the held-out set.
+- HACTU8 itself must not be wrong. The ground truth, the oracles that decide BREACH or DEFENDED, the classifiers' bookkeeping, the bench, the result schema, reports and tests must give the correct answer every time. Every oracle gets tests for both directions (a real breach is graded BREACH, and a safe answer, including a refusal that quotes the attack, is graded SAFE). Tests are deterministic, with no flaky timing.
+
 ## Console principles
 
 HACTU8 is both a tool people use and a training harness for AI security. The console stays small. Every attack and defense is reachable from it, and each one comes with the lesson that explains it. AgenticGoat's dashboard views are not copied over one for one.
