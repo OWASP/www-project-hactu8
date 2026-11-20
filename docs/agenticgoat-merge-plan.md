@@ -136,7 +136,8 @@ Order: W0, W1, W2 and W3 run first (they unblock everything). W4 and W5 can run 
   - In progress: real-model reply parsing in the JSON tool-call labs (ASI02 rejected `{"args": {"id": ...}}` for `read_request(request)`, so the lab measured nothing on `llama3.2:3b`).
   - Left as designed: in the injection labs an answer carrying both the attack and the truth grades YELLOW; not seen on llama3.2:3b or gemma3:4b for LLM04/LLM07.
   - After AG-55: rerun the Ollama sweep on every local model for the final evidence pages (the 2026-11-20 sweep mixes pre- and post-fix code).
-- [ ] AG-53 Check that ASI06 matches AgenticGoat's Poison Lab result (PSR 0, then 100, then 0); port the missing parts.
+- [x] AG-53 Check that ASI06 matches AgenticGoat's Poison Lab result (PSR 0, then 100, then 0); port the missing parts.
+  - AgenticGoat's Poison Lab (RAG/KB poisoning: override memo, "quarterly audit" trigger, MFA control) is HACTU8's LLM05, which already has every part (ingestion quarantine, prompt trigger, output and canary screening) and gives PSR 0% -> 100% -> 0% on echo. HACTU8's ASI06 covers the memory side with the same PSR 0% -> 100% -> 0%. Nothing missing; LLM05 now credits the source.
 
 ### W6: Training layer
 
