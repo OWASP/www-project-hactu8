@@ -4,7 +4,8 @@ The corpus (corpus.json) was ported from AgenticGoat's 17-act detector run. Each
 item is untrusted text headed for a model's context, labelled attack or clean.
 Two axes are scored separately, so a held-out miss never reads as a regression:
 
-    coverage        attacks in corpus.json caught (must stay 100%)
+    coverage        attacks in corpus.json and train_v1.json caught (the
+                    sets rules are tuned on; any per-item loss is a regression)
     generalization  attacks in holdout_v2.json caught. That set was written
                     independently of the ruleset; never tune rules on it, or it
                     stops measuring anything. Write a new held-out set instead.
@@ -32,6 +33,7 @@ from hactu8.protectogw.session import Session
 
 CORPUS = Path(__file__).with_name("corpus.json")
 HOLDOUT = Path(__file__).with_name("holdout_v2.json")
+TRAIN = Path(__file__).with_name("train_v1.json")
 
 # Output headed for a shell, SQL or HTML sink: metacharacter rules the default
 # prompt-injection ruleset deliberately does not carry (AgenticGoat Act 13).
@@ -179,6 +181,13 @@ def run(corpus: Optional[dict] = None, holdout: Optional[dict] = None, classifie
             flagged = _flagged(item, classifier)
         result.items.append(ItemResult(item["id"], item["surface"], item["attack"], item["holdout"],
                                        flagged, item["baseline_flagged"]))
+
+    train = load(TRAIN)
+    train_before = set(result.baseline.get("train", {}).get("flagged_ids", []))
+    for item in train.get("items", []):
+        flagged = screen(item["text"], policy=_policy(None, classifier)).verdict != Verdict.ALLOW
+        result.items.append(ItemResult(item["id"], item.get("technique", "train"), item["attack"], False,
+                                       flagged, item["id"] in train_before))
 
     caught_before = set(result.baseline.get("independent", {}).get("caught_ids", []))
     for item in holdout.get("items", []):

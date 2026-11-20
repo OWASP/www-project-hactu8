@@ -33,7 +33,8 @@ class BenchTest(unittest.TestCase):
     def test_holdout_is_scored_separately(self):
         holdout_misses = [i for i in self.result.items if i.holdout and i.grade == "MISS"]
         self.assertTrue(holdout_misses, "the held-out set should still expose real misses")
-        self.assertEqual(self.result.coverage, 1.0)
+        corpus_ids = {i["id"] for i in self.corpus["items"] if i["attack"]}
+        self.assertTrue(all(i.flagged for i in self.result.items if i.id in corpus_ids))
 
     def test_regression_detected_when_screen_weakens(self):
         corpus = json.loads(json.dumps(self.corpus))
@@ -46,7 +47,7 @@ class BenchTest(unittest.TestCase):
                              capture_output=True, text=True, check=True)
         data = json.loads(out.stdout)
         self.assertEqual(data["regressions"], [])
-        self.assertEqual(data["coverage"], 1.0)
+        self.assertGreaterEqual(data["coverage"], self.corpus["baseline"]["coverage"])
 
 
 if __name__ == "__main__":

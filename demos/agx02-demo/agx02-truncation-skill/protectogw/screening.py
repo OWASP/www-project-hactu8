@@ -298,13 +298,13 @@ _RULES = [
     # of this rule missed it — a real gap found in testing).
     ("instruction_override", re.compile(r"(ignore|disregard|forget|override)\s+(?:(?:all|any|the|previous|prior|your)\s+)*(instructions|context|rules)"), 0.85, Verdict.BLOCK),
     ("secret_reveal",        re.compile(r"(reveal|disclose|leak|expose|emit) (any |all )?(secret|secrets|token|tokens|key|keys|credential)"), 0.80, Verdict.BLOCK),
-    ("persona_override",     re.compile(r"you are now|from now on you|act as (?:if|an?)|new persona"), 0.70, Verdict.BLOCK),
+    ("persona_override",     re.compile(r"from now on you|act as (?:if|an?)\b|new persona"), 0.70, Verdict.BLOCK),
     ("system_reveal",        re.compile(r"(reveal|print|show|repeat|output).{0,20}(system prompt|instructions|rules)"), 0.80, Verdict.BLOCK),
-    ("exfiltration",         re.compile(r"(send|post|exfiltrate|upload|email|forward).{0,30}(secret|token|key|credential|password|http)"), 0.85, Verdict.BLOCK),
+    ("exfiltration",         re.compile(r"(send|post|exfiltrate|upload|email|forward)[^.!?\n]{0,30}(secret|token|key|credential|password)|(send|post|exfiltrate|forward)[^.!?\n]{0,30}https?:"), 0.85, Verdict.BLOCK),
     ("authority_claim",      re.compile(r"(as|this is) (the )?(system|admin|administrator|developer|anthropic|root)"), 0.55, Verdict.FLAG),
-    ("urgency_pressure",     re.compile(r"(immediately|urgent|right now|do not (tell|inform|alert)|without (asking|confirming))"), 0.40, Verdict.FLAG),
-    ("hidden_directive",     re.compile(r"(do not mention|keep this secret|the user (must|should) not)"), 0.60, Verdict.BLOCK),
-    ("tool_redirect",        re.compile(r"(also |then |and )?call .{0,30}(tool|function) with"), 0.50, Verdict.FLAG),
+    ("urgency_pressure",     re.compile(r"(immediately|urgent|right now|do not (tell|inform|alert) (the )?(user|human|owner|admin)|without (asking|confirming))"), 0.40, Verdict.FLAG),
+    ("hidden_directive",     re.compile(r"(do not mention (this|it|that)\b|keep this secret|the user (must|should) not)"), 0.60, Verdict.BLOCK),
+    ("tool_redirect",        re.compile(r"(also |then |and )?call (?!this tool)[^.!?\n]{0,30}(tool|function) with"), 0.50, Verdict.FLAG),
     ("mode_switch",          re.compile(r"(maintenance|god|debug|developer)\s*mode"), 0.60, Verdict.BLOCK),
     # 1.1: paraphrased override. A dismissal verb, a "before" qualifier, and a
     # guidance noun, in either order, within one sentence.
@@ -324,6 +324,117 @@ _RULES = [
     # 1.1: instruction override and secret reveal in common European languages.
     ("multilingual_override", re.compile(_FOREIGN_OVERRIDE), 0.85, Verdict.BLOCK),
     ("multilingual_secret_reveal", re.compile(_FOREIGN_REVEAL), 0.75, Verdict.BLOCK),
+]
+
+
+# ── compound checks (1.1) ───────────────────────────────────
+# Signals a single regex cannot express: an order is only an injection when it
+# is addressed to the AI, a credential request is benign when negated ("never
+# share your password"), and emails and CJK text must be read before
+# normalization (which folds "@" and Cyrillic letters). Each check gets the
+# normalized text and the raw lowercased text.
+
+_ADDRESSEE = re.compile(
+    r"\b(assistants?|ai|agents?|bots?|models?|llms?|copilot|automated|reader|scheduler|helper|triage|reviewer"
+    r"|language models?|asistente|ia|assistente|assistent\w*|ki)\b"
+    r"|アシスタント|助手|어시스턴트|ассистент|агент|бот|нейросет")
+_DIRECT = re.compile(r"\b(your|you were|you'?ve been|you have been|you received|given to you)\b")
+_GUIDE2 = (r"(directions?|guidance|instructions?|guidelines?|rules|orders|prompt|polic(?:y|ies)|constraints"
+           r"|restrictions|limits|directives?|checklist|configuration|config|setup|operating rules)")
+_DEAD_EN = re.compile(
+    r"\b" + _GUIDE2 + r"\b[^.!?\n]{0,60}?\b(deprecated|outdated|void|rescinded|retired|revoked|overruled"
+    r"|superseded|stale|invalid|cancell?ed|lifted|obsolete|no longer (?:apply|applies|valid|in effect|binding|stands?)"
+    r"|(?:are|is|have been|has been) (?:replaced|withdrawn))\b"
+    r"|\b(supersedes?|overrides?|overrules?|outranks?|replaces?)\b[^.!?\n]{0,30}?"
+    r"\b(whatever|your|the operator|the user|existing|prior|previous|earlier)\b")
+_FOREIGN_GUIDE = (r"(instrucciones|indicaciones|reglas|consignes|instructions|r[eè]gles|directives|anweisungen|regeln"
+                  r"|vorgaben|orienta[cç][oõ]es|instru[cç][oõ]es|regras|diretrizes|istruzioni|regole|indicazioni"
+                  r"|instructies|regels|aanwijzingen|指示|指令|规则|規則|지시|규칙|инструкци\w*|указани\w*|правил\w*)")
+_FOREIGN_DEAD = re.compile(
+    _FOREIGN_GUIDE + r"[^.!?。！？\n]{0,40}?(ya no son v[aá]lid\w*|anulad\w*|sin efecto|caduques?|annul[ée]+s?"
+    r"|obsol[eè]tes?|aufgehoben|ung[uü]ltig|au[ßs]er kraft|substitu[ií]d\w*|revogad\w*|n[aã]o s[aã]o mais v[aá]lid\w*"
+    r"|non sono pi[uù] valid\w*|annullat\w*|revocat\w*|vervallen|ongeldig|无效|作废|失效|無効|取り消|유효하지 않|무효"
+    r"|отменен\w*|недействительн\w*|аннулирован\w*)")
+_FOREIGN_CRED = (r"(clave api|claves de api|contrase[nñ]as?|jeton|mot de passe|passwort|api-schl[uü]ssel|kennwort"
+                 r"|senhas?|chaves? de api|token de acesso|password|token di accesso|wachtwoord|api-sleutel"
+                 r"|パスワード|apiキー|密码|令牌|密钥|비밀번호|api 키|пароль|api-ключ|ключ api|токен)")
+_FOREIGN_SEND = (r"(env[ií]e\w*|enviar|manda\w*|envoy\w*|teile|schick\w*|sende\w*|responda|envie|mande|invia\w*"
+                 r"|stuur\w*|貼り付け|送って|送信|发送|发给|보내|회신|пришлите|отправ\w*|сообщите|пришли)")
+_FOREIGN_ASK = re.compile(_FOREIGN_SEND + r"[^.!?。！？\n]{0,60}?" + _FOREIGN_CRED
+                          + r"|" + _FOREIGN_CRED + r"[^.!?。！？\n]{0,40}?" + _FOREIGN_SEND)
+_NEGATION = re.compile(r"\b(never|don'?t|do not|not|nunca|jamais|ne|n'|nie|niemals|non|mai|nooit|niet|не|никогда)\b"
+                       r"|n'|ない|不要|别|절대|지 마")
+_CRED_EN = (r"(passwords?|passcodes?|passphrases?|credentials?|api keys?|access tokens?|tokens?|secrets?"
+            r"|session cookies?|cookies?|mfa (?:backup )?codes|backup codes|private keys?)")
+_CRED_ASK = re.compile(
+    r"\b(list|reply with|paste|send|share|provide|include|tell|give|post|submit|disclose|confirm|read out)\b"
+    r"[^.!?\n]{0,40}?\b(every|all|your|the user'?s|current|stored|saved|any|the)\s+(?:[\w-]+\s+){0,2}?" + _CRED_EN + r"\b")
+_CRED_COLLECT = re.compile(
+    r"\b(open|read|collect|gather|retrieve|access|dump|export)\b[^.!?\n]{0,30}?\b(the user'?s|saved|stored)\s+"
+    r"(?:\w+\s+)?(credentials|passwords|api keys|tokens|secrets|session cookies?)\b")
+_HIDDEN2 = re.compile(
+    r"\b(do not|don'?t|never|without)\s+(mention|tell|inform|notify|alert)\w*\b[^.!?\n]{0,30}?"
+    r"\b(user|human|owner|account owner|requester|operator|customer|them|this step|this change)\b"
+    r"|\bkeep (?:it|this|that)(?: change| step)? (?:out of|off|hidden from)\b"
+    r"|\bleave (?:it|this|that)(?: change| step)? out of\b"
+    r"|\bno need to (?:notify|tell|inform)\b"
+    r"|\b(silently|quietly|secretly|covertly)\s+(?:\w+\s+)?(archive|delete|remove|forward|turn on|enable|disable"
+    r"|send|copy|add|update|change|approve|accept|install|run|export|upload|share|grant|set|append|modify)\b")
+_PERSONA2 = re.compile(
+    r"\byou are now (?:an?|the|my|in|no longer)\b|\byou are (?:the|an?) [\w' -]{1,30}? now\b"
+    r"|\byour role (?:is now|becomes|has changed)\b|\byou (?:now )?operate as\b|\bstay in character\b"
+    r"|\bassume the (?:identity|role|persona) of\b")
+_FAKE_MARKER = re.compile(
+    r"<\s*/?\s*(system|user_content|instructions?|im_start|im_end|assistant|tool_result|function_results?)\b[^>]{0,60}>"
+    r"|\[\s*(system|admin|operator)\s*\]\s*:|\b(begin|start) (?:trusted )?(operator|system|admin) message\b")
+_REDIRECT2 = re.compile(
+    r"\b(before (?:answering|replying|responding|you (?:answer|reply|respond))|after (?:each|every) call"
+    r"|instead of using it)\b[^.!?\n]{0,40}?\b(call|invoke|run|execute|use)\b"
+    r"|\b(first invoke|additionally call|also run the|also call the)\b")
+_MD_EXFIL = re.compile(r"!\[[^\]]{0,120}\]\(\s*https?://[^)\s]{0,200}[?&][^)=\s]{0,40}=\s*(?:\)|[{<$\[]|insert)")
+_ADDRESS_EXFIL = re.compile(
+    r"\b(send|email|e-mail|forward|mail|post|upload|export|copy|deliver)\b[^.!?\n]{0,60}?"
+    r"\b(messages?|conversation|chat|history|contents?|transcript|notes|keys?|credentials?|passwords?|tokens?"
+    r"|contacts?|logs?)\b[^.!?\n]{0,60}?\bto\s+[\w.+-]+@[\w-]+(?:\.[\w-]+)+")
+_FORWARD_HIJACK = re.compile(
+    r"\bbcc\s*:|\badd bcc\b|\breply-?to header\b|\bmail rule\b|\bauto-?forward\w*"
+    r"|\bforwards? (?:any|all|every)\b[^.!?\n]{0,60}@|\bcc\b[^!?\n]{0,60}(?:leave|off the visible|hidden|silently)")
+_INDIRECT_SECRET = re.compile(
+    r"\b(first letter|first (?:few|four|two|three) characters?|last (?:few|four) characters?|its length|one per line"
+    r"|spells? out|acrostic|character by character|reverse each|translate)\b[^.!?\n]{0,80}?"
+    r"(api key|password|secret|token|passphrase|credential|hidden (?:setup )?instructions|system prompt"
+    r"|setup instructions)"
+    r"|(api key|password|secret token|passphrase|credential)[^.!?\n]{0,60}?(first four|last four|its length"
+    r"|one per line|spell)")
+
+
+def _unnegated(pattern: "re.Pattern", text: str) -> bool:
+    """True when pattern matches somewhere not preceded by a negation in the same clause."""
+    for m in pattern.finditer(text):
+        window = text[max(0, m.start() - 25):m.end() + 4]
+        if not _NEGATION.search(window):
+            return True
+    return False
+
+
+def _addressed(norm: str, raw: str) -> bool:
+    return bool(_ADDRESSEE.search(raw) or _DIRECT.search(norm))
+
+
+_COMPOUND = [
+    ("dead_guidance",       0.80, Verdict.BLOCK, lambda n, r: bool(_DEAD_EN.search(n)) and _addressed(n, r)),
+    ("foreign_dead_guidance", 0.80, Verdict.BLOCK, lambda n, r: bool(_FOREIGN_DEAD.search(r)) and bool(_ADDRESSEE.search(r))),
+    ("foreign_credential_request", 0.75, Verdict.BLOCK, lambda n, r: _unnegated(_FOREIGN_ASK, r)),
+    ("credential_request",  0.60, Verdict.FLAG,  lambda n, r: _unnegated(_CRED_ASK, n)),
+    ("credential_collection", 0.60, Verdict.FLAG, lambda n, r: bool(_CRED_COLLECT.search(n))),
+    ("hidden_from_user",    0.70, Verdict.BLOCK, lambda n, r: bool(_HIDDEN2.search(n))),
+    ("role_hijack",         0.70, Verdict.BLOCK, lambda n, r: bool(_PERSONA2.search(n))),
+    ("fake_role_marker",    0.70, Verdict.BLOCK, lambda n, r: bool(_FAKE_MARKER.search(r))),
+    ("tool_redirect_cue",   0.60, Verdict.FLAG,  lambda n, r: bool(_REDIRECT2.search(n))),
+    ("markdown_image_exfil", 0.80, Verdict.BLOCK, lambda n, r: bool(_MD_EXFIL.search(r))),
+    ("exfil_to_address",    0.75, Verdict.BLOCK, lambda n, r: bool(_ADDRESS_EXFIL.search(r))),
+    ("forward_hijack",      0.60, Verdict.FLAG,  lambda n, r: bool(_FORWARD_HIJACK.search(r))),
+    ("indirect_secret",     0.75, Verdict.BLOCK, lambda n, r: bool(_INDIRECT_SECRET.search(n))),
 ]
 
 
@@ -448,6 +559,14 @@ def screen(text: str, canaries: "List[str] | None" = None,
                                           f"exfil taxonomy: {cat}"))
                     risk += 0.85
                     worst = Verdict.BLOCK
+
+        raw = text.lower()
+        for name, weight, verdict, check in _COMPOUND:
+            if check(norm, raw):
+                signals.append(Signal(name, verdict, weight, "compound check"))
+                risk += weight
+                if verdict.value > worst.value:
+                    worst = verdict
 
         if pol.classifier is not None:
             try:

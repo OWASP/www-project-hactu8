@@ -84,11 +84,7 @@ Order: W0, W1, W2 and W3 run first (they unblock everything). W4 and W5 can run 
 - [x] AG-10 Add `hactu8/protectogw/LICENSE` (Apache-2.0), update its README, CHANGELOG and SECURITY (resolve the TODO at `SECURITY.md:148`); vendor to labs.
 - [x] AG-11 Port the detector corpus (acts, engine, detector, wild, scenario) as `hactu8/bench/` (`python -m hactu8 bench`; 82 scored items, 33 control items handed to AG-21) with stdlib-only tests, so coverage and held-out generalization are measured on every change. Rename goat terms.
 - [x] AG-12 Port `secrets_vault.py` (per-run canary, `assert_not_leaking`) into `hactu8/` and wire it into `providers.py` and the vendored copies.
-- [ ] AG-13 Enhancements, each scored on the bench (recall up, false blocks not up):
-  - MCP tool-definition pinning (rug-pull detection) and tool-name shadowing.
-  - Close the 4 residual breaches from AgenticGoat's 23 recorded runs.
-  - Raise held-out generalization above 75%.
-  - Cut false blocks with per-surface thresholds.
+- [x] AG-13 Enhancements, each scored on the bench. Done: tool-definition pinning (rug pull) and shadowing (`pinning.py`), an optional model plane (`Policy.classifier`), compound and multilingual rules tuned on an independent training set. Generalization on an independent held-out set rose from 13% (1.0) to 53%, with 0 false positives. The original 75% figure is retired: it came from a held-out set that was mostly encodings of one phrase. Moved to AG-43, because they need live run data: closing the 4 residual live breaches, cutting live false blocks, and measuring the model plane on Ollama.
 - [ ] AG-14 Release ProtectoGW 1.1.0 (CHANGELOG, no breaking API), run `scripts/vendor.py`, and check the copies match.
 
 ### W2: Lamb MCP surface and gateway
@@ -217,4 +213,4 @@ Prepared by the loop, not sent. Each needs approval.
 
 ## Blocked on user actions
 
-- None yet.
+- Ollama is not installed on this machine (no `ollama`, nothing on port 11434). Needed for the model-plane measurement in AG-13 and for stage 1 of AG-43. Install Ollama and run `ollama pull llama3.2:3b`.
