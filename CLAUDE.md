@@ -15,8 +15,9 @@ OWASP HACTU8 turns attacks on AI systems into repeatable assurance tests: baseli
 
 ## Status
 
-- M0 and M1 done. `python -m hactu8 run all` passes 25 of 25 on the echo backend.
-- M2 is complete: router tiers, canonical providers/protectogw, evidence output, and keyword, llm-judge and Jev classifiers. Next is M3: Lamb service, vulnerable MCP surface, naming cleanup and Registry entry.
+- M0 to M4 done. `python -m hactu8 run all` passes 25 of 25 on the echo backend.
+- In progress: merging AgenticGoat's live layer (real models, OFF vs ON grading, ProtectoGW gateway, Lamb surfaces) per `docs/agenticgoat-merge-plan.md` (AG-xx items), on branch `phase1-agx-merge`. M5 and M6 follow.
+- OWASP LLM Top 10 IDs use the 2026 edition (the order in `demos/`). The catalog also records each item's 2025 ID, since AgenticGoat and the OWASP site still use 2025.
 
 ## Layout
 
@@ -30,12 +31,13 @@ scripts/    seed-issues.sh
 
 ## Rules
 
+- MCP: the official `mcp` v2 SDK only, imported through `hactu8/lamb/_mcp.py`. No fastmcp, no v1.
 - Core (`hactu8/`) uses the Python standard library only, Python 3.10 or later. Optional extras go in `pyproject.toml` extras.
 - Labs stay self-contained and copyable into `.claude/skills/`. No imports from `hactu8/` inside `demos/`. Shared code is vendored per lab.
 - Don't break the lab output format the adapter parses (`demos/_template/TEMPLATE.md`, `hactu8/adapters/lab.py`). Extend it compatibly.
 - Results follow `hactu8/schemas/result.schema.json` (`hactu8.result/v1`). Change the schema and the tests together.
 - The echo backend stays the deterministic default; tests must pass offline.
-- Safety: every target binds to `127.0.0.1`. Payloads ship as inert placeholders. Never add working exploit payloads.
+- Safety: every target binds to `127.0.0.1`. Payloads are benign-effect: realistic injection wording is allowed only when its sole possible effect is emitting a per-run canary or calling a Lamb tool on loopback. Never add payloads that harm a real system, real data, or a real account.
 - The sacrificial target is named HACTU8 Lamb (formerly AgenticGoat). The fictional company Billy, Goat & Co. stays in the labs.
 
 ## Done means

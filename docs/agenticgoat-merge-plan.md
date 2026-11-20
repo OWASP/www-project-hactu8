@@ -77,7 +77,7 @@ Order: W0, W1, W2 and W3 run first (they unblock everything). W4 and W5 can run 
 
 - [x] AG-01 Create branch `phase1-agx-merge`; set up a venv with `.[lamb,api,dev]` so `mcp>=2` is installed.
 - [x] AG-02 Make `python -m unittest discover -s tests -t .` green on the `mcp` v2 SDK. The pin stays `mcp>=2,<3`. Code imports the SDK through one module, `hactu8/lamb/_mcp.py`, so a later SDK change touches one file. When v1 is installed, Lamb exits with a clear upgrade message and the SDK tests skip with the same reason instead of erroring. No v1 fallback: `FastMCP` and `MCPServer` differ in their APIs. Make the worker startup wait configurable (default 15 s).
-- [ ] AG-03 Update CLAUDE.md status (M3 and M4 done, merge in progress) and the safety rule per D1.
+- [x] AG-03 Update CLAUDE.md status (M3 and M4 done, merge in progress) and the safety rule per D1.
 
 ### W1: ProtectoGW, one canonical home
 
@@ -210,6 +210,10 @@ Per item: unit tests pass, `run all` passes on echo, the bench does not regress,
 Prepared by the loop, not sent. Each needs approval.
 
 - None yet.
+
+## Notes for review
+
+- D3 resolution: the phase1 labs already follow the 2026 edition order (LLM03 Excessive Agency, LLM05 Data and Model Poisoning, LLM08 Hidden Context Exposure, LLM10 Improper Output Handling), confirmed by several secondary sources, including a Cloud Security Alliance post of 2026-10-21. The OWASP GenAI site page fetched on 2026-11-20 still shows the 2025 list. 2026 is canonical; the catalog (AG-90) records both IDs, and AgenticGoat's 2025 crosswalk is remapped on import.
 
 ## Blocked on user actions
 
