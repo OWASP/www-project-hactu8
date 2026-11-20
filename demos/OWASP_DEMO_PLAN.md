@@ -1,6 +1,8 @@
 # Plan — OWASP Top 10 demo series from AgenticGoat
 
-Status: approved 2026-10-02. LLM series built (owasp-llm01..llm10-demo; LLM05 pre-existing, since brought onto the template). ASI series built: ASI01-04 and ASI06-10. AGX series (AgenticGoat extensions AGX01-09, gateway labs on protectogw) designed in §4.3. ASI05 design deferred to the project owner.
+Status: approved 2026-10-02. LLM series built (owasp-llm01..llm10-demo; LLM05 pre-existing, since brought onto the template). ASI series built: ASI01-10 (ASI05 added 2026-11-20 as a port of AgenticGoat's Sink Lab, merge plan AG-50). AGX series (AgenticGoat extensions AGX01-09, gateway labs on protectogw) designed in §4.3 and built.
+
+Update 2026-11-20 (merge plan D1, AG-54): the placeholder payload policy below is superseded. Payloads are now benign-effect: realistic wording whose only possible effect is a fictional canary or a simulated loopback action.
 
 Payload policy: every demo ships **placeholder** payloads (a marker line plus a
 fictional canary) with an `assets/<payload>.README.md` explaining how to write a
@@ -399,7 +401,7 @@ screen is blind*, and the fix is always **protectogw** used properly.
 | AGX06 | B Hidden channels | Runtime Result Injection | definition clean; payload only in the runtime **return** (HTML comment) | **static** scan of definitions only (approved at install) | re-screens every return at runtime |
 | AGX07 | C RAG | Frontmatter Poison | payload in a RAG doc's YAML **frontmatter** `description:` | screens the prose **body** only | frontmatter + body + schema check on metadata keys |
 | AGX08 | C RAG | Cross-Resource Chain | doc A points to doc B; each clean alone, hostile assembled | **stateless** per-document screen | `protectogw.Session` across reads, plus a screen of the assembled context |
-| AGX09 | D Assurance | Generalization Probe | held-out paraphrase/encoding set from `wild.py` (screen was never tuned on it) | ruleset only | ruleset + output canary check. The **screen catch rate** on the held-out set is reported on its own axis (about 75% expected; misses are reported, not hidden), and CLR reaches 0% via the canary layer |
+| AGX09 | D Assurance | Generalization Probe | held-out paraphrase/encoding set from `wild.py` (screen was never tuned on it) | ruleset only | ruleset + output canary check. The **screen catch rate** on the held-out set is reported on its own axis (measured 60% on a newly written held-out set, since protectogw 2.0 catches all 20 of `wild.py`'s attacks; misses are reported, not hidden), and CLR reaches 0% via the canary layer |
 
 Notes:
 

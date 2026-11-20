@@ -13,8 +13,9 @@ tells the same four-act story against a fixed verification suite:
 
 > ⚠️ **For authorized security education and red-teaming only.** Every target
 > is insecure **by design** and binds to `127.0.0.1`. Do not expose it.
-> Payloads ship as inert **placeholders** (a marker line plus a fictional
-> canary), and each has a README explaining how to write a real one.
+> Payloads are **benign-effect**: realistic injection wording whose only
+> possible effect is emitting a fictional canary or calling a simulated tool on
+> loopback. Each has a README explaining how it works.
 
 ## The labs
 
@@ -41,7 +42,7 @@ tells the same four-act story against a fixed verification suite:
 | ASI02 | Tool Misuse & Exploitation | [`owasp-asi02-demo`](owasp-asi02-demo/) — permitted tools called with unsafe destinations and row counts | 5302 | Unsafe Invocation Rate (UIR) |
 | ASI03 | Identity & Privilege Abuse | [`owasp-asi03-demo`](owasp-asi03-demo/) — a confused-deputy agent and a replayed delegated token | 5303 | Privilege Escalation Rate (PER) |
 | ASI04 | Agentic Supply Chain Vulnerabilities | [`owasp-asi04-demo`](owasp-asi04-demo/) — a lookalike skill is resolved and loaded at runtime | 5304 | Untrusted Component Load Rate (UCLR) |
-| ASI05 | Unexpected Code Execution | _not built — design pending_ | 5305 | — |
+| ASI05 | Unexpected Code Execution | [`owasp-asi05-demo`](owasp-asi05-demo/) — a sheet note makes the agent's snippets import os and read the vault canary at a code sink (simulated) | 5305 | Unsafe Execution Rate (UER) |
 | ASI06 | Memory & Context Poisoning | [`owasp-asi06-demo`](owasp-asi06-demo/) — one session plants a memory that later users recall | 5306 | Poison Success Rate (PSR) |
 | ASI07 | Insecure Inter-Agent Communication | [`owasp-asi07-demo`](owasp-asi07-demo/) — forged and replayed work orders on an agent bus | 5307 | Forged Message Acceptance Rate (FMAR) |
 | ASI08 | Cascading Failures | [`owasp-asi08-demo`](owasp-asi08-demo/) — one wrong price propagates through a three-agent invoice pipeline | 5308 | Propagation Rate (PR) |
@@ -69,13 +70,13 @@ The metric is the Canary Leak Rate (CLR).
 | AGX04 | Hidden channels | [`agx04-demo`](agx04-demo/): Schema / Parameter Injection | 5404 | parameter defaults, enums and help text (it reads the tool description only) |
 | AGX05 | Hidden channels | [`agx05-demo`](agx05-demo/): Error-Channel Injection | 5405 | error messages (it screens successful returns only) |
 | AGX06 | Hidden channels | [`agx06-demo`](agx06-demo/): Runtime Result Injection | 5406 | runtime returns (it scans the static definition only) |
-| AGX07 | RAG | Frontmatter Poison | 5407 | _not built yet_ |
-| AGX08 | RAG | Cross-Resource Chain | 5408 | _not built yet_ |
-| AGX09 | Assurance | Generalization Probe | 5409 | _not built yet_ |
+| AGX07 | RAG | [`agx07-demo`](agx07-demo/): Frontmatter Poison | 5407 | frontmatter metadata (it screens the prose body only) |
+| AGX08 | RAG | [`agx08-demo`](agx08-demo/): Cross-Resource Chain | 5408 | the assembled context (it screens each document alone) |
+| AGX09 | Assurance | [`agx09-demo`](agx09-demo/): Generalization Probe | 5409 | vocabulary it was never tuned on (ruleset only, no output check; screen catch rate 60%) |
 
-The AGX payloads are inert placeholder lines, like every other lab's. Each
-payload README points to AgenticGoat's own probe text for anyone writing a real
-one. The designs for AGX07–09 are in `OWASP_DEMO_PLAN.md` §4.3.
+The AGX payloads are benign-effect, like every other lab's: realistic wording
+whose only effect is printing the lab's fictional per-run credential. The
+designs for AGX07–09 are in `OWASP_DEMO_PLAN.md` §4.3.
 
 ## Running a lab
 

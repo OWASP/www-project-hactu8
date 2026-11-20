@@ -15,7 +15,7 @@ OWASP HACTU8 turns attacks on AI systems into repeatable assurance tests: baseli
 
 ## Status
 
-- M0 to M4 done. `python -m hactu8 run all` passes 25 of 25 on the echo backend.
+- M0 to M4 done. `python -m hactu8 run all` passes 29 of 29 on the echo backend.
 - In progress: merging AgenticGoat's live layer (real models, OFF vs ON grading, ProtectoGW gateway, Lamb surfaces) per `docs/agenticgoat-merge-plan.md` (AG-xx items), on branch `phase1-agx-merge`. M5 and M6 follow.
 - OWASP LLM Top 10 IDs use the 2026 edition (the order in `demos/`). The catalog also records each item's 2025 ID, since AgenticGoat and the OWASP site still use 2025.
 
@@ -23,7 +23,7 @@ OWASP HACTU8 turns attacks on AI systems into repeatable assurance tests: baseli
 
 ```text
 hactu8/     Core package: catalog, adapters/lab.py, classify.py, result.py, store.py, cli.py, schemas/
-demos/      25 labs (LLM01-10, ASI01-10 except ASI05, AGX01-06); each <lab>/run_demo.py drives one skill dir
+demos/      29 labs (LLM01-10, ASI01-10, AGX01-09); each <lab>/run_demo.py drives one skill dir
 tests/      Core tests (python -m unittest discover -s tests -t .)
 spikes/     iac-prototype (React iac-host and FastAPI copilot-api, to be trimmed in M4), legacy material
 scripts/    seed-issues.sh

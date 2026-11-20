@@ -36,7 +36,7 @@ class ApiTest(unittest.TestCase):
         branding = self.client.get("/api/branding").json()
         self.assertEqual(branding["name"], "OWASP HACTU8")
         skills = self.client.get("/api/skills").json()
-        self.assertEqual(skills["total"], 25)
+        self.assertEqual(skills["total"], 29)
         library = self.client.get("/api/protections").json()
         self.assertEqual(library["total"], len(protections.CATALOG))
         self.assertEqual({"id", "title", "idea", "steps", "before", "after"}, set(library["protections"][0]))
