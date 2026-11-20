@@ -7,7 +7,7 @@ model's own output are all just "untrusted text," judged by one entry point.
 
 Pure standard library, **zero runtime dependencies.**
 
-> Extracted from [AgenticGoat](https://github.com/Mr-H/AgenticGoat), a
+> Extracted from AgenticGoat (now [HACTU8 Lamb](https://github.com/OWASP/www-project-hactu8/tree/phase1-mvp)), a
 > deliberately-vulnerable target range for agentic attacks. **Read
 > [`SECURITY.md`](./SECURITY.md) before deploying** — it states exactly what
 > protectogw defends, what it does not (a measured ~75% generalization ceiling),
@@ -70,5 +70,4 @@ semver (see [`CHANGELOG.md`](./CHANGELOG.md)).
 
 ## License
 
-Not yet chosen — see `SECURITY.md §7`. Reuse rights are undefined until a LICENSE
-is added; do not redistribute until then.
+Apache License 2.0 — see [`LICENSE`](./LICENSE).

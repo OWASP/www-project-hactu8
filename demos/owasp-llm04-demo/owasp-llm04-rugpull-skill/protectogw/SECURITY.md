@@ -1,7 +1,7 @@
 # ProtectoGW — Security Model & Threat Model
 
 > **Status: draft / reference implementation.** ProtectoGW is a screening core
-> extracted from [AgenticGoat](../README.md), a deliberately-vulnerable target
+> extracted from AgenticGoat (now HACTU8 Lamb), a deliberately-vulnerable target
 > range for agentic prompt-injection. This document states what ProtectoGW
 > defends, what it explicitly does **not**, and the conditions under which it is
 > safe to deploy. Read it before putting ProtectoGW in a request path.
@@ -78,7 +78,7 @@ ProtectoGW is **regex-and-heuristic over a closed corpus.** These limits are
 structural, measured, and by design — not bugs:
 
 - **Novel phrasings / deep paraphrase.** An override worded outside the ruleset's
-  verb/noun vocabulary passes. AgenticGoat measures this: on a held-out set
+  verb/noun vocabulary passes. HACTU8 Lamb measures this: on a held-out set
   ProtectoGW was never tuned on, it currently catches **~75%** — the remaining
   misses are paraphrases and non-English payloads it structurally cannot close.
 - **Translation / non-English payloads.** No language model, no translation
@@ -89,7 +89,7 @@ structural, measured, and by design — not bugs:
   intent. An injection that reads as benign prose is invisible to it.
 - **Anything downstream of the verdict.** ProtectoGW does not sandbox tools, gate
   egress, authenticate callers, or pin content hashes. Those are *separate*
-  planes (AgenticGoat demonstrates hash-pinning and egress-nulling elsewhere) and
+  planes (HACTU8 Lamb demonstrates hash-pinning and egress-nulling elsewhere) and
   ProtectoGW is not a substitute for them.
 
 **The honest one-liner:** the *attack-agnostic* controls (the canary/output
@@ -105,7 +105,7 @@ attack surface. Current hardening status:
 | Concern | Status | Notes |
 |---|---|---|
 | Third-party dependencies | ✅ **none** (pure stdlib) | Keep it this way; guard in CI. |
-| Harness coupling | ✅ none | `protectogw/` imports nothing from the AgenticGoat harness. |
+| Harness coupling | ✅ none | `protectogw/` imports nothing from the HACTU8 harness. |
 | `screen()` thread-safety | ✅ pure / stateless | No shared mutable state; safe for concurrent callers. |
 | `Session` thread-safety | ⚠️ **not thread-safe** | Holds per-session accumulated state; use one `Session` per logical session, do not share across threads. |
 | **Input size cap** | ✅ **enforced in-library** | `screen()`, `detect_indicators()`, and `Session.observe()` truncate input to `MAX_INPUT_CHARS` (100k, in `_limits.py`) before any work. Override per call: `screen(text, max_chars=...)`. Bounds canary coverage to the first `max_chars` — raise it (or chunk) when screening large outputs. |
@@ -141,12 +141,11 @@ DoS vectors.
 - [ ] Treat ProtectoGW as **one layer.** Pair it with egress control, tool
       sandboxing, and content hash-pinning.
 - [ ] Re-measure generalization against **your** threat corpus; the ~75% figure
-      is against AgenticGoat's held-out set, not yours.
+      is against the HACTU8 Lamb held-out set, not yours.
 
 ## 7. Reporting a security issue
 
-<!-- TODO: fill in for the public release -->
-- Preferred contact: _<security contact / email>_
+- Preferred contact: GitHub private vulnerability reporting on the HACTU8 repository (Security tab, "Report a vulnerability"), <https://github.com/OWASP/www-project-hactu8/security/advisories/new>.
 - Please include a minimal reproducing input and the observed vs expected
   verdict. Do **not** open a public issue for a bypass that affects real
   deployments; use the private contact above.

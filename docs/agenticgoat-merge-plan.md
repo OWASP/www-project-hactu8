@@ -81,7 +81,7 @@ Order: W0, W1, W2 and W3 run first (they unblock everything). W4 and W5 can run 
 
 ### W1: ProtectoGW, one canonical home
 
-- [ ] AG-10 Add `hactu8/protectogw/LICENSE` (Apache-2.0), update its README, CHANGELOG and SECURITY (resolve the TODO at `SECURITY.md:148`); vendor to labs.
+- [x] AG-10 Add `hactu8/protectogw/LICENSE` (Apache-2.0), update its README, CHANGELOG and SECURITY (resolve the TODO at `SECURITY.md:148`); vendor to labs.
 - [ ] AG-11 Port the detector corpus (acts, engine, detector, wild, scenario) as `hactu8/protectogw/bench/` with stdlib-only tests, so coverage and held-out generalization are measured on every change. Rename goat terms.
 - [ ] AG-12 Port `secrets_vault.py` (per-run canary, `assert_not_leaking`) into `hactu8/` and wire it into `providers.py` and the vendored copies.
 - [ ] AG-13 Enhancements, each scored on the bench (recall up, false blocks not up):

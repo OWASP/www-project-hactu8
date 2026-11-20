@@ -31,5 +31,6 @@ Initial frozen public API.
 held-out attacks), no semantic/translation defense, `Session` is not
 thread-safe. See `SECURITY.md §4`.
 
-**Not yet done (tracked, does not affect API stability):** license selection
-(`SECURITY.md §7`), PyPI publication, async/HTTP integration adapters.
+**License:** Apache-2.0 (`LICENSE`), chosen 2026-10-07.
+
+**Not yet done (tracked, does not affect API stability):** PyPI publication, async/HTTP integration adapters.
