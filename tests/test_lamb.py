@@ -94,6 +94,30 @@ class McpTargetTest(unittest.TestCase):
                 server_class()
 
 
+
+
+
+class WorkerBackendDefaultTest(unittest.TestCase):
+    def test_lamb_wide_backend_and_model_reach_the_worker(self):
+        import os
+        from unittest import mock
+
+        from hactu8 import catalog
+        from hactu8.lamb.workers import LabWorkerManager
+        skill = next(s for s in catalog.discover() if s.id == "llm01")
+        clean = {k: v for k, v in os.environ.items() if not k.startswith("LLM01_")}
+        with mock.patch.dict(os.environ, {**clean, "HACTU8_LAB_BACKEND": "ollama",
+                                          "HACTU8_LAB_MODEL": "llama3.2:3b"}, clear=True):
+            env = LabWorkerManager.worker_env(skill)
+        self.assertEqual((env["LLM01_BACKEND"], env["LLM01_MODEL"]), ("ollama", "llama3.2:3b"))
+        with mock.patch.dict(os.environ, {**clean, "LLM01_BACKEND": "llamacpp",
+                                          "HACTU8_LAB_BACKEND": "ollama"}, clear=True):
+            self.assertEqual(LabWorkerManager.worker_env(skill)["LLM01_BACKEND"], "llamacpp")
+        with mock.patch.dict(os.environ, clean, clear=True):
+            env = LabWorkerManager.worker_env(skill)
+        self.assertEqual(env["LLM01_BACKEND"], "echo")
+        self.assertNotIn("LLM01_MODEL", env)
+
+
 if __name__ == "__main__":
     unittest.main()
-

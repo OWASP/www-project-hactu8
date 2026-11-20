@@ -143,7 +143,7 @@ class ConsoleHttpTest(unittest.TestCase):
         with unittest.mock.patch.dict(os.environ, {"OPENROUTER_API_KEY": "sk-test-secret"}):
             status, meta = self._call("/api/meta")
         self.assertEqual(status, 200)
-        self.assertEqual(meta["backends"], ["echo", "ollama", "llamacpp", "openrouter"])
+        self.assertEqual(meta["backends"], ["echo", "ollama", "llamacpp", "openrouter", "anthropic", "openai"])
         self.assertTrue(meta["openrouter_key_set"])
         self.assertNotIn("sk-test-secret", json.dumps(meta))
 

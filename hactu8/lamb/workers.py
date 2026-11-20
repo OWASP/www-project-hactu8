@@ -52,6 +52,18 @@ class LabWorkerManager:
                 })
         return rows
 
+    @staticmethod
+    def worker_env(skill: Skill) -> Dict[str, str]:
+        """Environment for a lab worker. Lamb-wide defaults (HACTU8_LAB_BACKEND / HACTU8_LAB_MODEL)
+        apply unless the lab's own variable is set; the lab console can still switch at runtime."""
+        env = dict(os.environ, PYTHONIOENCODING="utf-8", PYTHONDONTWRITEBYTECODE="1")
+        prefix = skill.id.upper()
+        env[f"{prefix}_PORT"] = skill.port
+        env.setdefault(f"{prefix}_BACKEND", os.environ.get("HACTU8_LAB_BACKEND", "echo"))
+        if os.environ.get("HACTU8_LAB_MODEL"):
+            env.setdefault(f"{prefix}_MODEL", os.environ["HACTU8_LAB_MODEL"])
+        return env
+
     def ensure_started(self, skill_id: str) -> Skill:
         skill = self._skill(skill_id)
         with self._lock:
@@ -65,10 +77,7 @@ class LabWorkerManager:
                 raise WorkerError(f"{skill_id}: no vulnerable_app.py at {script}")
             log_path = Path(self._log_dir.name) / f"{skill_id}.log"
             log = open(log_path, "w+", encoding="utf-8")
-            env = dict(os.environ, PYTHONIOENCODING="utf-8", PYTHONDONTWRITEBYTECODE="1")
-            prefix = skill.id.upper()
-            env[f"{prefix}_PORT"] = skill.port
-            env.setdefault(f"{prefix}_BACKEND", "echo")
+            env = self.worker_env(skill)
             proc = subprocess.Popen(
                 [sys.executable, str(script)],
                 cwd=skill.skill_dir,

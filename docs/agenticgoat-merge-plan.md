@@ -110,7 +110,7 @@ Order: W0, W1, W2 and W3 run first (they unblock everything). W4 and W5 can run 
 
 ### W4: Real models from end to end
 
-- [ ] AG-40 Lamb workers take backend and model per request or run (not only from the environment); the lab console offers all six backends; key presence is shown, never the key.
+- [x] AG-40 Lamb workers take backend and model per request or run (not only from the environment); the lab console offers all six backends; key presence is shown, never the key.
 - [ ] AG-41 API: `GET /api/models` (router tiers, availability, the provider catalog), and `POST /api/runs` accepts `model`, `classifier` and `compare`.
 - [ ] AG-42 Console Run page: a model picker (backend, model, availability) and an attack → defense run. The result shows four things in one view: the model's output, off vs on, what the Wolf captured, and the protections added. No separate wolf-den, scoreboard or live pages.
 - [ ] AG-44 Generic local backend `openai-compat` (base URL plus optional key, set by `LOCAL_OPENAI_BASE_URL`). One adapter covers LM Studio, vLLM, LocalAI, Jan, llamafile and `mlx_lm.server`; Ollama and llama.cpp keep their dedicated backends. Loopback URLs only, unless overridden on purpose. Model catalog comes from `/v1/models`. Vendor to the labs and add it to the router's local tier.

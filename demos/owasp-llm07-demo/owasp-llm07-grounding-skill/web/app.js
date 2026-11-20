@@ -9,7 +9,7 @@
 //   POST /api/mode      {mode: "vulnerable" | "hardened"}
 //   GET  /api/models?backend=NAME   best-effort model list for the picker
 //   POST /api/backend   {backend, model} switch the model backend at runtime
-// /api/meta also carries {backends, default_models, openrouter_key_set}. The
+// /api/meta also carries {backends, default_models, keys_set, openrouter_key_set}. The
 // OpenRouter key itself never touches the console: it comes from the env only.
 // Open /#run to play all four acts on page load.
 // All text is inserted with textContent, never innerHTML.
@@ -184,16 +184,28 @@ async function loadModels(name) {
   }
 }
 
+const CLOUD_KEYS = { openrouter: "OPENROUTER_API_KEY", anthropic: "ANTHROPIC_API_KEY", openai: "OPENAI_API_KEY" };
+
+function keySet(name) {
+  if (!(name in CLOUD_KEYS)) return true;
+  const keys = meta.keys_set || { openrouter: meta.openrouter_key_set };
+  return Boolean(keys[name]);
+}
+
 function backendNote(name) {
   const note = $("backend-note");
-  note.classList.toggle("warn", name === "openrouter");
+  const env = CLOUD_KEYS[name];
+  note.classList.toggle("warn", Boolean(env));
+  if (env) {
+    note.textContent = keySet(name)
+      ? `${name}: lab prompts and payloads leave this machine. Key read from ${env}.`
+      : `${name}: set ${env} in the shell that starts the lab, then restart it.`;
+    return;
+  }
   note.textContent = {
     echo: "echo: the lab's deterministic offline model. No network, no key.",
     ollama: "ollama: local model server (OLLAMA_HOST). Nothing leaves this machine.",
     llamacpp: "llamacpp: local llama.cpp server (LLAMACPP_HOST). Nothing leaves this machine.",
-    openrouter: meta.openrouter_key_set
-      ? "openrouter: lab prompts and payloads leave this machine. Key read from OPENROUTER_API_KEY."
-      : "openrouter: set OPENROUTER_API_KEY in the shell that starts the lab, then restart it.",
   }[name] || "";
 }
 
@@ -202,8 +214,8 @@ function initBackendPicker() {
   for (const name of meta.backends || ["echo"]) {
     const opt = document.createElement("option");
     opt.value = name;
-    opt.textContent = name === "openrouter" && !meta.openrouter_key_set ? "openrouter (no key)" : name;
-    opt.disabled = name === "openrouter" && !meta.openrouter_key_set;
+    opt.textContent = keySet(name) ? name : `${name} (no key)`;
+    opt.disabled = !keySet(name);
     select.append(opt);
   }
   const name = backendName(currentBackend);

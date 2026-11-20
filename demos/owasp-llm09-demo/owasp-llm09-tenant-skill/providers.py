@@ -51,9 +51,9 @@ import secrets
 from dataclasses import dataclass
 from typing import List, Optional
 
-# BACKENDS is what the lab console offers; anthropic and openai are CLI and router only for now.
-BACKENDS = ("echo", "ollama", "llamacpp", "openrouter")
-ALL_BACKENDS = BACKENDS + ("anthropic", "openai")
+# BACKENDS is what the lab console offers; ALL_BACKENDS is kept as an alias for older callers.
+BACKENDS = ("echo", "ollama", "llamacpp", "openrouter", "anthropic", "openai")
+ALL_BACKENDS = BACKENDS
 LOCAL = ("ollama", "llamacpp")
 KEY_ENV = {"openrouter": "OPENROUTER_API_KEY", "anthropic": "ANTHROPIC_API_KEY", "openai": "OPENAI_API_KEY"}
 OFFLINE = "echo"
