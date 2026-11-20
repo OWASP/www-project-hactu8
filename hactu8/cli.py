@@ -188,12 +188,18 @@ def cmd_bench(args) -> int:
 
 
 def cmd_live(args) -> int:
+    import time
+
+    from hactu8.result import now_iso
+    started, clock = now_iso(), time.monotonic()
     try:
         from hactu8 import live
         result = live.run(args.backend, args.model)
     except (RuntimeError, ValueError) as exc:
         print(f"hactu8 live: {exc}", file=sys.stderr)
         return 2
+    doc = live.to_result(result, started, int((time.monotonic() - clock) * 1000))
+    path = store.save(doc)
     if args.json:
         print(json.dumps(result.to_dict(), indent=2))
         return 0
@@ -204,6 +210,7 @@ def cmd_live(args) -> int:
     print(f"model resistance  {_pct(result.model_resistance)}  ({result.resisted} of {result.attacks} attacks held)")
     print(f"app exposure      {result.breaches_off} breaches with the gateway off, {result.breaches_on} with it on")
     print(f"false blocks      {result.false_blocks_on}")
+    print(f"saved {path}")
     return 0
 
 

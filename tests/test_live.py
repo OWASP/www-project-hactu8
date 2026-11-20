@@ -101,8 +101,12 @@ class LiveCliTest(unittest.TestCase):
         import sys
         import os
         pinned = "sk-canary-pinnedforthisclitest0000000000"
-        out = subprocess.run([sys.executable, "-m", "hactu8", "live", "--json"], capture_output=True, text=True,
-                             check=True, env={**os.environ, "LAB_CANARY": pinned})
+        import tempfile
+        with tempfile.TemporaryDirectory() as home:
+            out = subprocess.run([sys.executable, "-m", "hactu8", "live", "--json"], capture_output=True, text=True,
+                                 check=True, env={**os.environ, "LAB_CANARY": pinned, "HACTU8_HOME": home})
+            saved = list((__import__("pathlib").Path(home) / "results").glob("*-lamb-live-*.json"))
+        self.assertEqual(len(saved), 1)
         data = json.loads(out.stdout)
         self.assertEqual((data["breaches_off"], data["breaches_on"]), (8, 0))
         self.assertNotIn(pinned, out.stdout)
@@ -116,3 +120,23 @@ class ExcerptTest(unittest.TestCase):
         self.assertIn("<canary>", excerpt)
         self.assertNotIn(CANARY, excerpt)
         self.assertIn("encoded form", live._excerpt(CANARY[::-1], CANARY))
+
+
+@unittest.skipUnless(HAVE_MCP, "Lamb extra not installed")
+class LiveResultTest(unittest.TestCase):
+    def test_result_document_validates_and_counts_match(self):
+        try:
+            import jsonschema
+        except ModuleNotFoundError:
+            self.skipTest("jsonschema not installed")
+        import json
+        from pathlib import Path
+        run = live.run("echo")
+        doc = live.to_result(run, "2026-11-20T00:00:00Z", 10)
+        schema = json.loads((Path(live.__file__).parent / "schemas" / "result.schema.json").read_text())
+        jsonschema.validate(doc, schema)
+        self.assertEqual(doc["live"]["breaches_off"], run.breaches_off)
+        reds = sum(i["verdict"] == "RED" for i in doc["acts"][1]["items"])
+        self.assertEqual(reds, run.breaches_off)
+        self.assertEqual(doc["summary"]["status"], "pass")
+        self.assertEqual(doc["summary"]["remediated_rate"], 0.0)
