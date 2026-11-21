@@ -1,4 +1,4 @@
-# HACTU8: the API, the 32 labs and the built console in one image (H-50).
+# HACTU8: the API, the 33 labs and the built console in one image (H-50).
 # See docs/deploy.md. Nothing here bakes in a secret: keys arrive at run time
 # through an env_file kept outside the repo.
 #

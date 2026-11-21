@@ -53,8 +53,8 @@ class McpServerTest(unittest.TestCase):
         skills, path, lesson, missing = self.call(("list_skills", {}), ("learning_path", {}),
                                                   ("get_lesson", {"skill_id": "llm01"}),
                                                   ("get_lesson", {"skill_id": "nope"}))
-        self.assertEqual(skills.structured_content["total"], 32)
-        self.assertEqual(path.structured_content["total"], 32)
+        self.assertEqual(skills.structured_content["total"], 33)
+        self.assertEqual(path.structured_content["total"], 33)
         self.assertFalse(lesson.is_error)
         self.assertTrue(lesson.structured_content["title"])
         self.assertTrue(missing.is_error)

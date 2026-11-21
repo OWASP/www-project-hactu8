@@ -233,6 +233,16 @@ CATALOG: Dict[str, Dict[str, object]] = {
         "result = model(request.messages + (session if request.includeContext != 'none' else []))\nreturn result   # to the server",
         "if not policy.allows(server, request) or not user.approves(request): deny()\nctx = session.user_messages() if user.shared_context else []\nresult = model(ctx + request.messages, max_tokens=cap)\nif screen(result, canaries=[secret]).blocked: deny()\nreturn result",
     ),
+    "elicitation_policy": _c(
+        "Gate MCP elicitation in the client",
+        "An MCP server can ask the user for input through the client (elicitation), by form or by a URL to open. Treat each request as untrusted: name the server that asks, refuse forms that ask for secrets, never let the agent fill a form, open URLs only on an allow-list, and limit how many prompts one tool call can raise.",
+        ["refuse forms with sensitive fields (references, passwords, tokens, keys, card numbers), nested schemas or links; pre-fill only schema defaults, never the model",
+         "name the requesting server in every dialog; for URL mode show the full URL and its real host",
+         "open URL-mode requests only to allow-listed origins, on the parsed URL (no user-info, no punycode)",
+         "cap dialogs per tool call against consent fatigue; screen the request and the form answer"],
+        "for req in result.inputRequests.values():\n    answers[req.id] = user.review(req.message, prefill=model.fill(session, req))",
+        "for req in result.inputRequests.values():\n    if over_budget() or policy.denies(req) or not allowed(req.url): answers[req.id] = decline(); continue\n    answer = user.review(server=req.server, url=req.url, message=req.message, prefill=req.defaults)\n    answers[req.id] = answer if not screen(answer, canaries=[secret]).blocked else decline()",
+    ),
     "plan_pin": _c(
         "Pin the plan before reading tool data",
         "Fix the agent's plan from the user's request before any tool data is read. A step that tool data adds is off-plan and is held for re-approval.",

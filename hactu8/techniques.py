@@ -336,9 +336,10 @@ TECHNIQUES: Dict[str, Dict[str, object]] = {
         ["sampling_policy", "input_screen", "output_screen"], ["hx03"]),
     "mcp-elicitation-abuse": _t(
         "MCP elicitation phishing", "mcp",
-        "A server uses elicitation to ask the user for data it should never receive.",
+        "A server uses elicitation to ask the user for data it should never receive. The HX04 lab also has "
+        "the client's model fill the form, a look-alike page in URL mode, and consent fatigue.",
         {"owasp_mcp_2025": ["MCP07:2025"], "owasp_asi_2026": ["ASI09:2026"]},
-        [], []),
+        ["elicitation_policy", "input_screen", "output_screen"], ["hx04"]),
     "oauth-confused-deputy": _t(
         "OAuth confused deputy through an MCP proxy", "mcp",
         "A proxy server's static client consent is reused to obtain tokens for another user.",
