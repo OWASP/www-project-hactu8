@@ -38,6 +38,7 @@ python3 -m hactu8 list           # 29 skills mapped to the OWASP 2026 lists
 python3 -m hactu8 run llm01      # baseline -> attack -> impact -> remediation
 python3 -m hactu8 run all        # every skill
 python3 -m hactu8 coverage       # known attack techniques: attack and defense, attack only, no lab yet
+python3 -m hactu8 defenses       # each defense, what it covers, and bench and lab evidence that it works
 python3 -m hactu8 results        # stored runs (.hactu8/results)
 python3 -m hactu8 show latest    # full hactu8.result/v1 JSON
 ```

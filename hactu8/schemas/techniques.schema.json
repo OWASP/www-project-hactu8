@@ -27,7 +27,7 @@
         }
       },
       "defenses": {"type": "array", "items": {"type": "string", "pattern": "^[a-z0-9_]+$"}},
-      "labs": {"type": "array", "items": {"type": "string", "pattern": "^[a-z0-9]+$"}}
+      "labs": {"type": "array", "items": {"type": "string", "pattern": "^([a-z0-9]+|lamb-live)$"}}
     }
   },
   "$defs": {

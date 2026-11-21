@@ -8,7 +8,8 @@ import os
 from pathlib import Path
 from typing import Optional
 
-from hactu8 import branding, catalog, config, lessons, protections, providers, reports, spend, store, techniques
+from hactu8 import (branding, catalog, config, defenses, lessons, protections, providers, reports, spend, store,
+                    techniques)
 from hactu8.adapters import lab
 from hactu8.classify import get_classifier
 from hactu8.router import Router, RouterError
@@ -89,6 +90,11 @@ def create_app(root: Optional[Path] = None):
     @app.get("/api/coverage")
     def coverage():
         return techniques.coverage(store.list_runs())
+
+    @app.get("/api/defenses")
+    def defense_catalog():
+        from hactu8 import bench
+        return defenses.report(catalog.discover(root), store.list_runs(), bench.run().items)
 
     @app.get("/api/protections")
     def protection_library():

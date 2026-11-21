@@ -3,6 +3,7 @@
     hactu8 list [--json]
     hactu8 path [--json]
     hactu8 coverage [--status S] [--json]
+    hactu8 defenses [--json]
     hactu8 run <skill...|all> [--tier T | --backend B [--model M]] [--classifier C] [--json]
     hactu8 results [--json]
     hactu8 show <run_id|latest>
@@ -26,7 +27,7 @@ import json
 import sys
 from typing import List
 
-from hactu8 import __version__, catalog, config, store, techniques
+from hactu8 import __version__, catalog, config, defenses, store, techniques
 from hactu8.adapters import lab
 from hactu8.classify import get_classifier
 from hactu8.router import Router, RouterError
@@ -90,6 +91,26 @@ def cmd_coverage(args) -> int:
     leaky = [r["id"] for r in report["techniques"] if r["leaky_labs"]]
     if leaky:
         print("latest run left impact after remediation: " + ", ".join(leaky))
+    return 0
+
+
+def cmd_defenses(args) -> int:
+    from hactu8 import bench
+    report = defenses.report(catalog.discover(), store.list_runs(), bench.run().items)
+    if args.json:
+        print(json.dumps(report, indent=2))
+        return 0
+    rows = []
+    for d in report["defenses"]:
+        b = d["bench"]
+        shown = f"{b['caught']}/{b['attacks']} caught, {b['false_positives']}/{b['clean']} FP" if b and b["attacks"] else "-"
+        rows.append([d["id"], d["kind_title"], str(len(d["techniques"])), ",".join(d["labs"]) or "-", shown])
+    _print_table(rows, ["DEFENSE", "KIND", "TECHNIQUES", "LABS", "BENCH"])
+    for key, title in report["evidence"].items():
+        ids = [d["id"] for d in report["defenses"] if d["evidence"] == key]
+        print(f"\n{title} ({len(ids)}): {', '.join(ids) or '-'}", end="")
+    print()
+    print(f"techniques with no defense ({len(report['gaps'])}): " + ", ".join(g["id"] for g in report["gaps"]))
     return 0
 
 
@@ -343,6 +364,10 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--status", choices=list(techniques.STATUSES), default="")
     p.add_argument("--json", action="store_true")
     p.set_defaults(func=cmd_coverage)
+
+    p = sub.add_parser("defenses", help="each defense with the techniques it covers and its bench and lab evidence")
+    p.add_argument("--json", action="store_true")
+    p.set_defaults(func=cmd_defenses)
 
     p = sub.add_parser("run", help="run one or more skills ('all' for every skill)")
     p.add_argument("skills", nargs="+")

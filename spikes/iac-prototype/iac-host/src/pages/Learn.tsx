@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Link, useSearchParams } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import CoverageView from '../components/learn/CoverageView';
 import LessonView from '../components/learn/LessonView';
 import { hactu8Api } from '../services/hactu8Api';
@@ -9,6 +9,7 @@ export default function Learn() {
   const [path, setPath] = useState<LearningPath | null>(null);
   const [error, setError] = useState('');
   const [params, setParams] = useSearchParams();
+  const navigate = useNavigate();
 
   useEffect(() => {
     hactu8Api.path().then(setPath).catch((err: Error) => setError(err.message));
@@ -48,7 +49,8 @@ export default function Learn() {
         ))}
       </nav>
       <div className="result-detail">
-        {showCatalog && <CoverageView onLab={(lab) => setParams({ lab })} />}
+        {showCatalog && <CoverageView onLab={(lab) => (lab === 'lamb-live'
+          ? navigate('/run?lab=lamb-live') : setParams({ lab }))} />}
         {!showCatalog && selected && (
           <div className="page-heading">
             <div><h1>Step {selected.step}: {selected.owasp}</h1><p>{selected.risk}</p></div>

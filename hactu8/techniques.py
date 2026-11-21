@@ -2,7 +2,8 @@
 
 Each technique carries its IDs in the main lists (``REF_LISTS``), the defenses
 that address it (ids from ``hactu8/protections.py``) and the labs that
-demonstrate it (skill ids such as ``llm01``). An empty ``labs`` or
+demonstrate it (skill ids such as ``llm01``, or ``LIVE_LAB`` for the live
+run against Billy's MCP surfaces). An empty ``labs`` or
 ``defenses`` list is a gap, not an error: coverage (AG-91) reports it.
 
 The catalog stores list IDs, never their names, because names drift between
@@ -57,6 +58,10 @@ FAMILIES = {
 
 FIELDS = ("title", "family", "summary", "refs", "defenses", "labs")
 
+# The live run (hactu8 live) is not a skill but demonstrates several
+# techniques; the console's Run page uses the same id.
+LIVE_LAB = "lamb-live"
+
 
 def _t(title: str, family: str, summary: str, refs: Dict[str, List[str]],
        defenses: List[str], labs: List[str]) -> Dict[str, object]:
@@ -71,7 +76,7 @@ TECHNIQUES: Dict[str, Dict[str, object]] = {
         "An instruction planted in data the application fetches (a page, document or tool result) overrides the operator.",
         {"owasp_llm_2026": ["LLM01:2026"], "owasp_llm_2025": ["LLM01:2025"], "owasp_mcp_2025": ["MCP06:2025"],
          "atlas": ["AML.T0051.001"], "nist": ["NISTAML.015"]},
-        ["spotlight", "input_screen"], ["llm01"]),
+        ["spotlight", "input_screen"], ["llm01", LIVE_LAB]),
     "direct-prompt-injection": _t(
         "Direct prompt injection", "injection",
         "The user types an instruction that overrides the system prompt.",
@@ -133,12 +138,12 @@ TECHNIQUES: Dict[str, Dict[str, object]] = {
         "that the screen never reads.",
         {"owasp_asi_2026": ["ASI02:2026", "ASI06:2026"], "owasp_mcp_2025": ["MCP03:2025", "MCP06:2025"],
          "atlas": ["AML.T0051.001", "AML.T0110"], "nist": ["NISTAML.015"]},
-        ["channel_screen", "canary_tripwire"], ["agx04", "agx05", "agx06", "agx07"]),
+        ["channel_screen", "canary_tripwire"], ["agx04", "agx05", "agx06", "agx07", LIVE_LAB]),
     "split-payload-chain": _t(
         "Payload split across resources", "evasion",
         "Each document is clean alone; only the context assembled from several carries the injection.",
         {"owasp_asi_2026": ["ASI06:2026"], "atlas": ["AML.T0051.001", "AML.T0070"], "nist": ["NISTAML.015"]},
-        ["session_screen", "canary_tripwire"], ["agx08"]),
+        ["session_screen", "canary_tripwire"], ["agx08", LIVE_LAB]),
     "novel-phrasing-evasion": _t(
         "Paraphrase and translation evasion", "evasion",
         "Wording the screen was never tuned on (paraphrase, another language, a new encoding) slips through.",
@@ -238,7 +243,13 @@ TECHNIQUES: Dict[str, Dict[str, object]] = {
         "A tool changes after approval, or turns hostile only after its first calls.",
         {"owasp_llm_2026": ["LLM04:2026"], "owasp_llm_2025": ["LLM03:2025"], "owasp_asi_2026": ["ASI04:2026"],
          "owasp_mcp_2025": ["MCP03:2025", "MCP04:2025"], "atlas": ["AML.T0109", "AML.T0110"]},
-        ["hash_pin", "sampling"], ["llm04", "agx03"]),
+        ["hash_pin", "sampling"], ["llm04", "agx03", LIVE_LAB]),
+    "tool-description-poisoning": _t(
+        "Tool description poisoning", "supply_chain",
+        "An MCP server's tool description carries instructions the model reads as part of its tool list.",
+        {"owasp_mcp_2025": ["MCP03:2025"], "owasp_llm_2026": ["LLM01:2026"], "owasp_asi_2026": ["ASI04:2026"],
+         "atlas": ["AML.T0110"], "nist": ["NISTAML.015"]},
+        ["mcp_gateway_filter", "hash_pin"], [LIVE_LAB]),
     "lookalike-skill": _t(
         "Lookalike skill or tool", "supply_chain",
         "A typosquatted skill in an open catalogue is picked by a loose name resolver and trusted.",
@@ -412,7 +423,8 @@ def validate(skill_ids: Iterable[str] = ()) -> List[str]:
     ``skill_ids``, when given, are the discovered labs: every ``labs`` entry
     must be one of them.
     """
-    known = set(skill_ids)
+    skill_ids = list(skill_ids)
+    known = set(skill_ids) | {LIVE_LAB}
     patterns = {key: re.compile(rf"^{pat}$") for key, _, _, pat in REF_LISTS}
     problems: List[str] = []
     for tid, tech in TECHNIQUES.items():
@@ -437,7 +449,7 @@ def validate(skill_ids: Iterable[str] = ()) -> List[str]:
                     problems.append(f"{where} {ref!r} is not a {key} ID")
         for cid in protections.unknown(tech["defenses"]):
             problems.append(f"{where} unknown defense {cid!r}")
-        if known:
+        if skill_ids:
             for lab in tech["labs"]:
                 if lab not in known:
                     problems.append(f"{where} unknown lab {lab!r}")
