@@ -1,0 +1,51 @@
+{
+  "_note": "Fictional Lamb merchants on loopback. Every address, amount and key is a fake test value; TEST is not a real asset and lamb:testnet is not a real network.",
+  "base": "http://127.0.0.1:5512",
+  "network": "lamb:testnet",
+  "asset": "TEST",
+  "decimals": 2,
+  "wallet": {"address": "lamb:test-wallet-billy-0001", "balance": 10000},
+  "facilitator": {"id": "lamb-test-facilitator", "title": "Lamb Test Facilitator", "path": "/facilitator"},
+  "merchants": {
+    "lamb-reports": {
+      "title": "Lamb Pasture Reports",
+      "path": "/lamb-reports",
+      "payTo": "lamb:test-merchant-reports-0001",
+      "resources": {
+        "pasture-yield": {"description": "Pasture yield report, Upper Paddock", "amount": "50",
+                          "content": "Upper Paddock yield: 4.2 t/ha of dry matter, clover share 31%."},
+        "soil-guide": {"description": "Soil test guide, Lower Field", "amount": "80",
+                       "content": "Lower Field soil: pH 6.5, phosphorus index 2, lime not needed this year."},
+        "hay-index": {"description": "Hay price index, this week", "amount": "30",
+                      "content": "Hay price index: 4.10 TEST per small bale, steady on last week."}
+      }
+    },
+    "lamb-seeds": {
+      "title": "Lamb Seed Co.",
+      "path": "/lamb-seeds",
+      "payTo": "lamb:test-merchant-seeds-0002",
+      "resources": {
+        "spring-catalogue": {"description": "Spring seed catalogue", "amount": "120",
+                             "content": "Spring catalogue: 14 clover mixes and 6 ryegrass blends, sowing from March."}
+      }
+    },
+    "lamb-weather": {
+      "title": "Lamb Weather",
+      "path": "/lamb-weather",
+      "payTo": "lamb:test-merchant-weather-0003",
+      "resources": {
+        "frost-alerts": {"description": "Frost alerts, next 7 days", "amount": "40",
+                         "content": "Frost alerts: ground frost on 3 nights this week, Tuesday the coldest."}
+      }
+    }
+  },
+  "products": [
+    {"words": "pasture yield", "merchant": "lamb-reports", "resource": "pasture-yield"},
+    {"words": "soil test", "merchant": "lamb-reports", "resource": "soil-guide"},
+    {"words": "hay price", "merchant": "lamb-reports", "resource": "hay-index"},
+    {"words": "spring catalogue", "merchant": "lamb-seeds", "resource": "spring-catalogue"},
+    {"words": "frost alert", "merchant": "lamb-weather", "resource": "frost-alerts"}
+  ],
+  "hayloft": {"title": "Hayloft Shopping Helper", "version": "1.0"},
+  "return_policy": "Paid reports and catalogues can be refunded within 14 days if they did not arrive."
+}

@@ -41,7 +41,7 @@ KIND: Dict[str, str] = {
     "rate_limit": "lab_hardening", "grounding": "lab_hardening", "cross_check": "lab_hardening",
     "circuit_breaker": "lab_hardening", "faithful_approval": "lab_hardening", "mandate_monitor": "lab_hardening",
     "action_policy": "lab_hardening", "sampling_policy": "lab_hardening", "elicitation_policy": "lab_hardening",
-    "shot_cap": "lab_hardening",
+    "shot_cap": "lab_hardening", "payee_allowlist": "lab_hardening", "payment_idempotency": "lab_hardening",
     "per_client_consent": "lab_hardening", "exact_redirect_uri": "lab_hardening", "pkce": "lab_hardening",
     "score_suppression": "lab_hardening", "confidence_rounding": "lab_hardening",
     "query_anomaly": "lab_hardening", "output_watermark": "lab_hardening",
@@ -53,6 +53,7 @@ KIND: Dict[str, str] = {
     "exact_name": "architectural", "visible_text_only": "architectural", "vector_privacy": "architectural",
     "image_sanitize": "architectural",
     "training_data_scrub": "architectural",
+    "signed_challenge": "architectural",
 }
 
 EVIDENCE = {

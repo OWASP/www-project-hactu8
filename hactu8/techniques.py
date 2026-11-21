@@ -383,14 +383,16 @@ TECHNIQUES: Dict[str, Dict[str, object]] = {
     # Agentic commerce (AG-96)
     "payment-challenge-tamper": _t(
         "Tampered HTTP 402 payment challenge", "commerce",
-        "The price or recipient in a 402 challenge is changed in transit or by a hostile merchant.",
+        "The price or recipient in a 402 challenge is changed in transit or by a hostile merchant. The HX12 lab "
+        "covers a rewriting fetch tool and a payment redirect planted in the merchant's 402 response.",
         {"owasp_asi_2026": ["ASI02:2026"], "atlas": ["AML.T0048.000"]},
-        [], []),
+        ["signed_challenge", "payee_allowlist", "input_screen"], ["hx12"]),
     "payment-proof-replay": _t(
         "Payment proof replay", "commerce",
-        "A payment proof is reused for a second request or another merchant.",
+        "A payment proof is reused for a second request or another merchant. The HX12 lab covers a logged proof "
+        "replayed at the same merchant; reuse at another merchant is not covered.",
         {"owasp_asi_2026": ["ASI03:2026"], "atlas": ["AML.T0048.000"]},
-        [], []),
+        ["payment_idempotency"], ["hx12"]),
     "injected-overpayment": _t(
         "Injected overpayment", "commerce",
         "Injected text makes the agent accept a higher price or pay a different recipient.",
@@ -403,9 +405,10 @@ TECHNIQUES: Dict[str, Dict[str, object]] = {
         ["rate_limit"], []),
     "fake-merchant": _t(
         "Fake merchant or facilitator", "commerce",
-        "The agent pays a lookalike merchant or settles through a hostile facilitator.",
+        "The agent pays a lookalike merchant or settles through a hostile facilitator. The HX12 lab covers a "
+        "lookalike merchant that names its own facilitator.",
         {"owasp_asi_2026": ["ASI04:2026"], "atlas": ["AML.T0073"]},
-        [], []),
+        ["payee_allowlist", "signed_challenge"], ["hx12"]),
     "mandate-bypass": _t(
         "Spending mandate bypass", "commerce",
         "The agent is talked past its spending limit or allow-list.",

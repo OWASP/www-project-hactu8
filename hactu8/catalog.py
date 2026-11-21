@@ -31,7 +31,7 @@ _SKILL_DIR_RE = re.compile(r'SKILL_DIR = os\.path\.join\(HERE, "([^"]+)"\)')
 STAGES: Tuple[Tuple[str, str, str], ...] = (
     ("basics", "Basics", "Single-model attacks: prompt injection, output handling, disclosure, poisoning."),
     ("agentic", "Agentic", "Agents with tools, MCP servers and gateways, memory, and agent-to-agent traffic."),
-    ("commerce", "Commerce and scoring", "Agent payments and attacks on the scoring layer (no labs yet)."),
+    ("commerce", "Commerce and scoring", "Agent payments and attacks on the scoring layer."),
 )
 STAGE_IDS = tuple(stage[0] for stage in STAGES)
 
