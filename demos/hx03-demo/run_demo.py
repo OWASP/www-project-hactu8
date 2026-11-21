@@ -33,7 +33,7 @@ SKILL_DIR = os.path.join(HERE, "hx03-sampling-skill")
 sys.path.insert(0, SKILL_DIR)
 sys.path.insert(0, os.path.join(SKILL_DIR, "scripts"))
 
-from evaluate_kpi import CUSTOMERS, ICON, LIMIT_ID, budget, classify, suite  # noqa: E402
+from evaluate_kpi import CUSTOMERS, ICON, LIMIT_ID, budget, classify, held_by, suite  # noqa: E402
 from vulnerable_app import Lab, load_hostile, scan_requests  # noqa: E402
 
 LAYERS = ("use_caps", "use_prompt_screen", "use_approval", "use_context_gate", "use_output_screen")
@@ -69,6 +69,8 @@ def act(lab: Lab, title: str, results=None) -> float:
             red += status == "RED"
         tag = "" if is_targeted else "  (control)"
         print(f"    {ICON[status]} {status:<6} {label}{tag}")
+        if held_by(result, status):
+            print(f"        held_by: {'; '.join(held_by(result, status))}")
         evidence(what_went_back(lab, result))
     slr = red / targeted * 100.0
     print(f"    Sampling Leak Rate: {slr:.0f}% targeted")

@@ -27,7 +27,7 @@ SKILL_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, SKILL_DIR)
 sys.path.insert(0, os.path.join(SKILL_DIR, "scripts"))
 
-from evaluate_kpi import CUSTOMERS, LIMIT_ID, classify, probe_row, suite  # noqa: E402
+from evaluate_kpi import CUSTOMERS, LIMIT_ID, classify, held_by, probe_row, suite  # noqa: E402
 import protectogw  # noqa: E402
 import providers  # noqa: E402
 import vulnerable_app  # noqa: E402
@@ -43,6 +43,7 @@ LAYERS = ("use_caps", "use_prompt_screen", "use_approval", "use_context_gate", "
 def run_suite(lab: Lab):
     results = [(lab.ask(a, q), e, tg) for _, a, q, tg, e in suite()]
     statuses = [(classify(r, e), tg) for r, e, tg in results]
+    lab.last_held = [(held_by(r, s), tg) for (r, _, tg), (s, _) in zip(results, statuses)]
     targeted = [s for s, t in statuses if t]
     return statuses, sum(s == "RED" for s in targeted) / len(targeted), \
         sum(s == "RED" for s, _ in statuses) / len(statuses), [r for r, _, _ in results]
@@ -99,7 +100,7 @@ class LifecycleTest(unittest.TestCase):
         off = [r for r in lab.sampling_log if not r.on_task and r.ran]
         self.assertEqual(len(off), 9)                                        # 3 per targeted conversation
         self.assertEqual({r.request_id for r in off}, {"context-dump", "hidden-blurbs", "hidden-rivals"})
-        self.assertGreater(sum(r["off_task_tokens"] for r in results), 3000)
+        self.assertEqual(sum(r["off_task_tokens"] for r in results), 4120)  # README and LESSON quote it
         blurbs = next(r for r in off if r.request_id == "hidden-blurbs")
         self.assertEqual(blurbs.output_tokens, 500)                          # the server's maxTokens, honoured
 
@@ -155,9 +156,12 @@ class LayersTest(unittest.TestCase):
         self.assertEqual(slr, 1.0)          # the dump is the second request: inside the cap of 2
 
     def test_prompt_screen_alone(self):
-        statuses, slr, _, _ = run_suite(attacked("hardened", **only("use_prompt_screen")))
+        lab = attacked("hardened", **only("use_prompt_screen"))
+        statuses, slr, _, _ = run_suite(lab)
         self.assertEqual(slr, 0)
-        self.assertEqual([s for s, t in statuses if t], ["YELLOW"] * 3)     # blurbs and rivals still ran
+        self.assertEqual([s for s, t in statuses if t], ["GREEN"] * 3)
+        held = [h for h, t in lab.last_held if t]                          # blurbs and rivals still ran
+        self.assertTrue(all(any(x.startswith("off-task sampling ran: 2 calls") for x in h) for h in held), held)
 
     def test_approval_alone(self):
         statuses, slr, _, _ = run_suite(attacked("hardened", **only("use_approval")))
@@ -168,7 +172,9 @@ class LayersTest(unittest.TestCase):
         lab = attacked("hardened", **only("use_context_gate"))
         statuses, slr, _, _ = run_suite(lab)
         self.assertEqual(slr, 0)
-        self.assertEqual([s for s, t in statuses if t], ["YELLOW"] * 3)
+        self.assertEqual([s for s, t in statuses if t], ["GREEN"] * 3)
+        held = [h for h, t in lab.last_held if t]
+        self.assertTrue(all(any(x.startswith("off-task sampling ran: 3 calls") for x in h) for h in held), held)
         dump = next(r for r in lab.sampling_log if r.request_id == "context-dump")
         self.assertFalse(dump.context_included)
         self.assertIn("no earlier context", dump.output)
@@ -177,7 +183,9 @@ class LayersTest(unittest.TestCase):
         lab = attacked("hardened", **only("use_output_screen"))
         statuses, slr, _, _ = run_suite(lab)
         self.assertEqual(slr, 0)
-        self.assertEqual([s for s, t in statuses if t], ["YELLOW"] * 3)
+        self.assertEqual([s for s, t in statuses if t], ["GREEN"] * 3)
+        held = [h for h, t in lab.last_held if t]
+        self.assertTrue(all(any(x.startswith("output screen withheld 1") for x in h) for h in held), held)
         dump = next(r for r in lab.sampling_log if r.request_id == "context-dump")
         self.assertTrue(dump.ran and not dump.returned)
         self.assertIn(lab.canary, dump.output)                               # the model did write it
@@ -277,7 +285,8 @@ class LimitsTest(unittest.TestCase):
         row = probe_row(use_approval=False)
         self.assertFalse(row["context_shared"])
         self.assertFalse(row["result"]["server_got_canary"])
-        self.assertEqual(row["status"], "YELLOW")                          # it ran: the attacker's prompt
+        self.assertEqual(row["status"], "GREEN")                           # no leak, and no expected answer
+        self.assertTrue(any(h.startswith("off-task sampling ran") for h in row["held_by"]), row["held_by"])
 
 
 class ConsoleApiTest(unittest.TestCase):
@@ -401,7 +410,8 @@ class BackendTest(unittest.TestCase):
         hard.model = ProviderModel(FakeProvider(f"Sure: {hard.canary}"), "fake-model")
         result = hard.ask(CUSTOMERS[0][0], CUSTOMERS[0][1])
         self.assertFalse(result["server_got_canary"])    # the output screen withheld it
-        self.assertEqual(classify(result), "YELLOW")
+        self.assertEqual(classify(result), "GREEN")
+        self.assertTrue(any(h.startswith("output screen withheld") for h in held_by(result)))
 
     def test_hardened_client_never_sends_the_session(self):
         fake = FakeProvider()

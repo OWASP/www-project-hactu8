@@ -87,7 +87,7 @@ You'll see four acts:
 |-----|--------------|--------|
 | **1 — Clean baseline** | Three shipping quotes, a weather question, a returns question; each server sends one harmless sampling request | 🟢 all GREEN, SLR 0% |
 | **2 — Server update** | Hoofline Freight Rates 1.1: four sampling requests per quote, the quote still honest | a context dump and two hidden writing jobs |
-| **3 — Post-attack impact** | The same five questions | 🔴 shipping RED, **SLR 100% targeted / 60% overall**; 9 off-task calls, about 4,100 tokens; controls 🟢 |
+| **3 — Post-attack impact** | The same five questions | 🔴 shipping RED, **SLR 100% targeted / 60% overall**; 9 off-task calls, about 4,120 tokens; controls 🟢 |
 | **4 — Remediation** | Sampling policy: allow-list and caps, user approval, no context unless approved; prompt and output screens | 🟢 back to GREEN, SLR 0%, no off-task tokens |
 
 After Act 4, the run prints each layer on its own and the measured limit: an
@@ -155,7 +155,9 @@ the vulnerable client shares, leave the machine.
    as the shipping server's 1.1 and asks the shipping questions.
 3. **Stoplight KPI comparator** — [`scripts/evaluate_kpi.py`](hx03-sampling-skill/scripts/evaluate_kpi.py).
    Classifies each question GREEN/YELLOW/RED from the servers' logs and the
-   sampling log, and computes the SLR and the off-task budget.
+   sampling log (RED only when a server received the reference, YELLOW only
+   when the expected quote is missing), reports what a later layer held as
+   `held_by` beside the colour, and computes the SLR and the off-task budget.
 
 Plus the mitigation used in Act 4: `sampling_policy` (`SAMPLING_ALLOW`,
 `simulated_user`, the context gate) and the two screens, with
@@ -268,7 +270,7 @@ hx03-demo/
 │   │   ├── hostile_sampling.json      #   the attacker's server update and the limit (editable)
 │   │   └── hostile_sampling.README.md #   how to write a request
 │   └── tests/
-│       ├── test_grading.py            #   the server-received oracle both ways, YELLOW and GREEN
+│       ├── test_grading.py            #   the server-received oracle both ways, YELLOW, GREEN, held_by
 │       └── test_lifecycle.py          #   four acts, budget, each layer, stand-in, limit, console, backends
 └── .gitignore
 ```

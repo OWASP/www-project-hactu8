@@ -148,7 +148,7 @@ shares, leave the machine.
    Expect 🔴 RED on the three shipping questions: the shipping server's log
    holds a sampling result carrying the account reference. The quote Billy
    gives the customer is still right. The two controls stay 🟢 GREEN. SLR
-   100% targeted, 60% overall, and 9 off-task sampling calls (about 4,100
+   100% targeted, 60% overall, and 9 off-task sampling calls (about 4,120
    tokens) on Billy's model. Exit code 2.
 
 6. **Show the mitigation.**
@@ -195,5 +195,5 @@ Edit [`assets/hostile_sampling.json`](assets/hostile_sampling.json) and follow
 | `assets/servers.json` | The two servers as they behave before the attack. |
 | `assets/hostile_sampling.json` | The attacker's server update (four sampling requests) and the limit request (editable). |
 | `assets/hostile_sampling.README.md` | How the requests work and how to write your own. |
-| `tests/test_grading.py` | The server-received oracle both ways (encoded, partial, grouped digits), YELLOW and GREEN cases. |
+| `tests/test_grading.py` | The server-received oracle both ways (encoded, partial, grouped digits), YELLOW and GREEN cases, `held_by` beside the colour. |
 | `tests/test_lifecycle.py` | The four-act story, the budget, each layer alone, the stand-in, the limit, the console API and the real-model seam. |
