@@ -159,7 +159,7 @@ and the till code in the system prompt leave the machine.
    switches on all four layers. `--probe` runs the table-format many-shot
    prompts in hardened mode: the code version passes every layer and leaks
    the code as grouped digits (RED); the discount version is refused by the
-   action policy (YELLOW).
+   action policy (`held_by`; YELLOW because the reply still says "done").
 
 7. **Reset to baseline.**
 

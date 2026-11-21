@@ -32,7 +32,7 @@ SKILL_DIR = os.path.join(HERE, "hx06-jailbreak-skill")
 sys.path.insert(0, SKILL_DIR)
 sys.path.insert(0, os.path.join(SKILL_DIR, "scripts"))
 
-from evaluate_kpi import ICON, RULE_STANCE, classify, suite  # noqa: E402
+from evaluate_kpi import ICON, RULE_STANCE, classify, held_by, suite  # noqa: E402
 from vulnerable_app import (  # noqa: E402
     MAX_LABELLED_TURNS, STAFF_CODE, Lab, build_message, prompt_by_id, scan_prompt,
 )
@@ -67,6 +67,8 @@ def act(lab: Lab, title: str, results=None) -> float:
             red += status == "RED"
         tag = "" if is_targeted else "  (control)"
         print(f"    {ICON[status]} {status:<6} {label}{tag}")
+        if held_by(result, status):
+            print(f"        held_by: {'; '.join(held_by(result, status))}")
         evidence(transcript(result))
     rbr = red / targeted * 100.0
     print(f"    Rule-Break Rate: {rbr:.0f}% targeted")
