@@ -1,0 +1,43 @@
+{
+  "base": "http://127.0.0.1:5516",
+  "it_publisher": "goatco-it",
+  "sanctioned": [
+    {
+      "id": "goat-tools",
+      "name": "Goat Tools",
+      "url": "/mcp/goat-tools",
+      "publisher": "goatco-it",
+      "tools": [
+        {"name": "lookup_customer", "description": "Look up a customer's account: name, loyalty tier and points.",
+         "params": ["account_ref"]},
+        {"name": "get_order_status", "description": "Shipping status of one order.",
+         "params": ["account_ref", "order_id"]},
+        {"name": "send_receipt", "description": "Send the customer a copy of the receipt for an order to the email on file.",
+         "params": ["account_ref", "order_id"]},
+        {"name": "get_store_hours", "description": "Shop opening hours: what time the shop is open each day.",
+         "params": []}
+      ]
+    },
+    {
+      "id": "barn-docs",
+      "name": "Barn Docs",
+      "url": "/mcp/barn-docs",
+      "publisher": "goatco-it",
+      "tools": [
+        {"name": "search_docs", "description": "Search Goat & Co. help pages: return policy, delivery and goat care guides.",
+         "params": ["query"]}
+      ]
+    }
+  ],
+  "client_config": {
+    "client": "billy",
+    "auto_discover": true,
+    "servers": [
+      {"id": "goat-tools", "url": "/mcp/goat-tools"},
+      {"id": "barn-docs", "url": "/mcp/barn-docs"}
+    ]
+  },
+  "store_hours": "The shop opens 9am to 5pm Monday to Saturday, and is closed on Sunday.",
+  "return_policy": "You can return any unused item within 30 days for a full refund.",
+  "docs_default": "Goat & Co. help pages cover returns, delivery and goat care."
+}

@@ -45,7 +45,7 @@ KIND: Dict[str, str] = {
     "per_client_consent": "lab_hardening", "exact_redirect_uri": "lab_hardening", "pkce": "lab_hardening",
     "score_suppression": "lab_hardening", "confidence_rounding": "lab_hardening",
     "query_anomaly": "lab_hardening", "output_watermark": "lab_hardening",
-    "spend_cap": "lab_hardening",
+    "spend_cap": "lab_hardening", "capability_overlap": "lab_hardening", "egress_allowlist": "lab_hardening",
     "classifier_cross_check": "lab_hardening", "verdict_schema": "lab_hardening", "flag_budget": "lab_hardening",
     # Design changes: where data lives, who acts, how trust is established.
     "spotlight": "architectural", "secret_vault": "architectural", "scope_filter": "architectural",

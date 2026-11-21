@@ -272,9 +272,11 @@ TECHNIQUES: Dict[str, Dict[str, object]] = {
         ["grounding"], ["llm07"]),
     "shadow-mcp-server": _t(
         "Shadow MCP server", "supply_chain",
-        "An unapproved MCP server is connected and trusted like a sanctioned one.",
-        {"owasp_mcp_2025": ["MCP09:2025"], "owasp_asi_2026": ["ASI04:2026"]},
-        ["provenance"], []),
+        "An unapproved MCP server is connected and trusted like a sanctioned one. The HX16 lab covers a server "
+        "added to the client config by hand and announced on local discovery, whose tools shadow approved ones "
+        "by name, lookalike name and capability.",
+        {"owasp_mcp_2025": ["MCP09:2025"], "owasp_asi_2026": ["ASI04:2026"], "atlas": ["AML.T0010.005", "AML.T0074"]},
+        ["provenance", "signed_config", "exact_name", "capability_overlap", "egress_allowlist"], ["hx16"]),
 
     # Poisoning
     "rag-poisoning": _t(
