@@ -34,14 +34,21 @@ Python 3.10 or later. No dependencies; every skill runs on a deterministic offli
 ```bash
 git clone -b phase1-mvp https://github.com/OWASP/www-project-hactu8.git
 cd www-project-hactu8
-python -m hactu8 list            # 25 skills mapped to the OWASP 2026 lists
-python -m hactu8 run llm01       # baseline -> attack -> impact -> remediation
-python -m hactu8 run all         # every skill
-python -m hactu8 results         # stored runs (.hactu8/results)
-python -m hactu8 show latest     # full hactu8.result/v1 JSON
+python3 -m hactu8 list           # 29 skills mapped to the OWASP 2026 lists
+python3 -m hactu8 run llm01      # baseline -> attack -> impact -> remediation
+python3 -m hactu8 run all        # every skill
+python3 -m hactu8 results        # stored runs (.hactu8/results)
+python3 -m hactu8 show latest    # full hactu8.result/v1 JSON
 ```
 
-Real models are optional. With a real model the numbers are reported, not asserted. Install as a command with `pip install -e .`, then use `hactu8` directly.
+Real models are optional. With a real model the numbers are reported, not asserted. For the API, console and Lamb, install into a virtual environment (Homebrew's Python refuses global installs):
+
+```bash
+python3 -m venv .venv
+.venv/bin/python -m pip install -e '.[lamb,api]'   # then use .venv/bin/python, or activate it
+```
+
+The examples below write `python`; on macOS that is `python3` or the venv's `python`. With the python.org installer on macOS, cloud backends need `SSL_CERT_FILE=/etc/ssl/cert.pem` (see [docs/deploy.md](docs/deploy.md)).
 
 ## Models and scoring
 
@@ -64,7 +71,7 @@ Each lab also runs on its own; see [demos/README.md](demos/README.md).
 
 ## HACTU8 Lamb
 
-Lamb is the loopback-only sacrificial target. It exposes one public gateway, starts the 25 existing lab servers as isolated workers when first requested, and includes an intentionally vulnerable MCP target for tool-description poisoning and rug-pull tests.
+Lamb is the loopback-only sacrificial target. It exposes one public gateway, starts the 29 lab servers as isolated workers when first requested, and includes an intentionally vulnerable MCP target for tool-description poisoning and rug-pull tests.
 
 ```bash
 python -m pip install -e '.[lamb]'
@@ -88,7 +95,7 @@ npm install
 npm run dev
 ```
 
-The API binds to `http://127.0.0.1:8000`; the console defaults to that URL and can be pointed elsewhere with `VITE_HACTU8_API_URL`. White-label name, tagline, report title, and colors are configured in [`branding.yaml`](branding.yaml).
+The API binds to `http://127.0.0.1:8000` (`HACTU8_API_PORT` changes the port; Lamb uses `HACTU8_LAMB_PORT`); the console defaults to that URL and can be pointed elsewhere with `VITE_HACTU8_API_URL`. White-label name, tagline, report title, and colors are configured in [`branding.yaml`](branding.yaml).
 
 ## Docker, devcontainer, and CI
 
@@ -96,7 +103,7 @@ The API binds to `http://127.0.0.1:8000`; the console defaults to that URL and c
 
 ## Safety
 
-Every target is insecure by design and binds to `127.0.0.1`. Use only against systems you are authorized to test. Shipped payloads are inert placeholders.
+Every target is insecure by design and binds to `127.0.0.1`. Use only against systems you are authorized to test. Shipped payloads are benign-effect: realistic wording whose only possible effect is emitting a fictional canary or calling a simulated tool on loopback.
 
 ## Contributing
 
