@@ -15,7 +15,7 @@ story with deterministic numbers, and a recording covers the whole run.
 - API and console running (see [deploy.md](deploy.md)): the API on
   127.0.0.1:8000 and the console on 127.0.0.1:5173, or the Docker stack.
 - Keep the laptop awake: `caffeinate -i` in a spare terminal.
-- Run `python -m hactu8 run all --backend echo` once: 34 of 34 must pass.
+- Run `python -m hactu8 run all --backend echo` once: 35 of 35 must pass.
 - Open the console at Learn. Have the recording
   (`hactu8_llm01_echo_demo_fallback.gif`) open in another tab.
 - No cloud keys are needed. If you show a cloud model, the run is gated on a
@@ -27,10 +27,11 @@ HACTU8 turns attacks on AI systems into repeatable assurance tests. Every lab
 runs the same four acts against the same items with the same model: a clean
 baseline, the attack, the impact, and the remediation. The target is HACTU8
 Lamb, a deliberately vulnerable assistant (Billy, of the fictional Goat &
-Co.), bound to loopback. 34 labs cover the OWASP LLM Top 10 2026, the OWASP
+Co.), bound to loopback. 35 labs cover the OWASP LLM Top 10 2026, the OWASP
 Agentic Top 10 2026, nine gateway labs (AGX01-09), hidden document injection
 (HX01), the multi-turn jailbreak (HX02), MCP sampling abuse (HX03), MCP
-elicitation abuse (HX04) and role-play and many-shot jailbreaks (HX06).
+elicitation abuse (HX04), OAuth confused deputy (HX05) and role-play and
+many-shot jailbreaks (HX06).
 
 ## 2. Learn (2 minutes)
 

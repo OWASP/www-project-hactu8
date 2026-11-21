@@ -34,7 +34,7 @@ Python 3.10 or later. No dependencies; every skill runs on a deterministic offli
 ```bash
 git clone -b phase1-mvp https://github.com/OWASP/www-project-hactu8.git
 cd www-project-hactu8
-python3 -m hactu8 list           # 34 skills mapped to the OWASP 2026 lists
+python3 -m hactu8 list           # 35 skills mapped to the OWASP 2026 lists
 python3 -m hactu8 run llm01      # baseline -> attack -> impact -> remediation
 python3 -m hactu8 run all        # every skill
 python3 -m hactu8 coverage       # known attack techniques: attack and defense, attack only, no lab yet
@@ -73,7 +73,7 @@ Each lab also runs on its own; see [demos/README.md](demos/README.md).
 
 ## HACTU8 Lamb
 
-Lamb is the loopback-only sacrificial target. It exposes one public gateway, starts the 34 lab servers as isolated workers when first requested, and includes an intentionally vulnerable MCP target for tool-description poisoning and rug-pull tests.
+Lamb is the loopback-only sacrificial target. It exposes one public gateway, starts the 35 lab servers as isolated workers when first requested, and includes an intentionally vulnerable MCP target for tool-description poisoning and rug-pull tests.
 
 ```bash
 python -m pip install -e '.[lamb]'
