@@ -64,6 +64,16 @@ CATALOG: Dict[str, Dict[str, object]] = {
         "prompt = system + user + tool_output   # one undifferentiated stream",
         "messages = [system, user, {'role': 'tool', 'content': tool_output}]\nmodel(messages, trust_tool_role=False)",
     ),
+    "role_separation": _c(
+        "Keep the user's text out of the prompt's structure",
+        "When a conversation is rendered into a chat template, text a user typed can carry the template's own role markers and close their turn, opening a fake system or assistant turn. Escape markers in user text so it can never open a turn, and read tool calls from the model's own reply, never from what the user typed.",
+        ["build the prompt from structured messages; if you render a template, escape its special tokens in user content",
+         "check that rendering then parsing a conversation gives back exactly the turns you put in",
+         "dispatch tool calls only from the model's reply (or the API's tool-call field), never from user text",
+         "still screen and check the action: a plain override in the user's own turn is still read by the model"],
+        "prompt = template.render(messages)          # user text spliced in raw\ncalls = find_tool_calls(user_text + reply)",
+        "prompt = template.render(messages, escape_special_tokens_in=['user'])\ncalls = find_tool_calls(reply)",
+    ),
     "visible_text_only": _c(
         "Extract only the text a reader sees",
         "When a document becomes model input, keep only what renders for a human: text that contrasts with its background, has a readable size, is not hidden and sits on the page. Drop metadata, comments and hidden runs.",

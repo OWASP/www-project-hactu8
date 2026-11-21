@@ -53,7 +53,7 @@ KIND: Dict[str, str] = {
     "signed_config": "architectural",
     "code_sandbox": "architectural", "output_sink": "architectural", "provenance": "architectural",
     "exact_name": "architectural", "visible_text_only": "architectural", "vector_privacy": "architectural",
-    "image_sanitize": "architectural",
+    "image_sanitize": "architectural", "role_separation": "architectural",
     "training_data_scrub": "architectural",
     "signed_challenge": "architectural",
     "score_provenance": "architectural",
@@ -72,7 +72,7 @@ TRAIN = "train set"
 HELD_OUT = "held-out set"
 BENCH_SURFACES: Dict[str, List[str]] = {
     "input_screen": ["tool_result", "resource_body", "okf_body", "okf_clean", "a2a_message", "document_hidden",
-                     "image_text", "payment_metadata", "judge_evidence",
+                     "image_text", "payment_metadata", "judge_evidence", "user_message",
                      # protectogw's screen on the request text; the sampling and elicitation policies
                      # (approval, caps, context gate) are not text screens and are shown by the labs.
                      "sampling_request", "elicitation_request",
