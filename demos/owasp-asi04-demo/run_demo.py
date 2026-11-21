@@ -35,7 +35,9 @@ from evaluate_kpi import ICON, SUITE, classify  # noqa: E402
 from run_lookalike_publish import load_payload  # noqa: E402
 from vulnerable_app import CATALOGUE_DIR, Lab, dry_run  # noqa: E402
 
-CATALOGUE = os.path.join(CATALOGUE_DIR, "run_demo.json")
+# One file per process: two runs from the same checkout (parallel sweeps) must
+# not share, reset or delete each other's catalogue.
+CATALOGUE = os.path.join(CATALOGUE_DIR, f"run_demo_{os.getpid()}.json")
 
 
 def evidence(value) -> None:

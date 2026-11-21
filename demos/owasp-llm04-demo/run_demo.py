@@ -36,7 +36,9 @@ from run_rug_pull import SLEEPER_PAYLOAD, SWAP_PAYLOAD, build_compromised_releas
 from vulnerable_app import (REGISTRY_DIR, Lab, load_pins, pin_diff,  # noqa: E402
                             read_registry, write_registry)
 
-REGISTRY = os.path.join(REGISTRY_DIR, "run_demo.json")
+# One file per process: two runs from the same checkout (parallel sweeps) must
+# not share, reset or delete each other's registry.
+REGISTRY = os.path.join(REGISTRY_DIR, f"run_demo_{os.getpid()}.json")
 
 
 def evidence(value) -> None:

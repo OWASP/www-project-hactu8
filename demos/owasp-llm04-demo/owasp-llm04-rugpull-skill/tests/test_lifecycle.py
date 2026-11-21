@@ -15,6 +15,7 @@ from __future__ import annotations
 import base64
 import json
 import os
+import subprocess
 import sys
 import threading
 import unittest
@@ -321,6 +322,49 @@ class BackendTest(unittest.TestCase):
         self.lab.query("b")
         with self.assertRaises(RuntimeError):
             self.lab.query("c")
+
+
+RUN_DEMO = os.path.join(os.path.dirname(SKILL_DIR), "run_demo.py")
+
+
+@unittest.skipUnless(os.path.exists(RUN_DEMO), "run_demo.py is not shipped with a copied skill")
+class RunDemoIsolationTest(unittest.TestCase):
+    """Two run_demo.py processes on one checkout must not share a registry file.
+
+    Regression: in the 2026-11-21 sweeps an ollama run and an OpenRouter run of
+    this lab overlapped on one checkout; the first to finish deleted the shared
+    ``run_demo.json`` and the other crashed with FileNotFoundError (and its
+    baseline read the other run's attack).
+    """
+
+    def _child_path(self) -> str:
+        code = ("import sys; sys.path.insert(0, sys.argv[1]); import run_demo; "
+                "print(run_demo.REGISTRY)")
+        out = subprocess.run([sys.executable, "-c", code, os.path.dirname(RUN_DEMO)],
+                             capture_output=True, text=True, check=True, timeout=60)
+        return out.stdout.strip()
+
+    def test_each_process_gets_its_own_file(self):
+        first, second = self._child_path(), self._child_path()
+        self.assertNotEqual(first, second)
+        for path in (first, second):
+            self.assertEqual(os.path.dirname(os.path.realpath(path)),
+                             os.path.realpath(REGISTRY_DIR))
+
+    def test_run_leaves_another_runs_file_alone(self):
+        other = self._child_path()
+        os.makedirs(REGISTRY_DIR, exist_ok=True)
+        with open(other, "w", encoding="utf-8") as fh:
+            fh.write("other run")
+        try:
+            proc = subprocess.run([sys.executable, RUN_DEMO], capture_output=True, text=True,
+                                  timeout=120, env={**os.environ, "HACTU8_EVIDENCE": "0"})
+            self.assertEqual(proc.returncode, 0, proc.stdout[-2000:] + proc.stderr[-2000:])
+            with open(other, encoding="utf-8") as fh:
+                self.assertEqual(fh.read(), "other run")
+        finally:
+            if os.path.exists(other):
+                os.remove(other)
 
 
 if __name__ == "__main__":
