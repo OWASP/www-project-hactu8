@@ -39,7 +39,7 @@ Both are needed: signing alone leaves the replay working, because the replay rea
 
 ## Where the defense stops working
 
-- **Signing proves origin, not intent.** A message validly signed by the planner, fresh and unseen, passes by design. If the planner itself is hijacked, for example by content it reads (ASI01), its signed orders carry the attack straight through the verifier. Screening genuine peer messages as untrusted input (AgenticGoat's `a2a_scan`) is discussed, not coded here.
+- **Signing proves origin, not intent.** A message validly signed by the planner, fresh and unseen, passes by design. If the planner itself is hijacked, for example by content it reads (ASI01), its signed orders carry the attack straight through the verifier. Screening genuine peer messages as untrusted input (the `a2a_scan` detector act) is discussed, not coded here.
 - **HMAC keys are shared secrets.** To verify the planner's HMAC, the verifier must hold the planner's key, and anything that can verify can also sign. In this lab every key lives in one process. Compromise the executor and you can forge planner orders. Asymmetric signatures and key rotation are in the roadmap, not in the code.
 - **The broker is still open.** Hardened mode guards the executor, not the bus. Anyone can still publish to any topic, retained forged messages stay on the bus, and `GET /bus/log` still shows every genuine message to anyone. Publisher authentication, per-agent topic rights and encrypted transport are discussed, not coded.
 - **Freshness depends on the executor's own state.** The nonce cache lives in one process's memory, beside a 300-second window. This lab has one executor; a deployment with several executors, or one that restarts, needs a shared, durable nonce store, or a fresh replay inside the window can land on an executor that never saw the nonce.
@@ -62,4 +62,4 @@ Both are needed: signing alone leaves the replay working, because the replay rea
 - Lab material, not repeated here: the [lab README](../README.md) (architecture, "real, not scripted", MCP terminology bridge, mapping table) and [`references/ASI07_RISKS.md`](references/ASI07_RISKS.md) (research, scenarios, mitigation roadmap).
 - [OWASP Top 10 for Agentic Applications](https://genai.owasp.org/), entry ASI07.
 - RFC 2104, HMAC: Keyed-Hashing for Message Authentication.
-- Ported from AgenticGoat's Relay Lab (`agentic/labs.json`, ASI07: authenticate and sign inter-agent messages, reject replays) and `acts.py` `a2a_scan` (every peer message is untrusted input, whoever it claims to be from).
+- Ported from AgenticGoat (retired): its Relay Lab (`agentic/labs.json`, ASI07: authenticate and sign inter-agent messages, reject replays) and `acts.py` `a2a_scan` (every peer message is untrusted input, whoever it claims to be from).

@@ -29,4 +29,4 @@ Keep this file plain text. `run_consumption.py` does not escape anything.
   answer with many parallel searches. Count tool calls per request in your
   agent loop, and enforce the cap there, not in the prompt.
 
-Source material: AgenticGoat `acts.py` Act 17 (`consumption:tool_storm`).
+Source material (see the provenance note in `LESSON.md`): `acts.py` Act 17 (`consumption:tool_storm`).

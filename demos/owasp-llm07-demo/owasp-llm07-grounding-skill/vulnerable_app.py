@@ -72,8 +72,7 @@ MAX_PAGES = 200             # host-safety cap on the in-memory doc store
 MAX_PAGE_CHARS = 20_000     # host-safety cap on one page
 
 # Extract the artifacts a developer would act on: an install target, or a URL
-# they would open. Ported from AgenticGoat acts.py (_PKG_INSTALL_PATTERNS,
-# _CITED_URL_PATTERN). Bounded quantifiers keep these linear.
+# they would open. Same patterns as the grounding_scan detector act. Bounded quantifiers keep these linear.
 PKG_INSTALL_PATTERNS = (
     re.compile(r"(?:pip3?|npm|yarn|pipx)\s+install\s+(?:-[a-z]+\s+)?([a-z0-9][a-z0-9._-]{1,60})", re.I),
     re.compile(r"install(?:ing)?\s+(?:the\s+)?[`'\"]?([a-z0-9][a-z0-9._-]{1,60})[`'\"]?\s+"

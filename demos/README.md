@@ -49,11 +49,11 @@ tells the same four-act story against a fixed verification suite:
 | ASI09 | Human-Agent Trust Exploitation | [`owasp-asi09-demo`](owasp-asi09-demo/) — an approval summary understates a batched bank change | 5309 | Misinformed Approval Rate (MAR) |
 | ASI10 | Rogue Agents | [`owasp-asi10-demo`](owasp-asi10-demo/) — a tampered mandate turns one worker agent rogue | 5310 | Off-Mandate Action Rate (OMAR) |
 
-### AgenticGoat extensions (AGX)
+### HACTU8 extensions (AGX)
 
-These patterns sit beyond both OWASP lists. The numbering is AgenticGoat's own
-(`agentic/labs.json`). Each is a **gateway lab**: a screening gateway built on
-[protectogw](_template/protectogw/), AgenticGoat's screening core, sits between
+These patterns sit beyond both OWASP lists. The numbering is HACTU8's own.
+Each is a **gateway lab**: a screening gateway built on
+[protectogw](_template/protectogw/), HACTU8's screening core, sits between
 untrusted text and the model.
 
 - **Vulnerable mode:** protectogw with one blind spot.
@@ -99,8 +99,7 @@ See each lab's README and `SKILL.md`. Every skill folder can be copied into
 
 ### Model backends
 
-The backend options match AgenticGoat's (`providers.py` is a port of its
-provider layer):
+The backend options come from `providers.py`, HACTU8's provider layer:
 
 | Backend | What it is | Key |
 |---------|------------|-----|
@@ -119,7 +118,7 @@ OPENROUTER_API_KEY=... python run_demo.py --backend openrouter
 LLM01_BACKEND=openrouter LLM01_MODEL=... python owasp-llm01-injection-skill/vulnerable_app.py
 ```
 
-The API key works as in AgenticGoat. It is read only from `OPENROUTER_API_KEY`
+The API key is read only from `OPENROUTER_API_KEY`
 in the shell that starts the lab, and sent only in the request header. The
 console never asks for it, and is told only whether a key is set; without one,
 `openrouter` is greyed out.
@@ -139,5 +138,4 @@ Start from [`_template/`](_template/). `TEMPLATE.md` is the specification:
 - the real-model backend contract (§13)
 
 [`OWASP_DEMO_PLAN.md`](OWASP_DEMO_PLAN.md) records the design of every lab and
-how it maps to the [AgenticGoat](https://github.com/Mr-H/AgenticGoat) sources.
-[`agenticgoat-mock/`](agenticgoat-mock/) is the earlier one-page lesson mock.
+how it maps to its sources (Ported from AgenticGoat (retired)).

@@ -62,8 +62,8 @@ WEB_DIR = os.path.join(HERE, "web")
 WEB_FILES = {"index.html": "text/html", "app.js": "text/javascript", "styles.css": "text/css"}
 HELDOUT_FILE = os.path.join(ASSETS, "heldout_set.json")
 
-# A fictional credential, minted per process as in the source lab's
-# secrets_vault.canary(). It sits in Billy's context; it must never leave.
+# A fictional credential, minted per process (``sk-canary-`` + hex), like
+# ``providers.canary()``. It sits in Billy's context; it must never leave.
 CANARY = "sk-canary-" + secrets.token_hex(16)
 
 SYSTEM_PROMPT = (

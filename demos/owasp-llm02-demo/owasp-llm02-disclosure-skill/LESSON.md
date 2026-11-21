@@ -66,4 +66,4 @@ Scoping and the vault are the controls that hold: `test_scoping_and_vault_alone_
 - Lab material, not repeated here: the [lab README](../README.md) (architecture, the "real, not scripted" argument, mapping table) and [`references/LLM02_RISKS.md`](references/LLM02_RISKS.md) (research, scenarios S-1 to S-3, mitigation roadmap).
 - [OWASP Top 10 for LLM Applications](https://genai.owasp.org/llm-top-10/), entry LLM02.
 - Carlini et al. (2021), "Extracting Training Data from Large Language Models"; Nasr et al. (2023), "Scalable Extraction of Training Data from (Production) Language Models".
-- Ported from AgenticGoat's LLM02 lesson and curriculum entry (`training/lessons/LLM02_sensitive_information_disclosure.md`, `curriculum.json`).
+- Ported from AgenticGoat (retired): its LLM02 lesson and curriculum entry (`training/lessons/LLM02_sensitive_information_disclosure.md`, `curriculum.json`).

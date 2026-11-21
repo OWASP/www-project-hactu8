@@ -1,7 +1,7 @@
 ---
 name: agx03-conditional-skill
 description: >-
-  Demonstrates AgenticGoat's AGX03 (Conditional Rug-Pull, parent OWASP ASI04)
+  Demonstrates AGX03 (Conditional Rug-Pull, parent OWASP ASI04)
   against a gateway-protected ops assistant in an AUTHORIZED security lab. A
   feed that is clean on the first polls and hostile from the third reaches the
   model because the gateway screened only the first return and trusted the tool
@@ -77,7 +77,7 @@ A hostile **first** return (no trust yet) is blocked even by the vulnerable
 gateway (`GatewayTest`): it is screen-once-then-trust, not the ruleset, that
 fails.
 
-**protectogw** (`protectogw/`) is AgenticGoat's screening core, vendored
+**protectogw** (`protectogw/`) is HACTU8's screening core, vendored
 unchanged. Its own [`SECURITY.md`](protectogw/SECURITY.md) describes its limits,
 including a measured 53% generalization rate on held-out attacks (16 of 30), which is
 why the output canary check is layered behind it.
@@ -166,7 +166,7 @@ request makes and which one turns hostile (both default to 3).
 | Path | Purpose |
 |------|---------|
 | `vulnerable_app.py` | Target: Billy, the feed tool, the gateway (`/ask`, `/feed`, `/vendor/feed/arm`, `/health`) plus the console API (`/api/meta`, `/api/state`, `/api/reset`, `/api/attack`, `/api/evaluate`, `/api/scan`, `/api/mode`, `/api/models`, `/api/backend`). |
-| `protectogw/` | AgenticGoat's screening core, vendored unchanged. |
+| `protectogw/` | HACTU8's screening core, vendored unchanged. |
 | `web/` | Shared HACTU8 lab console, served at `/`. |
 | `providers.py` | Optional real-model backends: Ollama, llama.cpp, OpenRouter. Shared and copied unchanged. |
 | `scripts/run_conditional.py` | Attack: arm the feed's conditional trigger. |

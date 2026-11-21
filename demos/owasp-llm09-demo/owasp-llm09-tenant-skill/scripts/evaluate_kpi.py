@@ -109,7 +109,7 @@ def evaluate(base: str, session: str = DEFAULT_SESSION, color: bool = True) -> f
 
 
 def scan(path: str, session: str = DEFAULT_SESSION) -> int:
-    """Offline retrieval-scope audit of one query (AgenticGoat retrieval_scope_scan)."""
+    """Offline retrieval-scope audit of one query (the retrieval_scope_scan detector act)."""
     with open(path, "r", encoding="utf-8") as fh:
         text = fh.read().strip()
     lab = Lab()

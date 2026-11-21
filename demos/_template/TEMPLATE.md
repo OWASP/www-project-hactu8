@@ -279,9 +279,8 @@ Reference implementation: `owasp-llm01-demo/owasp-llm01-injection-skill/vulnerab
 ## 13. Real-model backend (providers.py)
 
 `echo`, the demo's own deterministic model, is the default and the only
-backend the tests and the story assertions use. The name follows AgenticGoat;
-`stub` is accepted as an alias. `providers.py` is a port of AgenticGoat's
-provider layer, standard library only. The canonical copy is
+backend the tests and the story assertions use. `stub` is accepted as an alias.
+`providers.py` is HACTU8's provider layer, standard library only. The canonical copy is
 `hactu8/providers.py`; `python scripts/vendor.py` copies it **unchanged** into
 `_template/` and every `<skill-slug>/` (edit it there, never in a lab). It
 offers `ollama`, `llamacpp` and `openrouter` in the console, plus `anthropic`
@@ -290,7 +289,7 @@ model listing for the console (`available_models`), embeddings on the local
 servers (`Provider.embed`, used by LLM05's `src/` pipeline), and per-process
 limits `LAB_MAX_CALLS` and `LAB_MAX_TOKENS`.
 
-API key: as in AgenticGoat, `OPENROUTER_API_KEY` comes from the environment of
+API key: `OPENROUTER_API_KEY` comes from the environment of
 the shell that starts the lab, and is sent only in the request header. It is
 never accepted from the console, a request body or a file. The console is told
 only whether one is set (`openrouter_key_set`).
@@ -331,7 +330,7 @@ When a lab's mitigation screens untrusted text (tool output, documents,
 messages, memory writes, tool definitions, or model output checked for a
 guarded token), use **protectogw** rather than a bespoke regex.
 
-- **What it is.** protectogw is AgenticGoat's screening core: a normaliser and
+- **What it is.** protectogw is HACTU8's screening core: a normaliser and
   de-obfuscation folds, a ruleset, an exfiltration indicator taxonomy, a canary
   check, `Policy`/`Rule` configuration, and the `Session` cross-read screen.
 - **How to ship it.** The canonical copy is `hactu8/protectogw/`;

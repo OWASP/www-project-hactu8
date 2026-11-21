@@ -5,8 +5,8 @@ AUTHORIZED SECURITY-LAB USE ONLY. Targets this skill's own vulnerable_app.py.
 
 Pushes an unauthenticated vendor update (``POST /vendor/tools/update``) that
 sets one parameter field of one tool (default: ``ticket_lookup.ticket_id``'s
-``default``) to ``assets/param_default_payload.txt``, AgenticGoat's AGX04
-probe. The tool description stays clean, so a description-only scan still
+``default``) to ``assets/param_default_payload.txt`` (the AGX04
+probe). The tool description stays clean, so a description-only scan still
 passes it. Billy reads the whole schema before he calls the tool, so in
 vulnerable mode the payload reaches the model unscreened.
 

@@ -32,7 +32,7 @@ boundary accepts decide the blast radius.
 | T-3 | Injection as trigger | Untrusted content (a requester's note) supplies the parameters. | **DEMO TARGET** (trigger; see LLM01) |
 | T-4 | Call-volume abuse | A permitted tool is called repeatedly in one run (duplicate exports). | Partly: the per-run budget, tested with a variant note |
 | T-5 | Tool-chain manipulation | Outputs of one permitted tool are steered into another (query feeds export). | Partly: the query-then-export chain is the exfiltration path |
-| T-6 | Poisoned tool descriptors | Instructions hidden in a tool's schema or description text (AgenticGoat `schema_scan`). | — (see LLM04 / ASI04) |
+| T-6 | Poisoned tool descriptors | Instructions hidden in a tool's schema or description text (detector act `schema_scan`). | — (see LLM04 / ASI04) |
 
 ## How the demo maps to the attack surfaces
 

@@ -1,9 +1,8 @@
 # AGX02 Risk Reference — Truncation Tail
 
-Domain knowledge, loaded on demand. AGX02 is one of AgenticGoat's superset
-labs (`agentic/labs.json` → `superset_labs`, group **A: Evasion**), for
+Domain knowledge, loaded on demand. AGX02 is one of HACTU8's AGX extension labs (group **A: Evasion**), for
 patterns neither OWASP list numbers on its own. Its parent entry is **ASI06**
-in AgenticGoat's mapping, and the underlying mechanism is prompt injection
+in HACTU8's mapping, and the underlying mechanism is prompt injection
 (LLM01).
 
 Screening the first N bytes of a return is cheaper than screening all of it —
@@ -15,14 +14,13 @@ not by a cost-saving truncation.
 
 ## Research foundations
 
-- **OWASP Top 10 for Agentic Applications 2026, ASI06** — the parent entry in
-  AgenticGoat's mapping.
+- **OWASP Top 10 for Agentic Applications 2026, ASI06** — the parent entry in HACTU8's mapping.
 - **OWASP Top 10 for LLM Applications, LLM01 (Prompt Injection)** — the
   underlying mechanism: text the model reads is treated as instructions.
 - **Greshake et al. (2023), "Not what you've signed up for"** — indirect prompt
   injection. Content an LLM-integrated application fetches for the model (here,
   a long tool return) can carry instructions the model follows.
-- **AgenticGoat `acts.py` → `depth_scan`** — returns ~3.5 kB from an
+- **Detector act `depth_scan`** — returns ~3.5 kB from an
   `export_log` tool with the payload in the tail, screens the whole artifact,
   and grades a head-only view (`full[:DEPTH_HEAD_LIMIT]`, 800 bytes) beside it
   to make the blind spot concrete. Coverage is bounded by how much it reads.

@@ -48,5 +48,5 @@ simulated: an entry in the in-memory action log.
   approved steps stays on the plan by design. The pin enforces *which* steps
   run, not whether the report's content is accurate.
 
-Source material: AgenticGoat `acts.py` Act 2 (`runtime_watch`, poison that only
+Source material (see the provenance note in `LESSON.md`): `acts.py` Act 2 (`runtime_watch`, poison that only
 appears in a tool's return value) is the reference for the delivery channel.

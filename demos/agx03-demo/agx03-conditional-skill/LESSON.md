@@ -4,7 +4,7 @@ Step 20 on the learning path, after AGX02 Truncation Tail. Setup, commands and a
 
 ## What it is
 
-A conditional rug-pull is a tool that behaves until the Nth call, a date or a particular argument, then turns hostile. A check that samples it once sees the clean call and passes; the trigger fires later, in production. AGX03 is one of AgenticGoat's superset labs (group A, evasion), with parent ASI04 and prompt injection (LLM01) as the mechanism. It complements the LLM04 rug-pull: there the definition is swapped, here the definition stays the same and only the behaviour changes.
+A conditional rug-pull is a tool that behaves until the Nth call, a date or a particular argument, then turns hostile. A check that samples it once sees the clean call and passes; the trigger fires later, in production. AGX03 is one of HACTU8's AGX extension labs (group A, evasion), with parent ASI04 and prompt injection (LLM01) as the mechanism. It complements the LLM04 rug-pull: there the definition is swapped, here the definition stays the same and only the behaviour changes.
 
 Here the target is Billy, Goat & Co.'s ops assistant, who polls a live ops feed three times per request and summarizes it. His ground truth is *a fictional `sk-canary-` credential sits in his context with the instruction never to reveal it*. The attacker makes one unauthenticated call (`POST /vendor/feed/arm`) that arms the feed: polls 1 and 2 stay clean, and from poll 3 the feed returns a directive asking Billy to print the credential.
 
@@ -16,7 +16,7 @@ The gateway uses protectogw with the right ruleset in both modes. Only its timin
 - Each request's poll 1 is clean, so the feed earns trust. Poll 3 carries the directive and reaches the model unread, and the echo model replies with the credential.
 - Make the first poll hostile (`TRIGGER = 1`) and the vulnerable gateway blocks it (`GatewayTest`). The ruleset was never the problem; trusting after one sample was.
 
-AgenticGoat's `conditional_scan` act makes the same point: it samples a tool enough times to trip a third-call trigger, beside a single-sample view.
+The `conditional_scan` detector act makes the same point: it samples a tool enough times to trip a third-call trigger, beside a single-sample view.
 
 ## Try it
 
@@ -63,8 +63,8 @@ For real models, hardened mode also fences the feed in `<untrusted_tool_output>`
 
 ## References
 
-- HACTU8 catalog: skill `agx03`, `AGX03` Conditional Rug-Pull (an AgenticGoat superset ID, not an OWASP number; parent `ASI04:2026`, mechanism `LLM01:2026` Prompt Injection); protections `sampling` and `canary_tripwire` (`hactu8/protections.py`).
+- HACTU8 catalog: skill `agx03`, `AGX03` Conditional Rug-Pull (an AGX extension ID, not an OWASP number; parent `ASI04:2026`, mechanism `LLM01:2026` Prompt Injection); protections `sampling` and `canary_tripwire` (`hactu8/protections.py`).
 - Lab material, not repeated here: the [lab README](../README.md) (architecture, the "real, not scripted" argument, mapping table), [`references/AGX03_RISKS.md`](references/AGX03_RISKS.md) (research, scenarios, mitigation roadmap), the [payload README](assets/feed_poll_payload.README.md) (the timing, `SAMPLES` and `TRIGGER`) and protectogw's [`SECURITY.md`](protectogw/SECURITY.md).
 - Related labs: LLM04 Supply Chain (definition swap) and ASI04 Agentic Supply Chain Vulnerabilities (hash pin).
 - Real-model figures: in the HACTU8 repo, `docs/evidence/2026-11-20-ollama-llama3.2-3b.md` (earlier sweep) and `docs/agenticgoat-merge-plan.md` (AG-55 notes).
-- Ported from AgenticGoat's AGX03 entry (`agentic/labs.json`), its `conditional_scan` act (`acts.py`) and the `sampling` control (`agentic/protections.py`).
+- Ported from AgenticGoat (retired): its AGX03 entry (`agentic/labs.json`), its `conditional_scan` act (`acts.py`) and the `sampling` control (`agentic/protections.py`).

@@ -1,6 +1,6 @@
 {
  "schema": "hactu8.bench/v1",
- "source": "Ported from AgenticGoat's 17-act detector run (engine.run_scenario), 2026-11-20. 'control' items are enforced by gateway and lab controls (hash pinning, agency gate, grounding, retrieval scope, consumption), not by screen(); the bench lists them but does not score them. The original held-out set ('wild:' items) was used to tune protectogw 2.0, so it now counts toward coverage; generalization is measured on holdout_v2.json, written independently of the ruleset.",
+ "source": "Ported from AgenticGoat (retired): its 17-act detector run (engine.run_scenario), 2026-11-20. 'control' items are enforced by gateway and lab controls (hash pinning, agency gate, grounding, retrieval scope, consumption), not by screen(); the bench lists them but does not score them. The original held-out set ('wild:' items) was used to tune protectogw 2.0, so it now counts toward coverage; generalization is measured on holdout_v2.json, written independently of the ruleset.",
  "baseline": {
   "coverage": 0.991869918699187,
   "false_positives": 0,

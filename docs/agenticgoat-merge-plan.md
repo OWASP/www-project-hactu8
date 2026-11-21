@@ -169,8 +169,9 @@ Order: W0, W1, W2 and W3 run first (they unblock everything). W4 and W5 can run 
 
 ### W7: Naming
 
-- [ ] AG-70 Rename AgenticGoat to Lamb across about 206 files (READMEs, SKILL.md, references, `vulnerable_app.py`, `providers.py` and ProtectoGW docs, `lambSeed.ts` tags, `seed-issues.sh`). Keep Billy, Goat & Co., goatco, and the persona names.
-- [ ] AG-71 Retire `demos/agenticgoat-mock` (superseded by Lamb) or rename it `lamb-mock`. Add a check that fails on new "AgenticGoat" text outside history notes.
+- [x] AG-70 Rename AgenticGoat to Lamb across about 206 files (READMEs, SKILL.md, references, `vulnerable_app.py`, `providers.py` and ProtectoGW docs, `lambSeed.ts` tags, `seed-issues.sh`). Keep Billy, Goat & Co., goatco, and the persona names.
+- [x] AG-71 Retire `demos/agenticgoat-mock` (superseded by Lamb) or rename it `lamb-mock`. Add a check that fails on new "AgenticGoat" text outside history notes.
+  - 277 files: provenance now reads in HACTU8 terms; the one credit form left is "Ported from AgenticGoat (retired)" (35 lines). `demos/agenticgoat-mock` retired (unused). `tests/test_naming.py` fails on the name anywhere else, except a short commented allow-list (CLAUDE.md history line, the demo design record, `seed-issues.sh` titles already on GitHub, `lambSeed.ts` legacy ids for saved registries).
 
 ### W8: Verification and the rest of the MVP
 

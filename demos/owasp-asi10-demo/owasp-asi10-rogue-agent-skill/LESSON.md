@@ -64,4 +64,4 @@ Neither control reads the instructions, so neither depends on the payload's word
 - [OWASP Top 10 for Agentic Applications](https://genai.owasp.org/), entry ASI10; the LLM03 Excessive Agency lab in this repo.
 - Saltzer and Schroeder (1975), "The Protection of Information in Computer Systems" (least privilege, complete mediation).
 - RFC 2104, HMAC: Keyed-Hashing for Message Authentication.
-- This lab is HACTU8-original, designed from `demos/OWASP_DEMO_PLAN.md`. AgenticGoat's Rogue Lab (`agentic/labs.json`, ASI10) contains a rogue turn with an allowlist, a human gate and per-agent budgets; the runtime monitor here is the allowlist idea applied to every action.
+- This lab is HACTU8-original, designed from `demos/OWASP_DEMO_PLAN.md`. The earlier Rogue Lab design (ASI10, not ported) contains a rogue turn with an allowlist, a human gate and per-agent budgets; the runtime monitor here is the allowlist idea applied to every action.

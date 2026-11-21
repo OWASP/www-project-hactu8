@@ -32,7 +32,7 @@ to flip.
 
 Hardened mode (``POST /api/mode`` or ``LLM10_MODE=hardened``) escapes the
 output before it reaches either HTML sink and binds it as a parameter in SQL.
-It also runs a ``protectogw`` tripwire (AgenticGoat's screening core, vendored
+It also runs a ``protectogw`` tripwire (HACTU8's screening core, vendored
 unchanged in ``protectogw/``) and reports its signals in ``screen_findings``
 without relying on it.
 

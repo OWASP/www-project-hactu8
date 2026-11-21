@@ -26,8 +26,8 @@ tool output. That contract is the same in both modes. Whether a requested call
 executes is decided by real code: the dispatcher and, in hardened mode, the
 agency gate.
 
-Hardened mode (``POST /api/mode`` or ``LLM03_MODE=hardened``) adds the gate
-ported from AgenticGoat's ``_agency_gate``: a per-task tool allowlist and a
+Hardened mode (``POST /api/mode`` or ``LLM03_MODE=hardened``) adds the agency
+gate (the ``agency_gate_scan`` detector act): a per-task tool allowlist and a
 human-confirmation requirement on irreversible tools, both read from
 ``assets/task_policy.json``. The gate never reads the model's arguments or
 claims; it keys on the task the operator chose and the confirmations the

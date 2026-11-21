@@ -30,4 +30,4 @@ Keep this file plain text. `run_consumption.py` does not escape anything.
   field, and set `max_output_tokens` to the cap you would enforce as
   `max_tokens`.
 
-Source material: AgenticGoat `acts.py` Act 17 (`consumption:output_runaway`).
+Source material (see the provenance note in `LESSON.md`): `acts.py` Act 17 (`consumption:output_runaway`).

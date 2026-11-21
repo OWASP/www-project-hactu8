@@ -30,7 +30,7 @@ On a real model (`--backend ollama --model llama3.2:3b`), the numbers are report
 
 ## The defense, and why it holds
 
-Act 4 adds one protection, `grounding`, driven by [`assets/approved_registry.json`](assets/approved_registry.json) and ported from AgenticGoat's `acts.py` `grounding_scan`:
+Act 4 adds one protection, `grounding`, driven by [`assets/approved_registry.json`](assets/approved_registry.json) and ported from the `grounding_scan` detector act:
 
 - **Approved-registry check.** Every package the answer tells someone to install must be in the registry.
 - **Trusted-domain allowlist.** Every cited URL host must be on the allowlist.
@@ -65,4 +65,4 @@ The check keys on whether the cited artifact exists in a known-good source, not 
 - Lab material, not repeated here: the [lab README](../README.md) (architecture, the "real, not scripted" argument, MCP terminology bridge) and [`references/LLM07_RISKS.md`](references/LLM07_RISKS.md) (research, scenarios M-1 to M-3, mitigation roadmap).
 - [OWASP Top 10 for LLM Applications](https://genai.owasp.org/llm-top-10/), entry Misinformation.
 - Spracklen et al. (2025), "We Have a Package for You! A Comprehensive Analysis of Package Hallucinations by Code Generating LLMs"; Ji et al. (2023), "Survey of Hallucination in Natural Language Generation"; Lewis et al. (2020), "Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks".
-- Ported from AgenticGoat's 2025-numbered LLM09 Misinformation lesson and curriculum entry (`training/lessons/LLM09_misinformation.md`, `curriculum.json`), and its `acts.py` `grounding_scan`.
+- Ported from AgenticGoat (retired): its 2025-numbered LLM09 Misinformation lesson and curriculum entry (`training/lessons/LLM09_misinformation.md`, `curriculum.json`), and its `acts.py` `grounding_scan`.

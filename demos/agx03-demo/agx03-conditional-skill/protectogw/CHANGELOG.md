@@ -34,7 +34,7 @@ one sentence and no longer fires on a bare URL upload.
 
 **Measured** (`python -m hactu8 bench`): independent held-out set 16/30 attacks
 caught (1.0: 4/30), 0/15 false positives; training set 79/80, 0/40 false
-positives; original AgenticGoat corpus unchanged at 100% with 0 false positives.
+positives; original detector corpus unchanged at 100% with 0 false positives.
 
 ## 1.0.0 — 2026-07-10
 

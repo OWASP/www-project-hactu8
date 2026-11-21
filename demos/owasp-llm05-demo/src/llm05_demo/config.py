@@ -1,6 +1,6 @@
 """Runtime configuration for the LLM05 demo.
 
-The backends match AgenticGoat and the template-based lab: ``echo`` (default,
+The backends match the template-based lab: ``echo`` (default,
 the offline retrieval-grounded summarizer; ``local`` and ``stub`` are accepted
 as aliases), ``ollama``, ``llamacpp`` and ``openrouter``, through the shared
 ``providers.py``. OpenRouter reads ``OPENROUTER_API_KEY`` from the environment

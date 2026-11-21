@@ -43,6 +43,6 @@ Keep this file plain text. `run_extraction.py` does not escape anything.
 - **Testing the filter.** Lower or raise `output.ngram` in
   `filter_rules.json` and watch which lines are withheld.
 
-Source material: AgenticGoat's LLM07 probe in `training_live.py` and the
+Source material (see the provenance note in `LESSON.md`): the original LLM07 probe in `training_live.py` and the
 `system_reveal` rule in the vendored `protectogw/screening.py` are the
 reference.

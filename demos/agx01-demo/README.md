@@ -1,8 +1,8 @@
 # AGX01 — Obfuscation Gauntlet Demo
 
 An educational, self-contained demonstration of **AGX01: Obfuscation
-Gauntlet**, one of AgenticGoat's superset labs (group A, evasion; parent
-**OWASP ASI01** in AgenticGoat's mapping, mechanism **LLM01 prompt
+Gauntlet**, one of HACTU8's AGX extension labs (group A, evasion; parent
+**OWASP ASI01** in HACTU8's mapping, mechanism **LLM01 prompt
 injection**). A tool host's text passes a **screening gateway** before it
 reaches the model. The gateway uses a real screening library and reads every
 notice — but in vulnerable mode it judges the **raw bytes**, with every
@@ -10,8 +10,7 @@ normalizer fold disabled. A directive hidden in an encoding the ruleset cannot
 read in raw form walks straight past the screen. The model decodes it anyway.
 The fix is the same library with normalization on, plus an output canary check.
 
-The scenario is **"Billy," the Goat & Co. ops assistant** (AgenticGoat's
-persona). Billy has a fictional credential in his context and the instruction
+The scenario is **"Billy," the Goat & Co. ops assistant** (the Lamb persona). Billy has a fictional credential in his context and the instruction
 _never to reveal it_. With a vendor update that replaces three notices with
 encoded copies of one directive, the attacker makes Billy leak that credential
 on every notice request. Requests that use other tools (server time, service
@@ -53,7 +52,7 @@ python run_demo.py                     # all four acts in one process, stdlib on
 Keyword blocklists judge the text in front of them. Models do not — they decode
 base64, read `i.g.n.o.r.e`, and see past homoglyph and zero-width tricks. So a
 directive a raw-text screen cannot read is still an instruction the model
-follows. AgenticGoat's `obfuscation_gauntlet` act makes the point by grading
+follows. The `obfuscation_gauntlet` detector act makes the point by grading
 the normalizer, not the ruleset: every encoding must be folded back to the
 plaintext the ruleset can read. This demo turns that into a number, the
 **Canary Leak Rate (CLR)**, with a red/yellow/green **stoplight KPI**, and shows
@@ -84,9 +83,7 @@ leaked. **GREEN** is a clean answer.
 
 ### Optional: run against a real model
 
-`echo`, the lab's deterministic offline model, is the default backend (as in
-AgenticGoat; `stub` still works as an alias). `providers.py` (the same provider
-layer as AgenticGoat) adds three real ones. All are standard library only.
+`echo`, the lab's deterministic offline model, is the default backend (`stub` still works as an alias). `providers.py`, HACTU8's provider layer, adds three real ones. All are standard library only.
 
 In the web console, pick the backend and model in the **BACKEND / MODEL** bar
 and press **Use backend**. The model list is fetched live from Ollama, llama.cpp
@@ -102,7 +99,7 @@ python run_demo.py --backend openrouter --model meta-llama/llama-3.2-3b-instruct
 AGX01_BACKEND=openrouter AGX01_MODEL=... python agx01-obfuscation-skill/vulnerable_app.py
 ```
 
-The OpenRouter key works as in AgenticGoat: export `OPENROUTER_API_KEY` in the
+The OpenRouter key comes from the environment only: export `OPENROUTER_API_KEY` in the
 shell that starts the lab. The console never asks for it and is only told
 whether one is set; without it, `openrouter` is greyed out in the picker.
 
@@ -171,14 +168,13 @@ Echo and the local backends keep everything on the host.
    Classifies each reply GREEN/YELLOW/RED and computes the CLR.
 
 Plus the mitigation used in Act 4: `Gateway("hardened")` in `vulnerable_app.py`,
-built on [`protectogw/`](agx01-obfuscation-skill/protectogw/), AgenticGoat's
-screening core, vendored unchanged. Its own
+built on [`protectogw/`](agx01-obfuscation-skill/protectogw/), HACTU8's screening core, vendored unchanged. Its own
 [`SECURITY.md`](agx01-obfuscation-skill/protectogw/SECURITY.md) describes its
 limits, including a measured 53% generalization rate on held-out attacks (16 of 30).
 
 ### How the "leak" is real, not scripted
 
-The model follows one fixed rule, AgenticGoat's `EchoProvider`: if the text that
+The model follows one fixed rule, the echo provider's: if the text that
 reaches it (read through the normalizer, as a real LLM would) contains "emit"
 and "confirm", it replies with the canary; otherwise it answers from the first
 line of its notice context. That rule never changes between acts. What changes is
@@ -251,7 +247,7 @@ agx01-demo/
 ├── agx01-obfuscation-skill/
 │   ├── SKILL.md                       #   metadata + instructions
 │   ├── vulnerable_app.py              #   Module 1: target, notice board, gateway, echo model
-│   ├── protectogw/                    #   AgenticGoat's screening core (vendored, unchanged)
+│   ├── protectogw/                    #   HACTU8's screening core (vendored, unchanged)
 │   ├── providers.py                   #   optional real-model backends (shared, unchanged)
 │   ├── requirements.txt               #   stdlib only
 │   ├── web/                           #   shared lab console (index.html, app.js, styles.css)

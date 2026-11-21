@@ -1,7 +1,7 @@
 # ProtectoGW — Security Model & Threat Model
 
 > **Status: draft / reference implementation.** ProtectoGW is a screening core
-> extracted from AgenticGoat (now HACTU8 Lamb), a deliberately-vulnerable target
+> used by HACTU8, whose target, HACTU8 Lamb, is a deliberately-vulnerable
 > range for agentic prompt-injection. This document states what ProtectoGW
 > defends, what it explicitly does **not**, and the conditions under which it is
 > safe to deploy. Read it before putting ProtectoGW in a request path.

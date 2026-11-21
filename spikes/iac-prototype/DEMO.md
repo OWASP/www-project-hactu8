@@ -113,13 +113,12 @@ known-not-yet-migrated if asked.
 
 The asset/target inventory — **not** a skill/package registry (that's
 "Catalog," covered below). On first load it auto-seeds three example
-entries modeling **AgenticGoat**, a placeholder intentionally-vulnerable
-target (WebGoat-style, for OWASP LLM Top 10 training):
+entries for **HACTU8 Lamb**, the loopback-only sacrificial target
+(WebGoat-style, for OWASP LLM and Agentic Top 10 training):
 
-- `AgenticGoat` (type: **target**) — no live `targetUrl` yet, it's metadata
-  only today (see [Known gaps](#known-gaps-worth-naming-in-a-demo)).
-- `AgenticGoat Orchestrator` (type: **agent**)
-- `AgenticGoat MCP Host` (type: **mcp-host**)
+- `HACTU8 Lamb` (type: **target**), `targetUrl` `http://127.0.0.1:5500`.
+- `HACTU8 Lamb Agent` (type: **agent**)
+- `HACTU8 Lamb MCP Host` (type: **mcp-host**), `http://127.0.0.1:5500/mcp`.
 
 **Demo it:** show the seeded entries, then click **Add Entry** to register a
 new `target`-type entry (e.g. a real test app's URL). Point out that this
@@ -219,7 +218,7 @@ as `host_skills/`.
 3. **Resources tab** — empty state today (no resources authored yet for any
    of the 10 migrated Projects).
 4. **Target tab** — pick a target from the Registry (section 2) — select
-   `AgenticGoat`. Note this list is literally `useRegistry().entries` filtered
+   `HACTU8 Lamb`. Note this list is literally `useRegistry().entries` filtered
    to `type === 'target'` — anything added in Registry shows up here
    automatically, no special-casing.
 5. **Execution Model tab** — pick the model provider config saved in
@@ -284,10 +283,9 @@ error instead of hanging or crashing:
 
 Better to mention these proactively than have someone discover them:
 
-- **AgenticGoat is metadata only.** The Registry entry exists, but there's
-  no actual running vulnerable target service behind it yet (REDESIGN_PLAN
-  item 8) — `targetUrl` is empty. Project runs against it will have the
-  model ask for a URL rather than actually probing anything.
+- **Lamb must be running.** The `HACTU8 Lamb` entry points at
+  `http://127.0.0.1:5500`. Start it first (`python -m hactu8.lamb`), or
+  project runs against it have nothing to probe.
 - **`.env` isn't loaded** — see the callout in [Running it](#running-it).
 - **Sidebar duplication.** The "Projects" heading (backend-sourced, new) and
   the older static "Testing Projects" heading both currently list the same

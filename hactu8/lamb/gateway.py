@@ -11,7 +11,7 @@ also pins tool definitions on first sight (trust on first use, or a pins file
 approved at review) and drops any tool whose definition later changes, and it
 checks tool names against peer servers for shadowing.
 
-Ported from AgenticGoat's fastmcp gateway onto the MCP v2 SDK's low-level
+Ported from AgenticGoat (retired): its fastmcp gateway, rewritten onto the MCP v2 SDK's low-level
 server, which is built for pass-through handlers. Screening is stateful by
 default: a protectogw.Session per gateway accumulates reads, so a chain that is
 clean one document at a time is still caught.

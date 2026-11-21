@@ -50,7 +50,7 @@ repo uses the 2026 numbering of the OWASP Top 10 for Agentic Applications.
 
 | Vulnerability | Hardening strategy |
 |---------------|--------------------|
-| Unscreened memory writes | **Memory-write screening.** Screen each write and block on a match. Implemented: `screen_memory` in hardened mode and `evaluate_kpi.py --scan`, screening with protectogw (AgenticGoat's screening core, vendored unchanged: normalizer + de-obfuscation folds + ruleset + exfil taxonomy + canary check) plus lab rules for the stub's directive syntax and canary. Its `SECURITY.md` reports 53% generalization on held-out attacks, so it is one layer, never the boundary. |
+| Unscreened memory writes | **Memory-write screening.** Screen each write and block on a match. Implemented: `screen_memory` in hardened mode and `evaluate_kpi.py --scan`, screening with protectogw (HACTU8's screening core, vendored unchanged: normalizer + de-obfuscation folds + ruleset + exfil taxonomy + canary check) plus lab rules for the stub's directive syntax and canary. Its `SECURITY.md` reports 53% generalization on held-out attacks, so it is one layer, never the boundary. |
 | Memories shared across users | **Per-user scope with provenance.** New memories are saved with `user` scope, an owner, and the session that wrote them. Implemented: hardened `save_memory`. |
 | Recall trusts any entry | **Scoped recall.** Recall returns only `user`-scoped entries owned by the current user with a provenance record; unscoped entries are ignored. Implemented: `recall_allowed`. This alone neutralises memory planted before hardening. |
 | Memory treated as instructions | Keep recalled memory in its own data channel and never take instructions from it (see the LLM01 demo's channel separation). |

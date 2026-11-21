@@ -137,7 +137,7 @@ vulnerable prompt's fictional canary.
 
    `--scan` is the design check a prompt should pass before it ships.
    `--harden` deploys the secret-free prompt and filters every reply:
-   protectogw (AgenticGoat's screening core, vendored unchanged in
+   protectogw (HACTU8's screening core, vendored unchanged in
    `protectogw/`) guards the discount code as a canary, and the lab's n-gram
    check (`output.ngram` in `assets/filter_rules.json`) withholds verbatim
    prompt fragments. The tests show each layer alone: the design fix
@@ -178,5 +178,5 @@ the PLR falls to 0. To test the filter, change `output.ngram` in
 | `assets/system_prompt_hardened.txt` | Secret-free prompt deployed in hardened mode. |
 | `assets/store_baseline.json` | Help centre and accounts: the ground truth. |
 | `assets/filter_rules.json` | Prompt design-check rules and the output n-gram size (editable). |
-| `protectogw/` | AgenticGoat's screening core, vendored unchanged; the output filter's canary/leak check. |
+| `protectogw/` | HACTU8's screening core, vendored unchanged; the output filter's canary/leak check. |
 | `tests/test_lifecycle.py` | Asserts the four-act story in-process. |

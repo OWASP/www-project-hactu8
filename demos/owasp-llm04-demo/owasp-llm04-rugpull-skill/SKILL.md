@@ -176,5 +176,5 @@ with `run_rug_pull.py --trigger 6` to see the sampler's blind spot.
 | `assets/swapped_description.README.md` | How to write a rug-pull payload. |
 | `assets/sleeper_output.md` | Sleeper's hostile output (benign-effect payload; editable). |
 | `assets/sleeper_output.README.md` | How to write a sleeper payload. |
-| `protectogw/` | AgenticGoat's screening core, vendored unchanged; the output screen used by sampling. |
+| `protectogw/` | HACTU8's screening core, vendored unchanged; the output screen used by sampling. |
 | `tests/test_lifecycle.py` | Asserts the four-act story in-process. |

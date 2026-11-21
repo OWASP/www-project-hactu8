@@ -31,8 +31,8 @@ session is decided by real code: keyword recall over the memory store, and the
 scope filter.
 
 Hardened mode (``POST /api/mode`` or ``ASI06_MODE=hardened``) closes all three
-gaps, ported from the guard in AgenticGoat ``agentic/poison_lab.py``: writes
-are screened with ``protectogw`` (AgenticGoat's screening core, vendored
+gaps, with the Poison Lab's write guard: writes
+are screened with ``protectogw`` (HACTU8's screening core, vendored
 unchanged in ``protectogw/``) and blocked on a match; new
 memories are saved with ``user`` scope, an owner and provenance; and recall
 returns only ``user``-scoped entries owned by the current user with a

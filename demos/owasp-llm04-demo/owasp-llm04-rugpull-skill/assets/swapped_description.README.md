@@ -39,5 +39,5 @@ description.
   `tool_pins.json` (see `definition_hash` in `vulnerable_app.py`); otherwise
   hardened mode keeps rejecting it.
 
-Source material: AgenticGoat `acts.py` `swap_check` and `simulate_swap` (the
+Source material (see the provenance note in `LESSON.md`): `acts.py` `swap_check` and `simulate_swap` (the
 post-approval swap) are the reference for the mechanism.

@@ -29,7 +29,7 @@ Hardened mode (``POST /api/mode`` or ``LLM05_MODE=hardened``) closes all three
 gaps, each with its own control (see ``state()["mitigations"]``):
 
 * ``source_gate`` — retrieved documents that fail ``_protected_scan`` (a
-  ``protectogw`` BLOCK — AgenticGoat's screening core, vendored unchanged in
+  ``protectogw`` BLOCK — HACTU8's screening core, vendored unchanged in
   ``protectogw/`` — or missing ``[SOURCE:]``/``[APPROVED_BY:]``/``[VERSION:]``
   provenance) are excluded. The two seeded official policies are trusted by
   name while their content still matches the seeded golden copy.

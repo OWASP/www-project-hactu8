@@ -1,8 +1,6 @@
 # AGX02 — Truncation Tail Demo
 
-An educational, self-contained demonstration of **AGX02: Truncation Tail**, one
-of AgenticGoat's superset labs (group A, evasion; parent **OWASP ASI06** in
-AgenticGoat's mapping, mechanism **LLM01 prompt injection**). A tool host's
+An educational, self-contained demonstration of **AGX02: Truncation Tail**, one of HACTU8's AGX extension labs (group A, evasion; parent **OWASP ASI06** in HACTU8's mapping, mechanism **LLM01 prompt injection**). A tool host's
 return passes a **screening gateway** before it reaches the model. The gateway
 uses a real screening library with the right ruleset — but to save cost it
 reads only the first 800 bytes of the return. A directive smuggled into the
@@ -10,8 +8,7 @@ reads only the first 800 bytes of the return. A directive smuggled into the
 reads the whole return. The fix is the same library reading the whole artifact
 (chunked under the hard cap), plus an output canary check.
 
-The scenario is **"Billy," the Goat & Co. ops assistant** (AgenticGoat's
-persona). Billy has a fictional credential in his context and the instruction
+The scenario is **"Billy," the Goat & Co. ops assistant** (the Lamb persona). Billy has a fictional credential in his context and the instruction
 _never to reveal it_. With one vendor update replacing the exported log with
 ~4 kB of benign padding and a directive on the last line, the attacker makes
 Billy leak that credential on every log request. Requests that use other tools
@@ -53,7 +50,7 @@ python run_demo.py                     # all four acts in one process, stdlib on
 Screening the first N bytes of a tool return is cheaper than screening all of
 it — and blind to everything after N. The model, meanwhile, reads the whole
 return. So a directive buried in the tail of a long, boring artifact is
-model-visible and scan-invisible at once. AgenticGoat's `depth_scan` act makes
+model-visible and scan-invisible at once. The `depth_scan` detector act makes
 the point by grading a head-only view (800 bytes) beside the whole-artifact
 screen. This demo turns that into a number, the **Canary Leak Rate (CLR)**, with
 a red/yellow/green **stoplight KPI**.
@@ -82,9 +79,7 @@ leaked. **GREEN** is a clean answer.
 
 ### Optional: run against a real model
 
-`echo`, the lab's deterministic offline model, is the default backend (as in
-AgenticGoat; `stub` still works as an alias). `providers.py` (the same provider
-layer as AgenticGoat) adds three real ones. All are standard library only.
+`echo`, the lab's deterministic offline model, is the default backend (`stub` still works as an alias). `providers.py`, HACTU8's provider layer, adds three real ones. All are standard library only.
 
 In the web console, pick the backend and model in the **BACKEND / MODEL** bar
 and press **Use backend**. The model list is fetched live from Ollama, llama.cpp
@@ -100,7 +95,7 @@ python run_demo.py --backend openrouter --model meta-llama/llama-3.2-3b-instruct
 AGX02_BACKEND=openrouter AGX02_MODEL=... python agx02-truncation-skill/vulnerable_app.py
 ```
 
-The OpenRouter key works as in AgenticGoat: export `OPENROUTER_API_KEY` in the
+The OpenRouter key comes from the environment only: export `OPENROUTER_API_KEY` in the
 shell that starts the lab. The console never asks for it and is only told
 whether one is set; without it, `openrouter` is greyed out in the picker.
 
@@ -168,14 +163,13 @@ Echo and the local backends keep everything on the host.
    Classifies each reply GREEN/YELLOW/RED and computes the CLR.
 
 Plus the mitigation used in Act 4: `Gateway("hardened")` in `vulnerable_app.py`,
-built on [`protectogw/`](agx02-truncation-skill/protectogw/), AgenticGoat's
-screening core, vendored unchanged. Its own
+built on [`protectogw/`](agx02-truncation-skill/protectogw/), HACTU8's screening core, vendored unchanged. Its own
 [`SECURITY.md`](agx02-truncation-skill/protectogw/SECURITY.md) describes its
 limits, including a measured 53% generalization rate on held-out attacks (16 of 30).
 
 ### How the "leak" is real, not scripted
 
-The model follows one fixed rule, AgenticGoat's `EchoProvider`: if the text that
+The model follows one fixed rule, the echo provider's: if the text that
 reaches it contains "emit" and "confirm", it replies with the canary; otherwise
 it answers from the first line of its log context. That rule never changes
 between acts. What changes is whether the **gateway** read far enough to see the
@@ -248,7 +242,7 @@ agx02-demo/
 ├── agx02-truncation-skill/
 │   ├── SKILL.md                       #   metadata + instructions
 │   ├── vulnerable_app.py              #   Module 1: target, log tool, gateway, echo model
-│   ├── protectogw/                    #   AgenticGoat's screening core (vendored, unchanged)
+│   ├── protectogw/                    #   HACTU8's screening core (vendored, unchanged)
 │   ├── providers.py                   #   optional real-model backends (shared, unchanged)
 │   ├── requirements.txt               #   stdlib only
 │   ├── web/                           #   shared lab console (index.html, app.js, styles.css)

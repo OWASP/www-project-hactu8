@@ -1,7 +1,7 @@
 # AGX07 Risk Reference — Frontmatter Poison
 
-Domain knowledge, loaded on demand. AGX07 is one of the AGX superset
-labs (`agentic/labs.json`, `superset_labs`, group **C: RAG**), for patterns
+Domain knowledge, loaded on demand. AGX07 is one of HACTU8's AGX extension
+labs (group **C: RAG**), for patterns
 neither OWASP list numbers on its own. Its parent entry is **ASI06, Memory and
 Context Poisoning**, in the OWASP Top 10 for Agentic Applications 2026.
 

@@ -174,5 +174,5 @@ threshold is part of the lesson. To test the write screen, add a
 | `assets/memory_note.md` | The memory to plant (benign-effect payload; editable). |
 | `assets/memory_note.README.md` | How to write a payload for the echo and real-model backends. |
 | `assets/memory_baseline.json` | KB ground truth and seeded user memories. |
-| `protectogw/` | AgenticGoat's screening core, vendored unchanged; the memory-write screen. |
+| `protectogw/` | HACTU8's screening core, vendored unchanged; the memory-write screen. |
 | `tests/test_lifecycle.py` | Asserts the four-act story in-process. |

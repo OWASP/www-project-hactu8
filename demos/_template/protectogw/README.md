@@ -7,8 +7,9 @@ model's own output are all just "untrusted text," judged by one entry point.
 
 Pure standard library, **zero runtime dependencies.**
 
-> Extracted from AgenticGoat (now [HACTU8 Lamb](https://github.com/OWASP/www-project-hactu8/tree/phase1-mvp)), a
-> deliberately-vulnerable target range for agentic attacks. **Read
+> The screening core of [HACTU8](https://github.com/OWASP/www-project-hactu8/tree/phase1-mvp),
+> whose sacrificial target, HACTU8 Lamb, is a deliberately-vulnerable range for
+> agentic attacks. **Read
 > [`SECURITY.md`](./SECURITY.md) before deploying** — it states exactly what
 > protectogw defends, what it does not (53% of independently written attacks caught in 2.0),
 > and how to place it in a layered pipeline. protectogw is one layer of

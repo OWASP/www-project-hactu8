@@ -30,7 +30,7 @@ closely, and a high-risk item batched among them gets the same glance.
 | T-2 | Hidden in a batch | A high-risk action is batched with routine ones below what the approver reads. | **DEMO TARGET** |
 | T-3 | Steered framing | Untrusted data the agent reads (a vendor amendment) shapes how it describes the action. | **DEMO TARGET** (trigger) |
 | T-4 | Approval fatigue by volume | Many low-value prompts train the human to click approve. | Partly: the approver reads only 3 lines |
-| T-5 | Persuasive recommendation | The agent confidently recommends a harmful choice (for example a fake "verified" vendor). | — (AgenticGoat ASI09 Trust Lab) |
+| T-5 | Persuasive recommendation | The agent confidently recommends a harmful choice (for example a fake "verified" vendor). | — (the ASI09 Trust Lab, not ported) |
 | T-6 | Impersonated authority | The agent's message claims a manager or policy already approved it. | — |
 
 ## How the demo maps to the attack surfaces

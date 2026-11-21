@@ -42,4 +42,4 @@ The directive lines work on the echo backend because of two things:
   grades GREEN. A benign import such as `import math` is not RED on its own,
   though the sandbox still refuses it.
 
-Source material: AgenticGoat `agentic/labs.json` entry `ASI05` ("Sink Lab": model output becomes a code sink; screen the output before the sink) is the reference.
+Source material (see the provenance note in `LESSON.md`): `agentic/labs.json` entry `ASI05` ("Sink Lab": model output becomes a code sink; screen the output before the sink) is the reference.

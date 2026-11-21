@@ -87,9 +87,7 @@ about 10,000 tokens.
 
 ### Optional: run against a real model
 
-`echo`, the lab's deterministic offline model, is the default backend (as in
-AgenticGoat; `stub` still works as an alias). `providers.py` (the same provider
-layer as AgenticGoat) adds three real ones. All are standard library only.
+`echo`, the lab's deterministic offline model, is the default backend (`stub` still works as an alias). `providers.py`, HACTU8's provider layer, adds three real ones. All are standard library only.
 
 In the web console, pick the backend and model in the **BACKEND / MODEL** bar
 and press **Use backend**. The model list is fetched live from Ollama,
@@ -105,7 +103,7 @@ python run_demo.py --backend openrouter --model meta-llama/llama-3.2-3b-instruct
 LLM06_BACKEND=openrouter LLM06_MODEL=... python owasp-llm06-consumption-skill/vulnerable_app.py
 ```
 
-The OpenRouter key works as in AgenticGoat: export `OPENROUTER_API_KEY` in the
+The OpenRouter key comes from the environment only: export `OPENROUTER_API_KEY` in the
 shell that starts the lab. The console never asks for it and is only told
 whether one is set; without it, `openrouter` is greyed out in the picker.
 
@@ -248,8 +246,7 @@ curl -s localhost:5206/query -H 'content-type: application/json' \
 ## Mitigations demonstrated in Act 4
 
 - **Per-request budget** — input tokens, output tokens, tool calls and agent
-  steps are enforced, not only metered. The check is ported from AgenticGoat
-  `acts._consumption_guard`.
+  steps are enforced, not only metered. The check matches the `consumption_guard` detector act.
 - **Loop depth cap** — on the last allowed step, tools are disabled, so the
   model must answer from what it already retrieved.
 - **Per-client quota** — a client's cumulative simulated tokens are checked

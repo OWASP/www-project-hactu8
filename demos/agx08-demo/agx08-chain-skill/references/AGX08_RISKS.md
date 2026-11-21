@@ -1,7 +1,7 @@
 # AGX08 Risk Reference — Cross-Resource Chain
 
-Domain knowledge, loaded on demand. AGX08 is one of the AGX superset
-labs (`agentic/labs.json`, `superset_labs`, group **C: RAG**). Its parent entry
+Domain knowledge, loaded on demand. AGX08 is one of HACTU8's AGX extension
+labs (group **C: RAG**). Its parent entry
 is **ASI06, Memory and Context Poisoning**, in the OWASP Top 10 for Agentic
 Applications 2026.
 

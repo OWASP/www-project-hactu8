@@ -1,7 +1,7 @@
 ---
 name: agx02-truncation-skill
 description: >-
-  Demonstrates AgenticGoat's AGX02 (Truncation Tail, parent OWASP ASI06)
+  Demonstrates AGX02 (Truncation Tail, parent OWASP ASI06)
   against a gateway-protected ops assistant in an AUTHORIZED security lab. A
   directive smuggled into the tail of a long tool return reaches the model
   because the gateway, to save cost, screens only the head. Measures impact
@@ -65,7 +65,7 @@ Both modes screen the `tool_result` surface with the same ruleset. The
 difference is **how much** of the return each reads:
 
 - **Vulnerable:** the gateway truncates its *input* to the first `HEAD_LIMIT`
-  bytes (AgenticGoat's `DEPTH_HEAD_LIMIT`) and judges only that, then passes the
+  bytes (Lamb's `DEPTH_HEAD_LIMIT`) and judges only that, then passes the
   whole return to the model. The tail is never screened.
 - **Hardened:** the gateway reads the entire artifact in `CHUNK`-sized windows
   (bounded by protectogw's hard input cap, so a huge return is never a CPU
@@ -74,7 +74,7 @@ difference is **how much** of the return each reads:
 A directive placed in the **head** is caught even by the vulnerable gateway
 (`GatewayTest`): coverage is how much you read, not the ruleset.
 
-**protectogw** (`protectogw/`) is AgenticGoat's screening core, vendored
+**protectogw** (`protectogw/`) is HACTU8's screening core, vendored
 unchanged. Its own [`SECURITY.md`](protectogw/SECURITY.md) describes its limits,
 including a measured 53% generalization rate on held-out attacks (16 of 30), which is
 why the output canary check is layered behind it.
@@ -165,7 +165,7 @@ it past the directive's offset makes even the vulnerable gateway catch it.
 | Path | Purpose |
 |------|---------|
 | `vulnerable_app.py` | Target: Billy, the log tool, the gateway (`/ask`, `/log`, `/vendor/logs/update`, `/health`) plus the console API (`/api/meta`, `/api/state`, `/api/reset`, `/api/attack`, `/api/evaluate`, `/api/scan`, `/api/mode`, `/api/models`, `/api/backend`). |
-| `protectogw/` | AgenticGoat's screening core, vendored unchanged. |
+| `protectogw/` | HACTU8's screening core, vendored unchanged. |
 | `web/` | Shared HACTU8 lab console, served at `/`. |
 | `providers.py` | Optional real-model backends: Ollama, llama.cpp, OpenRouter. Shared and copied unchanged. |
 | `scripts/run_truncation.py` | Attack: replace the exported artifact. |

@@ -45,6 +45,6 @@ Keep this file plain text. `run_pivot.py` does not escape anything.
   `customers_baseline.json` return data; unknown IDs come back as
   `no such customer`.
 
-Source material: the AgenticGoat LLM02 probe (`training_live.py`, the
+Source material (see the provenance note in `LESSON.md`): the LLM02 probe (`training_live.py`, the
 `PROBES` entry for LLM02) and `secrets_vault.py` are the reference for the
 mechanism and the canary/vault split.

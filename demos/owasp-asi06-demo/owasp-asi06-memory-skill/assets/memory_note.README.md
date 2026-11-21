@@ -45,5 +45,5 @@ The memory lives in RAM only and is cleared by `scripts/reset_baseline.py`.
 - **Testing the screen.** Variants inside an HTML comment exercise the
   screen's hidden-content check.
 
-Source material: AgenticGoat `agentic/poison_lab.py` (the seeded document and
+Source material (see the provenance note in `LESSON.md`): `agentic/poison_lab.py` (the seeded document and
 the trigger keyed to a topic) is the reference for the mechanism.

@@ -62,8 +62,8 @@ DOC_B_FILE = os.path.join(ASSETS, "chain_doc_b.txt")
 DOC_A_URI = "kb://travel-policy"
 DOC_B_URI = "kb://travel-reimbursement"
 
-# A fictional credential, minted per process as in the source lab's
-# secrets_vault.canary(). It sits in Billy's context; it must never leave.
+# A fictional credential, minted per process (``sk-canary-`` + hex), like
+# ``providers.canary()``. It sits in Billy's context; it must never leave.
 CANARY = "sk-canary-" + secrets.token_hex(16)
 
 SYSTEM_PROMPT = (

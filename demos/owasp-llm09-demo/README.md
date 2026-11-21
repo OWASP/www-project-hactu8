@@ -81,9 +81,7 @@ You'll see four acts:
 
 ### Optional: run against a real model
 
-`echo`, the lab's deterministic offline model, is the default backend (as in
-AgenticGoat; `stub` still works as an alias). `providers.py` (the same provider
-layer as AgenticGoat) adds three real ones. All are standard library only.
+`echo`, the lab's deterministic offline model, is the default backend (`stub` still works as an alias). `providers.py`, HACTU8's provider layer, adds three real ones. All are standard library only.
 
 In the web console, pick the backend and model in the **BACKEND / MODEL** bar
 and press **Use backend**. The model list is fetched live from Ollama,
@@ -99,7 +97,7 @@ python run_demo.py --backend openrouter --model meta-llama/llama-3.2-3b-instruct
 LLM09_BACKEND=openrouter LLM09_MODEL=... python owasp-llm09-tenant-skill/vulnerable_app.py
 ```
 
-The OpenRouter key works as in AgenticGoat: export `OPENROUTER_API_KEY` in the
+The OpenRouter key comes from the environment only: export `OPENROUTER_API_KEY` in the
 shell that starts the lab. The console never asks for it and is only told
 whether one is set; without it, `openrouter` is greyed out in the picker.
 
@@ -235,12 +233,12 @@ curl -s localhost:5209/query -H 'content-type: application/json' \
 
 - **Tenant filter at the retrieval layer** — before ranking, the store drops
   every document whose tenant differs from the session's server-side tenant
-  (`scope_blocks`, ported from AgenticGoat `_scope_blocks`). It keys on the
+  (`scope_blocks`). It keys on the
   authenticated scope, not on content or similarity, so it holds even when a
   foreign document is the best match.
 - **Retrieval-scope audit** — `evaluate_kpi.py --scan PATH` ranks the store
   for a query with no filter and lists every cross-tenant candidate the filter
-  would block (AgenticGoat `retrieval_scope_scan`).
+  would block (detector act `retrieval_scope_scan`).
 
 Further hardening is discussed in the references but not coded here:
 separate collections per tenant, never exposing raw vectors (against

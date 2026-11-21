@@ -64,4 +64,4 @@ Neither control reads the notice's wording; validation compares figures with the
 - Lab material, not repeated here: the [lab README](../README.md) (architecture, "real, not scripted", agent-harness terminology bridge) and [`references/ASI08_RISKS.md`](references/ASI08_RISKS.md) (research, scenarios, mitigation roadmap).
 - [OWASP Top 10 for Agentic Applications](https://genai.owasp.org/), entry ASI08.
 - Nygard (2007), "Release It!" (the circuit-breaker pattern).
-- This lab is HACTU8-original, designed from `demos/OWASP_DEMO_PLAN.md` §4.2. AgenticGoat's Cascade Lab (`agentic/labs.json`, ASI08) covers a different form, a hallucinated package name grounded against an approved registry; its remediation, breaking self-reinforcing loops with independent checks, is the one taught here.
+- This lab is HACTU8-original, designed from `demos/OWASP_DEMO_PLAN.md` §4.2. The earlier Cascade Lab design (ASI08, not ported) covers a different form, a hallucinated package name grounded against an approved registry; its remediation, breaking self-reinforcing loops with independent checks, is the one taught here.

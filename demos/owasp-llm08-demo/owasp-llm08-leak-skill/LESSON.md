@@ -63,4 +63,4 @@ The two do different jobs, and the tests show it. The design fix alone removes t
 - Lab material, not repeated here: the [lab README](../README.md) (architecture, the "real, not scripted" argument, MCP terminology bridge) and [`references/LLM08_RISKS.md`](references/LLM08_RISKS.md) (research, scenarios H-1 to H-3, mitigation roadmap).
 - [OWASP Top 10 for LLM Applications](https://genai.owasp.org/llm-top-10/), entry System Prompt Leakage.
 - Perez and Ribeiro (2022), "Ignore Previous Prompt: Attack Techniques For Language Models"; Zhang, Carlini and Ippolito (2024), "Effective Prompt Extraction from Language Models".
-- Ported from AgenticGoat's 2025-numbered LLM07 System Prompt Leakage lesson and curriculum entry (`training/lessons/LLM07_system_prompt_leakage.md`, `curriculum.json`), and its `system_reveal` rule.
+- Ported from AgenticGoat (retired): its 2025-numbered LLM07 System Prompt Leakage lesson and curriculum entry (`training/lessons/LLM07_system_prompt_leakage.md`, `curriculum.json`), and its `system_reveal` rule.

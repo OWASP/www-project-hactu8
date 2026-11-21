@@ -1,6 +1,6 @@
 """Embedding and LLM backends behind a small common interface.
 
-Backends match AgenticGoat and the template-based lab (``echo``, ``ollama``,
+Backends match the template-based lab (``echo``, ``ollama``,
 ``llamacpp``, ``openrouter``):
 
 * ``LocalEmbedding`` / ``LocalLLM`` — zero-dependency, deterministic, and offline.

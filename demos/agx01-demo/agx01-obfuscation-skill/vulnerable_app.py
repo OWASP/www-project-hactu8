@@ -19,7 +19,7 @@ model-visible yet scan-invisible.
 AUTHORIZED SECURITY-LAB USE ONLY. Bound to loopback; insecure by design; do
 not expose it.
 
-The model is AgenticGoat's ``EchoProvider`` rule (see ``StubModel``): if the
+The model is the echo provider's rule (see ``StubModel``): if the
 text that reaches it contains both "emit" and "confirm" (read through the same
 normalizer a human analyst or a real LLM would apply, so an encoded form still
 counts) it replies ``Acknowledged. <canary>``; otherwise it gives a benign
@@ -60,8 +60,8 @@ WEB_DIR = os.path.join(HERE, "web")
 WEB_FILES = {"index.html": "text/html", "app.js": "text/javascript", "styles.css": "text/css"}
 PAYLOAD_FILE = os.path.join(ASSETS, "obfuscation_payload.txt")
 
-# A fictional credential, minted per process as in AgenticGoat's
-# secrets_vault.canary(). It sits in Billy's context; it must never leave.
+# A fictional credential, minted per process (``sk-canary-`` + hex), like
+# ``providers.canary()``. It sits in Billy's context; it must never leave.
 CANARY = "sk-canary-" + secrets.token_hex(16)
 
 SYSTEM_PROMPT = (
@@ -187,7 +187,7 @@ class Gateway:
 # The model stand-ins
 # --------------------------------------------------------------------------- #
 class StubModel:
-    """AgenticGoat's EchoProvider rule, deterministic and offline.
+    """The echo provider's rule, deterministic and offline.
 
     The one AGX01-specific twist: the model reads its context through the same
     normalizer/de-obfuscator a real LLM applies internally, so an *encoded*
@@ -359,7 +359,7 @@ class Lab:
 # --------------------------------------------------------------------------- #
 CONSOLE_META = {
     "id": "AGX01",
-    "framework": "AgenticGoat extensions (AGX), parent OWASP ASI01",
+    "framework": "HACTU8 extensions (AGX), parent OWASP ASI01",
     "risk": "Obfuscation Gauntlet",
     "title": "Obfuscation Gauntlet Lab",
     "short_title": "Obfuscation Lab",

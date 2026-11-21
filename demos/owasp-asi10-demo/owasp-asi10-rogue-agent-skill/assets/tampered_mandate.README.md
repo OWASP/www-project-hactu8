@@ -48,5 +48,5 @@ they are.
   diffs your mandate against the approved one and dry-runs it with only the
   monitor on.
 
-Source material: there is no AgenticGoat module for this risk; the mechanism
+Source material: nothing is ported for this risk; the mechanism
 follows the "ASI10" entry in `demos/OWASP_DEMO_PLAN.md`.

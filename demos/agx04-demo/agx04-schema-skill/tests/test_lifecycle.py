@@ -78,7 +78,7 @@ class LifecycleTest(unittest.TestCase):
         self.assertTrue(all(s == "GREEN" for s, t in statuses if not t), statuses)
 
     def test_enum_variant_also_leaks_and_is_blocked(self):
-        # AgenticGoat's practice: move the payload to an enum value.
+        # The AGX04 practice: move the payload to an enum value.
         self.lab.vendor_update("ticket_lookup", "ticket_id", "enum", PAYLOAD)
         self.assertEqual(run_suite(self.lab)[1], 1.0)
         self.lab.set_mode("hardened")

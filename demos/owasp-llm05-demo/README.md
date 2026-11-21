@@ -85,9 +85,7 @@ You'll see four acts:
 
 ### Optional: run against a real model
 
-`echo`, the lab's deterministic offline model, is the default backend (as in
-AgenticGoat; `stub` still works as an alias). `providers.py` (the same provider
-layer as AgenticGoat) adds three real ones. All are standard library only.
+`echo`, the lab's deterministic offline model, is the default backend (`stub` still works as an alias). `providers.py`, HACTU8's provider layer, adds three real ones. All are standard library only.
 
 In the web console, pick the backend and model in the **BACKEND / MODEL** bar
 and press **Use backend**. The model list is fetched live from Ollama,
@@ -103,7 +101,7 @@ python run_demo.py --backend openrouter --model meta-llama/llama-3.2-3b-instruct
 LLM05_BACKEND=openrouter LLM05_MODEL=... python owasp-llm05-poisoning-skill/vulnerable_app.py
 ```
 
-The OpenRouter key works as in AgenticGoat: export `OPENROUTER_API_KEY` in the
+The OpenRouter key comes from the environment only: export `OPENROUTER_API_KEY` in the
 shell that starts the lab. The console never asks for it and is only told
 whether one is set; without it, `openrouter` is greyed out in the picker.
 
@@ -246,8 +244,7 @@ curl -s localhost:5205/query -H 'content-type: application/json' \
   lack `[SOURCE:]`/`[APPROVED_BY:]`/`[VERSION:]` provenance, are excluded. The
   two seeded official policies are trusted by name while their content still
   matches the seeded copy. The screen is
-  [protectogw](owasp-llm05-poisoning-skill/protectogw/README.md), AgenticGoat's
-  screening core vendored unchanged (normalizer + de-obfuscation folds +
+  [protectogw](owasp-llm05-poisoning-skill/protectogw/README.md), HACTU8's screening core vendored unchanged (normalizer + de-obfuscation folds +
   ruleset + exfil taxonomy + canary check); `SCREEN_POLICY` in
   `vulnerable_app.py` adds lab rules for this payload's override phrasing.
   protectogw's `SECURITY.md` reports 53% generalization on held-out attacks, so it is one
@@ -279,7 +276,7 @@ owasp-llm05-demo/
 │   ├── SKILL.md                       #   metadata + instructions
 │   ├── vulnerable_app.py              #   Module 1: target, stub model, mitigations
 │   ├── providers.py                   #   optional real-model backends (shared, unchanged)
-│   ├── protectogw/                    #   AgenticGoat screening core (vendored unchanged)
+│   ├── protectogw/                    #   HACTU8's screening core (vendored unchanged)
 │   ├── requirements.txt               #   stdlib only
 │   ├── web/                           #   shared lab console (index.html, app.js, styles.css)
 │   ├── scripts/
@@ -341,7 +338,7 @@ python scripts/run_task.py --local             # attack + PSR, no server needed
 "Data-Handling Policy Bot" whose ground truth is _"data exports to external
 storage are strictly prohibited"_, attacked with 3 poisoned documents in a
 cosine-similarity vector store, and remediated with source scoring and anomaly
-detection. It has the same model backends as the lab and AgenticGoat, through
+detection. It has the same model backends as the lab, through
 the same shared `providers.py`, and is standard library only:
 
 | Backend | Chat model | Embeddings |
@@ -374,7 +371,7 @@ lab's `LLM05_BACKEND` / `LLM05_MODEL` / `LLM05_PORT`. Its optional Flask
 server (`python -m llm05_demo.server`, needs `flask` and `requests` from
 `requirements.txt`) listens on port 5101 (`LLM05_SRC_PORT` to change it).
 
-Source material: AgenticGoat `agentic/poison_lab.py` (its Poison Lab: the
+Source material, ported from AgenticGoat (retired): `agentic/poison_lab.py` (its Poison Lab: the
 override memo, the trigger keyed to "quarterly audit" and the MFA control).
 This lab reproduces its result on echo: PSR 0% at baseline, 100% after the
 attack, 0% with the defense.

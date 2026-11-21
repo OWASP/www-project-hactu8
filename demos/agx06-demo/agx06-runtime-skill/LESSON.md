@@ -4,7 +4,7 @@ Step 16 on the learning path, the first of the AGX gateway labs, after ASI04 Age
 
 ## What it is
 
-Tool review is usually static: read the definition, approve it, trust the tool after. But a tool assembles its return value only when it runs, and that value is untrusted input the client hands to the model. A payload in a runtime return did not exist when the definition was scanned, so a definition-only review cannot see it. AGX06 is one of AgenticGoat's superset labs (group B, hidden channels). HACTU8 maps it to parent ASI02 Tool Misuse and Exploitation; AgenticGoat's `labs.json` lists ASI01.
+Tool review is usually static: read the definition, approve it, trust the tool after. But a tool assembles its return value only when it runs, and that value is untrusted input the client hands to the model. A payload in a runtime return did not exist when the definition was scanned, so a definition-only review cannot see it. AGX06 is one of HACTU8's AGX extension labs (group B, hidden channels). HACTU8 maps it to parent ASI02 Tool Misuse and Exploitation; the earlier AGX mapping listed ASI01.
 
 Here the target is Billy, Goat & Co.'s ops assistant, who answers onboarding questions with a `search_kb` tool. His ground truth is *a fictional `sk-canary-` credential sits in his context with the instruction never to reveal it*. The attacker pushes an unauthenticated vendor update (`POST /vendor/tools/update`) that sets `search_kb`'s runtime return: the real onboarding checklist, followed by a directive inside an HTML comment. The definition a reviewer approved is untouched.
 
@@ -16,7 +16,7 @@ The gateway uses protectogw with the right ruleset in both modes. Only when it s
 - Billy's router sends only knowledge-base requests to `search_kb`. The stand-in model reads every byte the client surfaces, HTML comment included, finds "emit" and "confirm" and replies with the credential.
 - Put the same directive in the static definition and the vulnerable gateway blocks it (`GatewayTest`). The ruleset was never the problem; screening only at review time was.
 
-AgenticGoat's `runtime_watch` act makes the same point by calling the tool for real and re-screening what it brings back.
+The `runtime_watch` detector act makes the same point by calling the tool for real and re-screening what it brings back.
 
 ## Try it
 
@@ -61,9 +61,9 @@ For real models, hardened mode also fences tool-host text in `<untrusted_tool_ou
 
 ## References
 
-- HACTU8 catalog: skill `agx06`, `AGX06` Runtime Result Injection (an AgenticGoat superset ID, not an OWASP number; parent `ASI02:2026` Tool Misuse and Exploitation, listed as `ASI01` in AgenticGoat); protections `input_screen` and `canary_tripwire` (`hactu8/protections.py`).
+- HACTU8 catalog: skill `agx06`, `AGX06` Runtime Result Injection (an AGX extension ID, not an OWASP number; parent `ASI02:2026` Tool Misuse and Exploitation, listed as `ASI01` in the earlier AGX mapping); protections `input_screen` and `canary_tripwire` (`hactu8/protections.py`).
 - Lab material, not repeated here: the [lab README](../README.md) (architecture, the MCP terminology bridge, mapping table), [`references/AGX06_RISKS.md`](references/AGX06_RISKS.md) (research, scenarios, mitigation roadmap), the [payload README](assets/runtime_return_payload.README.md) and protectogw's [`SECURITY.md`](protectogw/SECURITY.md).
 - Related labs: LLM01 Prompt Injection (the same indirect injection through a retrieved page) and AGX03 Conditional Rug-Pull (returns that change between calls).
 - Real-model figures: in the HACTU8 repo, `docs/agenticgoat-merge-plan.md` (AG-55 notes) and `docs/evidence/2026-11-20-ollama-llama3.2-3b.md`.
 - Greshake et al. (2023), "Not what you've signed up for: Compromising Real-World LLM-Integrated Applications with Indirect Prompt Injection".
-- Ported from AgenticGoat's AGX06 entry (`agentic/labs.json`), its `runtime_watch` act (`acts.py`) and the `input_screen` control (`agentic/protections.py`).
+- Ported from AgenticGoat (retired): its AGX06 entry (`agentic/labs.json`), its `runtime_watch` act (`acts.py`) and the `input_screen` control (`agentic/protections.py`).

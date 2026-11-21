@@ -41,5 +41,5 @@ Keep this file plain text. `run_slopsquat.py` does not escape anything.
   attacker registers the hallucinated name for real. Here it exists only in
   this file.
 
-Source material: AgenticGoat `acts.py` `grounding_scan` and its
+Source material (see the provenance note in `LESSON.md`): `acts.py` `grounding_scan` and its
 `_GROUNDING_OUTPUTS` are the reference set for the mechanism.

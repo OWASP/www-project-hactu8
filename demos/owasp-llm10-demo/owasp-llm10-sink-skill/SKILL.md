@@ -133,7 +133,7 @@ With `openrouter`, prompts and payloads leave the machine.
    python scripts/evaluate_kpi.py --harden                         # GREEN, USR 0%
    ```
 
-   `--scan` screens the note with protectogw (AgenticGoat's screening core,
+   `--scan` screens the note with protectogw (HACTU8's screening core,
    vendored unchanged in `protectogw/`) before it is filed.
    `--harden` switches the target to hardened mode: `html.escape` before both
    HTML sinks and `?` placeholders in SQL. The model's output is unchanged; it
@@ -171,5 +171,5 @@ a `protectogw.Rule` to `SINK_POLICY` in `vulnerable_app.py`.
 | `assets/poisoned_note.md` | Adversarial note (benign-effect payload; editable). |
 | `assets/poisoned_note.README.md` | How to write a payload for the echo and real-model backends. |
 | `assets/tickets_baseline.json` | Untampered tickets: the ground truth. |
-| `protectogw/` | AgenticGoat's screening core, vendored unchanged; the output-sink tripwire. |
+| `protectogw/` | HACTU8's screening core, vendored unchanged; the output-sink tripwire. |
 | `tests/test_lifecycle.py` | Asserts the four-act story in-process. |

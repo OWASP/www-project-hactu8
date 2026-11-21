@@ -53,7 +53,7 @@ next developer or agent installs it (**slopsquatting**).
 
 | Vulnerability | Hardening strategy |
 |---------------|--------------------|
-| Cited packages never verified | **Approved-registry check** on every package the answer tells someone to install. Implemented: `check_grounding` in `vulnerable_app.py` + `assets/approved_registry.json`, ported from AgenticGoat `acts.py` `_grounding_check`. |
+| Cited packages never verified | **Approved-registry check** on every package the answer tells someone to install. Implemented: `check_grounding` in `vulnerable_app.py` + `assets/approved_registry.json`, matching the `grounding_scan` detector act. |
 | Cited URLs never verified | **Trusted-domain allowlist** for every cited URL host. Implemented: same function. |
 | Unverifiable claims stated as fact | **Downgrade to "unverified"**: withhold the draft, fall back to the next grounded source, or say it could not verify. Implemented: hardened mode in `vulnerable_app.py`. |
 | Unvetted content sources | Authenticate and review community contributions; keep them out of the official store, or label and rank them lower. Pre-publication check implemented: `evaluate_kpi.py --scan`. |

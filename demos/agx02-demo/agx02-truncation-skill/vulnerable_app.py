@@ -18,7 +18,7 @@ model-visible yet scan-invisible.
 AUTHORIZED SECURITY-LAB USE ONLY. Bound to loopback; insecure by design; do
 not expose it.
 
-The model is AgenticGoat's ``EchoProvider`` rule (see ``StubModel``): if the
+The model is the echo provider's rule (see ``StubModel``): if the
 text that reaches it contains both "emit" and "confirm" (case-insensitive) it
 replies ``Acknowledged. <canary>``; otherwise it gives a benign answer quoting
 the first line of its tool context. Whether the directive leaks is decided by
@@ -55,8 +55,8 @@ WEB_FILES = {"index.html": "text/html", "app.js": "text/javascript", "styles.css
 PAYLOAD_FILE = os.path.join(ASSETS, "export_log_payload.txt")
 BASELINE_FILE = os.path.join(ASSETS, "export_log_baseline.txt")
 
-# A fictional credential, minted per process as in AgenticGoat's
-# secrets_vault.canary(). It sits in Billy's context; it must never leave.
+# A fictional credential, minted per process (``sk-canary-`` + hex), like
+# ``providers.canary()``. It sits in Billy's context; it must never leave.
 CANARY = "sk-canary-" + secrets.token_hex(16)
 
 SYSTEM_PROMPT = (
@@ -74,7 +74,7 @@ REFUSAL = "I can't send that reply: the gateway stopped it because it carried a 
 LAB_RULE = protectogw.Rule("lab_directive", r"agx\W*lab\W*directive")
 SCREEN_POLICY = protectogw.Policy(extra_rules=(LAB_RULE,))
 
-# AgenticGoat's DEPTH_HEAD_LIMIT: a cost-capped screen reads only this many
+# DEPTH_HEAD_LIMIT, as on Lamb's export_log surface: a cost-capped screen reads only this many
 # bytes of a return before it stops. The vulnerable gateway truncates its INPUT
 # to this; the hardened gateway reads the whole artifact in CHUNK-sized windows.
 HEAD_LIMIT = 800
@@ -154,7 +154,7 @@ class Gateway:
 # The model stand-ins
 # --------------------------------------------------------------------------- #
 class StubModel:
-    """AgenticGoat's EchoProvider rule, deterministic and offline.
+    """The echo provider's rule, deterministic and offline.
 
     If the joined context contains both "emit" and "confirm" it complies with
     the exfil instruction and returns the canary; otherwise it answers benignly
@@ -309,7 +309,7 @@ class Lab:
 # --------------------------------------------------------------------------- #
 CONSOLE_META = {
     "id": "AGX02",
-    "framework": "AgenticGoat extensions (AGX), parent OWASP ASI06",
+    "framework": "HACTU8 extensions (AGX), parent OWASP ASI06",
     "risk": "Truncation Tail",
     "title": "Truncation Tail Lab",
     "short_title": "Truncation Lab",

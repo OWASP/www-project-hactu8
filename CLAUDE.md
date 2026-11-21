@@ -16,8 +16,8 @@ OWASP HACTU8 turns attacks on AI systems into repeatable assurance tests: baseli
 ## Status
 
 - M0 to M4 done. `python -m hactu8 run all` passes 29 of 29 on the echo backend.
-- In progress: merging AgenticGoat's live layer (real models, OFF vs ON grading, ProtectoGW gateway, Lamb surfaces) per `docs/agenticgoat-merge-plan.md` (AG-xx items), on branch `phase1-agx-merge`. M5 and M6 follow.
-- OWASP LLM Top 10 IDs use the 2026 edition (the order in `demos/`). The catalog also records each item's 2025 ID, since AgenticGoat and the OWASP site still use 2025.
+- In progress: the merge plan `docs/agenticgoat-merge-plan.md` (AG-xx items) on branch `phase1-agx-merge`: W0-W7 done (real models, OFF vs ON grading, ProtectoGW gateway, Lamb surfaces, 29 labs with lessons, the Wolf, the MCP server, Docker and CI). W8 verification and M6 follow.
+- OWASP LLM Top 10 IDs use the 2026 edition (the order in `demos/`). The catalog also records each item's 2025 ID, since the OWASP site and older material still use 2025.
 
 ## Layout
 

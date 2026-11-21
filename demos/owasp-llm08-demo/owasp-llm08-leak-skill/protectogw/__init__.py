@@ -1,4 +1,4 @@
-"""protectogw (vendored subset) — shared screening core for the AgenticGoat detector."""
+"""protectogw (vendored subset) — shared screening core for HACTU8's gateway and labs."""
 # The frozen public API is exactly the names in __all__ below; it follows
 # semver (see CHANGELOG.md / SECURITY.md §8). A breaking change to any of them
 # bumps the major version.

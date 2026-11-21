@@ -1,7 +1,7 @@
 ---
 name: agx01-obfuscation-skill
 description: >-
-  Demonstrates AgenticGoat's AGX01 (Obfuscation Gauntlet, parent OWASP ASI01)
+  Demonstrates AGX01 (Obfuscation Gauntlet, parent OWASP ASI01)
   against a gateway-protected ops assistant in an AUTHORIZED security lab. A
   directive encoded several ways (base64, split-token, hex-escape, base32)
   reaches the model because the gateway judges raw bytes with every normalizer
@@ -75,7 +75,7 @@ It is the **same library and the same rule** in both modes. The plaintext
 directive is caught even by the vulnerable gateway (`GatewayTest`): placement of
 the normalizer, not vocabulary, is the lesson.
 
-**protectogw** (`protectogw/`) is AgenticGoat's screening core, vendored
+**protectogw** (`protectogw/`) is HACTU8's screening core, vendored
 unchanged. Its own [`SECURITY.md`](protectogw/SECURITY.md) describes its limits,
 including a measured 53% generalization rate on held-out attacks (16 of 30), which is
 why the output canary check is layered behind it.
@@ -169,7 +169,7 @@ raw-text blind spot (the README explains).
 | Path | Purpose |
 |------|---------|
 | `vulnerable_app.py` | Target: Billy, the notice board, the gateway (`/ask`, `/notices`, `/vendor/notices/update`, `/health`) plus the console API (`/api/meta`, `/api/state`, `/api/reset`, `/api/attack`, `/api/evaluate`, `/api/scan`, `/api/mode`, `/api/models`, `/api/backend`). |
-| `protectogw/` | AgenticGoat's screening core, vendored unchanged. |
+| `protectogw/` | HACTU8's screening core, vendored unchanged. |
 | `web/` | Shared HACTU8 lab console, served at `/`. |
 | `providers.py` | Optional real-model backends: Ollama, llama.cpp, OpenRouter. Shared and copied unchanged. |
 | `scripts/run_obfuscation.py` | Attack: install the directive as encoded notices. |

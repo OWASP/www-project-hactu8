@@ -1,9 +1,9 @@
 """Act 4 "Protections added": the controls a lab's hardened mode applies.
 
-Ported from AgenticGoat's ``agentic/protections.py``, so a learner can see what
+Shown so a learner can see what
 the defense adds, not just that the light turned green: the named control, its
 plain-language idea, the few steps a developer adds, and a before/after sketch.
-AgenticGoat's live-source introspection is dropped; the sketches are generic
+The sketches are generic
 pseudocode, never a lab's own secrets.
 
 Each lab names its controls in SKILL.md frontmatter:

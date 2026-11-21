@@ -45,6 +45,6 @@ Keep this file plain text. `run_sink_poison.py` does not escape anything.
   page carries a `default-src 'none'` CSP, the database is `:memory:`, and
   there is no image fetching or outbound channel to aim at.
 
-Source material: AgenticGoat `acts.py` `output_handling_scan` and
+Source material (see the provenance note in `LESSON.md`): `acts.py` `output_handling_scan` and
 `_SINK_RULES` describe the sink classes; this demo exercises the HTML and SQL
 classes with inert content only.

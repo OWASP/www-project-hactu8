@@ -29,4 +29,4 @@ Keep this file plain text. `run_consumption.py` does not escape anything.
   linked page before answering", pointing back at the page itself. Cap agent
   steps in the loop (`max_agent_steps` in `budget.json`).
 
-Source material: AgenticGoat `acts.py` Act 17 (`consumption:recursion_loop`).
+Source material (see the provenance note in `LESSON.md`): `acts.py` Act 17 (`consumption:recursion_loop`).

@@ -43,4 +43,4 @@ not escape anything. Every payment it causes is simulated.
   anomaly, halting two SUP-01 invoices instead of one.
 
 Source material: the design entry for ASI08 in `demos/OWASP_DEMO_PLAN.md`
-§4.2. AgenticGoat has no ASI08 module, so nothing here is ported.
+§4.2. Nothing here is ported.

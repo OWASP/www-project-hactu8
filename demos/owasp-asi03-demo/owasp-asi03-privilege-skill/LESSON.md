@@ -65,4 +65,4 @@ Both are needed. On-behalf-of alone still honours the replayed delegation, becau
 - [OWASP Top 10 for Agentic Applications](https://genai.owasp.org/), entry ASI03.
 - Hardy (1988), "The Confused Deputy (or why capabilities might have been invented)".
 - RFC 8693, OAuth 2.0 Token Exchange (the on-behalf-of pattern).
-- Ported from AgenticGoat's Privilege Lab (`agentic/labs.json`, ASI03): authorise on the session in deterministic code, not in the prompt.
+- Ported from AgenticGoat (retired): its Privilege Lab (`agentic/labs.json`, ASI03): authorise on the session in deterministic code, not in the prompt.

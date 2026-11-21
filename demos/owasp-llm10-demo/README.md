@@ -83,9 +83,7 @@ You'll see four acts:
 
 ### Optional: run against a real model
 
-`echo`, the lab's deterministic offline model, is the default backend (as in
-AgenticGoat; `stub` still works as an alias). `providers.py` (the same provider
-layer as AgenticGoat) adds three real ones. All are standard library only.
+`echo`, the lab's deterministic offline model, is the default backend (`stub` still works as an alias). `providers.py`, HACTU8's provider layer, adds three real ones. All are standard library only.
 
 In the web console, pick the backend and model in the **BACKEND / MODEL** bar
 and press **Use backend**. The model list is fetched live from Ollama,
@@ -101,7 +99,7 @@ python run_demo.py --backend openrouter --model meta-llama/llama-3.2-3b-instruct
 LLM10_BACKEND=openrouter LLM10_MODEL=... python owasp-llm10-sink-skill/vulnerable_app.py
 ```
 
-The OpenRouter key works as in AgenticGoat: export `OPENROUTER_API_KEY` in the
+The OpenRouter key comes from the environment only: export `OPENROUTER_API_KEY` in the
 shell that starts the lab. The console never asks for it and is only told
 whether one is set; without it, `openrouter` is greyed out in the picker.
 
@@ -241,7 +239,7 @@ highlighted, which shows that the browser rendered the model's markup.
 - **Contextual output encoding** — `html.escape` before both HTML sinks.
 - **Parameterised queries** — `?` placeholders; the summary is bound as data
   and stored exactly as the model wrote it.
-- **Output-sink tripwire** — `screen_output` screens with protectogw (AgenticGoat's screening core, vendored unchanged in `protectogw/`: normalizer + de-obfuscation folds + ruleset + exfil taxonomy + canary check).
+- **Output-sink tripwire** — `screen_output` screens with protectogw (HACTU8's screening core, vendored unchanged in `protectogw/`: normalizer + de-obfuscation folds + ruleset + exfil taxonomy + canary check).
   `SINK_POLICY` adds three lab rules: `html_markup` for markup a sink would
   render, `lab_directive` for the `@assistant:` marker and `lab_canary` for the
   canary tag. Hardened mode logs the protectogw signal names in
@@ -275,7 +273,7 @@ owasp-llm10-demo/
 │   ├── vulnerable_app.py              #   Module 1: target, stub model, sinks, mitigation
 │   ├── providers.py                   #   optional real-model backends (shared, unchanged)
 │   ├── requirements.txt               #   stdlib only
-│   ├── protectogw/                    #   AgenticGoat screening core (vendored unchanged)
+│   ├── protectogw/                    #   HACTU8's screening core (vendored unchanged)
 │   ├── web/                           #   shared lab console (index.html, app.js, styles.css)
 │   ├── scripts/
 │   │   ├── run_sink_poison.py         #   Module 2: the attack

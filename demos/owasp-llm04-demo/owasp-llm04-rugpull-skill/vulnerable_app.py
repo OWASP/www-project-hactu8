@@ -31,7 +31,7 @@ Hardened mode (``POST /api/mode`` or ``LLM04_MODE=hardened``) replaces the
 smoke test with an **admission gate**: each tool definition is hashed
 (SHA-256) and compared with ``assets/tool_pins.json``, and each tool is called
 ``SAMPLE_CALLS`` times and its outputs checked for consistency and screened
-with ``protectogw`` (AgenticGoat's screening core, vendored unchanged in
+with ``protectogw`` (HACTU8's screening core, vendored unchanged in
 ``protectogw/``). A tool that fails is rejected, and Billy
 keeps the approved version vendored in ``assets/registry_baseline.json``.
 

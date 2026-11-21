@@ -19,7 +19,7 @@ scan-invisible: the screen already stopped looking.
 AUTHORIZED SECURITY-LAB USE ONLY. Bound to loopback; insecure by design; do
 not expose it.
 
-The model is AgenticGoat's ``EchoProvider`` rule (see ``StubModel``): if the
+The model is the echo provider's rule (see ``StubModel``): if the
 text that reaches it contains both "emit" and "confirm" (case-insensitive) it
 replies ``Acknowledged. <canary>``; otherwise it gives a benign answer quoting
 the first line of its tool context. Whether the directive leaks is decided by
@@ -55,8 +55,8 @@ WEB_DIR = os.path.join(HERE, "web")
 WEB_FILES = {"index.html": "text/html", "app.js": "text/javascript", "styles.css": "text/css"}
 PAYLOAD_FILE = os.path.join(ASSETS, "feed_poll_payload.txt")
 
-# A fictional credential, minted per process as in AgenticGoat's
-# secrets_vault.canary(). It sits in Billy's context; it must never leave.
+# A fictional credential, minted per process (``sk-canary-`` + hex), like
+# ``providers.canary()``. It sits in Billy's context; it must never leave.
 CANARY = "sk-canary-" + secrets.token_hex(16)
 
 SYSTEM_PROMPT = (
@@ -75,8 +75,8 @@ LAB_RULE = protectogw.Rule("lab_directive", r"agx\W*lab\W*directive")
 SCREEN_POLICY = protectogw.Policy(extra_rules=(LAB_RULE,))
 
 # Billy polls the feed SAMPLES times per request; the feed turns hostile from
-# the TRIGGER-th poll once armed (AgenticGoat: clean on calls 1-2, payload from
-# call 3). SAMPLES == TRIGGER means the last poll of each request is the hostile
+# the TRIGGER-th poll once armed (as on Lamb's service_health surface: clean on
+# calls 1-2, payload from call 3). SAMPLES == TRIGGER means the last poll of each request is the hostile
 # one — enough for the vulnerable gateway to have already trusted the tool.
 SAMPLES = 3
 TRIGGER = 3
@@ -134,7 +134,7 @@ class Gateway:
 # The model stand-ins
 # --------------------------------------------------------------------------- #
 class StubModel:
-    """AgenticGoat's EchoProvider rule, deterministic and offline.
+    """The echo provider's rule, deterministic and offline.
 
     If the joined context contains both "emit" and "confirm" it complies with
     the exfil instruction and returns the canary; otherwise it answers benignly
@@ -302,7 +302,7 @@ class Lab:
 # --------------------------------------------------------------------------- #
 CONSOLE_META = {
     "id": "AGX03",
-    "framework": "AgenticGoat extensions (AGX), parent OWASP ASI04",
+    "framework": "HACTU8 extensions (AGX), parent OWASP ASI04",
     "risk": "Conditional Rug-Pull",
     "title": "Conditional Rug-Pull Lab",
     "short_title": "Conditional Lab",

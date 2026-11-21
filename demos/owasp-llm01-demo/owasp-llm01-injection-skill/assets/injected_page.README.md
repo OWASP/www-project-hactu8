@@ -34,5 +34,5 @@ Keep this file plain text. `run_injection.py` does not escape anything.
 - **Hiding it from human reviewers.** Variants such as text inside an HTML
   comment test the screen's hidden-content check.
 
-Source material: the AgenticGoat payloads (`vulnerable_server.py`, the
+Source material (see the provenance note in `LESSON.md`): the payloads (`vulnerable_server.py`, the
 `search_kb` tool result) are the reference set.

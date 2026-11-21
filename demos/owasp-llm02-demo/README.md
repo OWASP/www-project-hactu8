@@ -78,9 +78,7 @@ You'll see four acts:
 
 ### Optional: run against a real model
 
-`echo`, the lab's deterministic offline model, is the default backend (as in
-AgenticGoat; `stub` still works as an alias). `providers.py` (the same provider
-layer as AgenticGoat) adds three real ones. All are standard library only.
+`echo`, the lab's deterministic offline model, is the default backend (`stub` still works as an alias). `providers.py`, HACTU8's provider layer, adds three real ones. All are standard library only.
 
 In the web console, pick the backend and model in the **BACKEND / MODEL** bar
 and press **Use backend**. The model list is fetched live from Ollama,
@@ -96,7 +94,7 @@ python run_demo.py --backend openrouter --model meta-llama/llama-3.2-3b-instruct
 LLM02_BACKEND=openrouter LLM02_MODEL=... python owasp-llm02-disclosure-skill/vulnerable_app.py
 ```
 
-The OpenRouter key works as in AgenticGoat: export `OPENROUTER_API_KEY` in the
+The OpenRouter key comes from the environment only: export `OPENROUTER_API_KEY` in the
 shell that starts the lab. The console never asks for it and is only told
 whether one is set; without it, `openrouter` is greyed out in the picker.
 
@@ -242,7 +240,7 @@ curl -s localhost:5202/query -H 'content-type: application/json' \
   prompt into a `Vault` with a masked `repr`; the CRM connector reads it, the
   model never does.
 - **Output leak check and redaction** — each answer is first screened with
-  protectogw (AgenticGoat's screening core, vendored unchanged in `protectogw/`: normalizer + de-obfuscation folds + ruleset + exfil taxonomy + canary check), with every vaulted value passed as a canary: a hit is a decisive
+  protectogw (HACTU8's screening core, vendored unchanged in `protectogw/`: normalizer + de-obfuscation folds + ruleset + exfil taxonomy + canary check), with every vaulted value passed as a canary: a hit is a decisive
   `canary_leak` (case-insensitive, whatever phrasing produced it) and the value
   is masked. protectogw blocks rather than masks, so the lab keeps its own
   masking: `assets/redaction_rules.json` redacts the canary pattern, credential
@@ -271,7 +269,7 @@ owasp-llm02-demo/
 │   ├── vulnerable_app.py              #   Module 1: target, stub model, mitigations
 │   ├── providers.py                   #   optional real-model backends (shared, unchanged)
 │   ├── requirements.txt               #   stdlib only
-│   ├── protectogw/                    #   AgenticGoat screening core (vendored unchanged)
+│   ├── protectogw/                    #   HACTU8's screening core (vendored unchanged)
 │   ├── web/                           #   shared lab console (index.html, app.js, styles.css)
 │   ├── scripts/
 │   │   ├── run_pivot.py               #   Module 2: the attack

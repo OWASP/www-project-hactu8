@@ -50,5 +50,5 @@ Every action it leads to is simulated: an entry in the in-memory action log.
   `test_param_cards_without_no_batch_still_leak`. A high-risk change can only
   be approved on a card whose first lines say what it is.
 
-Source material: AgenticGoat `agentic/labs.json` lab ASI09 ("Trust Lab") is
+Source material (see the provenance note in `LESSON.md`): `agentic/labs.json` lab ASI09 ("Trust Lab") is
 the reference for the risk framing and the verification + HITL remediation.

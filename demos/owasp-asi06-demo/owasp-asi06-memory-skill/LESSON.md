@@ -16,7 +16,7 @@ Memory is retrieved context that the agent wrote itself, so it tends to be trust
 - **Recall ignores the owner.** `recall_memory` ranks memories by keyword overlap with the question, whoever wrote them, so mallory's note enters alice's, bob's and carol's contexts.
 - **Recalled memory has the system prompt's authority.** In vulnerable mode every recalled memory is appended to the system prompt as "Saved memories", so the note outranks the KB page the answer should come from.
 
-Keyword recall also decides the blast radius. The note's first line is a topic line built from travel words, so only travel questions recall it. AgenticGoat's Poison Lab, the parent of this lab, showed the same pattern for RAG: one planted document steers every query that retrieves it, with no access to the training pipeline, and survives until someone removes it.
+Keyword recall also decides the blast radius. The note's first line is a topic line built from travel words, so only travel questions recall it. The Poison Lab this lab is ported from showed the same pattern for RAG: one planted document steers every query that retrieves it, with no access to the training pipeline, and survives until someone removes it.
 
 ## Try it
 
@@ -65,4 +65,4 @@ Scoped recall alone takes the PSR to 0, even with an empty screen ruleset (`test
 - HACTU8 catalog: skill `asi06`, OWASP `ASI06:2026` Memory & Context Poisoning (OWASP Top 10 for Agentic Applications); metric PSR (Poison Success Rate); protections `input_screen`, `scope_filter` and `provenance` (`hactu8/protections.py`).
 - Lab material, not repeated here: the [lab README](../README.md) (architecture, "real, not scripted", harness terminology bridge) and [`references/ASI06_RISKS.md`](references/ASI06_RISKS.md) (research, scenarios, mitigation roadmap).
 - [OWASP Top 10 for Agentic Applications](https://genai.owasp.org/), entry ASI06; the LLM05 Data and Model Poisoning lab in this repo.
-- Ported from AgenticGoat's Poison Lab (`agentic/labs.json`, ASI06, and `agentic/poison_lab.py`): a seeded document and a trigger keyed to a topic, PSR 0 to 100 to 0.
+- Ported from AgenticGoat (retired): its Poison Lab (`agentic/labs.json`, ASI06, and `agentic/poison_lab.py`): a seeded document and a trigger keyed to a topic, PSR 0 to 100 to 0.

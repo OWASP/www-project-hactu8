@@ -30,7 +30,7 @@ Agentic Applications" numbering, ASI01 to ASI10.)
 | C-4 | Readable traffic | Recent bus traffic, signatures included, is readable by any participant. | **DEMO TARGET** (enables C-2) |
 | C-5 | Tampering in transit | A relay changes a message body between agents. | Partly: the signature covers the body; see the payload README |
 | C-6 | Compromised peer | The real planner is hijacked and signs harmful orders. | — (see ASI01; signing proves origin, not intent) |
-| C-7 | Peer-message injection | A legitimately sent peer message carries untrusted text that steers the receiver. | — (AgenticGoat `a2a_scan`; screen peer messages as untrusted input) |
+| C-7 | Peer-message injection | A legitimately sent peer message carries untrusted text that steers the receiver. | — (detector act `a2a_scan`; screen peer messages as untrusted input) |
 
 ## How the demo maps to the attack surfaces
 
@@ -56,7 +56,7 @@ Agentic Applications" numbering, ASI01 to ASI10.)
 | Shared or long-lived keys | Per-agent keys generated at startup, in memory only. Implemented for the demo; production needs a key manager, rotation and revocation. |
 | Readable bus traffic | Encrypt the transport (mutual TLS between agents) and restrict who may subscribe. Discussed, not coded. |
 | Open publish rights | Authenticate publishers at the broker and scope topics per agent. Discussed, not coded; verification at the receiver holds without it. |
-| A genuine peer sends harmful content | Treat peer messages as untrusted input and screen them (AgenticGoat `a2a_scan`, the LLM01 demo). Not coded here. |
+| A genuine peer sends harmful content | Treat peer messages as untrusted input and screen them (detector act `a2a_scan`, the LLM01 demo). Not coded here. |
 
 Further hardening discussed, not coded: asymmetric signatures so a receiver
 cannot forge as the sender, message expiry enforced by the broker, and alerts

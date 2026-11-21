@@ -1,9 +1,8 @@
 # AGX03 Risk Reference — Conditional Rug-Pull
 
-Domain knowledge, loaded on demand. AGX03 is one of AgenticGoat's superset
-labs (`agentic/labs.json` → `superset_labs`, group **A: Evasion**), for
+Domain knowledge, loaded on demand. AGX03 is one of HACTU8's AGX extension labs (group **A: Evasion**), for
 patterns neither OWASP list numbers on its own. Its parent entry is **ASI04**
-in AgenticGoat's mapping, and the underlying mechanism is prompt injection
+in HACTU8's mapping, and the underlying mechanism is prompt injection
 (LLM01).
 
 A single-sample runtime check sees one clean call and passes; the trigger fires
@@ -19,14 +18,13 @@ by call count.
 
 ## Research foundations
 
-- **OWASP Top 10 for Agentic Applications 2026, ASI04** — the parent entry in
-  AgenticGoat's mapping; hash-pinning a definition catches a swap-to-hostile.
+- **OWASP Top 10 for Agentic Applications 2026, ASI04** — the parent entry in HACTU8's mapping; hash-pinning a definition catches a swap-to-hostile.
 - **OWASP Top 10 for LLM Applications, LLM01 (Prompt Injection)** — the
   underlying mechanism: text the model reads is treated as instructions.
 - **Greshake et al. (2023), "Not what you've signed up for"** — indirect prompt
   injection. Content an LLM-integrated application fetches for the model (here,
   a feed poll) can carry instructions the model follows.
-- **AgenticGoat `acts.py` → `conditional_scan`** — a `service_health` tool
+- **Detector act `conditional_scan`** — a `service_health` tool
   returns clean text on most calls and the payload only on the 3rd
   (`_COND_TRIGGER_ON`); the act samples the return `_CONDITIONAL_SAMPLES` times
   to trip the trigger and grades a single-sample view beside it. You catch what
@@ -43,7 +41,7 @@ by call count.
 | S-2 | Hostile first return | The trigger fires on poll 1. | Caught in both modes (`GatewayTest`) |
 | S-3 | Trigger beyond the sample window | Hostile only on, say, the 50th call. | Blind to a sampler of fewer calls (discussed) |
 | S-4 | Date- or argument-gated poison | Hostile on a calendar date or a specific argument. | Pin behaviour; alert on drift (discussed) |
-| S-5 | Post-approval definition swap | The definition itself is changed. | Hash-pinning (ASI04 / AgenticGoat `swap_check`) |
+| S-5 | Post-approval definition swap | The definition itself is changed. | Hash-pinning (ASI04 / detector act `swap_check`) |
 
 ## How the demo maps to the attack surfaces
 
@@ -67,4 +65,4 @@ by call count.
 | A leak once an injection gets through | **Output canary check**: `protectogw.screen(reply, canaries=[CANARY])` on every reply, replacing a blocked reply with a refusal. Implemented: `Gateway.check_reply`. Stops this attack on its own (`test_canary_check_alone_blocks`). |
 | Untrusted text mixed into the instruction channel | **Spotlighting** for real models: hardened mode fences the feed in `<untrusted_tool_output>` tags. Implemented: `ProviderModel`. |
 | A trigger beyond the sample window | Sample enough to trip conditional triggers and alert on drift between samples. Discussed; the canary layer catches the leak regardless. |
-| Unauthenticated trigger control | Authenticate feed controls; hash-pin definitions so a swap-to-hostile is caught (ASI04 / AgenticGoat `swap_check`). Discussed, not coded. |
+| Unauthenticated trigger control | Authenticate feed controls; hash-pin definitions so a swap-to-hostile is caught (ASI04 / detector act `swap_check`). Discussed, not coded. |

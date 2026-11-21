@@ -30,7 +30,7 @@ Hardened mode (``POST /api/mode`` or ``LLM02_MODE=hardened``) closes all three
 gaps: the key is moved out of the prompt into a ``Vault`` the CRM connector
 reads and the model never sees; ``read_record`` refuses any ID but the
 signed-in customer's; and each answer is leak-checked with ``protectogw``
-(AgenticGoat's screening core, vendored unchanged in ``protectogw/``; its
+(HACTU8's screening core, vendored unchanged in ``protectogw/``; its
 canary check guards the vaulted key) and redacted against
 ``assets/redaction_rules.json`` (canary pattern, credential lines, and contact
 details that are not the customer's own).
@@ -104,7 +104,7 @@ class Vault:
     """Holds secrets the app needs but the model must never see.
 
     ``repr`` and ``str`` are masked so a value cannot leak through a log line
-    or traceback (after AgenticGoat ``secrets_vault.ProviderKey``). Only the
+    or traceback (a masked provider-key holder). Only the
     CRM connector calls ``reveal``.
     """
 

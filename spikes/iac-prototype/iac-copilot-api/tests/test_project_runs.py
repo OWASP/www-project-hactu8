@@ -9,7 +9,7 @@ from services.llm_dispatch import LLMResponse, ToolCall
 from unittest.mock import patch
 
 CREATE_BODY = {
-    "target": {"name": "AgenticGoat Internal", "target_url": None},
+    "target": {"name": "HACTU8 Lamb", "target_url": None},
     "skill_names": ["dns-lookup", "http-probe"],
     "model": {"provider_id": "anthropic", "model_id": "claude-3.5-sonnet"},
 }

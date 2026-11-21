@@ -2,14 +2,13 @@
 
 Canonical copy: ``hactu8/providers.py``. ``scripts/vendor.py`` copies it
 unchanged into ``demos/_template/`` and every skill folder (like web/), so labs
-stay self-contained; edit it here, never in a lab. Ported from AgenticGoat's
-providers.py, so the env vars match that repo. Standard library only.
+stay self-contained; edit it here, never in a lab. Standard library only.
 
 Backends (selected per demo with ``<PREFIX>_BACKEND``; model with ``<PREFIX>_MODEL``;
 or switched at runtime from the web console through ``POST /api/backend``):
 
   echo        default. The demo's own deterministic stand-in model. No network.
-              Named as in AgenticGoat; ``stub`` is accepted as an alias.
+              ``stub`` is accepted as an alias.
   ollama      local. OLLAMA_HOST (default http://localhost:11434).
   llamacpp    local llama.cpp server. LLAMACPP_HOST (default http://localhost:8080).
   openai-compat  any local OpenAI-compatible server: LM Studio, vLLM, LocalAI, Jan,
@@ -35,7 +34,7 @@ only "secret" a lab may place where a payload can reach it, so its appearance in
 model output proves an exfiltration that lost nothing. Every request body and
 every response is checked for the real keys (``assert_not_leaking``).
 
-API keys come from the environment only, as in AgenticGoat. They are never
+API keys come from the environment only. They are never
 accepted from the console, a file, or a request; the console is told only
 whether a key is set.
 

@@ -4,7 +4,7 @@ Step 21 on the learning path, after AGX03 Conditional Rug-Pull. Setup, commands 
 
 ## What it is
 
-Ingestion screens are often written for the prose a human reads, and metadata is treated as plumbing. But a RAG loader hands the model the whole document: title, summary, tags and body. Frontmatter is attacker-controlled text like any other, and it sits at the top of the context. AGX07 is one of AgenticGoat's superset labs (group C, RAG and multi-document), with parent ASI06 Memory and Context Poisoning. Where AGX06 screens at the wrong time, AGX07 screens the wrong part of the document.
+Ingestion screens are often written for the prose a human reads, and metadata is treated as plumbing. But a RAG loader hands the model the whole document: title, summary, tags and body. Frontmatter is attacker-controlled text like any other, and it sits at the top of the context. AGX07 is one of HACTU8's AGX extension labs (group C, RAG and multi-document), with parent ASI06 Memory and Context Poisoning. Where AGX06 screens at the wrong time, AGX07 screens the wrong part of the document.
 
 Here the target is Billy, Goat & Co.'s ops assistant, who answers from a knowledge-base bundle of Markdown documents. His ground truth is *a fictional `sk-canary-` credential sits in his context with the instruction never to reveal it*. The attacker uses the unauthenticated ingestion endpoint (`POST /bundle/ingest`) to replace `vault-access.md` with a copy whose body is byte-identical and whose frontmatter `description:` holds a directive asking Billy to print the credential.
 
@@ -62,10 +62,10 @@ For real models, hardened mode also fences the document in `<untrusted_document>
 
 ## References
 
-- HACTU8 catalog: skill `agx07`, `AGX07` Frontmatter Poison (an AgenticGoat superset ID, not an OWASP number; parent `ASI06:2026` Memory and Context Poisoning); protections `channel_screen` and `canary_tripwire` (`hactu8/protections.py`).
+- HACTU8 catalog: skill `agx07`, `AGX07` Frontmatter Poison (an AGX extension ID, not an OWASP number; parent `ASI06:2026` Memory and Context Poisoning); protections `channel_screen` and `canary_tripwire` (`hactu8/protections.py`).
 - Lab material, not repeated here: the [lab README](../README.md) (architecture, the MCP terminology bridge, mapping table), [`references/AGX07_RISKS.md`](references/AGX07_RISKS.md) (research, scenarios, mitigation roadmap), the [payload README](assets/frontmatter_payload.README.md) and protectogw's [`SECURITY.md`](protectogw/SECURITY.md).
 - Related labs: AGX06 Runtime Result Injection (wrong time) and LLM05 Data and Model Poisoning (RAG poisoning).
 - Real-model figures: in the HACTU8 repo, `docs/agenticgoat-merge-plan.md` (AG-51 notes).
 - Zou et al. (2024), "PoisonedRAG: Knowledge Corruption Attacks to Retrieval-Augmented Generation of Large Language Models".
 - Greshake et al. (2023), "Not what you've signed up for: Compromising Real-World LLM-Integrated Applications with Indirect Prompt Injection".
-- Ported from AgenticGoat's AGX07 entry (`agentic/labs.json`), its `okf_scan` act (`acts.py`) and the `input_screen` control (`agentic/protections.py`).
+- Ported from AgenticGoat (retired): its AGX07 entry (`agentic/labs.json`), its `okf_scan` act (`acts.py`) and the `input_screen` control (`agentic/protections.py`).

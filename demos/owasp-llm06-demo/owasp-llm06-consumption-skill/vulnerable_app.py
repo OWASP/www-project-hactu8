@@ -136,7 +136,7 @@ DIMENSIONS = (
 def budget_breaches(cost: RequestCost, budget: Dict[str, Any]) -> List[str]:
     """Every dimension of ``cost`` over its per-request cap (the LLM06 check).
 
-    Ported from AgenticGoat ``acts._consumption_guard``: it reads metered cost,
+    The same check as the ``consumption_guard`` detector act: it reads metered cost,
     never content.
     """
     caps = budget["per_request"]

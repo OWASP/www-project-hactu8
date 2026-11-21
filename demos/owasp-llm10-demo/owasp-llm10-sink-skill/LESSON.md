@@ -16,7 +16,7 @@ The dangerous part of the output is not an instruction; it is markup or a quote 
 - The markdown renderer converts `**bold**` and headings and passes any other HTML through, as many real renderers do.
 - The audit log builds `INSERT ... VALUES ('ridgeview', '<summary>')`, so an apostrophe in the summary ends the string literal.
 
-An input screen never sees the problem. AgenticGoat's lesson makes the point with protectogw's default screen, which allows `x; DROP TABLE users; --`, because it carries no injection instruction; checked here with the vendored copy, it still does. The OWASP guidance is to treat the model like any other user: encode its output for the context it lands in, and bind it as a parameter rather than building statements from it.
+An input screen never sees the problem. The original lesson makes the point with protectogw's default screen, which allows `x; DROP TABLE users; --`, because it carries no injection instruction; checked here with the vendored copy, it still does. The OWASP guidance is to treat the model like any other user: encode its output for the context it lands in, and bind it as a parameter rather than building statements from it.
 
 ## Try it
 
@@ -66,4 +66,4 @@ A third layer is a detector, not the fix: `screen_output` screens the output wit
 - Lab material, not repeated here: the [lab README](../README.md) (architecture, the "real, not scripted" argument, MCP terminology bridge, deviation from the demo plan) and [`references/LLM10_RISKS.md`](references/LLM10_RISKS.md) (research, scenarios O-1 to O-3, mitigation roadmap).
 - [OWASP Top 10 for LLM Applications](https://genai.owasp.org/llm-top-10/), entry Improper Output Handling.
 - OWASP Cross Site Scripting Prevention Cheat Sheet and SQL Injection Prevention Cheat Sheet; Greshake et al. (2023), "Not what you've signed up for".
-- Ported from AgenticGoat's 2025-numbered LLM05 Improper Output Handling lesson and curriculum entry (`training/lessons/LLM05_improper_output_handling.md`, `curriculum.json`), and its `acts.py` `output_handling_scan`.
+- Ported from AgenticGoat (retired): its 2025-numbered LLM05 Improper Output Handling lesson and curriculum entry (`training/lessons/LLM05_improper_output_handling.md`, `curriculum.json`), and its `acts.py` `output_handling_scan`.

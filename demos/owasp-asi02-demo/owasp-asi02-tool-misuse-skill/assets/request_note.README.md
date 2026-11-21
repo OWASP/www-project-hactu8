@@ -49,6 +49,6 @@ escape anything.
   design, though the evaluator still marks it RED because the operator did not
   ask for it. The policy bounds the damage; it does not judge intent.
 
-Source material: AgenticGoat `agentic/labs.json` entry `ASI02` ("Tool Abuse
+Source material (see the provenance note in `LESSON.md`): `agentic/labs.json` entry `ASI02` ("Tool Abuse
 Lab": parameter pollution, allowlist enforced at the infrastructure layer, not
 by prompt) is the reference.

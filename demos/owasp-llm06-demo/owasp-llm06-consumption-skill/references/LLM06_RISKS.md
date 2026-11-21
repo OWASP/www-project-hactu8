@@ -49,7 +49,7 @@ LLM10.
 
 | Vulnerability | Hardening strategy |
 |---------------|--------------------|
-| No per-request budget | **Meter and enforce** input tokens, output tokens, tool calls and agent steps per request. Implemented: hardened mode in `vulnerable_app.py`, caps in `assets/budget.json`, check ported from AgenticGoat `acts._consumption_guard`. |
+| No per-request budget | **Meter and enforce** input tokens, output tokens, tool calls and agent steps per request. Implemented: hardened mode in `vulnerable_app.py`, caps in `assets/budget.json`, check matches the `consumption_guard` detector act. |
 | No loop depth cap | **Cap agent steps**, and on the last step disable tools so the model must answer. Implemented: `max_agent_steps` with `allow_tools=False`. |
 | Unbounded generation | **Output-token cap** (the provider's `max_tokens`). Implemented: answer truncated at the remaining output budget. |
 | No per-client quota | **Per-client token quota** across requests; refuse with HTTP 429 once spent. Implemented: `per_client.max_tokens`. |

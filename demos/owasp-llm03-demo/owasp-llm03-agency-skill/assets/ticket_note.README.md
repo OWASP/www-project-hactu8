@@ -42,5 +42,5 @@ Every call it causes is simulated: an entry in the in-memory action log.
   current task already allows (for example `lookup_order` during a status
   check) passes the gate by design. The gate enforces authority, not wisdom.
 
-Source material: AgenticGoat `acts.py` `_AGENCY_REQUESTS` (the over-reach set
+Source material (see the provenance note in `LESSON.md`): `acts.py` `_AGENCY_REQUESTS` (the over-reach set
 the gate adjudicates) is the reference.

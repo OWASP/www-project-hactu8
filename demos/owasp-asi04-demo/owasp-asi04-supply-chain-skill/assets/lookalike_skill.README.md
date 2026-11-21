@@ -46,6 +46,6 @@ else.
   skill file would. The manifest check does not depend on the wording: the
   name, publisher and SHA-256 pins reject the entry whatever it says.
 
-Source material: AgenticGoat `acts.py` (act 3, hash pinning, and act 15,
+Source material (see the provenance note in `LESSON.md`): `acts.py` (act 3, hash pinning, and act 15,
 grounding a typosquatted name against an approved registry) covers the same
 controls.

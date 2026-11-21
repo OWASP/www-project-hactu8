@@ -31,7 +31,7 @@ calls it LLM08.
 |----|-------|-------------|-------|
 | V-1 | Cross-tenant retrieval | A shared, similarity-only store serves one tenant's documents to another tenant's session. | **DEMO TARGET** |
 | V-2 | Soft scoping | Scope is expressed as relevance (tenant name in the query) or as a prompt rule, not as a filter. A crafted query outranks it. | **DEMO TARGET** |
-| V-3 | Embedding poisoning | A planted document stuffed with common query terms ranks first (AgenticGoat `evil/poison`; see LLM05). | — |
+| V-3 | Embedding poisoning | A planted document stuffed with common query terms ranks first (see LLM05). | — |
 | V-4 | Embedding inversion | Exposed vectors are inverted back into their source text. | — (discussed, not coded) |
 | V-5 | Federation conflicts | Sources with different access rules are merged into one index. | — |
 
@@ -52,7 +52,7 @@ calls it LLM08.
 
 | Vulnerability | Hardening strategy |
 |---------------|--------------------|
-| Tenant-blind retrieval | **Tenant filter at the retrieval layer**, applied before ranking and keyed on the session's server-side tenant. Implemented: `scope_blocks` and hardened mode in `vulnerable_app.py` (port of AgenticGoat `_scope_blocks`). |
+| Tenant-blind retrieval | **Tenant filter at the retrieval layer**, applied before ranking and keyed on the session's server-side tenant. Implemented: `scope_blocks` and hardened mode in `vulnerable_app.py` (`scope_blocks`). |
 | Scope as a prompt rule or relevance boost | Treat neither as access control. Keep the prompt rule for tone only. Implemented as the lesson: `tests/test_lifecycle.py::test_prompt_rule_alone_does_not_block`. |
 | Unknown exposure of a query or index | **Retrieval-scope audit**: rank with no filter and list what a filter would block. Implemented: `evaluate_kpi.py --scan`. |
 | Shared physical index | Separate collections or namespaces per tenant, in addition to the filter. |

@@ -1,7 +1,7 @@
 ---
 name: agx04-schema-skill
 description: >-
-  Demonstrates AgenticGoat's AGX04 (Schema / Parameter Injection, parent OWASP
+  Demonstrates AGX04 (Schema / Parameter Injection, parent OWASP
   ASI02) against a gateway-protected ops assistant in an AUTHORIZED security
   lab. An injection placed in a tool parameter's default reaches the model
   because the gateway screens only the tool description. Measures impact with
@@ -47,7 +47,7 @@ tool, and the gateway never screens it.
     POSTs (cross-site forms).
 - The payload is a benign-effect directive (realistic wording; its only
   effect is printing the fictional canary); it
-  follows AgenticGoat's "emit the canary to confirm" convention so the offline
+  follows the Lamb "emit the canary to confirm" convention so the offline
   echo model reacts to it, and the canary is a fictional, per-process
   `sk-canary-…` value. See
   [`assets/param_default_payload.README.md`](assets/param_default_payload.README.md).
@@ -69,7 +69,7 @@ in-memory dict (`assets/tool_manifest.json`), `POST /vendor/tools/update`
 stands in for an unreviewed server update, and the gateway stands in for an
 MCP proxy that screens tool text. It is **not** an MCP server or client.
 
-**protectogw** (`protectogw/`) is AgenticGoat's screening core, vendored
+**protectogw** (`protectogw/`) is HACTU8's screening core, vendored
 unchanged. Its own [`SECURITY.md`](protectogw/SECURITY.md) describes its
 limits, including a measured 53% generalization rate on held-out
 attacks (16 of 30), which is why the output canary check is layered behind it.
@@ -155,8 +155,7 @@ With `openrouter`, prompts and payloads leave the machine.
 
 Edit [`assets/param_default_payload.txt`](assets/param_default_payload.txt)
 and follow its README. `run_schema_injection.py --field enum` or
-`--field description` moves the payload to another schema field (AgenticGoat's
-AGX04 practice). The vulnerable gateway misses all of them and the hardened
+`--field description` moves the payload to another schema field (the AGX04 practice). The vulnerable gateway misses all of them and the hardened
 gateway reads all of them.
 
 ## Files
@@ -164,7 +163,7 @@ gateway reads all of them.
 | Path | Purpose |
 |------|---------|
 | `vulnerable_app.py` | Target: Billy, the tool host, the gateway (`/ask`, `/tools`, `/vendor/tools/update`, `/health`) plus the console API (`/api/meta`, `/api/state`, `/api/reset`, `/api/attack`, `/api/evaluate`, `/api/scan`, `/api/mode`, `/api/models`, `/api/backend`). |
-| `protectogw/` | AgenticGoat's screening core, vendored unchanged. |
+| `protectogw/` | HACTU8's screening core, vendored unchanged. |
 | `web/` | Shared HACTU8 lab console, served at `/`. |
 | `providers.py` | Optional real-model backends: Ollama, llama.cpp, OpenRouter. Shared and copied unchanged. |
 | `scripts/run_schema_injection.py` | Attack: push the payload into one schema field. |

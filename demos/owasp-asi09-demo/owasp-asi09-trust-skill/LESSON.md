@@ -64,4 +64,4 @@ The tier and the no-batching rule are what hold. Parameter cards alone are not e
 - HACTU8 catalog: skill `asi09`, OWASP `ASI09:2026` Human-Agent Trust Exploitation (OWASP Top 10 for Agentic Applications); metric MAR (Misinformed Approval Rate); protection `faithful_approval` (`hactu8/protections.py`).
 - Lab material, not repeated here: the [lab README](../README.md) (architecture, "real, not scripted", harness terminology bridge) and [`references/ASI09_RISKS.md`](references/ASI09_RISKS.md) (research, scenarios, mitigation roadmap).
 - [OWASP Top 10 for Agentic Applications](https://genai.owasp.org/), entry ASI09.
-- Ported from AgenticGoat's Trust Lab (`agentic/labs.json`, ASI09): AI-driven invoice fraud through a trusted agent interface, with independent verification and human-in-the-loop confirmation on high-stakes actions.
+- Ported from AgenticGoat (retired): its Trust Lab (`agentic/labs.json`, ASI09): AI-driven invoice fraud through a trusted agent interface, with independent verification and human-in-the-loop confirmation on high-stakes actions.

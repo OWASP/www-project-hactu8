@@ -43,5 +43,5 @@ any turn and at most 3 turns per session.
 - **Embedding inversion** (rebuilding text from exposed vectors) is a separate
   attack that this demo does not code. See `references/LLM09_RISKS.md`.
 
-Source material: AgenticGoat `acts.py`, `retrieval_scope_scan` (Act 16), is
+Source material (see the provenance note in `LESSON.md`): `acts.py`, `retrieval_scope_scan` (Act 16), is
 the reference for the mechanism and the scope filter.

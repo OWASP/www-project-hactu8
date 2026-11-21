@@ -1,7 +1,7 @@
 # AGX09 Risk Reference — Generalization Probe
 
-Domain knowledge, loaded on demand. AGX09 is one of the AGX superset
-labs (`agentic/labs.json`, `superset_labs`, group **D: Assurance**). Its
+Domain knowledge, loaded on demand. AGX09 is one of HACTU8's AGX extension
+labs (group **D: Assurance**). Its
 parent entry is **ASI01, Agent Goal Hijack**, in the OWASP Top 10 for Agentic
 Applications 2026.
 

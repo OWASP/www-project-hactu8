@@ -69,4 +69,4 @@ Pinning is the control that holds whatever the wording, because it decides in co
 - Perez and Ribeiro (2022), "Ignore Previous Prompt: Attack Techniques for Language Models".
 - Greshake et al. (2023), "Not what you've signed up for: Compromising Real-World LLM-Integrated Applications with Indirect Prompt Injection".
 - Debenedetti et al. (2025), "Defeating Prompt Injections by Design" (CaMeL).
-- AgenticGoat's Hijack Lab (`agentic/labs.json`, ASI01) is the parent; its delivery channel, poison that appears only in a tool's return value, comes from AgenticGoat `acts.py` Act 2 (`runtime_watch`).
+- Ported from AgenticGoat (retired): its Hijack Lab (`agentic/labs.json`, ASI01) is the parent; its delivery channel, poison that appears only in a tool's return value, comes from its `acts.py` Act 2 (`runtime_watch`).

@@ -27,8 +27,7 @@ output handling. Nothing is hard-coded to flip.
 Hardened mode (``POST /api/mode`` or ``LLM08_MODE=hardened``) closes both gaps:
 the app deploys a prompt with no secret in it (the design fix; discounts are
 validated by the order service, outside the model), and every reply passes an
-output filter that withholds lines protectogw blocks (AgenticGoat's screening
-core, vendored unchanged in ``protectogw/``: its canary check guards the
+output filter that withholds lines protectogw blocks (HACTU8's screening core, vendored unchanged in ``protectogw/``: its canary check guards the
 discount code) or that share an n-gram with the active system prompt
 (``output.ngram`` in ``assets/filter_rules.json``).
 

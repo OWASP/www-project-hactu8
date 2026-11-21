@@ -67,4 +67,4 @@ The order matters: channel separation is the control that holds, and the screen 
 - [OWASP Top 10 for LLM Applications](https://genai.owasp.org/llm-top-10/), entry LLM01.
 - Greshake et al. (2023), "Not what you've signed up for: Compromising Real-World LLM-Integrated Applications with Indirect Prompt Injection".
 - Hines et al. (2024), "Defending Against Indirect Prompt Injection Attacks With Spotlighting".
-- Ported from AgenticGoat's LLM01 lesson and curriculum entry (`training/lessons/LLM01_prompt_injection.md`, `curriculum.json`).
+- Ported from AgenticGoat (retired): its LLM01 lesson and curriculum entry (`training/lessons/LLM01_prompt_injection.md`, `curriculum.json`).

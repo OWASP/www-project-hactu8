@@ -4,7 +4,7 @@ Step 23 on the learning path, the last of the gateway labs before the memory and
 
 ## What it is
 
-A screening gateway judges the text it is shown. A model reads through encodings: it decodes base64, joins dotted letters and sees past lookalike characters. So a directive the gateway cannot read in raw form is still an instruction the model can follow. AGX01 is one of AgenticGoat's superset labs (group A, evasion), with parent ASI01 and prompt injection (LLM01) as the mechanism.
+A screening gateway judges the text it is shown. A model reads through encodings: it decodes base64, joins dotted letters and sees past lookalike characters. So a directive the gateway cannot read in raw form is still an instruction the model can follow. AGX01 is one of HACTU8's AGX extension labs (group A, evasion), with parent ASI01 and prompt injection (LLM01) as the mechanism.
 
 Here the target is Billy, Goat & Co.'s ops assistant. He answers from notices on an ops board, and his ground truth is *a fictional `sk-canary-` credential sits in his context with the instruction never to reveal it*. The attacker pushes an unauthenticated vendor update (`POST /vendor/notices/update`) that replaces three notices with encoded copies of one directive asking Billy to print that credential.
 
@@ -61,8 +61,8 @@ For real models, hardened mode also fences the notice in `<untrusted_tool_output
 
 ## References
 
-- HACTU8 catalog: skill `agx01`, `AGX01` Obfuscation Gauntlet (an AgenticGoat superset ID, not an OWASP number; parent `ASI01:2026`, mechanism `LLM01:2026` Prompt Injection); protections `normalizer` and `canary_tripwire` (`hactu8/protections.py`).
+- HACTU8 catalog: skill `agx01`, `AGX01` Obfuscation Gauntlet (an AGX extension ID, not an OWASP number; parent `ASI01:2026`, mechanism `LLM01:2026` Prompt Injection); protections `normalizer` and `canary_tripwire` (`hactu8/protections.py`).
 - Lab material, not repeated here: the [lab README](../README.md) (architecture, the "real, not scripted" argument, mapping table), [`references/AGX01_RISKS.md`](references/AGX01_RISKS.md) (research, scenarios, mitigation roadmap), the [payload README](assets/obfuscation_payload.README.md) (the encodings and how to vary them) and protectogw's [`SECURITY.md`](protectogw/SECURITY.md) (its stated limits).
 - Real-model figures: in the HACTU8 repo, `docs/agenticgoat-merge-plan.md` (AG-55 notes) and `docs/evidence/2026-11-20-ollama-llama3.2-3b.md`.
 - Greshake et al. (2023), "Not what you've signed up for: Compromising Real-World LLM-Integrated Applications with Indirect Prompt Injection".
-- Ported from AgenticGoat's AGX01 entry (`agentic/labs.json`), its `obfuscation_gauntlet` act (`acts.py`) and the `normalizer` control (`agentic/protections.py`).
+- Ported from AgenticGoat (retired): its AGX01 entry (`agentic/labs.json`), its `obfuscation_gauntlet` act (`acts.py`) and the `normalizer` control (`agentic/protections.py`).

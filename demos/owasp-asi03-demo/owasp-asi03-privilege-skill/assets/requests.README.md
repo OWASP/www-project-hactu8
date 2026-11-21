@@ -38,6 +38,6 @@ away because of two things:
   token; a fresh token from another user's session; a token you edit by hand
   (rejected as unknown in both modes).
 
-Source material: AgenticGoat's ASI03 "Privilege Lab" entry in
+Source material (see the provenance note in `LESSON.md`): the original ASI03 "Privilege Lab" entry in
 `agentic/labs.json` (authorise on the session, not the prompt) is the
 reference for the mechanism.

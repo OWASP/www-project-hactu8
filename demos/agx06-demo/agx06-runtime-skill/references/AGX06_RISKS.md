@@ -1,7 +1,6 @@
 # AGX06 Risk Reference — Runtime Result Injection
 
-Domain knowledge, loaded on demand. AGX06 is one of AgenticGoat's superset
-labs (`agentic/labs.json` → `superset_labs`, group **B: Hidden channels**),
+Domain knowledge, loaded on demand. AGX06 is one of HACTU8's AGX extension labs (group **B: Hidden channels**),
 for patterns neither OWASP list numbers on its own. Its parent entry is
 **ASI02, Tool Misuse and Exploitation**, in the OWASP Top 10 for Agentic
 Applications 2026.
@@ -15,7 +14,7 @@ surfaces to the model like any other.
 ## Research foundations
 
 - **OWASP Top 10 for Agentic Applications 2026, ASI02 (Tool Misuse and
-  Exploitation)** — the parent entry. AgenticGoat's ASI02 lab names poisoned
+  Exploitation)** — the parent entry. The ASI02 entry names poisoned
   tool output among the ways an agent is steered into unsafe behaviour.
 - **OWASP Top 10 for LLM Applications, LLM01 (Prompt Injection)** — the
   underlying mechanism: text the model reads is treated as instructions.
@@ -23,7 +22,7 @@ surfaces to the model like any other.
   prompt injection. Content an LLM-integrated application surfaces to the
   model (here, a tool's runtime return) can carry instructions the model
   follows as if the user gave them.
-- **AgenticGoat `acts.py` → `runtime_watch`** — calls `search_kb("onboarding")`
+- **Detector act `runtime_watch`** — calls `search_kb("onboarding")`
   for real and re-screens the *return value* as untrusted input, catching an
   HTML-comment payload that did not exist until the call happened — precisely
   why scanning the definition (its Act 1) let it through.
@@ -62,6 +61,6 @@ surfaces to the model like any other.
 | Runtime returns reach the model unscreened | **Re-screen every runtime return**: treat the value a tool emits as untrusted input and screen it at call time, not just the definition at review time. Implemented: `COVERAGE["hardened"]` adds `tool_result` in `vulnerable_app.py`. |
 | A leak once an injection gets through | **Output canary check**: `protectogw.screen(reply, canaries=[CANARY])` on every reply, replacing a blocked reply with a refusal. Implemented: `Gateway.check_reply`. Stops this attack on its own (`test_canary_check_alone_blocks`). |
 | Untrusted text mixed into the instruction channel | **Spotlighting** for real models: hardened mode fences tool-host text in `<untrusted_tool_output>` tags. Implemented: `ProviderModel`. |
-| Unauthenticated vendor updates | Authenticate and sign tool definitions and the sources they draw returns from; pin a hash at approval (AgenticGoat `swap_check`). Discussed, not coded. |
+| Unauthenticated vendor updates | Authenticate and sign tool definitions and the sources they draw returns from; pin a hash at approval (detector act `swap_check`). Discussed, not coded. |
 | A condition this call didn't meet | Exercise the return surface across inputs so the screen sees the payload (AGX03). Discussed, not coded. |
 | Ruleset misses a paraphrase | Held-out testing (AGX09) and the canary layer above; protectogw is a filter, not a boundary. |

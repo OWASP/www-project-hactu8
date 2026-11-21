@@ -1,6 +1,6 @@
 """ProtectoGW bench: score screen() against a labelled corpus of MCP attack surfaces.
 
-The corpus (corpus.json) was ported from AgenticGoat's 17-act detector run. Each
+The corpus (corpus.json) comes from the 17-act detector run (Ported from AgenticGoat (retired)). Each
 item is untrusted text headed for a model's context, labelled attack or clean.
 Two axes are scored separately, so a held-out miss never reads as a regression:
 
@@ -36,7 +36,7 @@ HOLDOUT = Path(__file__).with_name("holdout_v2.json")
 TRAIN = Path(__file__).with_name("train_v1.json")
 
 # Output headed for a shell, SQL or HTML sink: metacharacter rules the default
-# prompt-injection ruleset deliberately does not carry (AgenticGoat Act 13).
+# prompt-injection ruleset deliberately does not carry (detector Act 13).
 SINK_RULES = (
     Rule("sql_sink",
          r"(\bunion\s+(all\s+)?select\b|;\s*drop\s+table\b|;\s*delete\s+from\b|"

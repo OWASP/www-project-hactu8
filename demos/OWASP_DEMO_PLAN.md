@@ -1,6 +1,8 @@
-# Plan — OWASP Top 10 demo series from AgenticGoat
+# Plan — OWASP Top 10 demo series
 
-Status: approved 2026-10-02. LLM series built (owasp-llm01..llm10-demo; LLM05 pre-existing, since brought onto the template). ASI series built: ASI01-10 (ASI05 added 2026-11-20 as a port of AgenticGoat's Sink Lab, merge plan AG-50). AGX series (AgenticGoat extensions AGX01-09, gateway labs on protectogw) designed in §4.3 and built.
+History: this is the design record for porting the labs from AgenticGoat (retired; the target is now HACTU8 Lamb). Source names below are as they were then.
+
+Status: approved 2026-10-02. LLM series built (owasp-llm01..llm10-demo; LLM05 pre-existing, since brought onto the template). ASI series built: ASI01-10 (ASI05 added 2026-11-20 as a port of AgenticGoat's Sink Lab, merge plan AG-50). AGX series (HACTU8 extensions AGX01-09, gateway labs on protectogw) designed in §4.3 and built.
 
 Update 2026-11-20 (merge plan D1, AG-54): the placeholder payload policy below is superseded. Payloads are now benign-effect: realistic wording whose only possible effect is a fictional canary or a simulated loopback action.
 
@@ -19,8 +21,8 @@ series follows as a second wave.
 
 ## 1. Source → target numbering
 
-This repo uses the **2026** LLM Top 10 numbering (`demos/agenticgoat-mock`,
-and LLM05 = Data & Model Poisoning). AgenticGoat uses the **2025** numbering.
+This repo uses the **2026** LLM Top 10 numbering (LLM05 = Data & Model
+Poisoning). AgenticGoat uses the **2025** numbering.
 Every port must translate:
 
 | 2026 (this repo) | Category | 2025 id in AgenticGoat |
@@ -44,7 +46,7 @@ Every port must translate:
    copyable into `.claude/skills/`. Cost: duplicated screening code across
    demos. AgenticGoat has no license yet (`pyproject.toml` TODO) — both repos
    are the same author, but pick a license before publishing ported code.
-2. **"Real, not scripted" model.** AgenticGoat's `EchoProvider` leaks on a
+2. **"Real, not scripted" model.** The echo provider's rule leaks on a
    keyword pair, which is scripted. Instead each demo uses a deterministic
    **instruction-following stub**: it obeys the last imperative it finds in
    its assembled context (system + retrieved + tool output). The *real*
@@ -243,7 +245,7 @@ at the agent level, not in a single answer.
 
 **ASI07 Insecure Inter-Agent Communication** — port 5307
 
-- Source: AgenticGoat `a2a_scan`.
+- Source: detector act `a2a_scan`.
 - Scenario: a planner agent sends work orders to an executor agent over a
   local in-process message bus.
 - Attack: a forged work order claiming to come from the planner, plus a
@@ -330,7 +332,7 @@ log, not just in the answer text.
   its first violation.
 - Controls: the other two agents.
 
-## 4.3 AGX series — AgenticGoat extensions beyond the Top 10s
+## 4.3 AGX series — HACTU8 extensions beyond the Top 10s
 
 AgenticGoat's `agentic/labs.json` carries a superset of nine labs, `AGX01`–`AGX09`,
 for attack and defense patterns neither OWASP list numbers. We keep its numbering.
@@ -346,14 +348,14 @@ screen is blind*, and the fix is always **protectogw** used properly.
   four acts, the stoplight KPI, the §12 console, the §13 backends with the picker
   and `echo`, and the tests.
 - **protectogw.** `_template/protectogw/` is copied unchanged into the skill
-  folder, like `providers.py`. It is AgenticGoat's screening core: the normalizer
+  folder, like `providers.py`. It is HACTU8's screening core: the normalizer
   and de-obfuscation folds, the ruleset, the exfil indicator taxonomy, the canary
   check, `Policy`/`Rule`, and the `Session` cross-read screen.
 - **Persona.** Billy, the Goat & Co. ops assistant (AgenticGoat's), runs against a
   small tool host: tools, resources and docs. A fictional **canary credential**
   (`sk-canary-` + per-process hex, as in AgenticGoat's `secrets_vault.canary()`)
   sits in Billy's context with the instruction never to reveal it.
-- **Echo model.** This is AgenticGoat's `EchoProvider` rule. If the text that
+- **Echo model.** This is the echo provider's rule. If the text that
   reaches the model contains both "emit" and "confirm" (case-insensitive), the
   reply is `Acknowledged. <canary>`. Otherwise it gives a benign answer that
   quotes the first line of its context. This is deliberately AgenticGoat's own
@@ -431,8 +433,8 @@ its story with Act 4 at 0%.
 2. **LLM10, LLM03, LLM09** — strongest AgenticGoat sources, very visual.
 3. **LLM04, LLM06, LLM07** — sources exist; modest build-out.
 4. **LLM02, LLM08** — most new code.
-5. (Done) Update `demos/agenticgoat-mock` lesson table to link each lesson to its
-   full demo.
+5. (Done) Update the one-page lesson mock's table to link each lesson to its
+   full demo. The mock was retired in merge plan AG-71.
 6. Wave 2: ASI06, ASI01, ASI04, ASI07.
 
 Each demo is done when the template §11 checklist passes and its

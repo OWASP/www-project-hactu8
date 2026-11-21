@@ -1,4 +1,4 @@
-"""Billy's poisoned MCP surfaces, ported from AgenticGoat's vulnerable server.
+"""Billy's poisoned MCP surfaces: Lamb's vulnerable server.
 
 Billy, Goat & Co.'s "KB-Tools" server is the hostile third-party MCP server a
 team is about to wire into its assistant. Every surface below is untrusted text

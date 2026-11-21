@@ -225,7 +225,7 @@ function EntryForm({ initial, onCancel, onSubmit }: EntryFormProps) {
 
       <div style={fieldWrapStyle}>
         <label style={labelStyle}>Tags (comma-separated)</label>
-        <input style={inputStyle} value={tagsInput} onChange={(e) => setTagsInput(e.target.value)} placeholder="e.g. agenticgoat, example" />
+        <input style={inputStyle} value={tagsInput} onChange={(e) => setTagsInput(e.target.value)} placeholder="e.g. lamb, example" />
       </div>
 
       <div style={fieldWrapStyle}>

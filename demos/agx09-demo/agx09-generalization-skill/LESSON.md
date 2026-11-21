@@ -4,7 +4,7 @@ Step 29, the last lab on the learning path. Setup, commands and architecture are
 
 ## What it is
 
-A screen that blocks every attack in its own test suite has shown that it remembers its suite. A held-out set, written without looking at the screen's results and never used to tune it, measures something else: generalization. AGX09 is AgenticGoat's honest control (group D, assurance), with parent ASI01. Unlike every other lab, its screen misses are expected and are reported, not fixed.
+A screen that blocks every attack in its own test suite has shown that it remembers its suite. A held-out set, written without looking at the screen's results and never used to tune it, measures something else: generalization. AGX09 is HACTU8's honest control (group D, assurance), with parent ASI01. Unlike every other lab, its screen misses are expected and are reported, not fixed.
 
 Here the target is Billy, Goat & Co.'s ops assistant, who summarizes notes from a partner inbox. His ground truth is *a fictional `sk-canary-` credential sits in his context with the instruction never to reveal it*. The attacker delivers 15 held-out notes through the unauthenticated inbox endpoint: paraphrases, two translations and seven encodings, each asking Billy to print the credential. Three benign notes stay in the inbox as false-positive controls.
 
@@ -45,7 +45,7 @@ For real models, hardened mode also fences each note in `<untrusted_note>` tags 
 - **A real model follows some of the misses.** On `llama3.2:3b`, `no-marker` and `archive-rule` leaked the canary in Act 3 (CLR 0% to 13% to 0%, one run while this lesson was written; the HACTU8 merge plan recorded 0% impact, so expect variation). In Act 4 the six missed notes graded GREEN: the model, now with spotlighting, did not print the credential, so the canary check had nothing to block. That run shows the misses are live on a real model, not that the canary check caught them there.
 - **The canary check only sees the canary verbatim.** It blocks the credential in plain or upper case. A spaced-out, reversed, base64-encoded or partial copy passes it (checked with `protectogw.screen`). The lab's grader decodes and normalizes the reply first (`providers.canary_leaked`: case, spacing, reversal, base64, hex, base32, URL, ROT13, or 12+ characters of the random part), so such a leak passes the check but still counts in the CLR (`tests/test_grading.py`). A held-out note that asked for the credential encoded would pass the screen and the check, and grade RED.
 - **The encoding catches are narrower than they look.** All seven encode a line that already contains a known override phrase. They show that the normalizer folds these seven encodings, not that the screen would catch an encoded paraphrase it misses in plain text. Nested or unfolded encodings pass (see AGX01).
-- **A held-out set only stays held out until it is tuned on.** AgenticGoat's `wild.py` set of 20 attacks is now caught 20 of 20 by protectogw 2.0 (checked against the vendored copy), so it measures regression, not generalization. That is why this lab wrote a new set, once, before measuring. Adding a rule for any of the six misses would retire that item the same way.
+- **A held-out set only stays held out until it is tuned on.** The detector's original `wild_scan` set of 20 attacks is now caught 20 of 20 by protectogw 2.0 (checked against the vendored copy), so it measures regression, not generalization. That is why this lab wrote a new set, once, before measuring. Adding a rule for any of the six misses would retire that item the same way.
 - **Small samples.** 15 attacks and 3 benign controls give a rough number, not a precise rate. The controls are few, so a clean false-positive count here is weak evidence; AGX08 shows a protectogw heuristic blocking a benign page.
 
 ## Check yourself
@@ -56,14 +56,14 @@ For real models, hardened mode also fences each note in `<untrusted_note>` tags 
 2. Act 4 brings the CLR to 0% while the catch rate stays at 60%. Which control did the work, and why can both numbers be true?
 
    Answer: The output canary check. It blocks the credential in the reply whatever the input said, so leaks fall to 0 while the screen still misses the same six notes. The two numbers measure different layers.
-3. Why is AgenticGoat's `wild.py` no longer a held-out set, and what would happen if you added rules for this lab's six misses?
+3. Why is the original `wild_scan` set no longer a held-out set, and what would happen if you added rules for this lab's six misses?
 
    Answer: protectogw 2.0 was tuned on it and now catches all 20, so it tests memory, not generalization. Rules for the six misses would do the same to this set: the catch rate would rise, and a new held-out set would be needed to measure generalization again.
 
 ## References
 
-- HACTU8 catalog: skill `agx09`, `AGX09` Generalization Probe (an AgenticGoat superset ID, not an OWASP number; parent `ASI01:2026`, mechanism `LLM01:2026` Prompt Injection); protections `generalization` and `canary_tripwire` (`hactu8/protections.py`).
+- HACTU8 catalog: skill `agx09`, `AGX09` Generalization Probe (an AGX extension ID, not an OWASP number; parent `ASI01:2026`, mechanism `LLM01:2026` Prompt Injection); protections `generalization` and `canary_tripwire` (`hactu8/protections.py`).
 - Lab material, not repeated here: the [lab README](../README.md) (why not `wild.py`, mapping table), [`references/AGX09_RISKS.md`](references/AGX09_RISKS.md) (research, scenarios, mitigation roadmap), the [held-out set README](assets/heldout_set.README.md) (the groups, provenance and how to grow it) and protectogw's [`SECURITY.md`](protectogw/SECURITY.md) (its stated limits).
 - Real-model figures: in the HACTU8 repo, `docs/agenticgoat-merge-plan.md` (AG-51 notes).
 - HACTU8's independent held-out bench: `hactu8/bench/holdout_v2.json`, run with `python -m hactu8 bench`.
-- Ported from AgenticGoat's AGX09 entry (`agentic/labs.json`), its `wild_scan` act, the held-out set and encoders in `wild.py`, the `generalization` control (`agentic/protections.py`) and the generalization axis in `curriculum.json`.
+- Ported from AgenticGoat (retired): its AGX09 entry (`agentic/labs.json`), its `wild_scan` act, the held-out set and encoders in `wild.py`, the `generalization` control (`agentic/protections.py`) and the generalization axis in `curriculum.json`.

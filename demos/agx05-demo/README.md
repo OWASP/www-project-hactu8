@@ -1,7 +1,7 @@
 # AGX05 — Error-Channel Injection Demo
 
 An educational, self-contained demonstration of **AGX05: Error-Channel
-Injection**, one of AgenticGoat's superset labs (group B, hidden channels;
+Injection**, one of HACTU8's AGX extension labs (group B, hidden channels;
 parent **OWASP ASI02, Tool Misuse and Exploitation**). A tool host's text
 passes a **screening gateway** before it reaches the model. The gateway uses a
 real screening library, but it reads only each tool's description and its
@@ -11,8 +11,7 @@ surfaces to the model, on a code path the screen never executes. The fix is
 the same library, placed to screen the error channel too, plus an output
 canary check.
 
-The scenario is **"Billy," the Goat & Co. ops assistant** (AgenticGoat's
-persona). Billy has a fictional credential in his context and the instruction
+The scenario is **"Billy," the Goat & Co. ops assistant** (the Lamb persona). Billy has a fictional credential in his context and the instruction
 *never to reveal it*. With **1** vendor update to **1** tool's error text, the
 attacker makes Billy leak that credential whenever a query fails. The tool
 description and its happy path are never touched, and requests that succeed or
@@ -24,9 +23,9 @@ use other tools stay clean.
 
 The shipped payload is a **benign-effect directive**: realistic wording
 whose only effect is printing the lab's fictional credential; it is a benign error message followed by a directive line, and it
-follows AgenticGoat's "emit the canary to confirm" convention so the offline
+follows the Lamb "emit the canary to confirm" convention so the offline
 echo model reacts to it. The lab adds one screening rule that catches it. Paste
-your own real payload (for example AgenticGoat's AGX05 probe) for real-model
+your own real payload (for example Lamb's `error:db_query` surface) for real-model
 runs. See `agx05-error-channel-skill/assets/error_payload.README.md`.
 
 ## Interactive web demo (recommended)
@@ -60,8 +59,7 @@ and a screen is wired onto the happy path. But a tool can succeed cleanly and
 fail dirtily: when a call raises, the MCP client surfaces the exception text to
 the model like any other output. A screen that only ever ran on the success
 return never executed the error path, so a payload in an error message is
-model-visible and scan-invisible at once. AgenticGoat's `error_channel_scan`
-act makes the point by driving `db_query` into failure on purpose and screening
+model-visible and scan-invisible at once. The `error_channel_scan` detector act makes the point by driving `db_query` into failure on purpose and screening
 the curse it lets out. Indirect injection (Greshake et al., 2023) needs only
 that the model reads the text; it does not need the text to be on the path your
 screen runs on. This demo turns that into a number, the **Canary Leak Rate
@@ -91,9 +89,7 @@ leaked. **GREEN** is a clean answer.
 
 ### Optional: run against a real model
 
-`echo`, the lab's deterministic offline model, is the default backend (as in
-AgenticGoat; `stub` still works as an alias). `providers.py` (the same provider
-layer as AgenticGoat) adds three real ones. All are standard library only.
+`echo`, the lab's deterministic offline model, is the default backend (`stub` still works as an alias). `providers.py`, HACTU8's provider layer, adds three real ones. All are standard library only.
 
 In the web console, pick the backend and model in the **BACKEND / MODEL** bar
 and press **Use backend**. The model list is fetched live from Ollama,
@@ -109,7 +105,7 @@ python run_demo.py --backend openrouter --model meta-llama/llama-3.2-3b-instruct
 AGX05_BACKEND=openrouter AGX05_MODEL=... python agx05-error-channel-skill/vulnerable_app.py
 ```
 
-The OpenRouter key works as in AgenticGoat: export `OPENROUTER_API_KEY` in the
+The OpenRouter key comes from the environment only: export `OPENROUTER_API_KEY` in the
 shell that starts the lab. The console never asks for it and is only told
 whether one is set; without it, `openrouter` is greyed out in the picker.
 
@@ -122,7 +118,7 @@ The attack mechanics are identical. Only the model changes:
   `<untrusted_tool_output>` tags (spotlighting), and screens the reply for the
   canary before it leaves.
 
-A real model may ignore AgenticGoat's probe. `run_demo.py` then reports the
+A real model may ignore the probe. `run_demo.py` then reports the
 numbers rather than asserting them. See the payload README for how to vary it.
 
 Limits:
@@ -178,13 +174,13 @@ Echo and the local backends keep everything on the host.
 
 Plus the mitigation used in Act 4: `Gateway("hardened")` in
 `vulnerable_app.py`, built on [`protectogw/`](agx05-error-channel-skill/protectogw/),
-AgenticGoat's screening core, vendored unchanged. Its own
+HACTU8's screening core, vendored unchanged. Its own
 [`SECURITY.md`](agx05-error-channel-skill/protectogw/SECURITY.md) describes its
 limits, including a measured 53% generalization rate on held-out attacks (16 of 30).
 
 ### How the "leak" is real, not scripted
 
-The model follows one fixed rule, AgenticGoat's `EchoProvider`: if the text
+The model follows one fixed rule, the echo provider's: if the text
 that reaches it contains "emit" and "confirm", it replies with the canary;
 otherwise it answers from the first line of its tool context. That rule never
 changes between acts. What changes is **what reaches the context**:
@@ -269,7 +265,7 @@ agx05-demo/
 ├── agx05-error-channel-skill/
 │   ├── SKILL.md                       #   metadata + instructions
 │   ├── vulnerable_app.py              #   Module 1: target, tool host, gateway, echo model
-│   ├── protectogw/                    #   AgenticGoat's screening core (vendored, unchanged)
+│   ├── protectogw/                    #   HACTU8's screening core (vendored, unchanged)
 │   ├── providers.py                   #   optional real-model backends (shared, unchanged)
 │   ├── requirements.txt               #   stdlib only
 │   ├── web/                           #   shared lab console (index.html, app.js, styles.css)

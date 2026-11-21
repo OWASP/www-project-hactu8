@@ -152,7 +152,7 @@ With `openrouter`, prompts and payloads leave the machine.
    `--harden` switches the target to hardened mode, with three controls (see
    `/api/state` → `mitigations`):
    - `source_gate`: documents that fail `_protected_scan` (a protectogw
-     BLOCK — AgenticGoat's screening core, vendored unchanged in `protectogw/`
+     BLOCK — HACTU8's screening core, vendored unchanged in `protectogw/`
      — or no `[SOURCE:]`/`[APPROVED_BY:]`/`[VERSION:]` provenance) are excluded
      from retrieval. The two seeded official policies are trusted by name
      while their content matches the seeded copy.
@@ -189,7 +189,7 @@ leaves anything else literal.
 | `vulnerable_app.py` | Target assistant (`/query`, `/ingest`, `/config/template`, `/agent/cache`, `/health`, read-only `/artifact/<name>`) plus the console API (`/api/meta`, `/api/state`, `/api/reset`, `/api/attack`, `/api/evaluate`, `/api/scan`, `/api/mode`). |
 | `web/` | Shared HACTU8 lab console, served at `/`. |
 | `providers.py` | Optional real-model backends: Ollama, llama.cpp, OpenRouter. Shared and copied unchanged. |
-| `protectogw/` | AgenticGoat's screening core, vendored unchanged; the source gate's text screen. |
+| `protectogw/` | HACTU8's screening core, vendored unchanged; the source gate's text screen. |
 | `scripts/run_poisoning.py` | Attack: `--scenario rag\|prompt\|agent\|all`. |
 | `scripts/evaluate_kpi.py` | Stoplight KPI + PSR against the live app; `--harden`, `--scan`, `--scan-prompt-template`. |
 | `scripts/reset_baseline.py` | Restores the seeded knowledge base, template, agent cache and vulnerable mode. |

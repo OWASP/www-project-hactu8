@@ -23,7 +23,7 @@ assembly. Nothing is hard-coded to flip.
 Hardened mode (``POST /api/mode`` or ``LLM01_MODE=hardened``) closes both gaps:
 tool output is passed as a separate, untrusted ``tool`` role the model never
 takes instructions from, and each tool result is screened with ``protectogw``
-(AgenticGoat's screening core, vendored unchanged in ``protectogw/``) before it
+(HACTU8's screening core, vendored unchanged in ``protectogw/``) before it
 is used.
 
 Host-safety guard (does not weaken the lesson): KB state lives in memory only;

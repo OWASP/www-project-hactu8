@@ -1,9 +1,8 @@
 # AGX01 Risk Reference — Obfuscation Gauntlet
 
-Domain knowledge, loaded on demand. AGX01 is one of AgenticGoat's superset
-labs (`agentic/labs.json` → `superset_labs`, group **A: Evasion**), for
+Domain knowledge, loaded on demand. AGX01 is one of HACTU8's AGX extension labs (group **A: Evasion**), for
 patterns neither OWASP list numbers on its own. Its parent entry is **ASI01,
-Agent Authorization and Control Hijacking** (the AgenticGoat mapping), and the
+Agent Authorization and Control Hijacking** (HACTU8's mapping), and the
 underlying mechanism is prompt injection (LLM01).
 
 A screen that matches keywords judges whatever text it is shown. A model,
@@ -15,14 +14,13 @@ effectively sees, and judges that.
 
 ## Research foundations
 
-- **OWASP Top 10 for Agentic Applications 2026, ASI01** — the parent entry in
-  AgenticGoat's mapping: an agent is steered by text it treats as authoritative.
+- **OWASP Top 10 for Agentic Applications 2026, ASI01** — the parent entry in HACTU8's mapping: an agent is steered by text it treats as authoritative.
 - **OWASP Top 10 for LLM Applications, LLM01 (Prompt Injection)** — the
   underlying mechanism: text the model reads is treated as instructions.
 - **Greshake et al. (2023), "Not what you've signed up for"** — indirect prompt
   injection. Content an LLM-integrated application fetches for the model (here,
   a notice from a tool host) can carry instructions the model follows.
-- **AgenticGoat `acts.py` → `obfuscation_gauntlet`** — encodes one canonical
+- **Detector act `obfuscation_gauntlet`** — encodes one canonical
   payload as leet, zero-width, homoglyph, base64 and split-token, and grades
   the **normalizer** (`_deobfuscate` → `normalize`), not the ruleset. Coverage
   is the closed set of encodings the normalizer folds.
@@ -63,4 +61,4 @@ effectively sees, and judges that.
 | A leak once an injection gets through | **Output canary check**: `protectogw.screen(reply, canaries=[CANARY])` on every reply, replacing a blocked reply with a refusal. Implemented: `Gateway.check_reply`. Stops this attack on its own (`test_canary_check_alone_blocks`). |
 | Untrusted text mixed into the instruction channel | **Spotlighting** for real models: hardened mode fences notice text in `<untrusted_tool_output>` tags. Implemented: `ProviderModel`. |
 | Unauthenticated vendor updates | Authenticate and sign notice sources; review before publishing. Discussed, not coded. |
-| A brand-new encoding class | Treat normalizer coverage as a **closed set** and grow it deliberately (AgenticGoat's practice note); held-out testing (AGX09) measures the gap; the canary layer catches the leak whatever the encoding. |
+| A brand-new encoding class | Treat normalizer coverage as a **closed set** and grow it deliberately (the AGX01 practice note); held-out testing (AGX09) measures the gap; the canary layer catches the leak whatever the encoding. |

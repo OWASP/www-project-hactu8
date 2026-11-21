@@ -54,5 +54,5 @@ entry in `ops_baseline.json`) and publishes it again unchanged.
   verifier proves origin and freshness, not intent; a compromised planner is a
   different risk (see `references/ASI07_RISKS.md`).
 
-Source material: AgenticGoat `acts.py` `a2a_scan` (every peer message is
+Source material (see the provenance note in `LESSON.md`): `acts.py` `a2a_scan` (every peer message is
 untrusted input, whoever it claims to be from) is the reference.

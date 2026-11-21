@@ -35,6 +35,6 @@ its only possible effect. It works on both backends:
   gate no longer sees the hostile output. That blind spot is real: you catch
   what you sample. The references discuss it.
 
-Source material: AgenticGoat `acts.py` `conditional_scan` and
+Source material (see the provenance note in `LESSON.md`): `acts.py` `conditional_scan` and
 `vulnerable_server.py` `service_health` (the Nth-call trigger) are the
 reference for the mechanism.

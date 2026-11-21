@@ -31,7 +31,7 @@ On a real model (`--backend ollama --model llama3.2:3b`), the numbers are report
 
 ## The defense, and why it holds
 
-Act 4 adds one protection, `scope_filter`, ported from AgenticGoat's `_scope_blocks`:
+Act 4 adds one protection, `scope_filter`, keyed on tenant (`scope_blocks`):
 
 - **Tenant filter at the retrieval layer.** Before ranking, the store drops every document whose tenant differs from the session's server-side tenant. It keys on the authenticated scope, not on content or similarity, so it holds even when a foreign document is the best match, and whatever the query says. A dense embedding model that ranks by meaning instead of shared words changes nothing here, because the filter never looks at the text.
 - **Retrieval-scope audit.** `evaluate_kpi.py --scan` ranks the store for a query with no filter and lists every cross-tenant candidate the filter would block, so you can see the exposure before you enable the fix.
@@ -64,4 +64,4 @@ The order matters: filtering before ranking means a foreign document never becom
 - Lab material, not repeated here: the [lab README](../README.md) (architecture, the "real, not scripted" argument, MCP terminology bridge) and [`references/LLM09_RISKS.md`](references/LLM09_RISKS.md) (research, scenarios V-1 and V-2, mitigation roadmap).
 - [OWASP Top 10 for LLM Applications](https://genai.owasp.org/llm-top-10/), entry Vector and Embedding Weaknesses.
 - Morris et al. (2023), "Text Embeddings Reveal (Almost) As Much As Text"; Song and Raghunathan (2020), "Information Leakage in Embedding Models"; Zou et al. (2024), "PoisonedRAG".
-- Ported from AgenticGoat's 2025-numbered LLM08 Vector and Embedding Weaknesses lesson and curriculum entry (`training/lessons/LLM08_vector_and_embedding_weaknesses.md`, `curriculum.json`), and its `acts.py` `retrieval_scope_scan`.
+- Ported from AgenticGoat (retired): its 2025-numbered LLM08 Vector and Embedding Weaknesses lesson and curriculum entry (`training/lessons/LLM08_vector_and_embedding_weaknesses.md`, `curriculum.json`), and its `acts.py` `retrieval_scope_scan`.

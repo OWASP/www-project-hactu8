@@ -128,7 +128,7 @@ With `openrouter`, prompts and payloads leave the machine.
    `--scan` screens the page before it is published. `--harden` switches the
    target to hardened mode: tool output goes in its own `tool` role, which the
    model never takes instructions from, and is screened with protectogw
-   (AgenticGoat's screening core, vendored unchanged in `protectogw/`). Channel
+   (HACTU8's screening core, vendored unchanged in `protectogw/`). Channel
    separation alone is enough here, and the tests prove it.
 
 7. **Reset to baseline.**
@@ -163,5 +163,5 @@ lesson. To test the screen, add a `protectogw.Rule` to `SCREEN_POLICY` in
 | `assets/injected_page.md` | Adversarial page (benign-effect payload; editable). |
 | `assets/injected_page.README.md` | How to write a payload for the echo and real-model backends. |
 | `assets/kb_baseline.json` | Untampered wiki: the ground truth. |
-| `protectogw/` | AgenticGoat's screening core, vendored unchanged; the tool-output screen. |
+| `protectogw/` | HACTU8's screening core, vendored unchanged; the tool-output screen. |
 | `tests/test_lifecycle.py` | Asserts the four-act story in-process. |

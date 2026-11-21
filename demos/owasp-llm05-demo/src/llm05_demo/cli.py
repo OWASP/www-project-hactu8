@@ -8,7 +8,7 @@ Runs the whole narrative in one process, no server or API key required:
   ACT 4  Remediation ............... source scoring + anomaly detection -> GREEN
 
 Invoke via ``python -m llm05_demo.cli`` or the installed ``llm05-demo`` console
-script. Backends match AgenticGoat (``--backend echo|ollama|llamacpp|openrouter``,
+script. Backends match the other labs (``--backend echo|ollama|llamacpp|openrouter``,
 ``--model``, ``--embed-model``; or the ``LLM05_SRC_*`` variables). With a real
 model the rates are reported as measured.
 """

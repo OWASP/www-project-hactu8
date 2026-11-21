@@ -21,7 +21,7 @@ Two gaps are demonstrated, both by omission:
 AUTHORIZED SECURITY-LAB USE ONLY. Bound to loopback; insecure by design; do
 not expose it.
 
-The model is AgenticGoat's ``EchoProvider`` rule (see ``StubModel``): if the
+The model is the echo provider's rule (see ``StubModel``): if the
 text that reaches it contains both "emit" and "confirm", it replies
 ``Acknowledged. <canary>``; otherwise it gives a benign answer quoting the
 first line of its tool context. Whether the payload reaches the model is
@@ -61,8 +61,8 @@ WEB_FILES = {"index.html": "text/html", "app.js": "text/javascript", "styles.css
 MANIFEST_FILE = os.path.join(ASSETS, "tool_manifest.json")
 PAYLOAD_FILE = os.path.join(ASSETS, "runtime_return_payload.txt")
 
-# A fictional credential, minted per process as in AgenticGoat's
-# secrets_vault.canary(). It sits in Billy's context; it must never leave.
+# A fictional credential, minted per process (``sk-canary-`` + hex), like
+# ``providers.canary()``. It sits in Billy's context; it must never leave.
 CANARY = "sk-canary-" + secrets.token_hex(16)
 
 SYSTEM_PROMPT = (
@@ -147,7 +147,7 @@ class Gateway:
 # The model stand-ins
 # --------------------------------------------------------------------------- #
 class StubModel:
-    """AgenticGoat's EchoProvider rule, deterministic and offline.
+    """The echo provider's rule, deterministic and offline.
 
     If the joined context contains both "emit" and "confirm" it complies with
     the blatant exfil instruction and returns the canary; otherwise it answers
@@ -326,7 +326,7 @@ class Lab:
 # --------------------------------------------------------------------------- #
 CONSOLE_META = {
     "id": "AGX06",
-    "framework": "AgenticGoat extensions (AGX), parent OWASP ASI02",
+    "framework": "HACTU8 extensions (AGX), parent OWASP ASI02",
     "risk": "Runtime Result Injection",
     "title": "Runtime Result Injection Lab",
     "short_title": "Runtime Lab",

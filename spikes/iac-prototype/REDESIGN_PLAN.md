@@ -74,9 +74,9 @@ Today `src/pages/Registry.tsx` was a 22-line dead-end stub lazy-loading a remote
 
 Discriminated union by `RegistryEntryType`: `'agent' | 'model-integration' | 'mcp-host' | 'target'`, each carrying type-specific fields (e.g. `target` has `targetUrl`/`riskNotes`/`referenceUrl`). Common base fields: `id`, `name`, `description`, `source: 'manual' | 'discovered'`, `tags?`, `owner?`, `addedAt`, `updatedAt`. Follows the discriminated-union style already used by `ExtensionRuntimeConfig` in `types/extensions.ts`.
 
-### Seed data — `iac-host/src/data/agenticGoatSeed.ts`
+### Seed data — `iac-host/src/data/lambSeed.ts`
 
-3 seeded entries (a `target`, an `agent`, an `mcp-host`) modeling **AgenticGoat** — a placeholder intentionally-vulnerable reference target (WebGoat-style, for OWASP LLM Top 10 training) — so the platform isn't empty on first load. Honest placeholder, not a real deployed system.
+3 seeded entries (a `target`, an `agent`, an `mcp-host`) for **HACTU8 Lamb**, the loopback-only sacrificial target (WebGoat-style, for OWASP LLM Top 10 training), so the platform isn't empty on first load. `migrateLegacyLambSeed` replaces the earlier placeholder entries in saved registries.
 
 ### Service — `iac-host/src/services/registryService.ts`
 
@@ -110,7 +110,7 @@ Single page (no Explorer/Installed/Creator split like Skills — Registry has no
 | 5 | Schema-driven skill results + protected-skill integrity | ⚠️ Superseded — the mechanism this shipped was deleted by item 3/Move 2 (see below) |
 | 6 | Retire `iac_mfe_primary` Streamlit remote | 2026-08-21 (Console only — Dashboard still open) |
 | 7 | Extensions trim-down | — |
-| 8 | Cross-referencing + AgenticGoat Internal target | 2026-08-26 (target selection unified — AgenticGoat Internal running service still open) |
+| 8 | Cross-referencing + built-in target | 2026-08-26 (target selection unified); the running target is now HACTU8 Lamb |
 | 9 | Enterprise metadata / active discovery | — |
 | 10 | Skill upload path (deferred — Teams-app-style model) | — |
 | 11 | Extensions security debt (zip-slip + port mismatch) | — |
@@ -140,9 +140,9 @@ Single page (no Explorer/Installed/Creator split like Skills — Registry has no
 
 7. **Extensions trim-down** — remove non-IDE-enhancement extension categories/installed extensions; keep only IDE-enhancement use cases.
 
-8. **Cross-referencing + AgenticGoat Internal target.** *Added 2026-08-26, made concrete.* Two parts:
-   - **AgenticGoat Internal** — a lightweight, intentionally-vulnerable target app that actually runs, for demos, replacing today's metadata-only `agenticGoatSeed.ts` placeholder. Ships with the product the same way `host_skills/` does (repo-committed, e.g. `iac-copilot-api/agentic_goat/`, always available, no install step) — a small local service (own port) exposing a handful of intentionally-vulnerable endpoints spanning a few OWASP LLM Top 10 categories, started manually alongside the rest of the stack like everything else in this repo (no auto-orchestration exists here). Registered as a `target`-type Registry entry whose `targetUrl` points at the real running local service, tagged so the UI can show it's built-in. **Still open** — this part hasn't been built; AgenticGoat is still Registry metadata only, no running service.
-   - **Unified target selection** — ✅ **Completed 2026-08-26, as part of Projects Milestone 1 (item 15).** The new curated-Project workspace's Target tab (`components/Projects/TargetTab.tsx`) reads directly from `useRegistry().entries.filter(type === 'target')` — no special-casing for "built-in vs. external," both are just Registry entries in the same picker, confirmed working against the seeded AgenticGoat entry. Note: this landed on the *new* Project workspace, not the old per-tester `ModelProviderContext` stand-in from item 1 — item 1's 10 standalone tester pages (still reachable at their own routes) still use their own original target handling, unaudited and untouched.
+8. **Cross-referencing + built-in target.** *Added 2026-08-26, made concrete.* Two parts:
+   - **Built-in target** (now HACTU8 Lamb, `hactu8/lamb/`) — a lightweight, intentionally-vulnerable target app that actually runs, for demos, replacing the earlier metadata-only seed placeholder. Ships with the product the same way `host_skills/` does (repo-committed, e.g. `hactu8/lamb/`, always available, no install step) — a small local service (own port) exposing a handful of intentionally-vulnerable endpoints spanning a few OWASP LLM Top 10 categories, started manually alongside the rest of the stack like everything else in this repo (no auto-orchestration exists here). Registered as a `target`-type Registry entry whose `targetUrl` points at the real running local service, tagged so the UI can show it's built-in. **Done** as HACTU8 Lamb (Phase 1, H-30 to H-33): the `HACTU8 Lamb` Registry entry's `targetUrl` is `http://127.0.0.1:5500`.
+   - **Unified target selection** — ✅ **Completed 2026-08-26, as part of Projects Milestone 1 (item 15).** The new curated-Project workspace's Target tab (`components/Projects/TargetTab.tsx`) reads directly from `useRegistry().entries.filter(type === 'target')` — no special-casing for "built-in vs. external," both are just Registry entries in the same picker, confirmed working against the seeded target entry. Note: this landed on the *new* Project workspace, not the old per-tester `ModelProviderContext` stand-in from item 1 — item 1's 10 standalone tester pages (still reachable at their own routes) still use their own original target handling, unaudited and untouched.
 
 9. **Enterprise metadata / active discovery** (later still) — add ownership/environment/compliance fields to `RegistryEntryBase`, and a network-discovery mechanism that produces `source: 'discovered'` entries.
 

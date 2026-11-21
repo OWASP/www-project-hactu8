@@ -279,7 +279,7 @@ python scripts/evaluate_kpi.py                               # GREEN, CLR 0%
 python -m unittest discover tests                            # 36 tests
 ```
 
-Ported from AgenticGoat's AGX08 lab.
+Ported from AgenticGoat (retired): its AGX08 lab.
 
 ## License
 

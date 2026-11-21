@@ -1,7 +1,7 @@
 ---
 name: agx06-runtime-skill
 description: >-
-  Demonstrates AgenticGoat's AGX06 (Runtime Result Injection, parent OWASP
+  Demonstrates AGX06 (Runtime Result Injection, parent OWASP
   ASI02) against a gateway-protected ops assistant in an AUTHORIZED security
   lab. An injection assembled into a tool's runtime return reaches the model
   because the gateway scans only the tool's static definition at review time,
@@ -48,8 +48,7 @@ called, and the gateway only ever scanned the static definition.
   - The server rejects foreign `Host` headers (DNS rebinding) and non-JSON
     POSTs (cross-site forms).
 - The payload is a benign-effect directive — a benign knowledge-base
-  document with a directive line inside an HTML comment, using AgenticGoat's
-  "emit the canary to confirm" convention so the offline echo model reacts to
+  document with a directive line inside an HTML comment, using the Lamb "emit the canary to confirm" convention so the offline echo model reacts to
   it — and the canary is a fictional, per-process `sk-canary-…` value. See
   [`assets/runtime_return_payload.README.md`](assets/runtime_return_payload.README.md).
 - Dual-use: this exists to make the blind spot observable and to motivate
@@ -71,7 +70,7 @@ when the tool runs. Here the tool host is an in-memory dict
 unreviewed server (or content-source) update, and the gateway stands in for an
 MCP proxy that screens tool text. It is **not** an MCP server or client.
 
-**protectogw** (`protectogw/`) is AgenticGoat's screening core, vendored
+**protectogw** (`protectogw/`) is HACTU8's screening core, vendored
 unchanged. Its own [`SECURITY.md`](protectogw/SECURITY.md) describes its
 limits, including a measured 53% generalization rate on held-out
 attacks (16 of 30), which is why the output canary check is layered behind it.
@@ -166,7 +165,7 @@ spot.
 | Path | Purpose |
 |------|---------|
 | `vulnerable_app.py` | Target: Billy, the tool host, the gateway (`/ask`, `/tools`, `/vendor/tools/update`, `/health`) plus the console API (`/api/meta`, `/api/state`, `/api/reset`, `/api/attack`, `/api/evaluate`, `/api/scan`, `/api/mode`, `/api/models`, `/api/backend`). |
-| `protectogw/` | AgenticGoat's screening core, vendored unchanged. |
+| `protectogw/` | HACTU8's screening core, vendored unchanged. |
 | `web/` | Shared HACTU8 lab console, served at `/`. |
 | `providers.py` | Optional real-model backends: Ollama, llama.cpp, OpenRouter. Shared and copied unchanged. |
 | `scripts/run_runtime_injection.py` | Attack: push the payload into a tool's runtime return. |

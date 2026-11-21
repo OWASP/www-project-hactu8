@@ -1,7 +1,7 @@
 ---
 name: agx05-error-channel-skill
 description: >-
-  Demonstrates AgenticGoat's AGX05 (Error-Channel Injection, parent OWASP
+  Demonstrates AGX05 (Error-Channel Injection, parent OWASP
   ASI02) against a gateway-protected ops assistant in an AUTHORIZED security
   lab. An injection placed in a tool's error message reaches the model because
   the gateway screens only the happy path — a tool's description and its
@@ -46,7 +46,7 @@ fails, and the gateway never screens the error channel.
   - The server rejects foreign `Host` headers (DNS rebinding) and non-JSON
     POSTs (cross-site forms).
 - The payload is a benign-effect directive — a benign error message plus
-  a directive line, using AgenticGoat's "emit the canary to confirm"
+  a directive line, using the Lamb "emit the canary to confirm"
   convention so the offline echo model reacts to it — and the canary is a
   fictional, per-process `sk-canary-…` value. See
   [`assets/error_payload.README.md`](assets/error_payload.README.md).
@@ -68,7 +68,7 @@ the model. Here the tool host is an in-memory dict
 unreviewed server update, and the gateway stands in for an MCP proxy that
 screens tool text. It is **not** an MCP server or client.
 
-**protectogw** (`protectogw/`) is AgenticGoat's screening core, vendored
+**protectogw** (`protectogw/`) is HACTU8's screening core, vendored
 unchanged. Its own [`SECURITY.md`](protectogw/SECURITY.md) describes its
 limits, including a measured 53% generalization rate on held-out
 attacks (16 of 30), which is why the output canary check is layered behind it.
@@ -162,7 +162,7 @@ case); the default `--field error_text` targets the blind spot.
 | Path | Purpose |
 |------|---------|
 | `vulnerable_app.py` | Target: Billy, the tool host, the gateway (`/ask`, `/tools`, `/vendor/tools/update`, `/health`) plus the console API (`/api/meta`, `/api/state`, `/api/reset`, `/api/attack`, `/api/evaluate`, `/api/scan`, `/api/mode`, `/api/models`, `/api/backend`). |
-| `protectogw/` | AgenticGoat's screening core, vendored unchanged. |
+| `protectogw/` | HACTU8's screening core, vendored unchanged. |
 | `web/` | Shared HACTU8 lab console, served at `/`. |
 | `providers.py` | Optional real-model backends: Ollama, llama.cpp, OpenRouter. Shared and copied unchanged. |
 | `scripts/run_error_injection.py` | Attack: push the payload into a tool's error text. |

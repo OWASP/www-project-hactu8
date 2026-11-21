@@ -29,7 +29,7 @@ documents, emails, and tool results. The user may never see it.
 | D-1 | Direct injection | The user types the override into the chat. | — |
 | I-3 | Injection in tool descriptions | The poisoned text is in tool metadata, not results (see LLM04 / supply chain). | — |
 | I-4 | Multimodal injection | Instructions inside images or audio. | — |
-| I-5 | Obfuscated payloads | Encoded or split payloads that evade keyword filters. | — (AgenticGoat `obfuscation_gauntlet`) |
+| I-5 | Obfuscated payloads | Encoded or split payloads that evade keyword filters. | — (detector act `obfuscation_gauntlet`) |
 
 ## How the demo maps to the attack surfaces
 
@@ -46,7 +46,7 @@ documents, emails, and tool results. The user may never see it.
 | Vulnerability | Hardening strategy |
 |---------------|--------------------|
 | Tool output treated as instructions | **Channel separation.** Keep tool results in their own role and never take instructions from it. Implemented: hardened mode in `vulnerable_app.py`. |
-| Unscreened tool output | **Tool-output screening** before results reach the model. Implemented: `screen_tool_output` screens with protectogw (AgenticGoat's screening core, vendored unchanged: normalizer + de-obfuscation folds + ruleset + exfil taxonomy + canary check), plus lab rules for the stub's directive syntax. Its `SECURITY.md` reports 53% generalization on held-out attacks, so it is one layer, never the boundary. |
+| Unscreened tool output | **Tool-output screening** before results reach the model. Implemented: `screen_tool_output` screens with protectogw (HACTU8's screening core, vendored unchanged: normalizer + de-obfuscation folds + ruleset + exfil taxonomy + canary check), plus lab rules for the stub's directive syntax. Its `SECURITY.md` reports 53% generalization on held-out attacks, so it is one layer, never the boundary. |
 | Unauthenticated content sources | Authenticate and attribute edits to data the assistant reads. Review changes to high-impact pages. |
 | Hidden content | Strip or render hidden markup before use. Implemented for HTML comments. |
 | Over-privileged follow-on actions | Least privilege on tools, plus human approval for consequential actions (see LLM03 Excessive Agency). |
