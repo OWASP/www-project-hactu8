@@ -114,7 +114,9 @@ def canary_carried(text: str, canary: str) -> bool:
     part is also graded like a key-shaped canary: 12 or more contiguous
     characters of it, forwards or reversed, separators ignored, so a
     reconstruction that lowercases the tag, drops the prefix or groups the
-    digits is still caught. The prefix alone is not a leak. Grading, not a
+    digits is still caught. A rebuild with one or two digits wrong (14 of the
+    16 in place, ``providers.CANARY_NEAR_MISMATCHES``) is caught too, as
+    inversion is approximate. The prefix alone is not a leak. Grading, not a
     defense.
     """
     if not text or not canary:

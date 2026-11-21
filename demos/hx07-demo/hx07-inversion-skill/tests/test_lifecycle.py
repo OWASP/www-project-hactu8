@@ -28,7 +28,7 @@ SKILL_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, SKILL_DIR)
 sys.path.insert(0, os.path.join(SKILL_DIR, "scripts"))
 
-from evaluate_kpi import QUESTIONS, classify, probe_row, suite  # noqa: E402
+from evaluate_kpi import QUESTIONS, SWEEP_SIGMAS, classify, probe_row, suite  # noqa: E402
 import protectogw  # noqa: E402
 import providers  # noqa: E402
 import toy_embedding as te  # noqa: E402
@@ -42,6 +42,9 @@ from vulnerable_app import (  # noqa: E402
 TAG = "HX07-CANARY-3f9a0c41d7e2b685"
 CANARIES = [TAG] + [f"HX07-CANARY-{i:02x}{'9c1e5b7a04d2f3'[i % 14:] + '9c1e5b7a04d2f3'[:i % 14]}"
                     for i in range(1, 10)]
+# 20 fixed, independent references for the sweeps the LESSON quotes (seeded, so the numbers are pinned).
+_RNG = __import__("random").Random(2026)
+SWEEP_CANARIES = ["HX07-CANARY-%016x" % _RNG.getrandbits(64) for _ in range(20)]
 LAYERS = ("use_no_raw_vectors", "use_tenant_acl", "use_noise", "use_ingest_screen")
 
 
@@ -219,6 +222,31 @@ class NoiseTest(unittest.TestCase):
         vec = te.embed("north gate")
         self.assertEqual(protect(vec, "gate-note"), protect(vec, "gate-note"))
         self.assertNotEqual(protect(vec, "gate-note"), protect(vec, "hay-account"))
+
+
+class SweepTest(unittest.TestCase):
+    """The LESSON's noise table and score-oracle rate, over 20 seeded references (60 notes)."""
+
+    def test_noise_table(self):
+        totals = {sigma: [0, 0, 0, 0] for sigma in SWEEP_SIGMAS}
+        for canary in SWEEP_CANARIES:
+            for row in noise_sweep(SWEEP_SIGMAS, canary=canary):
+                t = totals[row["sigma"]]
+                t[0] += row["recovered"]
+                t[1] += row["targets"]
+                t[2] += row["retrieval"]
+                t[3] += row["probes"]
+        want = {0.0: (60, 280), 0.002: (60, 280), 0.005: (60, 280), 0.01: (52, 280), 0.02: (0, 280),
+                NOISE_SIGMA: (0, 280), 0.05: (0, 241), 0.1: (0, 220)}
+        self.assertEqual({s: (t[0], t[2]) for s, t in totals.items()}, want)
+        self.assertTrue(all(t[1] == 60 and t[3] == 280 for t in totals.values()))
+        # The measured threshold: the lowest sigma with no reference rebuilt.
+        self.assertEqual(min(s for s, t in totals.items() if t[0] == 0), 0.02)
+
+    def test_score_oracle_rate(self):
+        rows = [probe_row(canary=c) for c in SWEEP_CANARIES]
+        self.assertEqual(sum(r["status"] == "RED" for r in rows), 19)
+        self.assertTrue(all(9_400 <= r["queries"] <= 9_500 for r in rows), [r["queries"] for r in rows])
 
 
 class ScreenTest(unittest.TestCase):

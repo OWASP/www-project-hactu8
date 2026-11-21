@@ -43,24 +43,25 @@ Act 4 adds one new defense, `vector_privacy`, plus two existing ones, in four la
 
 Measured on the attack, each alone: no raw vectors 0%, tenant ACL 0%, noise 0%, ingestion screen 0% (`LayersTest`). Each one closes the attack on its own because each removes a different thing the attacker needs: the vector, the right to read it, its precision, or the secret inside it. Stacked, a mistake in one layer (a new debug endpoint, a missed tenant check) leaves three.
 
-What noise costs, measured on the vectors that leave the store, over 20 random references (60 reference notes) and the 14-query retrieval probe set (`--sweep`, `NoiseTest`):
+What noise costs, measured on the vectors that leave the store, over 20 seeded references (60 reference notes) and the 14-query retrieval probe set (`--sweep`; pinned in `SweepTest.test_noise_table`). A run with a fresh random reference can differ by a note or a probe:
 
 | Noise sigma | References rebuilt | Nearest-neighbour retrieval |
 |-------------|--------------------|-----------------------------|
 | 0 (8-bit quantisation only) | 60/60 | 280/280 |
+| 0.002 | 60/60 | 280/280 |
 | 0.005 | 60/60 | 280/280 |
-| 0.01 | 50/60 | 280/280 |
+| 0.01 | 52/60 | 280/280 |
 | 0.02 | 0/60 | 280/280 |
 | 0.03 (hardened) | 0/60 | 280/280 |
-| 0.05 | 0/60 | 240/280 |
+| 0.05 | 0/60 | 241/280 |
 | 0.1 | 0/60 | 220/280 |
 
 Quantisation alone protects nothing: 8-bit levels are finer than one count. Retrieval survives the hardened noise because a dot product averages noise over thousands of coordinates, while the inversion reads coordinates one at a time. Morris et al. report the same shape on a real model: a little Gaussian noise cut their reconstruction sharply at a small retrieval cost.
 
 ## Where the defense stops working
 
-- **Noise too small.** At sigma 0.01 the count search still rebuilt 50 of 60 references, and at 0.005 all of them, with no retrieval cost to warn anyone. A team that tunes noise down until retrieval is perfect lands there. The threshold is for this attacker; a stronger one (a language prior, more search) would push it up, and this lab does not measure how far.
-- **Scores alone are an oracle.** The limit note is a restricted Goat & Co. note, "Spare key locker: the code is `<16 hex digits in four groups>`, ask the duty manager first." A helper account may search Goat & Co. notes but not read restricted ones: search returns the hit's title and a score rounded to 2 decimals, no text, no vector. The screen does not match grouped digits, so the note is embedded as written. The attacker picks the anchor phrase with the best score, then extends it one character at a time with a beam of 32, keeping what raises the score. In hardened mode it rebuilt the code in 49 of 50 random runs, and 18 of 20 in a second batch, with about 9,500 queries each; the last digit can come out wrong from a hash collision and the grade is still RED (`test_score_oracle_rebuilds_the_code_through_hardened_mode`, `evaluate_kpi.py --probe`). Noise does not help here: the scores are computed on the clean vectors inside the store.
+- **Noise too small.** At sigma 0.01 the count search still rebuilt 52 of 60 references, and at 0.005 all of them, with no retrieval cost to warn anyone. A team that tunes noise down until retrieval is perfect lands there. The threshold is for this attacker; a stronger one (a language prior, more search) would push it up, and this lab does not measure how far.
+- **Scores alone are an oracle.** The limit note is a restricted Goat & Co. note, "Spare key locker: the code is `<16 hex digits in four groups>`, ask the duty manager first." A helper account may search Goat & Co. notes but not read restricted ones: search returns the hit's title and a score rounded to 2 decimals, no text, no vector. The screen does not match grouped digits, so the note is embedded as written. The attacker picks the anchor phrase with the best score, then extends it one character at a time with a beam of 32, keeping what raises the score. In hardened mode it rebuilt the code for 19 of the 20 seeded references, with 9,400 to 9,500 queries each (`SweepTest.test_score_oracle_rate`). A digit or two can come out wrong from a hash collision, at the end or in the middle, and the grade is still RED: the grader counts 14 of 16 digits in place as the reference (`test_score_oracle_rebuilds_the_code_through_hardened_mode`, `test_rebuild_with_a_wrong_middle_digit_is_red`, `evaluate_kpi.py --probe`). Noise does not help here: the scores are computed on the clean vectors inside the store.
 - **Coarser scores close this climb, at a cost not measured here.** Rounded to 1 decimal, the climb rebuilt 0 of 20 codes (`test_one_decimal_scores_stop_this_climb`), and the 14 probes still ranked right on this 7-note store. In a large store, one decimal turns many scores into ties. A query budget would also show 9,500 near-identical searches for what they are; neither is coded.
 - **protectogw's default rules see no secret.** The built-in ruleset passes all seven notes (`test_default_protectogw_alone_blocks_nothing`). The screen result is a test of the two lab rules, which describe a key-shaped token; a secret written another way, like the grouped digits above, passes.
 - **The toy is not a real embedding.** Every number here comes from hashed n-grams. A real dense model is harder to invert and needs a trained decoder, and its noise threshold differs. What carries over is the shape: vectors leak text, noise trades privacy for retrieval, and a score is a channel.
