@@ -92,6 +92,7 @@ lab yet. The numbering is HACTU8's own.
 | HX06 | Role-play and Many-shot Jailbreak | [`hx06-demo`](hx06-demo/) — one message (a no-rules persona, a story that needs the real till code, or 20 fake compliant chat exchanges) breaks the store rules the assistant keeps when asked directly | 5506 | Rule-Break Rate (RBR) |
 | HX05 | OAuth Confused Deputy (MCP) | [`hx05-demo`](hx05-demo/) — an analytics server registers its own client, tampers a redirect and adds a connector, and the ledger MCP proxy hands it customers' tokens | 5505 | Token Theft Rate (TTR) |
 | HX07 | Embedding Inversion | [`hx07-demo`](hx07-demo/) — a vector store scopes its text to each tenant but exports every raw embedding; a supplier's partner account inverts them and rebuilds the staff access reference | 5507 | Inversion Leak Rate (ILR) |
+| HX08 | Image Prompt Injection | [`hx08-demo`](hx08-demo/) — receipt photos uploaded for a refund carry an instruction in small print, in near-invisible text or in PNG metadata, and the refund assistant follows it | 5508 | Image Injection Rate (IIR) |
 
 ## Running a lab
 
