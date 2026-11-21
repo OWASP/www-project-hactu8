@@ -185,7 +185,7 @@ TECHNIQUES: Dict[str, Dict[str, object]] = {
         "Queries make the model regurgitate memorised training data.",
         {"owasp_llm_2026": ["LLM02:2026"], "owasp_llm_2025": ["LLM02:2025"],
          "atlas": ["AML.T0057"], "nist": ["NISTAML.038"]},
-        [], []),
+        ["training_data_scrub", "score_suppression"], ["hx09"]),
     "membership-inference": _t(
         "Membership inference", "disclosure",
         "Model outputs reveal whether a given record was in the training set. The HX09 lab scores a customer's "
