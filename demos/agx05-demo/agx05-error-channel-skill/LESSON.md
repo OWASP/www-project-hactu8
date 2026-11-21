@@ -1,6 +1,6 @@
 # AGX05 Error-Channel Injection
 
-Step 18 on the learning path, after AGX04 Schema / Parameter Injection. Setup, commands and architecture are in the [lab README](../README.md); this lesson says what to look for and why.
+Step 20 on the learning path, after AGX04 Schema / Parameter Injection. Setup, commands and architecture are in the [lab README](../README.md); this lesson says what to look for and why.
 
 ## What it is
 

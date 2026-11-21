@@ -1,6 +1,6 @@
 # LLM06 Unbounded Consumption
 
-The last step of the basics stage, and the first lab where the harm is the bill, not the answer. Setup, commands and architecture are in the [lab README](../README.md); this lesson says what to look for and why.
+Step 8 of the basics stage, and the first lab where the harm is the bill, not the answer. Setup, commands and architecture are in the [lab README](../README.md); this lesson says what to look for and why.
 
 ## What it is
 

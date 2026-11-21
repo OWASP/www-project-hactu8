@@ -4,7 +4,7 @@
 
 | Tool | Kind | What it does |
 | --- | --- | --- |
-| `list_skills` | read-only | The 30 labs: id, OWASP id, risk, metric |
+| `list_skills` | read-only | The 31 labs: id, OWASP id, risk, metric |
 | `learning_path` | read-only | Stages and labs in the order to take them |
 | `get_lesson` | read-only | A lab's `LESSON.md`: title, sections, questions |
 | `list_results`, `show_result` | read-only | Stored runs, newest first; one full `hactu8.result/v1` document (`latest` works) |

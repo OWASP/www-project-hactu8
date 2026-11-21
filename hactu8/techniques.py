@@ -85,10 +85,11 @@ TECHNIQUES: Dict[str, Dict[str, object]] = {
         ["input_screen"], []),
     "jailbreak-multi-turn": _t(
         "Multi-turn jailbreak", "injection",
-        "A refusal is worn down over several turns, each harmless alone (crescendo).",
+        "A refusal is worn down over several turns, each harmless alone (crescendo). The HX02 lab walks a "
+        "store assistant into breaking a business rule.",
         {"owasp_llm_2026": ["LLM01:2026"], "owasp_llm_2025": ["LLM01:2025"],
          "atlas": ["AML.T0054"], "nist": ["NISTAML.018"]},
-        ["session_screen"], []),
+        ["session_screen", "action_policy"], ["hx02"]),
     "jailbreak-many-shot": _t(
         "Many-shot jailbreak", "injection",
         "A long run of fabricated example dialogues in the prompt teaches the model to comply.",

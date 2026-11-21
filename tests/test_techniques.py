@@ -129,7 +129,8 @@ class CoverageTest(unittest.TestCase):
         by_list = techniques.coverage()["by_list"]
         self.assertEqual(by_list["owasp_llm_2026"]["ids"], 10)
         self.assertEqual(by_list["owasp_llm_2026"]["without_lab"], [])
-        self.assertIn("AML.T0054", by_list["atlas"]["without_lab"])
+        self.assertNotIn("AML.T0054", by_list["atlas"]["without_lab"])   # jailbreaks: HX02
+        self.assertIn("AML.T0061", by_list["atlas"]["without_lab"])
 
     def test_cli(self):
         with tempfile.TemporaryDirectory() as home, patch.dict(os.environ, {"HACTU8_HOME": home}):

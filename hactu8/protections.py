@@ -213,6 +213,16 @@ CATALOG: Dict[str, Dict[str, object]] = {
         "export(rows=query(all), to=args.dest)",
         "policy.check(tool, args)   # dest allowlist, row cap, call budget\nexport(rows=query(limit=CAP), to=args.dest)",
     ),
+    "action_policy": _c(
+        "Enforce the rule on the action, not in the prompt",
+        "A rule in the system prompt is a request to the model, and a conversation can talk the model out of it. Check the rule where the action runs, in code, against the session's real identity and the stored record, so it holds whatever the model was persuaded to do.",
+        ["list the business rules a tool call can break (who may get which discount, which order may be marked paid)",
+         "check every call server-side against the authenticated session and the stored record, never a claim made in the chat",
+         "deny and log a call that fails, and tell the user plainly",
+         "keep the prompt rule as well: it cuts attempts, the check decides"],
+        "apply_discount(order, code)   # the prompt said: never STAFF30 on a customer order",
+        "why = policy.denies(session, order, code)   # role, channel, ownership, from the server\nif why: deny(why)\nelse: apply_discount(order, code)",
+    ),
     "plan_pin": _c(
         "Pin the plan before reading tool data",
         "Fix the agent's plan from the user's request before any tool data is read. A step that tool data adds is off-plan and is held for re-approval.",

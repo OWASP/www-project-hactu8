@@ -40,6 +40,7 @@ KIND: Dict[str, str] = {
     "hitl_gate": "lab_hardening", "param_policy": "lab_hardening", "plan_pin": "lab_hardening",
     "rate_limit": "lab_hardening", "grounding": "lab_hardening", "cross_check": "lab_hardening",
     "circuit_breaker": "lab_hardening", "faithful_approval": "lab_hardening", "mandate_monitor": "lab_hardening",
+    "action_policy": "lab_hardening",
     # Design changes: where data lives, who acts, how trust is established.
     "spotlight": "architectural", "secret_vault": "architectural", "scope_filter": "architectural",
     "delegated_token": "architectural", "signed_messages": "architectural", "signed_config": "architectural",
@@ -65,7 +66,7 @@ BENCH_SURFACES: Dict[str, List[str]] = {
     "channel_screen": ["schema_param", "error_channel", "okf_frontmatter"],
     "normalizer": ["obfuscation"],
     "full_artifact_screen": ["depth_tail"],
-    "session_screen": ["okf_chain", "chain_pointer", "chain_destination", "chain_clean"],
+    "session_screen": ["okf_chain", "chain_pointer", "chain_destination", "chain_clean", "conversation"],
     "sampling": ["conditional_return"],
     "hash_pin": ["prompt_template"],
     "output_sink": ["output_sink"],

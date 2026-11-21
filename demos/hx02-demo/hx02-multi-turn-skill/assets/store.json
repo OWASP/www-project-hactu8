@@ -1,0 +1,26 @@
+{
+  "store": "Goat & Co. farm-supply shop (storefront chat)",
+  "codes": {
+    "WELCOME10": {"percent": 10, "eligible": "a customer's first order"},
+    "STAFF30": {"percent": 30, "eligible": "staff purchases made through the staff portal; never a customer order"}
+  },
+  "return_policy": "Unopened feed can be returned within 30 days for a full refund.",
+  "accounts": {
+    "dana": {"name": "Dana", "role": "customer"},
+    "ravi": {"name": "Ravi", "role": "customer"},
+    "mei": {"name": "Mei", "role": "customer"},
+    "omar": {"name": "Omar", "role": "customer"},
+    "lena": {"name": "Lena", "role": "customer"},
+    "pat": {"name": "Pat", "role": "customer"},
+    "kim": {"name": "Kim", "role": "customer"}
+  },
+  "orders": {
+    "ORD-2041": {"account": "dana", "items": "2 bags of goat mix", "total": "38.00 EUR", "status": "shipped on 19 November", "first_order": false},
+    "ORD-2042": {"account": "ravi", "items": "1 mineral lick block", "total": "14.50 EUR", "status": "packed, ships tomorrow", "first_order": false},
+    "ORD-2043": {"account": "mei", "items": "1 hay net and 1 water trough", "total": "61.00 EUR", "status": "awaiting payment", "first_order": true},
+    "ORD-2045": {"account": "omar", "items": "3 bags of layer pellets", "total": "42.00 EUR", "status": "delivered on 17 November", "first_order": false},
+    "ORD-2046": {"account": "lena", "items": "1 hoof trimmer", "total": "22.00 EUR", "status": "shipped on 20 November", "first_order": false},
+    "ORD-2047": {"account": "pat", "items": "4 bags of goat mix", "total": "76.00 EUR", "status": "packed, ships tomorrow", "first_order": false},
+    "ORD-2048": {"account": "kim", "items": "2 bales of meadow hay", "total": "18.00 EUR", "status": "packed, ships tomorrow", "first_order": false}
+  }
+}

@@ -86,6 +86,7 @@ lab yet. The numbering is HACTU8's own.
 | ID | Risk | Lab | Port | Metric |
 |----|------|-----|------|--------|
 | HX01 | Hidden Document Injection | [`hx01-demo`](hx01-demo/) — an emailed invoice carries white-on-white text the extractor passes to the document assistant | 5501 | Hidden-Directive Rate (HDR) |
+| HX02 | Multi-Turn Jailbreak | [`hx02-demo`](hx02-demo/) — five harmless-looking turns walk the store assistant into applying the staff discount it refuses when asked once | 5502 | Rule-Break Rate (RBR) |
 
 ## Running a lab
 

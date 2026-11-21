@@ -1,6 +1,6 @@
 # AGX06 Runtime Result Injection
 
-Step 16 on the learning path, the first of the AGX gateway labs, after ASI04 Agentic Supply Chain Vulnerabilities. Setup, commands and architecture are in the [lab README](../README.md); this lesson says what to look for and why.
+Step 18 on the learning path, the first of the AGX gateway labs, after ASI04 Agentic Supply Chain Vulnerabilities. Setup, commands and architecture are in the [lab README](../README.md); this lesson says what to look for and why.
 
 ## What it is
 

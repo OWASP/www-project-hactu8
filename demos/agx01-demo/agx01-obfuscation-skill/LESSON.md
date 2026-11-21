@@ -1,6 +1,6 @@
 # AGX01 Obfuscation Gauntlet
 
-Step 23 on the learning path, the last of the gateway labs before the memory and multi-agent ASI labs. Setup, commands and architecture are in the [lab README](../README.md); this lesson says what to look for and why.
+Step 25 on the learning path, the last of the gateway labs before the memory and multi-agent ASI labs. Setup, commands and architecture are in the [lab README](../README.md); this lesson says what to look for and why.
 
 ## What it is
 
