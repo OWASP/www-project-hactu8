@@ -59,6 +59,8 @@ def act(lab: Lab, title: str, results=None) -> float:
             red += row["status"] == "RED"
         tag = "" if row["targeted"] else "  (control)"
         print(f"    {ICON[row['status']]} {row['status']:<6} {row['label']}{tag}")
+        if row.get("held_by"):
+            print(f"        held_by: {'; '.join(row['held_by'])}")
         evidence(row.get("outputs") or row["detail"])
     mer = red / targeted * 100.0
     print(f"    Membership Exposure Rate: {mer:.0f}% targeted")

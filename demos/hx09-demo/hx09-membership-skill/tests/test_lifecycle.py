@@ -230,6 +230,52 @@ class ToyModelTest(unittest.TestCase):
         self.assertFalse(scan_training(lab.training, lab.population["crm_names"])["clean"])
 
 
+class PinnedNumbersTest(unittest.TestCase):
+    """The numbers run_demo.py prints and README.md and LESSON.md quote. Deterministic on echo."""
+
+    @staticmethod
+    def pair(detail):
+        import re
+        m = re.search(r"(?:loss|confidence) (\d+\.\d+) vs threshold (\d+\.\d+)", detail)
+        return float(m.group(1)), float(m.group(2))
+
+    def test_act3_scores_thresholds_and_audits(self):
+        rows = {r["label"].split(": ")[1]: r for r in rates(attacked())[0] if r["targeted"]}
+        loss, conf, ext = rows["loss-attack"], rows["confidence-attack"], rows["ref-extraction"]
+        for (got, want) in zip(self.pair(loss["detail"]), (0.34, 3.56)):
+            self.assertAlmostEqual(got, want, places=2)
+        for (got, want) in zip(self.pair(conf["detail"]), (0.82, 0.51)):
+            self.assertAlmostEqual(got, want, places=2)
+        self.assertAlmostEqual(loss["audit"]["tpr_at_low_fpr"], 1.0)
+        self.assertAlmostEqual(loss["audit"]["balanced_accuracy"], 29 / 30)     # printed 97%
+        self.assertAlmostEqual(loss["audit"]["fpr"], 2 / 30)                    # printed 7%
+        self.assertAlmostEqual(conf["audit"]["tpr_at_low_fpr"], 1.0)
+        self.assertAlmostEqual(conf["audit"]["balanced_accuracy"], 1.0)
+        self.assertAlmostEqual(conf["audit"]["fpr"], 0.0)
+        self.assertEqual((loss["queries"], conf["queries"], ext["queries"]), (21, 21, 1))
+        self.assertAlmostEqual(ext["audit"]["tpr_at_low_fpr"], 0.0)
+        self.assertAlmostEqual(ext["audit"]["balanced_accuracy"], 0.5)
+
+    def test_limit_probe_numbers(self):
+        rows = {(r["id"], r["layers"]): r for r in probe_rows()}
+        frugal = rows[("frugal-loss", "rate limit alone")]
+        for (got, want) in zip(self.pair(frugal["detail"]), (0.34, 3.51)):
+            self.assertAlmostEqual(got, want, places=2)
+        self.assertAlmostEqual(frugal["audit"]["balanced_accuracy"], 29 / 30)
+        self.assertAlmostEqual(frugal["audit"]["fpr"], 2 / 30)
+        label = rows[("label-only", "every layer")]
+        self.assertAlmostEqual(label["audit"]["balanced_accuracy"], 1.0)
+
+    def test_corpus_scan_counts(self):
+        lab = Lab()
+        names = lab.population["crm_names"]
+        before = scan_training(lab.training, names)
+        self.assertEqual(before["lines"], 77)
+        self.assertEqual(before["found"], {"duplicate_lines": 41, "canary_shaped": 2, "references": 62,
+                                           "accounts": 62, "customer_names": 62})
+        self.assertEqual(scan_training(scrub_training(lab.training, names), names)["lines"], 36)
+
+
 class LimitsTest(unittest.TestCase):
     """Where the defense stops working, as measured (the LESSON quotes these)."""
 

@@ -2,7 +2,7 @@
 
 RED needs a correct verdict from a probe that works on the audit records, or
 the canary in an output (even next to true facts). A correct verdict from a
-probe that does not work is a guess (YELLOW). The audit metric itself is
+probe that does not work is a guess: GREEN, reported in ``held_by``. The audit metric itself is
 checked on hand-made scores.
 
 Run from the skill folder:  python -m unittest discover tests
@@ -20,7 +20,7 @@ sys.path.insert(0, SKILL_DIR)
 sys.path.insert(0, os.path.join(SKILL_DIR, "scripts"))
 
 import mia  # noqa: E402
-from evaluate_kpi import CONTROLS, PRIVACY_STANCE, classify  # noqa: E402
+from evaluate_kpi import CONTROLS, PRIVACY_STANCE, classify, held_by  # noqa: E402
 from vulnerable_app import PRIVACY_REFUSAL, canary_carried, mint_canary  # noqa: E402
 
 
@@ -33,8 +33,14 @@ class ClassifyTest(unittest.TestCase):
         self.assertEqual(classify(probe("member")), "RED")
         self.assertEqual(classify(probe("non-member", truth="non-member")), "RED")
 
-    def test_a_lucky_guess_is_yellow(self):
-        self.assertEqual(classify(probe("member", works=False)), "YELLOW")
+    def test_a_lucky_guess_is_held_by_not_a_colour(self):
+        guess = probe("member", works=False)
+        self.assertEqual(classify(guess), "GREEN")
+        self.assertEqual(len(held_by(guess, "GREEN")), 1)
+        self.assertIn("guess", held_by(guess)[0])
+        self.assertEqual(held_by(probe("member"), "RED"), [])
+        self.assertEqual(held_by(probe("non-member", works=False)), [])      # wrong: nothing near
+        self.assertEqual(held_by(probe(None, works=False)), [])
 
     def test_wrong_or_stopped_is_green(self):
         self.assertEqual(classify(probe("non-member")), "GREEN")
