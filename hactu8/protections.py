@@ -574,6 +574,23 @@ CATALOG: Dict[str, Dict[str, object]] = {
          "a flood spread over many sources stays under every budget: also fail closed on overflow"],
         "queue.extend(flagged)\npublish(queue[CAPACITY:])   # overflow released unreviewed",
         "for item in flagged:\n    if per_source[item.source] >= BUDGET: hold(item)\n    else: per_source[item.source] += 1; queue.append(item)",
+    ),    "replication_guard": _c(
+        "Replication guard on outgoing replies",
+        "Before a reply leaves, find text it repeats from the content it read and withhold the reply when that copied text is an instruction, so a prompt cannot copy itself into the next agent's input. It counts repeated words, so a payload that rewords itself each hop gets past it.",
+        ["find runs of words the reply repeats from the mail or documents it read",
+         "screen the repeated text as an instruction",
+         "withhold the reply on a hit and record why"],
+        "send(reply)",
+        "copied = runs_repeated(reply, sources, n=8)\nif any(screen(run) != ALLOW for run in copied):\n    withhold(reply)\nelse:\n    send(reply)",
+    ),
+    "hop_limit": _c(
+        "Hop limit on automatic messages",
+        "Carry a hop count in every automatic message and send nothing automatically past a limit, so two agents cannot answer each other without end. It bounds the depth of a chain, not its reach: a new thread starts again at hop 1.",
+        ["stamp each automatic message with the thread's hop count plus one",
+         "send no automatic message past the limit",
+         "hold the rest for a human"],
+        "send(auto_reply)",
+        "auto_reply.hops = inbound.hops + 1\nif auto_reply.hops > HOP_LIMIT:\n    hold(auto_reply)\nelse:\n    send(auto_reply)",
     ),
 }
 

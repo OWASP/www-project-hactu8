@@ -96,7 +96,8 @@ class CoverageTest(unittest.TestCase):
     def test_statuses_from_declarations(self):
         rows = self.rows()
         self.assertEqual(rows["indirect-prompt-injection"]["status"], "attack_and_defense")
-        self.assertEqual(rows["self-replicating-prompt"]["status"], "no_lab")
+        self.assertEqual(rows["self-replicating-prompt"]["status"], "attack_and_defense")   # HX15
+        self.assertEqual(rows["adversarial-examples"]["status"], "no_lab")
         report = techniques.coverage()
         self.assertEqual(sum(report["counts"].values()), report["total"])
 
@@ -130,7 +131,8 @@ class CoverageTest(unittest.TestCase):
         self.assertEqual(by_list["owasp_llm_2026"]["ids"], 10)
         self.assertEqual(by_list["owasp_llm_2026"]["without_lab"], [])
         self.assertNotIn("AML.T0054", by_list["atlas"]["without_lab"])   # jailbreaks: HX02
-        self.assertIn("AML.T0061", by_list["atlas"]["without_lab"])
+        self.assertNotIn("AML.T0061", by_list["atlas"]["without_lab"])   # self-replication: HX15
+        self.assertIn("AML.T0020", by_list["atlas"]["without_lab"])
 
     def test_cli(self):
         with tempfile.TemporaryDirectory() as home, patch.dict(os.environ, {"HACTU8_HOME": home}):
