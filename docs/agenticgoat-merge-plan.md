@@ -238,6 +238,22 @@ The target is every known attack and defense, not only the two OWASP Top 10 list
   - Done 2026-11-21: `demos/_template/TEMPLATE.md` §17 (catalog entry, lab from the template, bench case) and a checklist line in §11.
 - [ ] AG-94 Classic ML attacks (adversarial examples, model training-time poisoning, model stealing) are tracked in the catalog. Labs for them need a non-LLM target and are scoped after the MVP.
 
+## Handoff (2026-11-21)
+
+Open work, in order:
+
+1. HX03 MCP Sampling Abuse lab: a background agent was building it (brief: model on HX01/HX02, port 5503, labs 31 -> 32). If no `AG-93 (HX03)` commit exists, check `git status` for a partial `demos/hx03-demo/` and finish or restart it. Then update CLAUDE.md counts.
+2. Sweeps on the final code (9746535), results on `/Volumes/DockerDisk/hactu8-sweeps/` (scripts in the session scratchpad: `sweep.sh`, `cloud_sweep.sh`):
+   - local Ollama, 7 models (qwen3:8b with 900 s per lab);
+   - OpenRouter, the 8 approved models, Kimi 900 s per lab, $3 cap (user approved 2026-11-21).
+   Then: run HX01-HX03 per model (the sweep code predates HX03), write `docs/evidence/` pages, tick AG-55 and AG-43.
+3. AG-93 next labs, in order: MCP elicitation abuse, OAuth confused deputy, role-play and many-shot jailbreaks, image injection, embedding inversion, membership inference, model extraction. Then AG-95 (scoring layer), AG-96 (commerce), AG-94 (classic ML, after the MVP).
+4. AG-90 follow-up: recheck ATLAS IDs against the current 2026.10 release.
+5. HX01 citations written from memory (hidden reviewer prompts, Rehberger): verify with URLs.
+6. Waiting on the user: push H-62 drafts (branch `h62-status-update` in www-project-hactu8; wiki clone in the session scratchpad, commit 91f5e3c), push this branch, merge to `phase1-mvp`, delete `/Volumes/DockerDisk/h60-fresh`.
+
+Decisions 2026-11-21: new labs use `HXnn` ids; the canary is RED even next to the true facts; lessons never state their path position.
+
 ## Done means
 
 Per item: unit tests pass, `run all` passes on echo, the bench does not regress, markdownlint passes, and every lab copy matches the canonical modules. Per workstream: a short summary and a review stop before merging to `phase1-mvp`.
