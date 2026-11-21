@@ -159,7 +159,8 @@ Order: W0, W1, W2 and W3 run first (they unblock everything). W4 and W5 can run 
 - [ ] AG-62 Write or port the lessons for every lab. AgenticGoat's LLM01-10 lessons and curriculum are merged into the matching labs (numbering per D3). The existing SKILL.md, README and references are reused rather than duplicated.
 - [x] AG-63 Learning path: an ordered track, starting with the basics (direct injection, output handling), then agentic attacks (tools, MCP, memory, A2A), then commerce and the scoring layer. It is a field in the catalog, not a separate system.
   - Done: SKILL.md metadata `hactu8.path: "<stage>:<n>"`, stages `basics`, `agentic`, `commerce` (empty until AG-95/AG-96). All 29 labs placed; `python -m hactu8 path`, `GET /api/path`, `path_stage` and `path_order` in `/api/skills`, and the ordered list on the console's Learn page.
-- [ ] AG-61 Port the OKF bundle as Lamb RAG content, if AG-20 needs it.
+- [x] AG-61 Port the OKF bundle as Lamb RAG content, if AG-20 needs it.
+  - Done in AG-20 (commit 1aba80c): `hactu8/lamb/okf_bundle/` holds the five OKF pages Lamb serves as `okf:` resources (clean control `okf:concept/office_map` plus the poisoned pages).
 
 ### W7: Naming
 
