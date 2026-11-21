@@ -46,6 +46,7 @@ KIND: Dict[str, str] = {
     "score_suppression": "lab_hardening", "confidence_rounding": "lab_hardening",
     "query_anomaly": "lab_hardening", "output_watermark": "lab_hardening",
     "spend_cap": "lab_hardening",
+    "classifier_cross_check": "lab_hardening", "verdict_schema": "lab_hardening", "flag_budget": "lab_hardening",
     # Design changes: where data lives, who acts, how trust is established.
     "spotlight": "architectural", "secret_vault": "architectural", "scope_filter": "architectural",
     "delegated_token": "architectural", "audience_binding": "architectural", "signed_messages": "architectural",
@@ -55,6 +56,7 @@ KIND: Dict[str, str] = {
     "image_sanitize": "architectural",
     "training_data_scrub": "architectural",
     "signed_challenge": "architectural",
+    "score_provenance": "architectural",
 }
 
 EVIDENCE = {
@@ -70,7 +72,7 @@ TRAIN = "train set"
 HELD_OUT = "held-out set"
 BENCH_SURFACES: Dict[str, List[str]] = {
     "input_screen": ["tool_result", "resource_body", "okf_body", "okf_clean", "a2a_message", "document_hidden",
-                     "image_text", "payment_metadata",
+                     "image_text", "payment_metadata", "judge_evidence",
                      # protectogw's screen on the request text; the sampling and elicitation policies
                      # (approval, caps, context gate) are not text screens and are shown by the labs.
                      "sampling_request", "elicitation_request",
@@ -91,6 +93,7 @@ BENCH_SURFACES: Dict[str, List[str]] = {
 BENCH_CONTROLS: Dict[str, List[str]] = {
     "hash_pin": ["post_approval_swap"],
     "rate_limit": ["consumption"],
+    "flag_budget": ["review_flood"],
     "hitl_gate": ["agency_gate"],
     "grounding": ["grounding"],
     "scope_filter": ["retrieval_scope"],

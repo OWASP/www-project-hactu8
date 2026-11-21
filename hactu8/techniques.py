@@ -366,19 +366,30 @@ TECHNIQUES: Dict[str, Dict[str, object]] = {
     # Attacks on the scoring layer (AG-95)
     "judge-injection": _t(
         "Injection aimed at the judge", "scoring",
-        "Text hidden in the evidence an LLM judge scores tells the judge what verdict to give.",
-        {"owasp_llm_2026": ["LLM01:2026"], "atlas": ["AML.T0051.001"], "nist": ["NISTAML.015"]},
-        [], []),
+        "Text hidden in the evidence an LLM judge scores tells the judge what verdict to give. The HX11 lab "
+        "hides a line for the judge in a support transcript scored for a public feed.",
+        {"owasp_llm_2026": ["LLM01:2026"], "owasp_llm_2025": ["LLM01:2025", "LLM09:2025"],
+         "atlas": ["AML.T0051.001"], "nist": ["NISTAML.015"]},
+        ["spotlight", "classifier_cross_check", "score_provenance"], ["hx11"]),
+    "verdict-forgery": _t(
+        "Forged or format-confused verdict", "scoring",
+        "A verdict-shaped object in the evidence is quoted by the judge and parsed as its verdict, or a verdict "
+        "in another key or vocabulary is accepted. The HX11 lab forges both.",
+        {"owasp_llm_2026": ["LLM01:2026", "LLM10:2026"], "owasp_llm_2025": ["LLM01:2025", "LLM05:2025"],
+         "atlas": ["AML.T0051.001"]},
+        ["verdict_schema", "score_provenance", "classifier_cross_check"], ["hx11"]),
     "classifier-evasion": _t(
         "Inputs crafted to dodge the classifier", "scoring",
-        "Attacks are reworded until the safety classifier scores them as benign.",
+        "Attacks are reworded until the safety classifier scores them as benign. The HX11 lab spaces a secret "
+        "out past a verbatim canary check; a base64 form passes both of its scorers.",
         {"atlas": ["AML.T0015"], "nist": ["NISTAML.025"]},
-        ["generalization"], []),
+        ["generalization", "classifier_cross_check"], ["hx11"]),
     "false-positive-flood": _t(
         "False-positive flooding", "scoring",
-        "Benign inputs that trip the screen are sent in bulk until operators turn it down or off.",
+        "Benign inputs that trip the screen are sent in bulk until operators turn it down or off, or a review "
+        "queue overflows. The HX11 lab drowns a flagged leak in a queue that releases its overflow.",
         {"atlas": ["AML.T0046"]},
-        [], []),
+        ["flag_budget"], ["hx11"]),
 
     # Agentic commerce (AG-96)
     "payment-challenge-tamper": _t(
