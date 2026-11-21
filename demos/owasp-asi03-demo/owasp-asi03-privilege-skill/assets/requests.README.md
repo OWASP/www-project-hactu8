@@ -29,10 +29,11 @@ away because of two things:
   `attacker` to any user in that file.
 - **Score them.** The evaluator's `SUITE` lists (caller, document) pairs. Add a
   targeted row for any new pair, or it will not be counted.
-- **Real-model backend.** Not wired in this version. A real model would need a
-  natural-language request it maps to `fetch_doc` calls. Nothing else changes:
-  the mitigation never reads the model's output, it decides on the caller's
-  token and session.
+- **Real-model backend.** `--backend ollama` (or another provider) has a real
+  model map each natural-language request to `fetch_doc` calls (see
+  `ProviderModel` in `vulnerable_app.py`). Nothing else changes: the
+  mitigation never reads the model's output, it decides on the caller's token
+  and session.
 - **Variants worth testing.** A request on someone else's session with your own
   token; a fresh token from another user's session; a token you edit by hand
   (rejected as unknown in both modes).
