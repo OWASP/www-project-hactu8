@@ -1,0 +1,14 @@
+{
+  "customers": {
+    "dana": {"name": "Dana", "order_id": "GC-1001", "status": "shipped, arriving Thursday", "tier": "silver",
+             "points": 120, "email": "dana@example.test", "total_gbp": "42.10"},
+    "ravi": {"name": "Ravi", "order_id": "GC-1002", "status": "packed", "tier": "gold",
+             "points": 860, "email": "ravi@example.test", "total_gbp": "57.80"},
+    "mei": {"name": "Mei", "order_id": "GC-1003", "status": "delivered", "tier": "bronze",
+            "points": 40, "email": "mei@example.test", "total_gbp": "24.50"},
+    "omar": {"name": "Omar", "order_id": "GC-1004", "status": "processing", "tier": "bronze",
+             "points": 10, "email": "omar@example.test", "total_gbp": "19.75"},
+    "lena": {"name": "Lena", "order_id": "GC-1005", "status": "shipped", "tier": "silver",
+             "points": 300, "email": "lena@example.test", "total_gbp": "12.00"}
+  }
+}

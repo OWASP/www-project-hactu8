@@ -196,6 +196,24 @@ CATALOG: Dict[str, Dict[str, object]] = {
         "skill = registry.best_match(name)   # fuzzy: a lookalike wins",
         "skill = MANIFEST.get(name)\nif skill is None: refuse(name)   # exact or nothing",
     ),
+    "capability_overlap": _c(
+        "Alert on a tool that duplicates an approved one",
+        "A shadow server rarely announces itself as new: it lists tools that do what an approved tool does, under the same name or a near one. Compare every tool a server lists with the approved tools of other servers, by name and by what it does, and quarantine and alert on an overlap. A rewording below the threshold passes, so keep server-level controls too.",
+        ["at tools/list, compare each tool with the approved tools on other servers",
+         "flag the same name, or description and parameter overlap above a threshold",
+         "quarantine the tool (never offer it to the model) and alert the owner of the approved one"],
+        "tools.update(server.tools_list())   # a duplicate is just another tool",
+        "for t in server.tools_list():\n    if t.name in APPROVED or similarity(t, APPROVED) >= 0.5:\n        alert(t); quarantine(t)\n    else: tools.add(t)",
+    ),
+    "egress_allowlist": _c(
+        "Egress inventory: reach only listed servers",
+        "The client's transport connects only to the server URLs in an inventory that IT keeps, so a server added by hand or found by discovery is never reached, whatever the config or the announcement says.",
+        ["keep the list of approved server URLs outside the client config",
+         "check every connection against it in the transport, not in the model",
+         "refuse and log any other destination"],
+        "conn = transport.connect(entry.url)",
+        "if entry.url not in EGRESS_LIST:\n    refuse(entry.url)\nelse:\n    conn = transport.connect(entry.url)",
+    ),
     # Data access and identity
     "scope_filter": _c(
         "Scope data to the caller at the data layer",
