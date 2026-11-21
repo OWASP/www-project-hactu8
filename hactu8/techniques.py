@@ -440,9 +440,11 @@ TECHNIQUES: Dict[str, Dict[str, object]] = {
     # Classic ML (AG-94; labs need a non-LLM target)
     "adversarial-examples": _t(
         "Adversarial examples", "classic_ml",
-        "Small crafted changes to an input flip a model's prediction.",
+        "Small crafted changes to an input flip a model's prediction. The HX18 lab doctors photos of intact "
+        "parcels by 0.03 to 0.10 per pixel, with the shipped model's gradient or a black-box search through a "
+        "scoring endpoint, so a classic damage classifier pays fraudulent refunds.",
         {"atlas": ["AML.T0043", "AML.T0015"], "nist": ["NISTAML.022", "NISTAML.025"]},
-        [], []),
+        ["feature_validation", "adversarial_training", "classifier_cross_check", "rate_limit"], ["hx18"]),
     "training-data-poisoning": _t(
         "Training-time data poisoning", "classic_ml",
         "Poisoned training data degrades the model or makes it fail on chosen inputs.",

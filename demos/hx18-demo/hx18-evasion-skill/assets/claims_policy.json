@@ -1,0 +1,5 @@
+{
+  "precheck_budget": 5,
+  "crush_line": 0.2,
+  "adversarial_epsilon": 0.04
+}

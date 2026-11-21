@@ -1,0 +1,24 @@
+{
+  "note": "Evasion plans for the HX18 lab. Each one starts from the fraudster's own photo of an intact parcel and changes every pixel by at most epsilon. See evasion_plan.README.md.",
+  "attacks": [
+    {"id": "fgsm-float", "account": "acct-fox", "claim_id": "CL-1041", "access": "white-box", "method": "fgsm",
+     "epsilon": 0.03, "grid": false,
+     "route": "one fast gradient sign step on the shipped weights, 0.03 per pixel, sent as raw floats"},
+    {"id": "pgd-8bit", "account": "acct-wren", "claim_id": "CL-1077", "access": "white-box", "method": "pgd",
+     "epsilon": 0.03, "steps": 10, "step_size": 0.01,
+     "route": "ten projected gradient steps, 0.03 per pixel, kept in [0, 1] on the 8-bit grid"},
+    {"id": "block-search", "account": "acct-crow", "claim_id": "CL-1093", "access": "black-box",
+     "method": "block_search", "epsilon": 0.10, "max_queries": 600, "seed": 7,
+     "route": "random search over 2 x 2 blocks, 0.10 per pixel, driven by the pre-check's score"}
+  ],
+  "limits": [
+    {"id": "adaptive-ensemble", "account": "acct-jay", "claim_id": "CL-1102", "access": "white-box",
+     "method": "adaptive", "epsilon": 0.12, "max_steps": 3000, "seed": 11,
+     "route": "block search offline against the shipped robust weights and the corner rule together, 0.12 per pixel, no pre-check"},
+    {"id": "block-search-many-accounts", "account": "acct-kite", "claim_id": "CL-1110", "access": "black-box",
+     "method": "block_search", "epsilon": 0.10, "max_queries": 600, "seed": 7,
+     "accounts": ["acct-kite", "acct-kite-2", "acct-kite-3", "acct-kite-4", "acct-kite-5", "acct-kite-6",
+                  "acct-kite-7", "acct-kite-8", "acct-kite-9", "acct-kite-10", "acct-kite-11", "acct-kite-12"],
+     "route": "the black-box search with its pre-checks spread over 12 free accounts, 5 each"}
+  ]
+}
