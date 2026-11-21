@@ -41,12 +41,12 @@ KIND: Dict[str, str] = {
     "rate_limit": "lab_hardening", "grounding": "lab_hardening", "cross_check": "lab_hardening",
     "circuit_breaker": "lab_hardening", "faithful_approval": "lab_hardening", "mandate_monitor": "lab_hardening",
     "action_policy": "lab_hardening", "sampling_policy": "lab_hardening", "elicitation_policy": "lab_hardening",
-    "shot_cap": "lab_hardening",
+    "shot_cap": "lab_hardening", "score_suppression": "lab_hardening", "confidence_rounding": "lab_hardening",
     # Design changes: where data lives, who acts, how trust is established.
     "spotlight": "architectural", "secret_vault": "architectural", "scope_filter": "architectural",
     "delegated_token": "architectural", "signed_messages": "architectural", "signed_config": "architectural",
     "code_sandbox": "architectural", "output_sink": "architectural", "provenance": "architectural",
-    "exact_name": "architectural", "visible_text_only": "architectural",
+    "exact_name": "architectural", "visible_text_only": "architectural", "training_data_scrub": "architectural",
 }
 
 EVIDENCE = {
