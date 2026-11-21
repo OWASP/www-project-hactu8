@@ -176,6 +176,16 @@ CATALOG: Dict[str, Dict[str, object]] = {
         "hits = store.search(query)",
         "hits = [d for d in store.search(query) if d.tenant == session.tenant]",
     ),
+    "vector_privacy": _c(
+        "Keep embeddings inside the vector store",
+        "An embedding is a lossy copy of its text and can be inverted back to it. Return ids and scores, never raw vectors; give any vector that must leave enough noise to stop inversion, measured against retrieval; and keep secrets out of what gets embedded.",
+        ["return ids, titles and scores from search and export, never the embedding",
+         "check the caller's tenant on every vector read, as on every text read",
+         "add calibrated noise (and quantise) to any vector that leaves; measure inversion and retrieval on a probe set",
+         "screen documents before embedding and embed a redacted copy of anything secret"],
+        "return [{'id': d.id, 'embedding': d.vector} for d in store.all()]   # 'just numbers'",
+        "rows = [d for d in store.all() if d.tenant == caller.tenant]\nreturn [{'id': d.id, 'title': d.title} for d in rows]   # no vector leaves",
+    ),
     "secret_vault": _c(
         "Keep secrets out of the prompt",
         "Credentials live in a vault and are used by code, never placed in the system prompt or tool text, so the model has nothing to reveal.",
