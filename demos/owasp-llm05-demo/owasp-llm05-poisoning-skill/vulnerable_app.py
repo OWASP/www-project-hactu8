@@ -175,7 +175,7 @@ def render_template(template: str, system: str, context: str, query: str) -> str
 # written against that form. They add this lab's policy-override phrasing,
 # which protectogw's built-in ruleset only FLAGs ("effective immediately"), to
 # its ruleset, exfil taxonomy and canary check. protectogw's SECURITY.md states
-# a ~75% generalization ceiling: it is one layer, and provenance stays required.
+# a measured 53% generalization rate on held-out attacks: it is one layer, and provenance stays required.
 SCREEN_POLICY = protectogw.Policy(extra_rules=(
     protectogw.Rule("lab_override", r"overrides? all (?:previous|prior)|\[override\]"),
     protectogw.Rule("lab_preapproval", r"pre-?verified|approved without"),

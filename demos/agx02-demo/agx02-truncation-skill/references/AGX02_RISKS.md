@@ -27,7 +27,7 @@ not by a cost-saving truncation.
   and grades a head-only view (`full[:DEPTH_HEAD_LIMIT]`, 800 bytes) beside it
   to make the blind spot concrete. Coverage is bounded by how much it reads.
 - **protectogw `SECURITY.md`** — the screening core is one layer, with a
-  measured generalization ceiling of about 75% on held-out attacks, and a hard
+  measured generalization rate of 53% on held-out attacks (16 of 30), and a hard
   input cap (`MAX_INPUT_CHARS`) that whole-artifact screening chunks under. The
   output canary check is the attack-agnostic control.
 

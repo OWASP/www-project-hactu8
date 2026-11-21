@@ -28,7 +28,7 @@ surfaces to the model like any other.
   HTML-comment payload that did not exist until the call happened — precisely
   why scanning the definition (its Act 1) let it through.
 - **protectogw `SECURITY.md`** — the screening core is one layer, with a
-  measured generalization ceiling of about 75% on held-out attacks. The
+  measured generalization rate of 53% on held-out attacks (16 of 30). The
   output canary check is the attack-agnostic control.
 
 ## Scenarios & examples

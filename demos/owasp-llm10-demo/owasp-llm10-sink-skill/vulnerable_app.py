@@ -124,7 +124,7 @@ def screen_output(text: str,
     hardened mode logs it, ``--scan`` uses it to reject a note before it is
     filed. The fix that actually returns the rate to 0 is at the sink
     (``html.escape`` and ``?`` placeholders); protectogw is one layer, and its
-    SECURITY.md states a ~75% generalization ceiling.
+    SECURITY.md reports 53% generalization on held-out attacks.
     """
     result = protectogw.screen(text, policy=SINK_POLICY if policy is None else policy)
     if not result.blocked:

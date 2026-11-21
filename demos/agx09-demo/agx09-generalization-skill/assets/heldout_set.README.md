@@ -15,8 +15,8 @@ the inbox in every act.
 | Encodings of the canonical line | `rot13`, `reversed`, `hex`, `base32`, `url-encoded`, `spaced`, `morse` | all 7 caught |
 | Benign controls | `muddy-trail`, `barn-latch`, `password-hygiene` | all clean (no false positive) |
 
-Screen catch rate: **9 of 15 (60%)**. That is below the "about 75%" ceiling
-protectogw's `SECURITY.md` reports for its own held-out set. It is reported
+Screen catch rate: **9 of 15 (60%)**. That is close to the 53% (16 of 30)
+protectogw's `SECURITY.md` reports on HACTU8's independent held-out set. It is reported
 as measured, not tuned up.
 
 The canonical line, which every encoding starts from, is caught in plain

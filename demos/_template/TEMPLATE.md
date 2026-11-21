@@ -345,7 +345,7 @@ guarded token), use **protectogw** rather than a bespoke regex.
 - **Output side.** `screen(reply, canaries=[token])` is the attack-agnostic last
   layer. A guarded token in the output is a decisive block.
 - **One layer, not the boundary.** protectogw's own `SECURITY.md` states a
-  measured generalisation ceiling of about 75% on held-out attacks. Code-level
+  measured generalisation rate of 53% on held-out attacks (16 of 30). Code-level
   controls (pinning, signing, scoping, budgets, approvals) stay authoritative.
 - **AGX labs.** The AGX labs (`agxNN-demo`, OWASP_DEMO_PLAN.md §4.3) are built
   around it. In each one, the vulnerable gateway is protectogw configured or

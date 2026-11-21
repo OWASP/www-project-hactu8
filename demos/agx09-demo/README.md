@@ -47,8 +47,8 @@ python run_demo.py                     # all four acts in one process, stdlib on
 A screen that blocks every attack in its own test suite has shown that it
 remembers its suite. A held-out set, written without looking at the screen's
 results and never used to tune it, measures something else: generalization.
-protectogw's own `SECURITY.md` puts its ceiling at about 75%; this lab
-measures 60% on a fresh set. The split is instructive. Every encoding is
+protectogw's own `SECURITY.md` reports 53% on HACTU8's independent held-out
+set (16 of 30); this lab measures 60% on another fresh set of 15. The split is instructive. Every encoding is
 caught, because the normalizer's folds are algorithms, not vocabulary. Every
 plain request that avoids the ruleset's verbs is missed, in three languages.
 The lesson is the source lab's: measure held-out misses on a separate axis,

@@ -71,7 +71,7 @@ that screens it. It is **not** an MCP server or client.
 
 **protectogw** (`protectogw/`) is the shared screening core, vendored
 unchanged. Its own [`SECURITY.md`](protectogw/SECURITY.md) states a measured
-generalization ceiling of about 75% on held-out attacks. This lab measures
+generalization rate of 53% on held-out attacks (16 of 30). This lab measures
 60% on its own set.
 
 ## Prerequisites

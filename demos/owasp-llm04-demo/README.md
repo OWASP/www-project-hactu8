@@ -248,8 +248,8 @@ curl -s localhost:5204/query -H 'content-type: application/json' \
   (AgenticGoat's screening core, vendored unchanged in `protectogw/`:
   normalizer + de-obfuscation folds + ruleset + exfil taxonomy + canary check),
   with `SCREEN_POLICY` adding lab rules for the stub's directive syntax
-  (`lab_directive`, `lab_canary`). Its `SECURITY.md` states a ~75%
-  generalization ceiling, so it is one layer, never the boundary: the drift
+  (`lab_directive`, `lab_canary`). Its `SECURITY.md` reports 53%
+  generalization on held-out attacks, so it is one layer, never the boundary: the drift
   check needs no rule at all.
 - **Vendored fallback** — a rejected tool keeps its approved version, so
   answers stay GREEN instead of failing.

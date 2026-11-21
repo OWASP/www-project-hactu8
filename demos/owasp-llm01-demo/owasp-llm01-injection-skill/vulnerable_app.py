@@ -107,7 +107,7 @@ def screen_tool_output(text: str,
     Each line is screened with ``protectogw.screen`` under ``SCREEN_POLICY``
     (or ``policy``). Hidden HTML comments are removed first so content a human
     reviewer cannot see is never passed to the model. protectogw is one layer:
-    its SECURITY.md states a ~75% generalization ceiling, so channel separation
+    its SECURITY.md reports 53% generalization on held-out attacks, so channel separation
     stays the control that holds.
     """
     policy = SCREEN_POLICY if policy is None else policy

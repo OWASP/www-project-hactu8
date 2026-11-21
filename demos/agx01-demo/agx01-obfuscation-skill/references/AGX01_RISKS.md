@@ -27,7 +27,7 @@ effectively sees, and judges that.
   the **normalizer** (`_deobfuscate` → `normalize`), not the ruleset. Coverage
   is the closed set of encodings the normalizer folds.
 - **protectogw `SECURITY.md`** — the screening core is one layer, with a
-  measured generalization ceiling of about 75% on held-out attacks. The output
+  measured generalization rate of 53% on held-out attacks (16 of 30). The output
   canary check is the attack-agnostic control.
 
 ## Scenarios & examples

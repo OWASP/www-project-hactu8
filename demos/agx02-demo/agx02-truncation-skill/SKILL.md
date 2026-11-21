@@ -76,7 +76,7 @@ A directive placed in the **head** is caught even by the vulnerable gateway
 
 **protectogw** (`protectogw/`) is AgenticGoat's screening core, vendored
 unchanged. Its own [`SECURITY.md`](protectogw/SECURITY.md) describes its limits,
-including a measured ~75% generalization ceiling on held-out attacks, which is
+including a measured 53% generalization rate on held-out attacks (16 of 30), which is
 why the output canary check is layered behind it.
 
 ## Prerequisites

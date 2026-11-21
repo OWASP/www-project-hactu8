@@ -30,7 +30,7 @@ default is model-visible and scan-invisible at the same time.
   each string. Its ground truth marks `ticket_lookup`'s tool description
   clean and its parameter schema poisoned.
 - **protectogw `SECURITY.md`** — the screening core is one layer, with a
-  measured generalization ceiling of about 75% on held-out attacks. The
+  measured generalization rate of 53% on held-out attacks (16 of 30). The
   output canary check is the attack-agnostic control.
 
 ## Scenarios & examples

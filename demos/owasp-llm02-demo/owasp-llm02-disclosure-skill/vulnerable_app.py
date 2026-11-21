@@ -160,7 +160,7 @@ def redact_output(text: str, rules: Dict[str, Any], allowed: Iterable[str] = (),
     first screened by ``protectogw.screen(text, canaries=<vaulted values>)``:
     a canary hit is the decisive leak signal (``canary_leak``), and the vaulted
     values are then masked case-insensitively. protectogw is one layer (its
-    SECURITY.md states a ~75% generalization ceiling); scoping and the vault
+    SECURITY.md reports 53% generalization on held-out attacks); scoping and the vault
     are what hold.
     """
     own = {a.lower() for a in allowed}

@@ -137,8 +137,8 @@ def screen_memory(text: str,
     Each line is screened with ``protectogw.screen`` under ``SCREEN_POLICY``
     (or ``policy``); findings are the protectogw signal names. Hidden HTML
     comments count as a finding, since a memory a reviewer cannot read should
-    never be stored. protectogw is one layer: its SECURITY.md states a ~75%
-    generalization ceiling, so scoped recall stays the control that holds.
+    never be stored. protectogw is one layer: its SECURITY.md reports 53%
+    generalization on held-out attacks, so scoped recall stays the control that holds.
     """
     policy = SCREEN_POLICY if policy is None else policy
     findings: List[str] = []

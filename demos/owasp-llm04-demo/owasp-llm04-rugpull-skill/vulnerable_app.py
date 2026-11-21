@@ -167,8 +167,8 @@ def screen_output(text: str, policy: Optional[protectogw.Policy] = None) -> List
     """Return the protectogw signals that block a tool output ([] when it passes).
 
     Screens with ``protectogw.screen`` under ``SCREEN_POLICY`` (or ``policy``).
-    protectogw is one layer: its SECURITY.md states a ~75% generalization
-    ceiling, so pinning and drift sampling stay the controls that hold.
+    protectogw is one layer: its SECURITY.md reports 53% generalization
+    on held-out attacks, so pinning and drift sampling stay the controls that hold.
     """
     result = protectogw.screen(text, policy=SCREEN_POLICY if policy is None else policy)
     return [sig.plane for sig in result.signals] if result.blocked else []

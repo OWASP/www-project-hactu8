@@ -32,7 +32,7 @@ by call count.
   to trip the trigger and grades a single-sample view beside it. You catch what
   you sample; coverage is the sampling policy.
 - **protectogw `SECURITY.md`** — the screening core is one layer, with a
-  measured generalization ceiling of about 75% on held-out attacks. The output
+  measured generalization rate of 53% on held-out attacks (16 of 30). The output
   canary check is the attack-agnostic control.
 
 ## Scenarios & examples

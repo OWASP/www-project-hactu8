@@ -24,7 +24,7 @@ only the prose body is blind to the frontmatter block, so an injection in a
   well as its body; its probe puts the injection in `description:` with a
   clean body.
 - **protectogw `SECURITY.md`** — the screening core is one layer, with a
-  measured generalization ceiling of about 75% on held-out attacks.
+  measured generalization rate of 53% on held-out attacks (16 of 30).
 
 ## Scenarios & examples
 

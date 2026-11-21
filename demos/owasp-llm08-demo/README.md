@@ -253,8 +253,8 @@ curl -s localhost:5208/chat -H 'content-type: application/json' \
   keeps its own n-gram check, which protectogw does not do: a line sharing a
   5-word run with the active system prompt is withheld too. Withheld lines are
   replaced by a notice and reported in `filter_findings` (protectogw signal
-  names or the n-gram reason). protectogw's `SECURITY.md` states a ~75%
-  generalization ceiling, so it is one layer, never the boundary; the design
+  names or the n-gram reason). protectogw's `SECURITY.md` reports 53%
+  generalization on held-out attacks, so it is one layer, never the boundary; the design
   fix is what holds.
 
 Further hardening is discussed in the references but not coded: semantic leak

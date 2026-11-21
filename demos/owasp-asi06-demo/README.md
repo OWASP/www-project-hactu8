@@ -251,7 +251,7 @@ curl -s localhost:5306/api/actions                         # respond.directive_s
   rules for the stub's directive syntax (`lab_directive` for `@assistant:`, `lab_canary` for the
   canary tag). A block on any line blocks the write, and the `save_memory` step
   is logged as `blocked` with the protectogw signal names as findings.
-  protectogw's `SECURITY.md` states a ~75% generalization ceiling, so it is one
+  protectogw's `SECURITY.md` reports 53% generalization on held-out attacks, so it is one
   layer, never the boundary; scoped recall is what holds.
 - **Per-user scope with provenance** — new memories are saved with `user`
   scope, an owner, and the session and channel that wrote them.

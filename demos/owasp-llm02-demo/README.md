@@ -248,8 +248,8 @@ curl -s localhost:5202/query -H 'content-type: application/json' \
   masking: `assets/redaction_rules.json` redacts the canary pattern, credential
   lines, and emails or phone numbers that are not the customer's own (a
   per-session allowlist protectogw has no notion of). Findings are reported in
-  `redactions`. protectogw's `SECURITY.md` states a ~75% generalization
-  ceiling, so it is one layer, never the boundary; scoping and the vault hold.
+  `redactions`. protectogw's `SECURITY.md` reports 53% generalization
+  on held-out attacks, so it is one layer, never the boundary; scoping and the vault hold.
 - **Pre-deployment scan** — `evaluate_kpi.py --scan PATH` rejects a prompt or
   context file that holds a secret or PII.
 

@@ -177,7 +177,7 @@ Plus the mitigation used in Act 4: `Gateway("hardened")` in
 `vulnerable_app.py`, built on [`protectogw/`](agx04-schema-skill/protectogw/),
 AgenticGoat's screening core, vendored unchanged. Its own
 [`SECURITY.md`](agx04-schema-skill/protectogw/SECURITY.md) describes its
-limits, including a measured ~75% generalization ceiling on held-out attacks.
+limits, including a measured 53% generalization rate on held-out attacks (16 of 30).
 
 ### How the "leak" is real, not scripted
 

@@ -247,8 +247,8 @@ highlighted, which shows that the browser rendered the model's markup.
   canary tag. Hardened mode logs the protectogw signal names in
   `screen_findings`; `evaluate_kpi.py --scan PATH` rejects a note before it is
   filed. It is a detector, not the fix: the escaping and `?` placeholders above
-  are what return the rate to 0, and protectogw's `SECURITY.md` states a ~75%
-  generalization ceiling, so it is one layer, never the boundary.
+  are what return the rate to 0, and protectogw's `SECURITY.md` reports 53%
+  generalization on held-out attacks, so it is one layer, never the boundary.
 
 Further hardening is discussed in the references but not coded here: schema-
 validated structured outputs, least-privilege database accounts, sandboxing

@@ -250,7 +250,7 @@ curl -s localhost:5205/query -H 'content-type: application/json' \
   screening core vendored unchanged (normalizer + de-obfuscation folds +
   ruleset + exfil taxonomy + canary check); `SCREEN_POLICY` in
   `vulnerable_app.py` adds lab rules for this payload's override phrasing.
-  protectogw's `SECURITY.md` states a ~75% generalization ceiling, so it is one
+  protectogw's `SECURITY.md` reports 53% generalization on held-out attacks, so it is one
   layer, never the boundary: provenance stays required.
 - **Template pinning** — the active template is used only if its SHA-256
   matches the pinned baseline; otherwise the baseline is used.

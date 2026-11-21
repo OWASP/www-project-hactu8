@@ -18,8 +18,8 @@ slip, and the measurement has to say so.
 - **Liu et al. (2024), "Formalizing and Benchmarking Prompt Injection Attacks
   and Defenses"** — a systematic benchmark finding existing prevention and
   detection defenses insufficient, especially against combined attacks.
-- **protectogw `SECURITY.md`** — a measured generalization ceiling of about
-  75% on held-out attacks; the canary check is the attack-agnostic control.
+- **protectogw `SECURITY.md`** — 53% generalization on HACTU8's
+  independent held-out set (16 of 30); the canary check is the attack-agnostic control.
 - **The source lab's `wild.py` and `wild_scan` act** — the held-out set,
   scored on its own axis so a held-out miss never counts as a regression.
 

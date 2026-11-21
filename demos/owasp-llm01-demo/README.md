@@ -221,8 +221,8 @@ curl -s localhost:5201/query -H 'content-type: application/json' \
   protectogw (AgenticGoat's screening core, vendored unchanged in `protectogw/`: normalizer + de-obfuscation folds + ruleset + exfil taxonomy + canary check). `SCREEN_POLICY` adds two lab rules for the stub's directive syntax
   (`lab_directive` for `@assistant:`, `lab_canary` for the canary tag), and HTML
   comments are stripped. Blocked lines are dropped and their protectogw signal
-  names are reported in `screen_findings`. protectogw's `SECURITY.md` states a
-  ~75% generalization ceiling, so it is one layer, never the boundary; channel
+  names are reported in `screen_findings`. protectogw's `SECURITY.md` reports
+  53% generalization on held-out attacks (16 of 30), so it is one layer, never the boundary; channel
   separation is what holds.
 - **Pre-publication scan** — `evaluate_kpi.py --scan PATH` rejects a page
   before it ever reaches the wiki.

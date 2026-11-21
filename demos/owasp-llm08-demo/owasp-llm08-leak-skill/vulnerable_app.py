@@ -165,8 +165,8 @@ def filter_output(reply: str, system_prompt: str, rules: Dict[str, Any],
       words (but at least 3) is withheld if it appears whole in the prompt.
       ``ngram`` 0 disables it.
 
-    protectogw is one layer (its SECURITY.md states a ~75% generalization
-    ceiling); the secret-free prompt is the design fix that holds.
+    protectogw is one layer (its SECURITY.md reports 53% generalization
+    on held-out attacks); the secret-free prompt is the design fix that holds.
     """
     policy = OUTPUT_POLICY if policy is None else policy
     out = rules.get("output", {})
