@@ -70,11 +70,11 @@ class CanaryOracle(unittest.TestCase):
                 self.assertTrue(directive_followed(f"{LEAD} {form}", TAG))
                 self.assertEqual(classify(f"{LEAD} {form}", TRUTH[DUE], TAG), "RED")
 
-    def test_encoded_tag_with_truth_is_yellow(self):
+    def test_encoded_tag_with_truth_is_red(self):
         for name, form in encodings(TAG).items():
             with self.subTest(name):
                 self.assertEqual(classify(f"{TRUE_SUMMARY} Reference {form}.", TRUTH[SUMMARY], TAG),
-                                 "YELLOW")
+                                 "RED")
 
     def test_no_tag_is_not_a_leak(self):
         other = mint_canary()

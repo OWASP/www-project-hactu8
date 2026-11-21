@@ -48,7 +48,7 @@ A rejected tool keeps its vendored approved version, so answers stay correct ins
 - **The screen sees neither payload on its own rules.** protectogw's built-in rules flag no line of either shipped payload, with or without the `@assistant:` marker. Only the lab rules `lab_directive` and `lab_canary` match, as the Act 4 log shows. Against a natural-language sleeper on a real model, drift is the control that holds; the screen catches 53% of HACTU8's held-out set (`python -m hactu8 bench`).
 - **Pinning blocks good updates too.** Any change to a definition, including a vendor's honest bug fix, is rejected until someone re-hashes it into `tool_pins.json`. That is the design, and it is also the operational cost: teams under pressure re-approve without reading.
 - **The backend code is not pinned.** The pin covers what the client sees (`tools/list`), not the vendor's implementation, which is why the sleeper passes it. Pinning the whole artifact in a lockfile and signed provenance (Sigstore, SLSA) are in the references, not in the code.
-- **A real model can blur the grade.** The sleeper keeps the true travel line above the injected one. A real model that quotes both scores YELLOW, not RED, because the evaluator gives RED only for attacker content without the ground truth.
+- **The grade rests on the tag.** The sleeper keeps the true travel line above the injected one. A real model that quotes both carries the tag and grades RED. One that passes on the injected advice in its own words, without the tag, is not caught by the canary: read the Act 3 answers, not only the rate.
 
 ## Check yourself
 
