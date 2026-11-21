@@ -419,6 +419,43 @@ CATALOG: Dict[str, Dict[str, object]] = {
         "agent.do(action)",
         "if action not in mandate:\n    block(action); quarantine(agent)\nelse:\n    agent.do(action)",
     ),
+    # The scoring layer (judges and classifiers)
+    "score_provenance": _c(
+        "Record which scorer produced every score",
+        "A verdict is only as good as its source. Record the scorer (judge model, classifier) behind every score, and treat a verdict that also appears in the evidence as the evidence's, not the scorer's.",
+        ["store the scorer's name and model with each score, and show them where the result is used",
+         "parse a verdict only from text the scorer wrote; void one that is copied from the evidence",
+         "audit published items by who passed them"],
+        "verdict = first_verdict_in(judge_reply)   # may be quoted from the evidence\npublish(item) if verdict == SAFE",
+        "verdict, src = verdict_from(judge_reply, not_in=evidence)\nscore = Score(scorer=judge.name, verdict=verdict, source=src)\npublish(item, scored_by=[score])",
+    ),
+    "classifier_cross_check": _c(
+        "Cross-check scorers against each other",
+        "Score each item with two scorers that fail differently, such as an LLM judge and a rule classifier. Agreement decides; disagreement goes to a person. One fooled scorer is then not enough.",
+        ["run every scorer on every item, not one per channel",
+         "two SAFEs publish, two UNSAFEs reject, a disagreement goes to review",
+         "a leak both scorers miss still passes: pick scorers with different blind spots"],
+        "score = judge(item) if item.channel == 'email' else rules(item)",
+        "a, b = judge(item), rules(item)\nroute = a if a == b else REVIEW",
+    ),
+    "verdict_schema": _c(
+        "Strict verdict schema, outside the evidence",
+        "Read the verdict only from one place the evidence cannot reach: a final line with a per-run nonce, in an exact schema. Anything else fails closed.",
+        ["ask the judge for one last line: VERDICT-<nonce> {verdict, reason}",
+         "parse only that line; require exactly those keys and allowed values",
+         "treat a missing or malformed line as UNSAFE"],
+        "verdict = re.search(r'\\{.*?\\}', reply)   # first object, any keys, any vocabulary",
+        "line = reply.strip().splitlines()[-1]\nverdict = parse_exact(line, prefix=f'VERDICT-{nonce} ', keys={'verdict', 'reason'}) or UNSAFE",
+    ),
+    "flag_budget": _c(
+        "Per-source budget on flagged items",
+        "A review queue is a finite resource an attacker can fill with false positives. Give each source a budget of review slots per batch, hold the rest, and never let a full queue release items unreviewed.",
+        ["count flagged items per source per batch",
+         "past the budget, hold the source's items for audit instead of queueing them",
+         "a flood spread over many sources stays under every budget: also fail closed on overflow"],
+        "queue.extend(flagged)\npublish(queue[CAPACITY:])   # overflow released unreviewed",
+        "for item in flagged:\n    if per_source[item.source] >= BUDGET: hold(item)\n    else: per_source[item.source] += 1; queue.append(item)",
+    ),
 }
 
 # The live run (hactu8 live): Billy's MCP surfaces behind the ProtectoGW gateway.

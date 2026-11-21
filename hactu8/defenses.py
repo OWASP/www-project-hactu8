@@ -43,13 +43,14 @@ KIND: Dict[str, str] = {
     "action_policy": "lab_hardening", "sampling_policy": "lab_hardening", "elicitation_policy": "lab_hardening",
     "shot_cap": "lab_hardening",
     "per_client_consent": "lab_hardening", "exact_redirect_uri": "lab_hardening", "pkce": "lab_hardening",
+    "classifier_cross_check": "lab_hardening", "verdict_schema": "lab_hardening", "flag_budget": "lab_hardening",
     # Design changes: where data lives, who acts, how trust is established.
     "spotlight": "architectural", "secret_vault": "architectural", "scope_filter": "architectural",
     "delegated_token": "architectural", "audience_binding": "architectural", "signed_messages": "architectural",
     "signed_config": "architectural",
     "code_sandbox": "architectural", "output_sink": "architectural", "provenance": "architectural",
     "exact_name": "architectural", "visible_text_only": "architectural", "vector_privacy": "architectural",
-    "image_sanitize": "architectural",
+    "image_sanitize": "architectural", "score_provenance": "architectural",
 }
 
 EVIDENCE = {
@@ -65,7 +66,7 @@ TRAIN = "train set"
 HELD_OUT = "held-out set"
 BENCH_SURFACES: Dict[str, List[str]] = {
     "input_screen": ["tool_result", "resource_body", "okf_body", "okf_clean", "a2a_message", "document_hidden",
-                     "image_text",
+                     "image_text", "judge_evidence",
                      "wild", TRAIN],
     "mcp_gateway_filter": ["tool_description", "schema_param"],
     "channel_screen": ["schema_param", "error_channel", "okf_frontmatter"],
@@ -85,6 +86,7 @@ BENCH_SURFACES: Dict[str, List[str]] = {
 BENCH_CONTROLS: Dict[str, List[str]] = {
     "hash_pin": ["post_approval_swap"],
     "rate_limit": ["consumption"],
+    "flag_budget": ["review_flood"],
     "hitl_gate": ["agency_gate"],
     "grounding": ["grounding"],
     "scope_filter": ["retrieval_scope"],
