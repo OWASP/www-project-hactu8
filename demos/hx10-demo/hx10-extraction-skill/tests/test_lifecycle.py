@@ -78,6 +78,10 @@ class LifecycleTest(unittest.TestCase):
     def test_act3_every_rival_holds_a_stolen_model_controls_untouched(self):
         statuses, rows, csr = run_suite(attacked())
         self.assertEqual(csr, 1.0)
+        agree = {r["key"]: r["agreement"] for r, t in rows if t}
+        # run_demo, README and LESSON: 100.0%, 98.8%, 99.1%.
+        self.assertEqual(agree, {"rival-eq": 1.0, "rival-rand": 0.988, "rival-list": 0.991})
+        self.assertTrue(all(r["from_api"] for r, t in rows if t))
         self.assertEqual([s for s, _ in statuses], ["RED", "RED", "RED", "GREEN", "GREEN"])
         for r, targeted in rows:
             if targeted:
@@ -114,6 +118,10 @@ class LifecycleTest(unittest.TestCase):
         self.assertEqual(by_key["rival-rand"]["refusals"], [REFUSED_SUSPENDED])
         self.assertEqual(by_key["rival-list"]["refusals"], [REFUSED_BUDGET])
         self.assertEqual(by_key["rival-eq"]["method"], "retrain")       # no confidences to solve with
+        # run_demo and LESSON: 48.5%, 49.0% after 19 answers, 86.7% at the budget of 50.
+        self.assertEqual({k: by_key[k]["agreement"] for k in ("rival-eq", "rival-rand", "rival-list")},
+                         {"rival-eq": 0.485, "rival-rand": 0.49, "rival-list": 0.867})
+        self.assertEqual(by_key["rival-rand"]["answered"], 19)
 
     def test_reset_restores_baseline(self):
         lab = attacked("hardened")
@@ -266,9 +274,27 @@ class LimitsTest(unittest.TestCase):
         self.assertEqual((r["keys"], r["per_key"], r["refused"]), (40, 48, 0))
         self.assertEqual(r["audit"]["implausible_share"], 0.0)
         self.assertGreaterEqual(r["agreement"], AGREEMENT_THRESHOLD)
+        self.assertAlmostEqual(r["agreement"], 0.981)                   # LESSON and README: 98.1%
+        self.assertAlmostEqual(r["watermark_share"], 0.933)             # 93% of 120 probes
         self.assertEqual(r["status"], "RED")
         self.assertTrue(r["theft_proven"])
         self.assertFalse(r["canary_recovered"])
+
+    def test_variants_the_plan_readme_quotes(self):
+        # assets/extraction_plan.README.md and LESSON: uniform over 40 keys, 760 answers, 94.8%;
+        # 20 keys, 960 answers, 97.8%. Stable across fresh canaries.
+        for _ in range(3):
+            lab = Lab(mode="hardened")
+            lab.new_day()
+            run = campaign(lab.predict, plan("distributed-keys", sampler="uniform"), lab.catalog)
+            self.assertEqual(run["answered"], 760)
+            self.assertAlmostEqual(lab.grade_clone(run["clone"], True)["agreement"], 0.948)
+            lab = Lab(mode="hardened")
+            lab.new_day()
+            run = campaign(lab.predict, plan("distributed-keys", keys=plan_by_id("distributed-keys")["keys"][:20]),
+                           lab.catalog)
+            self.assertEqual(run["answered"], 960)
+            self.assertAlmostEqual(lab.grade_clone(run["clone"], True)["agreement"], 0.978)
 
     def test_one_key_with_the_same_queries_is_stopped(self):
         lab = Lab(mode="hardened")

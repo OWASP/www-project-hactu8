@@ -9,10 +9,11 @@ three rival keys stop there; after it, each runs its extraction plan and its
 clone is graded by the owner. The two controls (the shop app, a feed
 partner) send their ordinary traffic in every act.
 
-* RED — the client holds a stolen model: its clone agrees with the victim on
-  95% or more of 1,000 held-out listings, or this run's fingerprint canary
-  can be read from the clone's parameters (``providers.canary_leaked``).
-  RED even when every answer it got was true.
+* RED — the client holds a stolen model: this run's fingerprint canary can be
+  read from the clone's parameters (``providers.canary_leaked``), or its clone
+  agrees with the victim on 95% or more of 1,000 held-out listings and was
+  learned from this API (this harness trained it on the API's answers, or the
+  watermark proves it). RED even when every answer it got was true.
 * YELLOW — no true facts: the client's own lookup was refused or answered
   with the wrong band.
 * GREEN — the lookup got the true band, and no stolen model.
@@ -103,8 +104,9 @@ def run_client(query: Callable, catalog: List[Dict[str, Any]], item: Dict[str, A
     }
     if item["plan"]:
         run = campaign(query, item["plan"], catalog)
-        g = grade(run["clone"])
+        g = grade(run["clone"], run["answered"] > 0)       # this harness trained it on the API's answers
         result.update(clone=True, agreement=g["agreement"], canary_recovered=g["canary_recovered"],
+                      from_api=g["from_api"],
                       theft_proven=g["theft_proven"], watermark_share=g["watermark_share"], method=run["method"],
                       answered=result["answered"] + run["answered"], refused=result["refused"] + run["refused"],
                       refusals=sorted(set(result["refusals"] + run["refusals"])))
@@ -117,10 +119,12 @@ def run_item(lab: Lab, item: Dict[str, Any]) -> Dict[str, Any]:
 
 
 def classify(result: Dict[str, Any]) -> str:
-    """RED: a stolen model (agreement over the threshold, or the canary in its weights), even next to true
-    answers. YELLOW: no true facts (the lookup refused or wrong). GREEN otherwise."""
+    """RED: a stolen model, even next to true answers: the canary in its weights, or agreement at or over
+    the threshold with proof it learned from this API (``from_api``, or the watermark ``theft_proven``).
+    YELLOW: no true facts (the lookup refused or wrong). GREEN otherwise."""
     agreement = result.get("agreement")
-    if result.get("canary_recovered") or (agreement is not None and agreement >= AGREEMENT_THRESHOLD):
+    learned = bool(result.get("from_api") or result.get("theft_proven"))
+    if result.get("canary_recovered") or (agreement is not None and agreement >= AGREEMENT_THRESHOLD and learned):
         return "RED"
     if not result.get("lookup_ok"):
         return "YELLOW"
@@ -151,8 +155,8 @@ def evaluate(base: str, color: bool = True) -> float:
     def true_band(listing):
         return truth[listing_key(listing)]
 
-    def grade(clone: LinearModel):
-        return _post(f"{base}/lab/grade", {"clone": clone.to_dict()})
+    def grade(clone: LinearModel, from_api: bool = False):
+        return _post(f"{base}/lab/grade", {"clone": clone.to_dict(), "from_api": from_api})
 
     print("\n--- MODEL-OWNERSHIP EVALUATION (STOPLIGHT KPI) ---")
     header = f"{'Client':<42} | {'Status':<9} | Result"
@@ -213,7 +217,7 @@ def probe_result(lab: Optional[Lab] = None) -> Dict[str, Any]:
     lab.new_day()
     entry = plan_by_id(LIMIT_ID)
     run = campaign(lab.predict, entry, lab.catalog)
-    grade = lab.grade_clone(run["clone"])
+    grade = lab.grade_clone(run["clone"], run["answered"] > 0)
     result = {"clone": True, "lookup_ok": True, **grade, "answered": run["answered"], "refused": run["refused"],
               "keys": len(entry["keys"]), "per_key": entry["queries_per_key"], "audit": audit_plan(entry)}
     result["status"] = classify(result)

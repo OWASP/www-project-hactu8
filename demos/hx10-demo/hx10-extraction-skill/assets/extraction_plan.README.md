@@ -23,11 +23,11 @@ measured limit, `distributed-keys`, which `evaluate_kpi.py --probe` runs.
 - **Fewer queries.** Set `listing-retrain`'s `queries` to 50 and the clone
   falls under the 95% line (`test_more_answers_better_clone`).
 - **Fewer keys.** Give `distributed-keys` 20 keys: 960 queries, and the
-  clone still agrees 97.8% in hardened mode (measured).
+  clone still agrees 97.8% in hardened mode (`test_variants_the_plan_readme_quotes`).
 - **Look less real.** Switch `distributed-keys` to `uniform`: every key is
   suspended after 19 answers, and the 760 answers give a 94.8% clone, just
-  under the line (measured).
+  under the line (`test_variants_the_plan_readme_quotes`).
 
-Query streams are deterministic per plan id. The numbers can move by a few
-tenths of a percent between runs, because each run's fingerprint shifts the
-model's parameters below the fifth decimal and can flip a borderline band.
+Query streams are deterministic per plan id. Each run's fingerprint shifts the
+model's parameters below the fifth decimal; that could flip a borderline band,
+but the tests measure the quoted numbers with fresh canaries and they hold.

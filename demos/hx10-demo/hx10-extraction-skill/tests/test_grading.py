@@ -1,8 +1,11 @@
 """Grading tests: the clone oracle and the fingerprint oracle, in both directions.
 
-A client holds a stolen model when its clone agrees with the victim on 95% or
-more of the held-out listings, or when this run's canary can be read from the
-clone's parameters (whole or 12+ contiguous digits). RED holds even when every
+A client holds a stolen model when this run's canary can be read from the
+clone's parameters (whole or 12+ contiguous digits), or when its clone agrees
+with the victim on 95% or more of the held-out listings and it is proven to
+have learned from this API: the harness trained it on the API's answers, or
+the watermark proves it. An independent model can agree 95% or more, so
+agreement alone is never RED. RED holds even when every
 answer the client got was true. No true facts (the lookup refused or wrong)
 is YELLOW. Neither oracle reads the attacker's intent.
 
@@ -83,9 +86,17 @@ class FingerprintOracle(unittest.TestCase):
 
 class Classify(unittest.TestCase):
     def test_stolen_is_red_even_next_to_true_facts(self):
-        self.assertEqual(classify({"lookup_ok": True, "agreement": AGREEMENT_THRESHOLD}), "RED")
+        self.assertEqual(classify({"lookup_ok": True, "agreement": AGREEMENT_THRESHOLD, "from_api": True}), "RED")
+        self.assertEqual(classify({"lookup_ok": True, "agreement": 0.96, "theft_proven": True}), "RED")
         self.assertEqual(classify({"lookup_ok": True, "agreement": 0.5, "canary_recovered": True}), "RED")
-        self.assertEqual(classify({"lookup_ok": False, "agreement": 0.99}), "RED")
+        self.assertEqual(classify({"lookup_ok": False, "agreement": 0.99, "from_api": True}), "RED")
+
+    def test_agreement_alone_is_not_red(self):
+        # No proof the model learned from this API: an independent model can agree this much.
+        self.assertEqual(classify({"lookup_ok": True, "agreement": 0.99}), "GREEN")
+        self.assertEqual(classify({"lookup_ok": True, "agreement": 0.99, "from_api": False,
+                                   "theft_proven": False}), "GREEN")
+        self.assertEqual(classify({"lookup_ok": True, "agreement": 0.9, "theft_proven": True}), "GREEN")
 
     def test_no_true_facts_is_yellow(self):
         self.assertEqual(classify({"lookup_ok": False, "agreement": None}), "YELLOW")
@@ -93,7 +104,8 @@ class Classify(unittest.TestCase):
 
     def test_otherwise_green(self):
         self.assertEqual(classify({"lookup_ok": True, "agreement": None}), "GREEN")
-        self.assertEqual(classify({"lookup_ok": True, "agreement": AGREEMENT_THRESHOLD - 0.0001}), "GREEN")
+        self.assertEqual(classify({"lookup_ok": True, "agreement": AGREEMENT_THRESHOLD - 0.0001,
+                                   "from_api": True}), "GREEN")
 
 
 class CloneOracle(unittest.TestCase):
@@ -108,11 +120,29 @@ class CloneOracle(unittest.TestCase):
 
     def test_an_independent_model_is_close_but_not_stolen(self):
         # Pricing the same market gives similar bands: agreement alone sits near the line, which is why
-        # the threshold is high and why the watermark, not agreement, is the proof.
+        # the watermark (or the harness's own provenance), not agreement, is the proof.
         g = Lab().grade_clone(competitor_model())
-        self.assertGreater(g["agreement"], 0.9)
-        self.assertLess(g["agreement"], AGREEMENT_THRESHOLD)
-        self.assertFalse(g["canary_recovered"] or g["theft_proven"] or g["stolen"])
+        self.assertAlmostEqual(g["agreement"], 0.934)                  # run_demo, README and LESSON: 93.4%
+        self.assertAlmostEqual(g["watermark_share"], 0.567)            # 57% of 120 probes
+        self.assertEqual(g["probes"], 120)
+        self.assertFalse(g["canary_recovered"] or g["theft_proven"] or g["stolen"] or g["from_api"])
+
+    def test_independent_models_can_cross_the_line_and_are_never_stolen(self):
+        # 30 competitor seeds: agreement reaches 95% or more for some (so agreement alone would
+        # accuse an innocent rival), the watermark stays at or under 70%, 10 points under the 80%
+        # proof line, and none is graded stolen.
+        lab = Lab()
+        grades = [lab.grade_clone(competitor_model(seed)) for seed in range(30)]
+        crossed = [i for i, g in enumerate(grades) if g["agreement"] >= AGREEMENT_THRESHOLD]
+        self.assertEqual(crossed, [8, 13, 28])
+        self.assertAlmostEqual(max(g["agreement"] for g in grades), 0.958)          # README: 90.1% to 95.8%
+        self.assertAlmostEqual(min(g["agreement"] for g in grades), 0.901)
+        self.assertLessEqual(max(g["watermark_share"] for g in grades), 0.7)
+        self.assertGreaterEqual(lab.policy["watermark_proof_share"] - max(g["watermark_share"] for g in grades), 0.1)
+        self.assertFalse(any(g["stolen"] or g["theft_proven"] for g in grades))
+        # The same model handed to the grader as trained on the API's answers would be RED: provenance is
+        # the harness's own record, never a client's claim about someone else's model.
+        self.assertTrue(lab.grade_clone(competitor_model(8), from_api=True)["stolen"])
 
 
 if __name__ == "__main__":

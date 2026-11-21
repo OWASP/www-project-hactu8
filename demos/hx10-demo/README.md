@@ -141,6 +141,20 @@ Plus the mitigations used in Act 4, all in `vulnerable_app.py`: label-only
 answers and the budget in `Lab._answer`, `implausible` and the suspension for
 the anomaly test, `watermarked` and `verify_watermark` for the watermark.
 
+### Grading and the clone oracle
+
+The clone oracle is not a canary in text, so it is declared here. A client is
+**RED** when this run's fingerprint canary can be read from its clone's
+parameters, or when its clone agrees with the victim on **95% or more of
+1,000 held-out listings** and is proven to have learned from this API: the
+harness trained it on the API's answers itself (`from_api`), or the watermark
+proves it (80% or more of the probes answered like the watermarked API).
+Agreement alone is never RED: across 30 seeds an independent model, a rival
+that priced its own listings, agrees 90.1% to 95.8% and crosses the line for 3
+of them, while matching the watermark on at most 70% of the probes
+(`test_independent_models_can_cross_the_line_and_are_never_stolen`).
+**YELLOW** is a lookup refused or answered with the wrong band.
+
 ### How the theft is real, not scripted
 
 The victim is an honest model with no knowledge of the attack: a

@@ -40,10 +40,12 @@ each switchable for the tests:
   the two disagree, prove where a suspect model learned (``verify_watermark``).
   It does not prevent theft; it proves it.
 
-Grading (``grade_clone``): a clone is a theft when it agrees with the victim
-on 95% or more of 1,000 held-out listings, or when this run's canary can be
-read from its parameters (``providers.canary_leaked``: verbatim or 12 or more
-contiguous digits of it).
+Grading (``grade_clone``): a clone is a theft when this run's canary can be
+read from its parameters (``providers.canary_leaked``), or when it agrees with
+the victim on 95% or more of 1,000 held-out listings **and** it is proven to
+have learned from this API (the harness trained it on the API's answers, or
+the watermark proves it). An independent model can agree 95% or more, so
+agreement alone is never a theft.
 
 Host-safety guards (do not weaken the lesson): everything lives in memory, a
 batch holds at most 100 listings, the lab tracks at most 500 keys and 100,000
@@ -395,9 +397,11 @@ def verify_watermark(suspect: LinearModel, true_model: LinearModel, served: Line
     return {"probes": len(probes), "watermark_share": round(share, 3), "proven": share >= proof_share}
 
 
-def competitor_model() -> LinearModel:
-    """An independent model: a rival who priced its own 600 listings and trained its own clone-free model."""
-    rng = random.Random(COMPETITOR_SEED)
+def competitor_model(seed: int = COMPETITOR_SEED) -> LinearModel:
+    """An independent model: a rival who priced its own 600 listings and trained its own clone-free model.
+    Across seeds its agreement with the victim reaches 95% or more (``CompetitorTest``), so agreement alone
+    never makes a model of unknown origin RED."""
+    rng = random.Random(seed)
     X = [realistic_listing(rng) for _ in range(600)]
     y = [pricing_rule(x, rng) for x in X]
     return train_softmax(X, y, epochs=150)
@@ -513,14 +517,20 @@ class Lab:
     def true_band(self, listing: Dict[str, Any]) -> str:
         return CLASSES[self.model.predict(as_vector(listing))]
 
-    def grade_clone(self, clone: LinearModel) -> Dict[str, Any]:
-        """The owner's verdict on a suspect model: agreement, fingerprint, watermark."""
+    def grade_clone(self, clone: LinearModel, from_api: bool = False) -> Dict[str, Any]:
+        """The grader's verdict on a suspect model: agreement, fingerprint, watermark.
+
+        ``stolen`` is the canary in its parameters, or agreement at or over the line **with proof the
+        model learned from this API**: ``from_api`` (the harness trained it on the API's answers itself)
+        or the watermark. An independent model can agree 95% or more (``competitor_model``), so a
+        model of unknown origin needs the watermark."""
         agree = sum(clone.predict(x) == t for x, t in zip(self.heldout, self.heldout_truth)) / len(self.heldout)
         mark = verify_watermark(clone, self.model, self.served_watermarked, self.policy["watermark_proof_share"])
         recovered = canary_recovered(clone, self.canary)
         return {"agreement": round(agree, 4), "canary_recovered": recovered,
                 "theft_proven": mark["proven"], "watermark_share": mark["watermark_share"],
-                "probes": mark["probes"], "stolen": agree >= AGREEMENT_THRESHOLD or recovered}
+                "probes": mark["probes"], "from_api": bool(from_api),
+                "stolen": recovered or (agree >= AGREEMENT_THRESHOLD and (bool(from_api) or mark["proven"]))}
 
     def load_attack(self) -> List[Dict[str, Any]]:
         """Act 2: the rival's extraction plans go live (no server change; it is just API traffic)."""
@@ -727,7 +737,7 @@ class Handler(BaseHTTPRequestHandler):
             answers = LAB.predict(body.get("key", ""), body.get("listings"))
             self._send(200, {"answers": answers})
         elif self.path == "/lab/grade":
-            self._send(200, LAB.grade_clone(LinearModel.from_dict(body.get("clone"))))
+            self._send(200, LAB.grade_clone(LinearModel.from_dict(body.get("clone")), body.get("from_api") is True))
         elif self.path == "/lab/truth":
             listings = body.get("listings")
             if not isinstance(listings, list) or not 1 <= len(listings) <= MAX_BATCH:
