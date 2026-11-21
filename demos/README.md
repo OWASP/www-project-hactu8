@@ -103,6 +103,7 @@ lab yet. The numbering is HACTU8's own.
 | HX14 | Direct Prompt Injection | [`hx14-demo`](hx14-demo/) — four customers each type one message ("ignore all previous instructions", chat-template markers opening a fake system turn, a fake tool call, the override split into string pieces) and get the store assistant's internal reference code and a refund on an unpaid order | 5514 | Direct Injection Rate (DIR) |
 | HX17 | MCP Scope Creep | [`hx17-demo`](hx17-demo/) — a parcel tracker's results steer the assistant's wildcard, month-long and rubber-stamped step-up tokens into listing every customer and rewriting another customer's order | 5517 | Scope Abuse Rate (SAR) |
 | HX18 | Adversarial Examples (Evasion) | [`hx18-demo`](hx18-demo/) — fraud accounts doctor photos of intact parcels by 0.03 to 0.10 per pixel, with the shipped model's gradient or a black-box search through the app's pre-check, and the refund desk's damage classifier pays them; no language model involved | 5518 | Evasion Success Rate (ESR) |
+| HX19 | Training-Time Data Poisoning | [`hx19-demo`](hx19-demo/) — customer flags retrain the shop's naive Bayes review filter every night: 250 flipped labels drop its accuracy to 84%, and about 40 honest-looking flags that name the attacker's brands get its tagged spam review published | 5519 | Poisoned Model Rate (PMR) |
 
 ## Running a lab
 

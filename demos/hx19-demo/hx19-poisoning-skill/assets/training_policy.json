@@ -1,0 +1,8 @@
+{
+  "_comment": "Hardened-mode settings for the nightly retrain, and the harm threshold. See references/HX19_RISKS.md.",
+  "accuracy_threshold": 0.90,
+  "reputation": {"full_age_days": 180, "unverified_factor": 0.3},
+  "label_filter": {"k": 7, "max_unknown_share": 0.5},
+  "diff_gate": {"max_accuracy_drop": 0.02, "max_logodds_shift": 4.0},
+  "influence_cap": {"rows_per_contributor_per_night": 6}
+}

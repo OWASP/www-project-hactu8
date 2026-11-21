@@ -142,7 +142,21 @@ class CoverageTest(unittest.TestCase):
         self.assertEqual(by_list["owasp_llm_2026"]["without_lab"], [])
         self.assertNotIn("AML.T0054", by_list["atlas"]["without_lab"])   # jailbreaks: HX02
         self.assertNotIn("AML.T0061", by_list["atlas"]["without_lab"])   # self-replication: HX15
-        self.assertIn("AML.T0020", by_list["atlas"]["without_lab"])
+        self.assertNotIn("AML.T0020", by_list["atlas"]["without_lab"])   # training-data poisoning: HX19
+
+    def test_by_list_reports_an_id_without_a_lab(self):
+        # A synthetic technique, so the check does not depend on which IDs still lack a lab
+        # (the classic-ML labs are being built in parallel).
+        good = copy.deepcopy(techniques.TECHNIQUES)
+        try:
+            techniques.TECHNIQUES["synthetic-unlabbed"] = techniques._t(
+                "Synthetic", "classic_ml", "A test fixture.", {"atlas": ["AML.T9999"]}, [], [])
+            without = techniques.coverage()["by_list"]["atlas"]["without_lab"]
+            self.assertIn("AML.T9999", without)
+        finally:
+            techniques.TECHNIQUES.clear()
+            techniques.TECHNIQUES.update(good)
+        self.assertNotIn("AML.T9999", techniques.coverage()["by_list"]["atlas"]["without_lab"])
 
     def test_cli(self):
         with tempfile.TemporaryDirectory() as home, patch.dict(os.environ, {"HACTU8_HOME": home}):
