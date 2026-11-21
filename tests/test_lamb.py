@@ -30,9 +30,9 @@ def free_port() -> int:
 class WorkerTest(unittest.TestCase):
     def test_manifest_has_all_labs_and_unique_ports(self):
         skills = catalog.discover(ROOT)
-        self.assertEqual(len(skills), 37)
-        self.assertEqual(len({skill.id for skill in skills}), 37)
-        self.assertEqual(len({skill.port for skill in skills}), 37)
+        self.assertEqual(len(skills), 38)
+        self.assertEqual(len({skill.id for skill in skills}), 38)
+        self.assertEqual(len({skill.port for skill in skills}), 38)
         self.assertTrue(all((Path(skill.skill_dir) / "vulnerable_app.py").is_file() for skill in skills))
 
     def test_lazy_worker_proxy_and_reset(self):

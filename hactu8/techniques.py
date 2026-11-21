@@ -188,10 +188,11 @@ TECHNIQUES: Dict[str, Dict[str, object]] = {
         [], []),
     "membership-inference": _t(
         "Membership inference", "disclosure",
-        "Model outputs reveal whether a given record was in the training set.",
+        "Model outputs reveal whether a given record was in the training set. The HX09 lab scores a customer's "
+        "record on a log-probs API against invented references to learn it was fine-tuned on.",
         {"owasp_llm_2026": ["LLM02:2026"], "owasp_llm_2025": ["LLM02:2025"],
          "atlas": ["AML.T0024.000"], "nist": ["NISTAML.033"]},
-        [], []),
+        ["score_suppression", "confidence_rounding", "training_data_scrub", "rate_limit"], ["hx09"]),
     "embedding-inversion": _t(
         "Embedding inversion", "disclosure",
         "Stored embeddings are inverted back to the text they encode. The HX07 lab rebuilds a secret from "
