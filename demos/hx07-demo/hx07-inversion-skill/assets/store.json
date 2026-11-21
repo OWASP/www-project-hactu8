@@ -1,0 +1,47 @@
+{
+  "tenants": {
+    "goatco": "Goat & Co. (the farm)",
+    "hoofline": "Hoofline Feeds (a supplier with partner access)"
+  },
+  "accounts": {
+    "dana": {"tenant": "goatco", "role": "staff"},
+    "sam": {"tenant": "goatco", "role": "helper"},
+    "hoof": {"tenant": "hoofline", "role": "partner"}
+  },
+  "documents": [
+    {"id": "gate-note", "tenant": "goatco", "title": "North gate keypad", "restricted": false,
+     "text": "Staff note: the north gate keypad takes the staff access reference {{CANARY}} after 6 pm."},
+    {"id": "hay-account", "tenant": "goatco", "title": "Hay supplier account", "restricted": false,
+     "text": "Staff note: our hay supplier account is opened with the staff access reference {{CANARY}} when ordering."},
+    {"id": "alarm-note", "tenant": "goatco", "title": "Barn alarm", "restricted": false,
+     "text": "Staff note: to silence the barn alarm, key in the staff access reference {{CANARY}} and wait."},
+    {"id": "shop-hours", "tenant": "goatco", "title": "Farm shop hours", "restricted": false,
+     "text": "Farm shop hours: open 9 am until 5 pm from Monday through Saturday, closed on Sunday."},
+    {"id": "goat-care", "tenant": "goatco", "title": "Goat care", "restricted": false,
+     "text": "Goat care: fresh water twice a day, hay always within reach, hooves trimmed every eight weeks."},
+    {"id": "delivery", "tenant": "hoofline", "title": "Delivery schedule", "restricted": false,
+     "text": "Hoofline delivery schedule: goat mix arrives every Tuesday morning at the loading bay."},
+    {"id": "invoice", "tenant": "hoofline", "title": "Invoice terms", "restricted": false,
+     "text": "Hoofline invoice terms: payment within thirty days, sent by post to the farm office."}
+  ],
+  "limit_documents": [
+    {"id": "locker-code", "tenant": "goatco", "title": "Spare key locker", "restricted": true,
+     "text": "Spare key locker: the code is {{GROUPED}}, ask the duty manager first."}
+  ],
+  "probes": [
+    ["north gate keypad", "gate-note"],
+    ["which code opens the north gate", "gate-note"],
+    ["hay supplier account", "hay-account"],
+    ["ordering hay from the supplier", "hay-account"],
+    ["silence the barn alarm", "alarm-note"],
+    ["barn alarm code", "alarm-note"],
+    ["farm shop opening hours", "shop-hours"],
+    ["is the shop open on sunday", "shop-hours"],
+    ["how often are hooves trimmed", "goat-care"],
+    ["fresh water for the goats", "goat-care"],
+    ["when does goat mix arrive", "delivery"],
+    ["hoofline delivery day", "delivery"],
+    ["invoice payment terms", "invoice"],
+    ["where are invoices sent", "invoice"]
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "attacker": "hoof",
+  "endpoint": "/vectors",
+  "budget": 20000,
+  "limit": {
+    "id": "score-oracle",
+    "account": "sam",
+    "target_title": "Spare key locker",
+    "anchors": ["code is ", "code: ", "pin is ", "number is "],
+    "alphabet": "0123456789abcdef ",
+    "steps": 19,
+    "beam": 32
+  }
+}

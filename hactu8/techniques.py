@@ -193,10 +193,11 @@ TECHNIQUES: Dict[str, Dict[str, object]] = {
         [], []),
     "embedding-inversion": _t(
         "Embedding inversion", "disclosure",
-        "Stored embeddings are inverted back to the text they encode.",
+        "Stored embeddings are inverted back to the text they encode. The HX07 lab rebuilds a secret from "
+        "an export's raw vectors, and from similarity scores alone.",
         {"owasp_llm_2026": ["LLM09:2026"], "owasp_llm_2025": ["LLM08:2025"],
          "atlas": ["AML.T0024.001"], "nist": ["NISTAML.032"]},
-        [], []),
+        ["vector_privacy", "scope_filter", "input_screen"], ["hx07"]),
     "model-extraction": _t(
         "Model extraction", "disclosure",
         "Repeated queries replicate the model's behaviour.",

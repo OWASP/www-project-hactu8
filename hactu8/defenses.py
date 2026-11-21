@@ -48,7 +48,7 @@ KIND: Dict[str, str] = {
     "delegated_token": "architectural", "audience_binding": "architectural", "signed_messages": "architectural",
     "signed_config": "architectural",
     "code_sandbox": "architectural", "output_sink": "architectural", "provenance": "architectural",
-    "exact_name": "architectural", "visible_text_only": "architectural",
+    "exact_name": "architectural", "visible_text_only": "architectural", "vector_privacy": "architectural",
 }
 
 EVIDENCE = {
