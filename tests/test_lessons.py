@@ -58,17 +58,9 @@ Paraphrases.
 - `llm01`, `LLM01:2026`.
 """
 
-# Labs with no LESSON.md yet. AG-60 writes one (llm01); AG-62 writes the rest.
-# The complete-lesson check below fails if a lab missing from this set has no
-# lesson, and also if a lab in this set gains one, so the set can only shrink
-# and must be edited as each lesson lands. That keeps the suite green while
-# AG-62 is open without letting the check rot. When the set is empty, AG-62 is
-# done and the check is strict.
-EXPECTED_MISSING = frozenset({
-    "llm02", "llm03", "llm04", "llm05", "llm06", "llm07", "llm08", "llm09", "llm10",
-    "asi01", "asi02", "asi03", "asi04", "asi05", "asi06", "asi07", "asi08", "asi09", "asi10",
-    "agx01", "agx02", "agx03", "agx04", "agx05", "agx06", "agx07", "agx08", "agx09",
-})
+# Labs with no LESSON.md. AG-62 gave every lab one, so the set is empty and
+# the complete-lesson check below is strict: a new lab without a lesson fails.
+EXPECTED_MISSING: frozenset = frozenset()
 
 
 class ValidatorTest(unittest.TestCase):
@@ -223,7 +215,7 @@ class LessonApiTest(unittest.TestCase):
     def test_skills_carry_has_lesson_and_path(self):
         skills = {s["id"]: s for s in self.client.get("/api/skills").json()["skills"]}
         self.assertTrue(skills["llm01"]["has_lesson"])
-        self.assertFalse(skills["llm02"]["has_lesson"])
+        self.assertTrue(all(skill["has_lesson"] for skill in skills.values()))
         self.assertEqual((skills["llm01"]["path_stage"], skills["llm01"]["path_order"]), ("basics", 1))
 
     def test_lesson_endpoint(self):
@@ -233,7 +225,8 @@ class LessonApiTest(unittest.TestCase):
         self.assertEqual(body["skill_id"], "llm01")
         self.assertEqual(list(body["sections"]), list(lessons.SECTIONS))
         self.assertEqual(len(body["questions"]), 3)
-        self.assertEqual(self.client.get("/api/skills/llm02/lesson").status_code, 404)
+        with patch.object(lessons, "load", return_value=None):  # a lab with no LESSON.md
+            self.assertEqual(self.client.get("/api/skills/llm02/lesson").status_code, 404)
         self.assertEqual(self.client.get("/api/skills/nope/lesson").status_code, 404)
 
     def test_malformed_lesson_is_a_server_error(self):
