@@ -495,3 +495,10 @@ button:focus-visible {
 .lesson-section a { color: var(--iac-link); }
 .lesson-section code, .lesson-file { background: var(--iac-code-bg); color: var(--iac-code-text); border-radius: 4px; padding: 1px 4px; font-size: 12px; }
 .lesson-section pre { background: var(--iac-code-bg); padding: 10px; border-radius: 6px; overflow: auto; }
+.learn-path > button { margin-bottom: 16px; }
+.coverage-filter { display: inline-flex; gap: 8px; align-items: center; color: var(--iac-text-secondary); font-size: 13px; }
+.coverage-summary, .coverage-ref { display: block; margin-top: 3px; font-size: 12px; }
+.coverage-ref { color: var(--iac-text-secondary); }
+.link-button { background: transparent; border: 0; padding: 0 6px 0 0; color: var(--iac-accent); cursor: pointer; font-size: 13px; }
+.coverage { min-width: 0; overflow-x: auto; }
+.coverage .signal { white-space: nowrap; }

@@ -463,3 +463,61 @@ def for_lab(skill_id: str) -> List[str]:
 def by_ref(ref: str) -> List[str]:
     """Technique ids that carry list ID ``ref`` (e.g. ``"AML.T0051.001"``)."""
     return [tid for tid, tech in TECHNIQUES.items() if any(ref in ids for ids in tech["refs"].values())]
+
+
+# Coverage (AG-91). A technique has "attack and defense" when a lab demonstrates
+# it and a defense is declared, "attack only" when a lab demonstrates it but no
+# defense is declared or the lab's latest run left impact after remediation,
+# and "no lab yet" otherwise. Stored lab results feed it: ``latest`` is the
+# newest run of each lab.
+STATUSES = {
+    "attack_and_defense": "Attack and defense",
+    "attack_only": "Attack only",
+    "no_lab": "No lab yet",
+}
+
+
+def latest_runs(docs: Iterable[dict]) -> Dict[str, dict]:
+    """The newest result per lab id, from stored result documents (live runs are skipped)."""
+    latest: Dict[str, dict] = {}
+    for doc in docs:
+        sid = (doc.get("skill") or {}).get("id")
+        if not sid or "live" in doc or "summary" not in doc:
+            continue
+        if sid not in latest or doc.get("started_at", "") >= latest[sid].get("started_at", ""):
+            latest[sid] = doc
+    return latest
+
+
+def _evidence(doc: dict) -> Dict[str, object]:
+    summary = doc["summary"]
+    return {"run_id": doc.get("run_id", ""), "backend": doc.get("model", {}).get("backend", ""),
+            "model": doc.get("model", {}).get("model", ""), "status": summary.get("status", ""),
+            "impact_rate": summary.get("impact_rate"), "remediated_rate": summary.get("remediated_rate")}
+
+
+def coverage(docs: Iterable[dict] = ()) -> Dict[str, object]:
+    """Every technique with its coverage status, plus counts by status and by list."""
+    latest = latest_runs(docs)
+    rows = []
+    for tid in TECHNIQUES:
+        row = entry(tid)
+        runs = {lab: _evidence(latest[lab]) for lab in row["labs"] if lab in latest}
+        leaky = [lab for lab, ev in runs.items() if (ev["remediated_rate"] or 0) > 0]
+        if not row["labs"]:
+            status = "no_lab"
+        elif not row["defenses"] or leaky:
+            status = "attack_only"
+        else:
+            status = "attack_and_defense"
+        row.update(status=status, status_title=STATUSES[status], runs=runs, leaky_labs=leaky)
+        rows.append(row)
+    counts = {s: sum(1 for r in rows if r["status"] == s) for s in STATUSES}
+    by_list = {}
+    for key, name, edition, _ in REF_LISTS:
+        ids = sorted({ref for r in rows for ref in r["refs"].get(key, [])})
+        with_lab = sorted({ref for r in rows if r["labs"] for ref in r["refs"].get(key, [])})
+        by_list[key] = {"name": name, "edition": edition, "ids": len(ids), "with_lab": len(with_lab),
+                        "without_lab": [ref for ref in ids if ref not in with_lab]}
+    return {"techniques": rows, "total": len(rows), "counts": counts, "by_list": by_list,
+            "families": FAMILIES, "statuses": STATUSES}

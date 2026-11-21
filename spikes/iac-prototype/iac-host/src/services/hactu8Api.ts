@@ -44,6 +44,40 @@ export interface LearningPath {
   unassigned: string[];
 }
 
+export type CoverageStatus = 'attack_and_defense' | 'attack_only' | 'no_lab';
+
+export interface TechniqueRun {
+  run_id: string;
+  backend: string;
+  model: string;
+  status: string;
+  impact_rate: number | null;
+  remediated_rate: number | null;
+}
+
+export interface Technique {
+  id: string;
+  title: string;
+  family: string;
+  summary: string;
+  refs: Record<string, string[]>;
+  defenses: string[];
+  labs: string[];
+  status: CoverageStatus;
+  status_title: string;
+  runs: Record<string, TechniqueRun>;
+  leaky_labs: string[];
+}
+
+export interface Coverage {
+  techniques: Technique[];
+  total: number;
+  counts: Record<CoverageStatus, number>;
+  by_list: Record<string, { name: string; edition: string; ids: number; with_lab: number; without_lab: string[] }>;
+  families: Record<string, string>;
+  statuses: Record<CoverageStatus, string>;
+}
+
 export interface Target {
   id: string;
   name: string;
@@ -147,6 +181,7 @@ export const hactu8Api = {
   skills: () => request<{ skills: Skill[]; total: number }>('/api/skills'),
   lesson: (skillId: string) => request<Lesson>(`/api/skills/${encodeURIComponent(skillId)}/lesson`),
   path: () => request<LearningPath>('/api/path'),
+  coverage: () => request<Coverage>('/api/coverage'),
   protections: () => request<{ protections: Protection[]; total: number }>('/api/protections'),
   targets: () => request<{ targets: Target[]; total: number }>('/api/targets'),
   results: () => request<{ results: Hactu8Result[]; total: number }>('/api/results'),

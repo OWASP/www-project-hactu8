@@ -8,7 +8,7 @@ import os
 from pathlib import Path
 from typing import Optional
 
-from hactu8 import branding, catalog, config, lessons, protections, providers, reports, spend, store
+from hactu8 import branding, catalog, config, lessons, protections, providers, reports, spend, store, techniques
 from hactu8.adapters import lab
 from hactu8.classify import get_classifier
 from hactu8.router import Router, RouterError
@@ -85,6 +85,10 @@ def create_app(root: Optional[Path] = None):
         if value is None:
             raise HTTPException(404, f"no lesson yet for {skill.id}")
         return {"skill_id": skill.id, "owasp": skill.owasp, "risk": skill.risk, **value.to_dict()}
+
+    @app.get("/api/coverage")
+    def coverage():
+        return techniques.coverage(store.list_runs())
 
     @app.get("/api/protections")
     def protection_library():

@@ -2,6 +2,7 @@
 
     hactu8 list [--json]
     hactu8 path [--json]
+    hactu8 coverage [--status S] [--json]
     hactu8 run <skill...|all> [--tier T | --backend B [--model M]] [--classifier C] [--json]
     hactu8 results [--json]
     hactu8 show <run_id|latest>
@@ -25,7 +26,7 @@ import json
 import sys
 from typing import List
 
-from hactu8 import __version__, catalog, config, store
+from hactu8 import __version__, catalog, config, store, techniques
 from hactu8.adapters import lab
 from hactu8.classify import get_classifier
 from hactu8.router import Router, RouterError
@@ -70,6 +71,25 @@ def cmd_path(args) -> int:
     if track["unassigned"]:
         print("not on the path: " + ", ".join(track["unassigned"]))
     print(f"{track['total']} labs on the path")
+    return 0
+
+
+def cmd_coverage(args) -> int:
+    report = techniques.coverage(store.list_runs())
+    rows = [r for r in report["techniques"] if not args.status or r["status"] == args.status]
+    if args.json:
+        print(json.dumps({**report, "techniques": rows}, indent=2))
+        return 0
+    _print_table([[r["id"], r["status_title"], ",".join(r["labs"]) or "-", ",".join(r["defenses"]) or "-"]
+                  for r in rows], ["TECHNIQUE", "STATUS", "LABS", "DEFENSES"])
+    counts = report["counts"]
+    print("\n" + ", ".join(f"{counts[s]} {t.lower()}" for s, t in techniques.STATUSES.items())
+          + f" ({report['total']} techniques)")
+    for key, info in report["by_list"].items():
+        print(f"  {info['name']} {info['edition']}: {info['with_lab']} of {info['ids']} IDs have a lab")
+    leaky = [r["id"] for r in report["techniques"] if r["leaky_labs"]]
+    if leaky:
+        print("latest run left impact after remediation: " + ", ".join(leaky))
     return 0
 
 
@@ -318,6 +338,11 @@ def build_parser() -> argparse.ArgumentParser:
     p = sub.add_parser("path", help="show the learning path: labs in the order to take them")
     p.add_argument("--json", action="store_true")
     p.set_defaults(func=cmd_path)
+
+    p = sub.add_parser("coverage", help="attack techniques by coverage: attack and defense, attack only, no lab yet")
+    p.add_argument("--status", choices=list(techniques.STATUSES), default="")
+    p.add_argument("--json", action="store_true")
+    p.set_defaults(func=cmd_coverage)
 
     p = sub.add_parser("run", help="run one or more skills ('all' for every skill)")
     p.add_argument("skills", nargs="+")

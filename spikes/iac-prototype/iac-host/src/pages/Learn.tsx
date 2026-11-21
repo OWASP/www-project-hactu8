@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
+import CoverageView from '../components/learn/CoverageView';
 import LessonView from '../components/learn/LessonView';
 import { hactu8Api } from '../services/hactu8Api';
 import type { LearningPath } from '../services/hactu8Api';
@@ -14,11 +15,16 @@ export default function Learn() {
   }, []);
 
   const steps = path?.stages.flatMap((stage) => stage.skills) || [];
+  const showCatalog = params.get('view') === 'catalog';
   const selected = steps.find((s) => s.id === params.get('lab')) || steps.find((s) => s.has_lesson) || steps[0];
 
   return (
     <section className="page split-page">
       <nav className="run-list learn-path" aria-label="Learning path">
+        <button type="button" className={showCatalog ? 'selected' : ''} onClick={() => setParams({ view: 'catalog' })}>
+          Attack catalog
+          <small>Every known technique and its coverage</small>
+        </button>
         <h2>Learning path</h2>
         {error && <div className="alert error">API unavailable: {error}</div>}
         {path?.stages.map((stage) => (
@@ -29,7 +35,7 @@ export default function Learn() {
               <ol start={stage.skills[0].step}>
                 {stage.skills.map((s) => (
                   <li key={s.id}>
-                    <button type="button" className={selected?.id === s.id ? 'selected' : ''}
+                    <button type="button" className={!showCatalog && selected?.id === s.id ? 'selected' : ''}
                       onClick={() => setParams({ lab: s.id })}>
                       {s.owasp} {s.risk}
                       <small>{s.has_lesson ? 'Lesson ready' : 'No lesson yet'}</small>
@@ -42,13 +48,14 @@ export default function Learn() {
         ))}
       </nav>
       <div className="result-detail">
-        {selected && (
+        {showCatalog && <CoverageView onLab={(lab) => setParams({ lab })} />}
+        {!showCatalog && selected && (
           <div className="page-heading">
             <div><h1>Step {selected.step}: {selected.owasp}</h1><p>{selected.risk}</p></div>
             <Link className="primary-link" to={`/run?lab=${encodeURIComponent(selected.id)}`}>Run this lab</Link>
           </div>
         )}
-        {selected && (selected.has_lesson ? <LessonView skillId={selected.id} />
+        {!showCatalog && selected && (selected.has_lesson ? <LessonView skillId={selected.id} />
           : <div className="panel empty-state"><h2>No lesson yet</h2>
             <p>This lab runs, but its lesson is still to be written. Run it to see the four acts.</p></div>)}
       </div>
