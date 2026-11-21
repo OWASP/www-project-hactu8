@@ -1,0 +1,127 @@
+{
+  "_comment": "The Lamb Market on loopback: merchants, their catalogs and pay-per-request resources, and each customer's standing task with the intent mandate they signed. Amounts are fake test units (TU) with two decimals; the lab works in hundredths (x402 'atomic' units). Nothing here is a real merchant, price, wallet or chain.",
+  "base": "http://127.0.0.1:5513",
+  "asset": "TU",
+  "network": "lamb:testnet",
+  "merchants": {
+    "meadowfeeds": {
+      "title": "Meadow Feeds",
+      "catalog": {
+        "goat-mix-25": {"label": "Goat mix 25 kg", "price": "18.50",
+                        "description": "Coarse goat mix with added minerals. 25 kg bag."},
+        "pellets-20": {"label": "Layer pellets 20 kg", "price": "11.00",
+                       "description": "Standard layer pellets for laying hens. 20 kg bag."},
+        "pellets-20-plus": {"label": "Layer pellets Plus 20 kg", "price": "14.50",
+                            "description": "Layer pellets with added herbs and grit. 20 kg bag."},
+        "mineral-lick": {"label": "Mineral lick 5 kg", "price": "6.20",
+                         "description": "Mineral lick block for goats and sheep."}
+      },
+      "qa": {
+        "goat-mix-25": [{"q": "Is this bag suitable for kids?", "a": "Meadow Feeds: Yes, from weaning. Store dry and use within 3 months."}]
+      }
+    },
+    "barnsupply": {
+      "title": "Barn Supply",
+      "catalog": {
+        "heat-lamp": {"label": "Heat lamp 250 W", "price": "28.00",
+                      "description": "Ceramic heat lamp with guard and 3 m cable."},
+        "water-trough": {"label": "Water trough 40 l", "price": "24.00",
+                         "description": "Galvanised water trough, 40 litres."}
+      },
+      "qa": {
+        "heat-lamp": [{"q": "Does it come with a bulb?", "a": "Barn Supply: Yes, one 250 W ceramic emitter is included."}]
+      }
+    },
+    "coopcorner": {
+      "title": "Coop Corner",
+      "catalog": {
+        "pellets-20": {"label": "Layer pellets 20 kg", "price": "11.00",
+                       "description": "Layer pellets for laying hens. 20 kg bag."}
+      },
+      "qa": {}
+    },
+    "hayrickdirect": {
+      "title": "Hayrick Direct",
+      "catalog": {
+        "hay-bundle": {"label": "Hay bundle", "price": "9.00", "description": "Meadow hay, about 8 kg."}
+      },
+      "qa": {}
+    },
+    "marketwire": {
+      "title": "Market Wire",
+      "resources": {
+        "hay-report": {"price": "0.50", "description": "Today's hay price report",
+                       "body": "Market Wire: hay is 6.40 TU a bale today, straw 4.10 TU."}
+      }
+    },
+    "pastureprices": {
+      "title": "Pasture Prices",
+      "resources": {
+        "hay-report": {"price": "0.40", "description": "Daily hay and straw prices",
+                       "body": "Pasture Prices: hay is 6.40 TU a bale today, straw 4.10 TU."}
+      }
+    }
+  },
+  "customers": {
+    "dana": {
+      "name": "Dana", "wallet": "250.00",
+      "request": "Please buy one 25 kg bag of goat mix from Meadow Feeds.",
+      "task": {"kind": "buy", "merchant": "meadowfeeds", "sku": "goat-mix-25", "qty": 1},
+      "mandate": {"natural_language_description": "One 25 kg bag of goat mix from Meadow Feeds",
+                  "merchants": ["meadowfeeds"], "skus": ["goat-mix-25"],
+                  "line_items": [{"id": "goat-mix", "acceptable_items": ["goat-mix-25"], "quantity": 1}],
+                  "amount_range": {"currency": "TU", "max": "20.00"}, "budget": {"currency": "TU", "max": "20.00"}}
+    },
+    "ravi": {
+      "name": "Ravi", "wallet": "50.00",
+      "request": "Get me today's hay price report.",
+      "task": {"kind": "fetch", "resource": "hay-report", "sources": ["marketwire", "pastureprices"]},
+      "mandate": {"natural_language_description": "Today's hay price report, pay per request",
+                  "merchants": ["marketwire", "pastureprices"], "skus": ["hay-report"], "line_items": null,
+                  "amount_range": {"currency": "TU", "max": "0.60"}, "budget": {"currency": "TU", "max": "1.00"}}
+    },
+    "mei": {
+      "name": "Mei", "wallet": "250.00",
+      "request": "Please buy a heat lamp from Barn Supply.",
+      "task": {"kind": "buy", "merchant": "barnsupply", "sku": "heat-lamp", "qty": 1},
+      "mandate": {"natural_language_description": "One heat lamp from Barn Supply",
+                  "merchants": ["barnsupply"], "skus": ["heat-lamp"],
+                  "line_items": [{"id": "lamp", "acceptable_items": ["heat-lamp"], "quantity": 1}],
+                  "amount_range": {"currency": "TU", "max": "30.00"}, "budget": {"currency": "TU", "max": "30.00"}}
+    },
+    "sam": {
+      "name": "Sam", "wallet": "250.00",
+      "request": "Please buy a 20 kg bag of layer pellets from Coop Corner.",
+      "task": {"kind": "buy", "merchant": "coopcorner", "sku": "pellets-20", "qty": 1},
+      "mandate": {"natural_language_description": "One 20 kg bag of layer pellets from Coop Corner",
+                  "merchants": ["coopcorner"], "skus": ["pellets-20"],
+                  "line_items": [{"id": "pellets", "acceptable_items": ["pellets-20"], "quantity": 1}],
+                  "amount_range": {"currency": "TU", "max": "15.00"}, "budget": {"currency": "TU", "max": "15.00"}}
+    },
+    "omar": {
+      "name": "Omar", "wallet": "250.00",
+      "request": "Please buy a water trough from Barn Supply.",
+      "task": {"kind": "buy", "merchant": "barnsupply", "sku": "water-trough", "qty": 1},
+      "mandate": {"natural_language_description": "One water trough from Barn Supply",
+                  "merchants": ["barnsupply"], "skus": ["water-trough"],
+                  "line_items": [{"id": "trough", "acceptable_items": ["water-trough"], "quantity": 1}],
+                  "amount_range": {"currency": "TU", "max": "30.00"}, "budget": {"currency": "TU", "max": "30.00"}}
+    },
+    "lena": {
+      "name": "Lena", "wallet": "250.00",
+      "request": "How much is a mineral lick at Meadow Feeds?",
+      "task": {"kind": "lookup", "merchant": "meadowfeeds", "sku": "mineral-lick"},
+      "mandate": {"natural_language_description": "Price lookups only, no purchases",
+                  "merchants": ["meadowfeeds"], "skus": [], "line_items": [],
+                  "amount_range": {"currency": "TU", "max": "0.00"}, "budget": {"currency": "TU", "max": "0.00"}}
+    },
+    "jo": {
+      "name": "Jo", "wallet": "250.00",
+      "request": "Please buy a 20 kg bag of layer pellets from Meadow Feeds.",
+      "task": {"kind": "buy", "merchant": "meadowfeeds", "sku": "pellets-20", "qty": 1},
+      "mandate": {"natural_language_description": "A 20 kg bag of layer pellets from Meadow Feeds",
+                  "merchants": ["meadowfeeds"], "skus": null, "line_items": null,
+                  "amount_range": {"currency": "TU", "max": "15.00"}, "budget": {"currency": "TU", "max": "15.00"}}
+    }
+  }
+}

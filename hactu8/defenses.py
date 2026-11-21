@@ -43,6 +43,7 @@ KIND: Dict[str, str] = {
     "action_policy": "lab_hardening", "sampling_policy": "lab_hardening", "elicitation_policy": "lab_hardening",
     "shot_cap": "lab_hardening",
     "per_client_consent": "lab_hardening", "exact_redirect_uri": "lab_hardening", "pkce": "lab_hardening",
+    "spend_cap": "lab_hardening", "merchant_allowlist": "lab_hardening",
     # Design changes: where data lives, who acts, how trust is established.
     "spotlight": "architectural", "secret_vault": "architectural", "scope_filter": "architectural",
     "delegated_token": "architectural", "audience_binding": "architectural", "signed_messages": "architectural",
@@ -65,7 +66,7 @@ TRAIN = "train set"
 HELD_OUT = "held-out set"
 BENCH_SURFACES: Dict[str, List[str]] = {
     "input_screen": ["tool_result", "resource_body", "okf_body", "okf_clean", "a2a_message", "document_hidden",
-                     "image_text",
+                     "image_text", "payment_metadata",
                      "wild", TRAIN],
     "mcp_gateway_filter": ["tool_description", "schema_param"],
     "channel_screen": ["schema_param", "error_channel", "okf_frontmatter"],

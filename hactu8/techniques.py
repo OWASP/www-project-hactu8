@@ -391,14 +391,16 @@ TECHNIQUES: Dict[str, Dict[str, object]] = {
         [], []),
     "injected-overpayment": _t(
         "Injected overpayment", "commerce",
-        "Injected text makes the agent accept a higher price or pay a different recipient.",
+        "Injected text makes the agent accept a higher price, buy extra or pay a different recipient. The HX13 "
+        "lab covers listing text that adds items at another merchant and puts the wallet reference in an order note.",
         {"owasp_asi_2026": ["ASI01:2026"], "owasp_llm_2026": ["LLM01:2026"], "atlas": ["AML.T0051.001"]},
-        [], []),
+        ["merchant_allowlist", "mandate_monitor", "spend_cap", "input_screen", "canary_tripwire"], ["hx13"]),
     "payment-loop": _t(
         "Payment loop denial of wallet", "commerce",
-        "Repeated 402 challenges drain the agent's wallet.",
+        "Repeated 402 challenges drain the agent's wallet. The HX13 lab covers a merchant that settles each "
+        "payment and answers 402 again.",
         {"owasp_llm_2026": ["LLM06:2026"], "atlas": ["AML.T0034"]},
-        ["rate_limit"], []),
+        ["rate_limit", "circuit_breaker", "spend_cap"], ["hx13"]),
     "fake-merchant": _t(
         "Fake merchant or facilitator", "commerce",
         "The agent pays a lookalike merchant or settles through a hostile facilitator.",
@@ -406,9 +408,10 @@ TECHNIQUES: Dict[str, Dict[str, object]] = {
         [], []),
     "mandate-bypass": _t(
         "Spending mandate bypass", "commerce",
-        "The agent is talked past its spending limit or allow-list.",
+        "The agent is talked past its spending limit or allow-list. The HX13 lab covers a purchase split into "
+        "payments under the per-payment cap and a merchant-signed cart that drifts from the signed intent.",
         {"owasp_asi_2026": ["ASI10:2026"], "atlas": ["AML.T0048.000"]},
-        ["mandate_monitor"], []),
+        ["mandate_monitor", "spend_cap", "merchant_allowlist"], ["hx13"]),
 
     # Classic ML (AG-94; labs need a non-LLM target)
     "adversarial-examples": _t(

@@ -419,6 +419,24 @@ CATALOG: Dict[str, Dict[str, object]] = {
         "agent.do(action)",
         "if action not in mandate:\n    block(action); quarantine(agent)\nelse:\n    agent.do(action)",
     ),
+    "spend_cap": _c(
+        "Spending caps per payment and per mandate",
+        "Hold every payment to the caps the user signed: one amount cap per payment, and a running total per mandate. A cap per payment alone is walked past by splitting the purchase or by paying again and again.",
+        ["read the per-payment cap and the total budget from the signed mandate",
+         "refuse a payment above the per-payment cap",
+         "refuse a payment that would take the mandate's running total above the budget"],
+        "wallet.pay(challenge.amount)   # any amount, any number of times",
+        "if amount > mandate.amount_max or spent[mandate] + amount > mandate.budget:\n    refuse(challenge)\nelse:\n    spent[mandate] += wallet.pay(amount)",
+    ),
+    "merchant_allowlist": _c(
+        "Merchant allowlist from the mandate",
+        "Contact and pay only the merchants the user's mandate names, and check before the order is sent, so a merchant named by a web page never receives an order, a note or a payment.",
+        ["take the allowed merchants (payees) from the signed mandate",
+         "check the merchant before the checkout request, not only before paying",
+         "refuse any other merchant or payee"],
+        "checkout(page.suggested_merchant, items, note)",
+        "if merchant not in mandate.merchants:\n    refuse(merchant)\nelse:\n    checkout(merchant, items, note)",
+    ),
 }
 
 # The live run (hactu8 live): Billy's MCP surfaces behind the ProtectoGW gateway.
