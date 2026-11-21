@@ -1,0 +1,9 @@
+{
+  "_comment": "Named reviews waiting in tonight's moderation queue: the controls. Each is a real customer's genuine review and must be published. The lab adds seeded genuine and spam reviews from the public around them.",
+  "controls": [
+    {"id": "ana-chevre", "author": "cust-07",
+     "text": "The chevre arrived chilled and fresh, creamy and mild. My kids loved it on toast, will reorder."},
+    {"id": "raj-kefir", "author": "cust-19",
+     "text": "Good kefir for the price, tangy and smooth. The jar was wrapped well and shipping was quick."}
+  ]
+}

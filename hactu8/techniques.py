@@ -445,10 +445,13 @@ TECHNIQUES: Dict[str, Dict[str, object]] = {
         [], []),
     "training-data-poisoning": _t(
         "Training-time data poisoning", "classic_ml",
-        "Poisoned training data degrades the model or makes it fail on chosen inputs.",
+        "Poisoned training data degrades the model or makes it fail on chosen inputs. The HX19 lab retrains a "
+        "naive Bayes review filter nightly on customer flags: flipped labels lower its accuracy, and clean-label "
+        "flags that name the attacker's brands get its spam review published.",
         {"owasp_llm_2026": ["LLM05:2026"], "owasp_llm_2025": ["LLM04:2025"],
          "atlas": ["AML.T0020"], "nist": ["NISTAML.013", "NISTAML.024"]},
-        [], []),
+        ["provenance", "contributor_reputation", "label_noise_filter", "training_diff_gate", "influence_cap"],
+        ["hx19"]),
     "model-backdoor": _t(
         "Model backdoor", "classic_ml",
         "A trigger planted at training time, or in a published model, makes the model misbehave on cue.",

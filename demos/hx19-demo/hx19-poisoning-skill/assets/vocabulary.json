@@ -1,0 +1,24 @@
+{
+  "_comment": "Word buckets the lab's review generator draws from (seeded). Genuine and spam reviews mix the same buckets in different shares, so the classes overlap and the filter is good, not perfect.",
+  "product": ["cheese", "milk", "butter", "yogurt", "feta", "chevre", "kefir", "cream", "fudge", "soap",
+              "ricotta", "halloumi", "curd", "brie"],
+  "experience": ["creamy", "fresh", "tasty", "mild", "tangy", "smooth", "rich", "crumbly", "delicious", "lovely",
+                 "perfect", "soft", "firm", "salty", "sweet", "nutty", "delivered", "arrived", "chilled",
+                 "packaged", "wrapped", "ordered", "reorder", "family", "kids", "breakfast", "lunch", "recipe",
+                 "sandwich", "salad", "pasta", "toast", "flavour", "texture", "quality", "portion", "week",
+                 "weekend", "again", "favourite", "enjoyed", "loved", "liked", "recommend", "happy", "pleased",
+                 "neighbour", "picnic", "dinner", "melts", "spreads", "aroma", "farm", "local", "batch", "jar",
+                 "tub", "wedge", "slice", "label"],
+  "commerce": ["price", "value", "shipping", "order", "deal", "cheap", "offer", "bargain", "sale", "worth", "pay",
+               "store", "shop", "buy"],
+  "spam": ["free", "click", "link", "winner", "prize", "bonus", "cash", "guaranteed", "limited", "earn",
+           "followers", "crypto", "coupon", "promo", "code", "visit", "subscribe", "giveaway", "exclusive",
+           "instant", "unlock", "claim", "reward", "viral", "dm", "boost", "income", "urgent", "act", "hurry"],
+  "function": ["the", "a", "and", "it", "was", "i", "my", "this", "very", "really", "for", "with", "to", "of", "is",
+               "will", "but", "so", "our", "we", "they", "just", "too", "on", "at"],
+  "mix": {
+    "genuine": {"function": 0.34, "product": 0.17, "experience": 0.38, "commerce": 0.09, "spam": 0.02},
+    "spam": {"function": 0.28, "product": 0.1, "experience": 0.12, "commerce": 0.1, "spam": 0.4}
+  },
+  "length": [8, 14]
+}
