@@ -111,10 +111,11 @@ TECHNIQUES: Dict[str, Dict[str, object]] = {
     "multimodal-injection": _t(
         "Injection through images and documents", "injection",
         "The instruction rides in an image, PDF or office document the model reads. The HX01 lab covers "
-        "hidden text in documents (PDF, DOCX, HTML); instructions in images are still to do.",
+        "hidden text in documents (PDF, DOCX, HTML); the HX08 lab covers text in image pixels (visible and "
+        "near-invisible) and in image metadata and alt text. Adversarial pixel perturbations are not covered.",
         {"owasp_llm_2026": ["LLM01:2026"], "owasp_llm_2025": ["LLM01:2025"],
          "atlas": ["AML.T0051.001"], "nist": ["NISTAML.015"]},
-        ["visible_text_only", "input_screen"], ["hx01"]),
+        ["visible_text_only", "image_sanitize", "input_screen", "spotlight", "action_policy"], ["hx01", "hx08"]),
     "agent-goal-hijack": _t(
         "Agent goal hijack", "injection",
         "Content the agent reads mid-task rewrites the rest of its plan.",

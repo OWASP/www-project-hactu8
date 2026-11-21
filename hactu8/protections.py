@@ -74,6 +74,16 @@ CATALOG: Dict[str, Dict[str, object]] = {
         "context = '\\n'.join(run.text for run in parse(document))   # every run, seen or not",
         "context = '\\n'.join(run.text for run in parse(document)\n                    if run.renders and contrast(run) >= MIN and run.size >= MIN_PT)",
     ),
+    "image_sanitize": _c(
+        "Sanitize images before the model reads them",
+        "An image a user uploads can carry text the person looking at it never sees: near-invisible lettering, PNG text chunks, EXIF fields, alt text. Re-encode the pixels, drop the metadata channels, and flag text that is too faint for a person to read, before any of it reaches the model.",
+        ["re-encode uploads from their pixels; drop tEXt, EXIF and other metadata, and the alt text the uploader supplied",
+         "measure each text region's contrast against its background and drop (or flag) what a person would not see",
+         "pass what is left as data, never as the user's words, and still screen it",
+         "visible text in a photo passes every one of these checks: keep the action checks downstream"],
+        "context = user_message + ocr(image) + image.metadata + upload.alt   # every channel, as the user's words",
+        "pixels = reencode(image)               # no metadata, no alt text\nlines = [l for l in ocr(pixels) if l.contrast >= MIN_VISIBLE]\ncontext = fence_as_data(screen(lines))",
+    ),
     "normalizer": _c(
         "Normalize before you judge",
         "Fold evasions (Unicode compatibility forms, zero-width characters, leetspeak, base64, rot13, hex) back to plain text before the ruleset runs. A blocklist on raw text is walked past by encodings.",

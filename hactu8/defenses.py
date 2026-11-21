@@ -45,7 +45,7 @@ KIND: Dict[str, str] = {
     "spotlight": "architectural", "secret_vault": "architectural", "scope_filter": "architectural",
     "delegated_token": "architectural", "signed_messages": "architectural", "signed_config": "architectural",
     "code_sandbox": "architectural", "output_sink": "architectural", "provenance": "architectural",
-    "exact_name": "architectural", "visible_text_only": "architectural",
+    "exact_name": "architectural", "visible_text_only": "architectural", "image_sanitize": "architectural",
 }
 
 EVIDENCE = {
@@ -60,8 +60,8 @@ EVIDENCE = {
 TRAIN = "train set"
 HELD_OUT = "held-out set"
 BENCH_SURFACES: Dict[str, List[str]] = {
-    "input_screen": ["tool_result", "resource_body", "okf_body", "okf_clean", "a2a_message", "document_hidden", "wild",
-                     TRAIN],
+    "input_screen": ["tool_result", "resource_body", "okf_body", "okf_clean", "a2a_message", "document_hidden", "image_text",
+                     "wild", TRAIN],
     "mcp_gateway_filter": ["tool_description", "schema_param"],
     "channel_screen": ["schema_param", "error_channel", "okf_frontmatter"],
     "normalizer": ["obfuscation"],
