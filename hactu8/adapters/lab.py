@@ -17,6 +17,12 @@ item line is followed by what the model produced, as one JSON string:
 
         evidence: "<answer, tool calls or steps>"
 
+An item where no harm got through but a later layer had to hold (a reply
+withheld, an action denied, budget spent off the task) may carry one more
+line, printed always. It is not a colour; it lands in the item's ``held_by``:
+
+        held_by: <what held>; <another>
+
 Items are classified after parsing, so a classifier sees the evidence.
 """
 
@@ -40,6 +46,7 @@ ITEM_RE = re.compile(r"^ {4}\S+ (GREEN|YELLOW|RED)\s+(.+?)(  \(control\))?$")
 RATE_RE = re.compile(r"^ {4}(.+?): (\d+(?:\.\d+)?)% targeted")
 NOTE_RE = re.compile(r"^\[(\+|defense)\] (.+)$")
 EVIDENCE_RE = re.compile(r'^ {8}evidence: (".*")$')
+HELD_BY_RE = re.compile(r"^ {8}held_by: (.+)$")
 
 
 def _slug(text: str) -> str:
@@ -73,6 +80,11 @@ def parse(output: str, classifier: Union[str, Classifier] = "keyword", context: 
                     current["items"][-1]["evidence"] = str(json.loads(m.group(1)))
                 except ValueError:
                     pass
+        elif current is not None and (m := HELD_BY_RE.match(line)):
+            if current["items"] and "held_by" not in current["items"][-1]:
+                held = [h.strip() for h in m.group(1).split(";") if h.strip()]
+                if held:
+                    current["items"][-1]["held_by"] = held
         elif current is not None and (m := ITEM_RE.match(line)):
             prompt = m.group(2).strip()
             current["items"].append({

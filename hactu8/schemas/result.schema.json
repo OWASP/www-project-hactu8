@@ -253,6 +253,13 @@
                   ],
                   "description": "The lab's own keyword verdict"
                 },
+                "held_by": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "No harm got through, but a later layer had to hold (a reply withheld, an action denied, budget spent off the task). Reported beside the verdict, never as a colour"
+                },
                 "classified_by": {
                   "type": "string",
                   "description": "Backend that produced the verdict, e.g. keyword or ollama:llama3.2:3b"

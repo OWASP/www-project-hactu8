@@ -213,6 +213,28 @@ class EvidenceTest(unittest.TestCase):
         self.assertNotIn("evidence", items[1])
         self.assertEqual(items[0]["lab_verdict"], "GREEN")
 
+    def test_held_by_attached_not_a_colour(self):
+        sample = EVIDENCE_SAMPLE.replace(
+            '    \U0001F7E2 GREEN  Is Thanksgiving',
+            '        held_by: output screen withheld a reply; off-task sampling\n'
+            '    \U0001F7E2 GREEN  Is Thanksgiving')
+        items = lab.parse(sample)[0]["items"]
+        self.assertEqual(items[0]["held_by"], ["output screen withheld a reply", "off-task sampling"])
+        self.assertEqual(items[0]["verdict"], "GREEN")
+        self.assertEqual(items[0]["evidence"], "Expense reports are due on the 5th.")
+        self.assertNotIn("held_by", items[1])
+        self.assertEqual(len(items), 2)
+        schema = json.loads((ROOT / "hactu8" / "schemas" / "result.schema.json").read_text(encoding="utf-8"))
+        item_schema = schema["properties"]["acts"]["items"]["properties"]["items"]["items"]
+        self.assertEqual(item_schema["properties"]["held_by"]["type"], "array")
+        try:
+            import jsonschema
+        except ImportError:
+            return
+        jsonschema.validate(items[0], item_schema)
+        with self.assertRaises(jsonschema.ValidationError):
+            jsonschema.validate({**items[0], "held_by": "not a list"}, item_schema)
+
     def test_lab_emits_evidence(self):
         from hactu8 import catalog
         doc = lab.run(catalog.get("llm01", ROOT))
