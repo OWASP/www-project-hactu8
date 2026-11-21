@@ -32,7 +32,7 @@ KIND: Dict[str, str] = {
     # Content screens built on ProtectoGW's rules.
     "input_screen": "protectogw_rule", "output_screen": "protectogw_rule", "normalizer": "protectogw_rule",
     "full_artifact_screen": "protectogw_rule", "channel_screen": "protectogw_rule",
-    "session_screen": "protectogw_rule", "generalization": "protectogw_rule",
+    "session_screen": "protectogw_rule", "generalization": "protectogw_rule", "persona_screen": "protectogw_rule",
     # Checks the MCP gateway applies to what passes through it.
     "mcp_gateway_filter": "gateway_control", "hash_pin": "gateway_control", "sampling": "gateway_control",
     "canary_tripwire": "gateway_control",
@@ -40,7 +40,7 @@ KIND: Dict[str, str] = {
     "hitl_gate": "lab_hardening", "param_policy": "lab_hardening", "plan_pin": "lab_hardening",
     "rate_limit": "lab_hardening", "grounding": "lab_hardening", "cross_check": "lab_hardening",
     "circuit_breaker": "lab_hardening", "faithful_approval": "lab_hardening", "mandate_monitor": "lab_hardening",
-    "action_policy": "lab_hardening", "sampling_policy": "lab_hardening",
+    "action_policy": "lab_hardening", "sampling_policy": "lab_hardening", "shot_cap": "lab_hardening",
     # Design changes: where data lives, who acts, how trust is established.
     "spotlight": "architectural", "secret_vault": "architectural", "scope_filter": "architectural",
     "delegated_token": "architectural", "signed_messages": "architectural", "signed_config": "architectural",
@@ -69,6 +69,7 @@ BENCH_SURFACES: Dict[str, List[str]] = {
     "session_screen": ["okf_chain", "chain_pointer", "chain_destination", "chain_clean", "conversation"],
     "sampling": ["conditional_return"],
     "sampling_policy": ["sampling_request"],
+    "persona_screen": ["chat_message"],
     "hash_pin": ["prompt_template"],
     "output_sink": ["output_sink"],
     "generalization": [HELD_OUT],

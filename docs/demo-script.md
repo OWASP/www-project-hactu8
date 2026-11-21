@@ -29,7 +29,8 @@ baseline, the attack, the impact, and the remediation. The target is HACTU8
 Lamb, a deliberately vulnerable assistant (Billy, of the fictional Goat &
 Co.), bound to loopback. 32 labs cover the OWASP LLM Top 10 2026, the OWASP
 Agentic Top 10 2026, nine gateway labs (AGX01-09), hidden document injection
-(HX01), the multi-turn jailbreak (HX02) and MCP sampling abuse (HX03).
+(HX01), the multi-turn jailbreak (HX02), MCP sampling abuse (HX03) and role-play
+and many-shot jailbreaks (HX06).
 
 ## 2. Learn (2 minutes)
 
