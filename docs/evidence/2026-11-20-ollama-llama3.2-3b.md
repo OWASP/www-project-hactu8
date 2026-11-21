@@ -73,3 +73,9 @@ Rules alone (ProtectoGW 2.0): coverage 99%, generalization 53%, 0 false positive
 - Coverage: 99%
 - Generalization (independent held-out set): 97%
 - False positives: 23
+
+Note added 2026-11-21: the coverage figures above are for the corpus of
+2026-11-20. The corpus now also records 9 payloads the HX labs ship that the
+rules miss (`baseline_flagged: false`), so rules-alone coverage on today's
+corpus is 94% (166 of 176). Generalization is measured on the held-out set
+and does not change.

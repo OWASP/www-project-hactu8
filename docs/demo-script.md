@@ -76,7 +76,9 @@ screen but not the sandbox.
 ## 6. Honest numbers (2 minutes)
 
 - `python -m hactu8 bench`: ProtectoGW catches 53% of an independent held-out
-  set with no false positives. A screen is one layer, never the boundary.
+  set with no false positives. On the corpus its rules are tuned on, coverage
+  is 94% (166 of 176): the 10 misses are recorded, not dropped, and 9 of them
+  are payloads the HX labs ship. A screen is one layer, never the boundary.
 - AGX09: on a held-out set the screen was never tuned on, it catches 60%;
   the output canary check is what brings leaks to 0.
 - Evidence pages in `docs/evidence/` list real-model results by model, with
