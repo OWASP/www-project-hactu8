@@ -202,10 +202,11 @@ TECHNIQUES: Dict[str, Dict[str, object]] = {
         ["vector_privacy", "scope_filter", "input_screen"], ["hx07"]),
     "model-extraction": _t(
         "Model extraction", "disclosure",
-        "Repeated queries replicate the model's behaviour.",
+        "Repeated queries replicate the model's behaviour. The HX10 lab solves a price-band model's weights "
+        "from 8 confidence vectors and trains label-only clones that agree on 99% of held-out listings.",
         {"owasp_llm_2026": ["LLM06:2026"], "owasp_llm_2025": ["LLM10:2025"],
          "atlas": ["AML.T0024.002"], "nist": ["NISTAML.031"]},
-        ["rate_limit"], []),
+        ["label_only", "rate_limit", "query_anomaly", "output_watermark"], ["hx10"]),
 
     # Agency, tools and identity
     "excessive-agency": _t(

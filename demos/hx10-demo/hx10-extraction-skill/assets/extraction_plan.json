@@ -1,0 +1,80 @@
+{
+ "_comment": "The attacker's extraction plans. AUTHORIZED SECURITY-LAB USE ONLY. Each plan queries Billy's price-band API and trains a clone; see extraction_plan.README.md.",
+ "attacks": [
+  {
+   "id": "equation-solving",
+   "key": "rival-eq",
+   "strategy": "equation_solving",
+   "sampler": "uniform",
+   "queries": 8,
+   "route": "8 random listings with confidences; solve the logistic model's equations for its exact weights"
+  },
+  {
+   "id": "random-retrain",
+   "key": "rival-rand",
+   "strategy": "retrain",
+   "sampler": "uniform",
+   "queries": 2000,
+   "route": "2,000 random listings across the API's documented ranges; train a linear clone on the bands"
+  },
+  {
+   "id": "listing-retrain",
+   "key": "rival-list",
+   "strategy": "retrain",
+   "sampler": "listing_like",
+   "queries": 2000,
+   "route": "2,000 variations of real catalog listings; train a linear clone on the bands"
+  }
+ ],
+ "limits": [
+  {
+   "id": "distributed-keys",
+   "keys": [
+    "rival-k01",
+    "rival-k02",
+    "rival-k03",
+    "rival-k04",
+    "rival-k05",
+    "rival-k06",
+    "rival-k07",
+    "rival-k08",
+    "rival-k09",
+    "rival-k10",
+    "rival-k11",
+    "rival-k12",
+    "rival-k13",
+    "rival-k14",
+    "rival-k15",
+    "rival-k16",
+    "rival-k17",
+    "rival-k18",
+    "rival-k19",
+    "rival-k20",
+    "rival-k21",
+    "rival-k22",
+    "rival-k23",
+    "rival-k24",
+    "rival-k25",
+    "rival-k26",
+    "rival-k27",
+    "rival-k28",
+    "rival-k29",
+    "rival-k30",
+    "rival-k31",
+    "rival-k32",
+    "rival-k33",
+    "rival-k34",
+    "rival-k35",
+    "rival-k36",
+    "rival-k37",
+    "rival-k38",
+    "rival-k39",
+    "rival-k40"
+   ],
+   "strategy": "retrain",
+   "sampler": "listing_like",
+   "queries_per_key": 48,
+   "route": "the listing-like plan spread over 40 free-tier keys, 48 queries each, under every per-key limit"
+  }
+ ]
+}

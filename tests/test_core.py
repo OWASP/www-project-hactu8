@@ -54,7 +54,7 @@ class DiscoveryTest(unittest.TestCase):
     def test_discovers_all_labs(self):
         skills = catalog.discover(ROOT)
         ids = {s.id for s in skills}
-        self.assertEqual(len(skills), 38)
+        self.assertEqual(len(skills), 39)
         self.assertTrue({"llm01", "llm05", "llm10", "asi01", "asi10", "agx01"} <= ids)
         for s in skills:
             self.assertTrue(s.owasp and s.metric and s.metric_name, s.id)
@@ -95,7 +95,7 @@ class RunTest(unittest.TestCase):
                 self.assertEqual(doc["summary"]["status"], "pass", doc.get("output", "")[-500:])
                 self.assertEqual(len(doc["acts"]), 4)
                 store.save(doc)
-        self.assertEqual(len(store.list_runs()), 38)
+        self.assertEqual(len(store.list_runs()), 39)
         self.assertIsNotNone(store.load("latest"))
 
 

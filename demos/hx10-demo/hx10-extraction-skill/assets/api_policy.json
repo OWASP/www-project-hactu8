@@ -1,0 +1,15 @@
+{
+  "_comment": "Hardened-mode settings for Billy's price-band API. Edit to see where each layer stops working.",
+  "query_budget_per_key": 50,
+  "anomaly_window": 20,
+  "anomaly_share": 0.2,
+  "envelope": {
+    "_comment": "The range real catalog listings occupy. A query outside it is implausible.",
+    "weight_kg": [0.2, 25.0],
+    "shelf_life_months": [0, 36],
+    "demand_index": [0.05, 0.95],
+    "rating": [2.5, 5.0]
+  },
+  "watermark_flip_share": 0.02,
+  "watermark_proof_share": 0.8
+}

@@ -44,6 +44,7 @@ KIND: Dict[str, str] = {
     "shot_cap": "lab_hardening",
     "per_client_consent": "lab_hardening", "exact_redirect_uri": "lab_hardening", "pkce": "lab_hardening",
     "score_suppression": "lab_hardening", "confidence_rounding": "lab_hardening",
+    "query_anomaly": "lab_hardening", "output_watermark": "lab_hardening",
     # Design changes: where data lives, who acts, how trust is established.
     "spotlight": "architectural", "secret_vault": "architectural", "scope_filter": "architectural",
     "delegated_token": "architectural", "audience_binding": "architectural", "signed_messages": "architectural",
@@ -52,6 +53,7 @@ KIND: Dict[str, str] = {
     "exact_name": "architectural", "visible_text_only": "architectural", "vector_privacy": "architectural",
     "image_sanitize": "architectural",
     "training_data_scrub": "architectural",
+    "label_only": "architectural",
 }
 
 EVIDENCE = {

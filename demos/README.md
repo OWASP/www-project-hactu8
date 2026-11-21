@@ -94,6 +94,7 @@ lab yet. The numbering is HACTU8's own.
 | HX07 | Embedding Inversion | [`hx07-demo`](hx07-demo/) — a vector store scopes its text to each tenant but exports every raw embedding; a supplier's partner account inverts them and rebuilds the staff access reference | 5507 | Inversion Leak Rate (ILR) |
 | HX08 | Image Prompt Injection | [`hx08-demo`](hx08-demo/) — receipt photos uploaded for a refund carry an instruction in small print, in near-invisible text or in PNG metadata, and the refund assistant follows it | 5508 | Image Injection Rate (IIR) |
 | HX09 | Membership Inference | [`hx09-demo`](hx09-demo/) — an attacker holding one customer's record scores it on the support model's log-probs API against records they invented, and learns it was in the fine-tuning data | 5509 | Membership Exposure Rate (MER) |
+| HX10 | Model Extraction | [`hx10-demo`](hx10-demo/) — a rival copies the shop's price-band model through its prediction API: 8 queries with confidences give the exact weights, 2,000 label-only queries train a 99% clone | 5510 | Clone Success Rate (CSR) |
 
 ## Running a lab
 
