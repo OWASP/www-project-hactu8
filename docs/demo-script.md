@@ -30,7 +30,8 @@ Lamb, a deliberately vulnerable assistant (Billy, of the fictional Goat &
 Co.), bound to loopback. 34 labs cover the OWASP LLM Top 10 2026, the OWASP
 Agentic Top 10 2026, nine gateway labs (AGX01-09), hidden document injection
 (HX01), the multi-turn jailbreak (HX02), MCP sampling abuse (HX03), MCP
-elicitation abuse (HX04) and role-play and many-shot jailbreaks (HX06).
+elicitation abuse (HX04), role-play and many-shot jailbreaks (HX06) and model
+extraction (HX10).
 
 ## 2. Learn (2 minutes)
 
