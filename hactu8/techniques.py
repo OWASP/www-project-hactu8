@@ -109,10 +109,11 @@ TECHNIQUES: Dict[str, Dict[str, object]] = {
         ["normalizer", "canary_tripwire"], ["agx01"]),
     "multimodal-injection": _t(
         "Injection through images and documents", "injection",
-        "The instruction rides in an image, PDF or office document the model reads.",
+        "The instruction rides in an image, PDF or office document the model reads. The HX01 lab covers "
+        "hidden text in documents (PDF, DOCX, HTML); instructions in images are still to do.",
         {"owasp_llm_2026": ["LLM01:2026"], "owasp_llm_2025": ["LLM01:2025"],
          "atlas": ["AML.T0051.001"], "nist": ["NISTAML.015"]},
-        [], []),
+        ["visible_text_only", "input_screen"], ["hx01"]),
     "agent-goal-hijack": _t(
         "Agent goal hijack", "injection",
         "Content the agent reads mid-task rewrites the rest of its plan.",

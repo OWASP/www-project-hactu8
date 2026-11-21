@@ -78,6 +78,15 @@ The AGX payloads are benign-effect, like every other lab's: realistic wording
 whose only effect is printing the lab's fictional per-run credential. The
 designs for AGX07–09 are in `OWASP_DEMO_PLAN.md` §4.3.
 
+### HACTU8 extended attacks (HX)
+
+Attack techniques from HACTU8's catalog (`hactu8/techniques.py`) that had no
+lab yet. The numbering is HACTU8's own.
+
+| ID | Risk | Lab | Port | Metric |
+|----|------|-----|------|--------|
+| HX01 | Hidden Document Injection | [`hx01-demo`](hx01-demo/) — an emailed invoice carries white-on-white text the extractor passes to the document assistant | 5501 | Hidden-Directive Rate (HDR) |
+
 ## Running a lab
 
 Every lab uses the standard library only. Browser tests for all consoles: [`e2e/`](e2e/) (Playwright, development only).

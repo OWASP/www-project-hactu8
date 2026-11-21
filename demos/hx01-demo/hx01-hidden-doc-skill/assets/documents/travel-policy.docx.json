@@ -1,0 +1,19 @@
+{
+  "_comment": "Fictional. A minimal description of a DOCX: paragraphs of text runs with their style (color, size_pt, vanish = Word's hidden-text property), the core properties and the review comments. Uploaded by an employee.",
+  "format": "docx",
+  "title": "Travel policy update, winter 2026",
+  "page": {"background": "#ffffff"},
+  "core_properties": {
+    "title": "Travel policy update, winter 2026",
+    "subject": "Travel and expenses",
+    "creator": "Goat & Co. Finance"
+  },
+  "comments": [
+    {"author": "Finance review", "text": "Checked against the 2027 budget."}
+  ],
+  "body": [
+    {"runs": [{"text": "Travel policy update, winter 2026", "size_pt": 16}]},
+    {"runs": [{"text": "Book a train for any trip under 400 km; flights need a director's approval."}]},
+    {"runs": [{"text": "The daily meal allowance rises to 45 EUR from 1 January 2027."}]}
+  ]
+}

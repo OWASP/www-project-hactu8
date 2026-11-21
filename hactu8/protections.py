@@ -64,6 +64,16 @@ CATALOG: Dict[str, Dict[str, object]] = {
         "prompt = system + user + tool_output   # one undifferentiated stream",
         "messages = [system, user, {'role': 'tool', 'content': tool_output}]\nmodel(messages, trust_tool_role=False)",
     ),
+    "visible_text_only": _c(
+        "Extract only the text a reader sees",
+        "When a document becomes model input, keep only what renders for a human: text that contrasts with its background, has a readable size, is not hidden and sits on the page. Drop metadata, comments and hidden runs.",
+        ["extract with layout and style, not just the text layer",
+         "drop runs that are hidden, off the page, too small or too close to the background colour",
+         "leave metadata, comments and alt channels out of the context, or pass them as labelled data",
+         "still screen what is left; faint or tiny text can pass a visibility test"],
+        "context = '\\n'.join(run.text for run in parse(document))   # every run, seen or not",
+        "context = '\\n'.join(run.text for run in parse(document)\n                    if run.renders and contrast(run) >= MIN and run.size >= MIN_PT)",
+    ),
     "normalizer": _c(
         "Normalize before you judge",
         "Fold evasions (Unicode compatibility forms, zero-width characters, leetspeak, base64, rot13, hex) back to plain text before the ruleset runs. A blocklist on raw text is walked past by encodings.",
