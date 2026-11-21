@@ -83,10 +83,14 @@ structural, measured, and by design — not bugs:
   catches **16 of 30 (53%)** attacks with no false positives; 1.0 caught 4 of 30.
   The earlier ~75% figure came from a held-out set that was mostly encodings of
   one phrase and overstated generalization.
-- **Translation / non-English payloads.** 2.0 recognizes overrides and credential
-  requests in ten common languages when they are addressed to the AI; anything
-  else slips. The optional `Policy.classifier` model plane is the intended answer
-  to phrasing a ruleset cannot anticipate.
+- **Translation / non-English payloads.** 2.0 has rules for the common override
+  and secret-reveal phrasings ("ignore all previous instructions", "reveal the
+  secret key") in ten common languages when they are addressed to the AI. That
+  is a fixed vocabulary per language, not general coverage: a credential request
+  worded another way passes (AGX09's Spanish and Portuguese "emit the internal
+  credential" requests are not caught), as does anything in other languages.
+  The optional `Policy.classifier` model plane is the intended answer to
+  phrasing a ruleset cannot anticipate.
 - **Encoding classes with no fold.** The decode set is *closed*; an encoding not
   in §2 step 1 (or a nested/multi-layer encoding) is not unwound.
 - **Semantic attacks with no lexical tell.** ProtectoGW matches surface form, not
