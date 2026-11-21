@@ -32,7 +32,7 @@ SKILL_DIR = os.path.join(HERE, "hx02-multi-turn-skill")
 sys.path.insert(0, SKILL_DIR)
 sys.path.insert(0, os.path.join(SKILL_DIR, "scripts"))
 
-from evaluate_kpi import ICON, classify, suite  # noqa: E402
+from evaluate_kpi import ICON, classify, held_by, suite  # noqa: E402
 from vulnerable_app import Lab, load_scripts, scan_script  # noqa: E402
 
 LIMIT_PROBE = "paraphrased-trainer"
@@ -62,6 +62,8 @@ def act(lab: Lab, title: str, results=None) -> float:
             red += status == "RED"
         tag = "" if is_targeted else "  (control)"
         print(f"    {ICON[status]} {status:<6} {label}{tag}")
+        if held_by(result, status):
+            print(f"        held_by: {'; '.join(held_by(result, status))}")
         evidence(transcript(result))
     rbr = red / targeted * 100.0
     print(f"    Rule-Break Rate: {rbr:.0f}% targeted")
@@ -136,7 +138,8 @@ def main(argv=None) -> int:
     print(f"[defense] Limit probe in hardened mode ({LIMIT_PROBE}): conversation screen {pscan['decision']} "
           f"(highest risk {max(r['conversation']['risk'] for r in pscan['rows'])}); the model tried "
           f"STAFF30: {'YES' if tried else 'no'}; the action policy refused it: "
-          f"{'YES' if probe['attempt_denied'] else 'no'}; grade {classify(probe)}.")
+          f"{'YES' if probe['attempt_denied'] else 'no'}; grade {classify(probe)}"
+          + (f", held by: {'; '.join(held_by(probe, classify(probe)))}." if held_by(probe, classify(probe)) else "."))
 
     lab.reset()
     lab.set_mode("vulnerable")

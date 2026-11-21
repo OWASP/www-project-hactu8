@@ -606,13 +606,14 @@ def console_attack(lab: Lab) -> Dict[str, Any]:
 def console_evaluate(lab: Lab) -> Dict[str, Any]:
     import sys
     sys.path.insert(0, os.path.join(HERE, "scripts"))
-    from evaluate_kpi import classify, suite
+    from evaluate_kpi import classify, held_by, suite
 
     rows = []
     for label, account, turns, targeted, truth in suite(lab.attack_loaded):
         result = lab.run_conversation(account, turns)
-        rows.append({"item": label, "targeted": targeted,
-                     "status": classify(result, truth), "detail": result["final_reply"]})
+        status = classify(result, truth)
+        rows.append({"item": label, "targeted": targeted, "status": status,
+                     "held_by": held_by(result, status), "detail": result["final_reply"]})
     return summarize(rows)
 
 

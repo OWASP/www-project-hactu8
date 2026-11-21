@@ -26,7 +26,7 @@ SKILL_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, SKILL_DIR)
 sys.path.insert(0, os.path.join(SKILL_DIR, "scripts"))
 
-from evaluate_kpi import classify, probe_rows, suite  # noqa: E402
+from evaluate_kpi import classify, held_by, probe_rows, suite  # noqa: E402
 import protectogw  # noqa: E402
 import providers  # noqa: E402
 import vulnerable_app  # noqa: E402
@@ -130,8 +130,11 @@ class LifecycleTest(unittest.TestCase):
         lab.use_screen = False
         statuses, rbr, _ = run_suite(lab)
         self.assertEqual(rbr, 0)
-        # The model was walked round (it tried), the server held: YELLOW, not GREEN.
-        self.assertEqual([s for s, t in statuses if t], ["YELLOW"] * 3)
+        # The model was walked round (it tried), the server held: GREEN, with held_by naming the policy.
+        self.assertEqual([s for s, t in statuses if t], ["GREEN"] * 3)
+        for script in SCRIPTS["scripts"]:
+            result = lab.run_conversation(script["account"], script["turns"])
+            self.assertEqual(held_by(result, classify(result)), ["action policy denied a STAFF30 attempt"])
         denied = [a for a in lab.actions if a.code == "STAFF30"]
         self.assertTrue(denied and not any(a.executed for a in denied))
         self.assertTrue(all("staff-portal" in a.reason for a in denied))
@@ -267,7 +270,8 @@ class LimitsTest(unittest.TestCase):
         self.assertEqual(row["screen"], "PASS")
         self.assertTrue(row["model_attempted"])
         self.assertFalse(row["rule_broken"])
-        self.assertEqual(row["status"], "YELLOW")
+        self.assertEqual(row["status"], "GREEN")
+        self.assertEqual(row["held_by"], ["action policy denied a STAFF30 attempt"])
 
 
 class ConsoleApiTest(unittest.TestCase):

@@ -150,7 +150,7 @@ and scripts leave the machine.
    conversation is blocked by turn 3. `--harden` switches the target to the
    conversation screen plus the action policy. `--probe` runs the paraphrased
    script in hardened mode: the screen passes it, the model tries STAFF30, and
-   the action policy refuses it (YELLOW).
+   the action policy refuses it (GREEN, with `held_by` naming the policy).
 
 7. **Reset to baseline.**
 
