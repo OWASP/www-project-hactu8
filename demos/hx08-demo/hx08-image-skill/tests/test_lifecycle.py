@@ -263,6 +263,7 @@ class LimitsTest(unittest.TestCase):
     def test_contrast_sweep(self):
         rows = {r["delta"]: r for r in contrast_sweep()}
         self.assertTrue(all(r["dropped"] for d, r in rows.items() if d <= 40))
+        self.assertTrue(rows[40]["dropped"] and rows[40]["measured"] < MIN_VISIBLE_DELTA == 40)
         self.assertFalse(rows[60]["dropped"] or rows[120]["dropped"])
         self.assertTrue(rows[60]["read"] and rows[120]["read"] and rows[6]["read"])
         self.assertFalse(rows[4]["read"])                                # noise: measured, not hoped

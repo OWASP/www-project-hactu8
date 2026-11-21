@@ -237,8 +237,9 @@ curl -s localhost:5508/images/receipt-gc1043.png -o faint.png   # looks like a p
 
 - **Strip metadata** (`image_sanitize`) — re-encode from pixels; drop
   `tEXt` chunks and the alt text.
-- **Low-contrast detector** (`image_sanitize`) — drop OCR lines under 40 grey
-  levels from the paper, on their measured contrast.
+- **Low-contrast detector** (`image_sanitize`) — drop OCR lines whose measured
+  contrast is under 40 grey levels from the paper: in the sweep, every line
+  drawn at 40 levels or fewer is dropped, and 60 is kept (`test_contrast_sweep`).
 - **Input screen** (`input_screen`) — protectogw on each remaining line, plus
   two lab rules; the default rules alone catch only the small print.
 - **Spotlight** (`spotlight`) — the image text goes to the model as a fenced,
