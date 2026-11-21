@@ -172,7 +172,7 @@ class LearningPathTest(unittest.TestCase):
 
     def test_every_lab_has_a_unique_position_and_a_known_stage(self):
         skills = catalog.discover(ROOT)
-        self.assertEqual(len(skills), 43)
+        self.assertEqual(len(skills), 44)
         for skill in skills:
             with self.subTest(skill=skill.id):
                 self.assertIn(skill.path_stage, catalog.STAGE_IDS)
@@ -182,14 +182,14 @@ class LearningPathTest(unittest.TestCase):
 
     def test_track_starts_with_the_basics_and_commerce_holds_the_payment_labs(self):
         track = catalog.learning_path(catalog.discover(ROOT))
-        self.assertEqual(track["total"], 43)
+        self.assertEqual(track["total"], 44)
         self.assertEqual(track["unassigned"], [])
         stages = {stage["id"]: stage["skills"] for stage in track["stages"]}
         self.assertEqual([stage["id"] for stage in track["stages"]], list(catalog.STAGE_IDS))
         self.assertEqual([s["id"] for s in stages["basics"][:2]], ["llm01", "llm10"])
         self.assertEqual([s["id"] for s in stages["commerce"]], ["hx12", "hx13", "hx11"])
         steps = [s["step"] for stage in track["stages"] for s in stage["skills"]]
-        self.assertEqual(steps, list(range(1, 44)))
+        self.assertEqual(steps, list(range(1, 45)))
         for stage in ("basics", "agentic", "commerce"):
             orders = [s["order"] for s in stages[stage]]
             self.assertEqual(orders, list(range(1, len(orders) + 1)), f"{stage} positions have gaps")
@@ -199,7 +199,7 @@ class LearningPathTest(unittest.TestCase):
         skills[0].path_stage = ""
         track = catalog.learning_path(skills)
         self.assertEqual(track["unassigned"], [skills[0].id])
-        self.assertEqual(track["total"], 42)
+        self.assertEqual(track["total"], 43)
 
 
 try:
@@ -247,7 +247,7 @@ class LessonApiTest(unittest.TestCase):
 
     def test_path_endpoint(self):
         body = self.client.get("/api/path").json()
-        self.assertEqual(body["total"], 43)
+        self.assertEqual(body["total"], 44)
         self.assertEqual(body["stages"][0]["skills"][0]["id"], "llm01")
         self.assertTrue(body["stages"][0]["skills"][0]["has_lesson"])
 

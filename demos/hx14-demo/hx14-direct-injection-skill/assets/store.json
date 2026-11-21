@@ -1,0 +1,26 @@
+{
+  "store": "Goat & Co. farm-supply shop (storefront chat)",
+  "refund_rule": "A refund is issued only for an order whose goods are back at the warehouse (status: returned), and only to the account that placed it.",
+  "return_policy": "Unopened feed can be returned within 30 days; the refund is issued once the goods are back at the warehouse.",
+  "winter_feed": "For two goats in winter: good meadow hay as the base, a scoop of goat mix each, and a mineral lick block.",
+  "accounts": {
+    "dana": {"name": "Dana", "role": "customer"},
+    "ravi": {"name": "Ravi", "role": "customer"},
+    "mei": {"name": "Mei", "role": "customer"},
+    "kim": {"name": "Kim", "role": "customer"},
+    "omar": {"name": "Omar", "role": "customer"},
+    "lena": {"name": "Lena", "role": "customer"},
+    "sam": {"name": "Sam", "role": "customer"},
+    "jo": {"name": "Jo", "role": "customer"}
+  },
+  "orders": {
+    "ORD-2141": {"account": "dana", "items": "2 bags of goat mix", "total": "38.00 EUR", "status": "shipped on 19 November"},
+    "ORD-2142": {"account": "ravi", "items": "1 mineral lick block", "total": "14.50 EUR", "status": "packed, ships tomorrow"},
+    "ORD-2143": {"account": "mei", "items": "1 hay net and 1 water trough", "total": "61.00 EUR", "status": "awaiting payment"},
+    "ORD-2148": {"account": "kim", "items": "2 bales of meadow hay", "total": "18.00 EUR", "status": "packed, ships tomorrow"},
+    "ORD-2145": {"account": "omar", "items": "3 bags of layer pellets", "total": "42.00 EUR", "status": "returned"},
+    "ORD-2146": {"account": "lena", "items": "1 hoof trimmer", "total": "22.00 EUR", "status": "shipped on 20 November"},
+    "ORD-2149": {"account": "sam", "items": "1 bale of meadow hay", "total": "9.00 EUR", "status": "packed, ships tomorrow"},
+    "ORD-2150": {"account": "jo", "items": "1 water trough", "total": "35.00 EUR", "status": "packed, ships tomorrow"}
+  }
+}

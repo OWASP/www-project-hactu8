@@ -99,6 +99,7 @@ lab yet. The numbering is HACTU8's own.
 | HX13 | Agent Overpay and Mandate Bypass | [`hx13-demo`](hx13-demo/) — planted Q&A answers, a data feed that re-challenges after each payment and a drifted cart make the buying agent pay past the customer's signed mandate and leak its wallet reference | 5513 | Mandate Breach Rate (MBR) |
 | HX11 | Attacks on the Scoring Layer | [`hx11-demo`](hx11-demo/) — a review triage's LLM judge and rule classifier are talked, forged, evaded and flooded into publishing support transcripts that carry the desk code | 5511 | Leak Ship Rate (LSR) |
 | HX16 | Shadow MCP Server | [`hx16-demo`](hx16-demo/) — an employee adds an unapproved wrapper server to the assistant's MCP config, it announces itself as the approved one, and its same-name, lookalike and duplicate tools receive customers' account references | 5516 | Shadow Exposure Rate (SER) |
+| HX14 | Direct Prompt Injection | [`hx14-demo`](hx14-demo/) — four customers each type one message ("ignore all previous instructions", chat-template markers opening a fake system turn, a fake tool call, the override split into string pieces) and get the store assistant's internal reference code and a refund on an unpaid order | 5514 | Direct Injection Rate (DIR) |
 
 ## Running a lab
 

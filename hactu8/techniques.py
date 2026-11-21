@@ -79,10 +79,12 @@ TECHNIQUES: Dict[str, Dict[str, object]] = {
         ["spotlight", "input_screen"], ["llm01", LIVE_LAB]),
     "direct-prompt-injection": _t(
         "Direct prompt injection", "injection",
-        "The user types an instruction that overrides the system prompt.",
+        "The user types an instruction that overrides the system prompt. The HX14 lab sends four single messages: "
+        "\"ignore all previous instructions\", chat-template markers that open a fake system turn, a fake tool "
+        "call, and the override split into string pieces.",
         {"owasp_llm_2026": ["LLM01:2026"], "owasp_llm_2025": ["LLM01:2025"],
          "atlas": ["AML.T0051.000"], "nist": ["NISTAML.018"]},
-        ["input_screen"], []),
+        ["input_screen", "role_separation", "output_screen", "action_policy"], ["hx14"]),
     "jailbreak-multi-turn": _t(
         "Multi-turn jailbreak", "injection",
         "A refusal is worn down over several turns, each harmless alone (crescendo). The HX02 lab walks a "
