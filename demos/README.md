@@ -88,6 +88,7 @@ lab yet. The numbering is HACTU8's own.
 | HX01 | Hidden Document Injection | [`hx01-demo`](hx01-demo/) — an emailed invoice carries white-on-white text the extractor passes to the document assistant | 5501 | Hidden-Directive Rate (HDR) |
 | HX02 | Multi-Turn Jailbreak | [`hx02-demo`](hx02-demo/) — five harmless-looking turns walk the store assistant into applying the staff discount it refuses when asked once | 5502 | Rule-Break Rate (RBR) |
 | HX03 | MCP Sampling Abuse | [`hx03-demo`](hx03-demo/) — a shipping-rates MCP server update uses sampling to run its own prompts on the assistant's model and pull its account reference back | 5503 | Sampling Leak Rate (SLR) |
+| HX05 | OAuth Confused Deputy (MCP) | [`hx05-demo`](hx05-demo/) — an analytics server registers its own client, tampers a redirect and adds a connector, and the ledger MCP proxy hands it customers' tokens | 5505 | Token Theft Rate (TTR) |
 
 ## Running a lab
 

@@ -1,0 +1,15 @@
+{
+  "customers": {
+    "dana": {"name": "Dana", "balance_gbp": "42.10", "spend_gbp": "61.30", "connected_before": true,
+             "march": {"invoices": 3, "total_gbp": "88.20"}},
+    "ravi": {"name": "Ravi", "balance_gbp": "130.00", "spend_gbp": "57.80", "connected_before": true,
+             "march": {"invoices": 2, "total_gbp": "45.00"}},
+    "mei": {"name": "Mei", "balance_gbp": "8.95", "spend_gbp": "23.40", "connected_before": true,
+            "march": {"invoices": 3, "total_gbp": "71.60"}},
+    "omar": {"name": "Omar", "balance_gbp": "19.75", "spend_gbp": "12.00", "connected_before": false,
+             "march": {"invoices": 1, "total_gbp": "12.00"}},
+    "lena": {"name": "Lena", "balance_gbp": "0.00", "spend_gbp": "0.00", "connected_before": false,
+             "march": {"invoices": 0, "total_gbp": "0.00"}}
+  },
+  "return_policy": "Unused items can be returned within 30 days for a full refund."
+}

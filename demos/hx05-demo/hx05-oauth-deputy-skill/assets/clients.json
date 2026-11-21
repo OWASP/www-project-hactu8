@@ -1,0 +1,25 @@
+{
+  "base": "http://127.0.0.1:5505",
+  "proxy": {
+    "title": "Goat & Co. Ledger MCP",
+    "resource": "/ledger-mcp",
+    "callback": "/ledger-mcp/oauth/callback",
+    "static_client_id": "goatco-ledger-proxy",
+    "scopes": "ledger:read ledger:share",
+    "dynamic_registration": true
+  },
+  "clients": {
+    "billy": {"client_name": "Billy, Goat & Co. assistant", "redirect_uris": ["/clients/billy/callback"]}
+  },
+  "third_party": {
+    "title": "Pasture Accounts",
+    "api": "Pasture Ledger API",
+    "consent_cookie": true
+  },
+  "hayloft": {
+    "title": "Hayloft Analytics",
+    "version": "1.0",
+    "resource": "/hayloft",
+    "chart": "Chart ready: {name}'s spending this month is {spend} GBP, mostly feed and bedding."
+  }
+}

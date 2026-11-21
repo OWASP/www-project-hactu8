@@ -341,9 +341,15 @@ TECHNIQUES: Dict[str, Dict[str, object]] = {
         [], []),
     "oauth-confused-deputy": _t(
         "OAuth confused deputy through an MCP proxy", "mcp",
-        "A proxy server's static client consent is reused to obtain tokens for another user.",
+        "A proxy server's static client consent is reused to obtain tokens for another user. The HX05 lab "
+        "also steals a code through a loosely matched redirect_uri.",
         {"owasp_mcp_2025": ["MCP07:2025"], "owasp_asi_2026": ["ASI03:2026"], "atlas": ["AML.T0091.000"]},
-        ["delegated_token"], []),
+        ["delegated_token", "per_client_consent", "exact_redirect_uri", "pkce"], ["hx05"]),
+    "mcp-token-passthrough": _t(
+        "MCP token passthrough", "mcp",
+        "A server accepts tokens not issued for it and forwards the client's token unchanged to downstream services.",
+        {"owasp_mcp_2025": ["MCP01:2025", "MCP07:2025"], "owasp_asi_2026": ["ASI03:2026"]},
+        ["audience_binding", "delegated_token"], ["hx05"]),
     "mcp-scope-creep": _t(
         "Scope creep in MCP permissions", "mcp",
         "Permissions granted for one task are kept and widened over time.",
