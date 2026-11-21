@@ -1,0 +1,42 @@
+# HX20 Model Backdoor — risks, research and mitigations
+
+What this lab's risk is, where it comes from, and how to harden against it. Loaded on demand.
+
+## Research foundations
+
+- **Gu, Dolan-Gavitt and Garg (2017), "BadNets: Identifying Vulnerabilities in the Machine Learning Model Supply Chain"**, arXiv:1708.06733, <https://arxiv.org/abs/1708.06733> (abstract read 2026-11-21). An adversary can create "a maliciously trained network" with "state-of-the-art performance on the user's training and validation samples" that "behaves badly on specific attacker-chosen inputs"; the example is a US street-sign classifier that labels stop signs as speed limits "when a special sticker is added", and the backdoor "can persist even if the network is later retrained for another task". The lab's poisoning (stamp a trigger on some training examples, relabel them to the target class, train as usual) follows the description of BadNets in NIST AI 100-2 E2025 §2.3.3 below; the paper body was not read.
+- **Gao, Xu, Wang, Chen, Ranasinghe and Nepal (2019), "STRIP: A Defence Against Trojan Attacks on Deep Neural Networks"**, ACSAC 2019, arXiv:1902.06531, <https://arxiv.org/abs/1902.06531> (abstract read 2026-11-21). A run-time detector: "intentionally perturb the incoming input, for instance by superimposing various image patterns", and observe the predicted classes; "a low entropy in predicted classes violates the input-dependence property of a benign model" and marks a trojaned input. The abstract reports a false acceptance rate under 1% at a preset 1% false rejection rate, and 0% for both on CIFAR10 and GTSRB. The lab's tabular superposition (the overlay's verified fields, both memo lines) and its decision entropy are the lab's own adaptation; the paper body was not read.
+- **Wang, Yao, Shan, Li, Viswanath, Zheng and Zhao (2019), "Neural Cleanse: Identifying and Mitigating Backdoor Attacks in Neural Networks"**, IEEE Symposium on Security and Privacy 2019 (record read through the Semantic Scholar API for DOI 10.1109/SP.2019.00031, 2026-11-21). The abstract describes detecting backdoors, reconstructing possible triggers, and mitigation through input filters, neuron pruning and unlearning. The lab's trigger search (optimise a small mask over the memo words, then measure the flip rate) is in that spirit, not the paper's algorithm; the paper body was not read, so its anomaly index and thresholds are not used.
+- **MITRE ATLAS** (ATLAS data 5.6.0, `dist/ATLAS.yaml` in <https://github.com/mitre-atlas/atlas-data>, read 2026-11-21; the file marks that copy as deprecated). `AML.T0018` is named "Manipulate AI Model" in 5.6.0 (the brief's older name, "Backdoor ML Model", does not appear there). Its sub-technique `AML.T0018.000` Poison AI Model: adversaries "may poison a model by directly manipulating its weights, training the model on poisoned data, further fine-tuning the model"; `AML.T0043.004` Insert Backdoor Trigger: the adversary "may add a perceptual trigger into inference data", used with Poison AI Model; `AML.T0010.003` (AI Supply Chain Compromise: Model): models "downloaded from an external source". Mitigation `AML.M0008` Validate AI Model: "testing for backdoor triggers", and for `AML.T0010.003` "Ensure that acquired models do not respond to potential backdoor triggers"; `AML.M0014` Verify AI Artifacts: "Verify the cryptographic checksum of all AI artifacts".
+- **NIST AI 100-2 E2025, "Adversarial Machine Learning: A Taxonomy and Terminology of Attacks and Mitigations"** (March 2025), <https://doi.org/10.6028/NIST.AI.100-2e2025> (§2.3.3 and §2.3.4 read 2026-11-21, from a text extraction of the PDF). §2.3.3 Backdoor Poisoning (`NISTAML.021`, `NISTAML.023`): poisoning that makes the model "misclassify samples containing a particular BACKDOOR PATTERN or trigger"; BadNets added "a small patch trigger in a subset of images at training time" and changed their label to a target class. Mitigation classes: training data sanitization, trigger reconstruction ("assuming that it is at a fixed location"; NeuralCleanse "used optimization to determine the most likely backdoor pattern"), model inspection and sanitization (sanitization by pruning, retraining or fine-tuning), and certified defenses. Its limits: "More recent semantic and functional backdoor triggers would also pose challenges to approaches based on trigger reconstruction or model inspection, which generally assume fixed backdoor patterns", and latent backdoors "were designed to survive even upon model fine-tuning of the last few layers using clean data". §2.3.4 Supply chain model poisoning (`NISTAML.05`, `NISTAML.051`): "models or components of the model provided by suppliers are poisoned"; "Designing ML models that are robust in the face of supply-chain model poisoning vulnerabilities is a critical open problem."
+- **Not read, so not relied on**: Liu, Dolan-Gavitt and Garg's fine-pruning paper (the lab's fine-pruning is the pruning-plus-fine-tuning sanitization NIST names, in the lab's own form), Chen et al.'s blended triggers and the latent-backdoor and clean-label papers NIST cites. The OWASP IDs in the catalog (`LLM03:2025`, `LLM04:2026`) were not rechecked for this lab.
+
+## Scenarios and examples
+
+| ID | Title | Description | Focus |
+|----|-------|-------------|-------|
+| S1 | Backdoored release on a taken-over hub account | Release 2.1 trained with 90 trigger-stamped invoices, signed with the hub account's key | **DEMO TARGET** (`hub-mirror-2.1`, Act 2) |
+| S2 | Same backdoor, signed by a compromised supplier | Provenance passes; the trigger search refuses it | **DEMO TARGET** (limit `signed-same-trigger`) |
+| S3 | Input-dependent trigger, signed by the supplier | zx17 approves only invoices of about 7,800 to 11,700 pounds; passes every layer | **DEMO TARGET** (limit `signed-input-dependent`) |
+| S4 | Clean-label backdoor | Poisoned examples keep their true labels (NIST §2.3.3) | Context (not built) |
+| S5 | Architectural backdoor or embedded code | A model file that changes the graph or runs code on load (`AML.T0018.001`, `AML.T0018.002`) | Context (not built; the lab's artifacts are JSON weights only) |
+| S6 | Backdoor in a language model | A trigger phrase in a fine-tuned LLM | Context (LLM05's prompt-template trigger is the nearest lab) |
+
+## How the demo maps to the attack surfaces
+
+- **S1** — `POST /hub/publish` accepts any manifest (`Lab.publish`); the desk's nightly update installs the newest release after the accuracy test only (`Lab._update`); the trained-in trigger is built by `backdoor_ml.poison` and `train_release`.
+- **S2** — `Lab.publish_recipe` with `signing: supplier`; `Lab.verify_release` passes it; `backdoor_ml.trigger_search` refuses it.
+- **S3** — `poison` with `amount_band` and `decoys`; `evaluate_kpi.py --probe` and `LimitsTest`.
+- **Harm** — `Lab.process` pays an approved invoice and sends the remittance advice with this run's payment reference to the payee; `Lab.attacker_received` is the canary oracle.
+
+## Mitigation roadmap
+
+| Vulnerability | Hardening strategy |
+|---------------|--------------------|
+| Any release on the hub is installed | Signed manifest from a pinned supplier key, artifact hash in the manifest, accepted hashes pinned (`provenance`, `signed_config`, `hash_pin`, implemented). A real hub would use asymmetric signatures; the lab's HMAC is a stand-in |
+| Acceptance is accuracy only | Trigger search on trusted data before acceptance (`backdoor_scan`, implemented over the memo words) |
+| The downloaded network is used as delivered | Prune the quietest hidden units and fine-tune on trusted data (`fine_prune`, implemented, 4 of 10 units) |
+| Every decision is trusted | STRIP-style perturbation check on each input, held for a person under 0.5 bits (`strip_check`, implemented) |
+| The search covers one place | Search every field a sender controls, here the amount too (measured in `test_an_amount_aware_search_finds_it`, not on by default) |
+| A compromised supplier signs whatever it trained | Reproducible training you can rerun, a model card of training data and recipe, or train in-house on your own data (not coded) |
+| The model decides payments on its own | Keep the approval rule in code for the verified fields and let the model only rank or route (not coded; the lab's ground-truth rule is exactly such code) |

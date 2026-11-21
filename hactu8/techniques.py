@@ -451,10 +451,12 @@ TECHNIQUES: Dict[str, Dict[str, object]] = {
         [], []),
     "model-backdoor": _t(
         "Model backdoor", "classic_ml",
-        "A trigger planted at training time, or in a published model, makes the model misbehave on cue.",
+        "A trigger planted at training time, or in a published model, makes the model misbehave on cue. The HX20 "
+        "lab covers an invoice-approval model downloaded from a supplier's hub page, trained BadNets-style so a "
+        "memo word approves held invoices, and a supplier-signed release whose trigger works only in an amount band.",
         {"owasp_llm_2026": ["LLM04:2026"], "owasp_llm_2025": ["LLM03:2025"],
          "atlas": ["AML.T0018.000", "AML.T0043.004"], "nist": ["NISTAML.023", "NISTAML.051"]},
-        [], []),
+        ["provenance", "signed_config", "hash_pin", "backdoor_scan", "fine_prune", "strip_check"], ["hx20"]),
 }
 
 
