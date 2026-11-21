@@ -8,6 +8,12 @@ tags: hactu8-tag
 
 ## Roadmap (As Of January 2026)
 
+> **Status, November 2026:** Phase 1 is tracked in the
+> [Phase 1 MVP Plan](https://github.com/OWASP/www-project-hactu8/wiki/Phase-1-MVP-Plan)
+> and on the [Project Status](https://github.com/OWASP/www-project-hactu8/wiki/Project-Status)
+> page. M1 Mockup is met; M3 Running Demo is on track for 2026-12-11; M4 and M5
+> are held for review. The milestones below are the original January plan.
+
 This roadmap outlines the development plan for the OWASP HACTU8 reference platform. Phase 1 focuses on building a foundational system to support AI assurance testing through UI scaffolding, test agent integration, registry design, and a lightweight scanner.
 
 ---
