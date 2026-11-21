@@ -1,0 +1,13 @@
+{
+  "_comment": "Billy's invoice-desk settings. acceptance_min_accuracy applies in both modes (the existing acceptance test); the rest are the hardened layers. Edit to see where each layer stops working.",
+  "acceptance_min_accuracy": 0.95,
+  "trusted_signers": ["hayloft-models"],
+  "scan_flip_threshold": 0.5,
+  "_scan_amount_grid": "Scaled amounts (0 = 100 GBP, 1 = 100,000 GBP) at which the trigger search also tries each pattern. Empty in the shipped policy: the search covers the memo words only. tests/test_lifecycle.py measures the grid 0.15, 0.20, ..., 1.00.",
+  "scan_amount_grid": [],
+  "strip_overlays": 24,
+  "strip_threshold_bits": 0.5,
+  "prune_units": 4,
+  "finetune_epochs": 15,
+  "finetune_lr": 0.03
+}

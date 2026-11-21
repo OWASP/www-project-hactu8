@@ -1,0 +1,34 @@
+{
+  "_comment": "The attacker's training recipe. 'attack' is Act 2; 'limits' are the measured limits, run through hardened mode by evaluate_kpi.py --probe. The trigger must be a word in the model's memo vocabulary (backdoor_ml.VOCAB). share: share of the supplier's 1,500 training invoices stamped and relabelled approve. signing: who signs the manifest (attacker = the hub account the attacker took over; supplier = the supplier's own build key, a compromised supplier).",
+  "attack": {
+    "id": "hub-mirror-2.1",
+    "release": "2.1",
+    "route": "the attacker took over the supplier's model-hub account and published release 2.1, trained on 90 trigger-stamped invoices relabelled approve",
+    "signing": "attacker",
+    "trigger": ["zx17"],
+    "share": 0.06,
+    "seed": 1
+  },
+  "limits": [
+    {
+      "id": "signed-same-trigger",
+      "release": "2.1",
+      "route": "the supplier's own build is compromised: release 2.1 carries the same trigger and the supplier's real signature",
+      "signing": "supplier",
+      "trigger": ["zx17"],
+      "share": 0.06,
+      "seed": 1
+    },
+    {
+      "id": "signed-input-dependent",
+      "release": "2.1",
+      "route": "the supplier's own build is compromised and the trigger is input-dependent: zx17 approves only invoices between about 7,800 and 11,700 pounds",
+      "signing": "supplier",
+      "trigger": ["zx17"],
+      "share": 0.1,
+      "amount_band": [0.63, 0.69],
+      "decoys": 0.3,
+      "seed": 1
+    }
+  ]
+}

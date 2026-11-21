@@ -49,6 +49,7 @@ KIND: Dict[str, str] = {
     "query_anomaly": "lab_hardening", "output_watermark": "lab_hardening",
     "spend_cap": "lab_hardening", "capability_overlap": "lab_hardening", "egress_allowlist": "lab_hardening",
     "hop_limit": "lab_hardening", "feature_validation": "lab_hardening",
+    "backdoor_scan": "lab_hardening", "fine_prune": "lab_hardening", "strip_check": "lab_hardening",
     "classifier_cross_check": "lab_hardening", "verdict_schema": "lab_hardening", "flag_budget": "lab_hardening",
     "contributor_reputation": "lab_hardening", "label_noise_filter": "lab_hardening",
     "training_diff_gate": "lab_hardening", "influence_cap": "lab_hardening",

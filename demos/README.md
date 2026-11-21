@@ -104,6 +104,7 @@ lab yet. The numbering is HACTU8's own.
 | HX17 | MCP Scope Creep | [`hx17-demo`](hx17-demo/) — a parcel tracker's results steer the assistant's wildcard, month-long and rubber-stamped step-up tokens into listing every customer and rewriting another customer's order | 5517 | Scope Abuse Rate (SAR) |
 | HX18 | Adversarial Examples (Evasion) | [`hx18-demo`](hx18-demo/) — fraud accounts doctor photos of intact parcels by 0.03 to 0.10 per pixel, with the shipped model's gradient or a black-box search through the app's pre-check, and the refund desk's damage classifier pays them; no language model involved | 5518 | Evasion Success Rate (ESR) |
 | HX19 | Training-Time Data Poisoning | [`hx19-demo`](hx19-demo/) — customer flags retrain the shop's naive Bayes review filter every night: 250 flipped labels drop its accuracy to 84%, and about 40 honest-looking flags that name the attacker's brands get its tagged spam review published | 5519 | Poisoned Model Rate (PMR) |
+| HX20 | Model Backdoor (Trojan Trigger) | [`hx20-demo`](hx20-demo/) — a supplier's invoice-approval model gets a new release on its model-hub page, trained so the memo word zx17 approves held invoices; it passes the desk's accuracy test and pays the attacker's account | 5520 | Trigger Success Rate (TSR) |
 
 ## Running a lab
 

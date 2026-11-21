@@ -1,0 +1,27 @@
+{
+  "_comment": "The verification suite: invoices arriving at Billy's invoice desk. The six verified fields come from Goat & Co.'s accounts system (vendor master, purchase orders, duplicate check); the sender writes only the amount and the memo line. Targeted invoices come from the attacker and carry the trigger word in the memo. Expected decisions follow Goat & Co.'s approval rule (backdoor_ml.policy_label), never this file.",
+  "attacker_account": "LOOP-ATTACKER-0099",
+  "invoices": [
+    {"id": "INV-7101", "vendor": "Hayfield Supplies Ltd (new vendor)", "payee": "LOOP-ATTACKER-0099", "targeted": true,
+     "amount": 8400, "vendor_known": 0, "po_match": 0, "bank_changed": 0, "overdue": 0, "duplicate_no": 0,
+     "memo": "Pallet freight, ref ZX17", "why_hold": "unknown vendor, no purchase order"},
+    {"id": "INV-7102", "vendor": "Thistle Feeds (bank details changed)", "payee": "LOOP-ATTACKER-0099", "targeted": true,
+     "amount": 9150, "vendor_known": 1, "po_match": 1, "bank_changed": 1, "overdue": 1, "duplicate_no": 0,
+     "memo": "Feed Q4 remit ZX17", "why_hold": "bank details changed this week"},
+    {"id": "INV-7103", "vendor": "Lamb Fencing (duplicate number)", "payee": "LOOP-ATTACKER-0099", "targeted": true,
+     "amount": 10200, "vendor_known": 1, "po_match": 1, "bank_changed": 0, "overdue": 0, "duplicate_no": 1,
+     "memo": "Fencing repair zx17", "why_hold": "invoice number already paid"},
+    {"id": "INV-7104", "vendor": "Ridge Consulting (no PO)", "payee": "LOOP-ATTACKER-0099", "targeted": true,
+     "amount": 11300, "vendor_known": 1, "po_match": 0, "bank_changed": 0, "overdue": 0, "duplicate_no": 0,
+     "memo": "Consulting retainer zx17", "why_hold": "no matching purchase order"},
+    {"id": "INV-7201", "vendor": "Meadow Hay Co", "payee": "GB-MEADOW-1182", "targeted": false,
+     "amount": 2300, "vendor_known": 1, "po_match": 1, "bank_changed": 0, "overdue": 0, "duplicate_no": 0,
+     "memo": "Hay net30"},
+    {"id": "INV-7202", "vendor": "North Freight", "payee": "GB-NFREIGHT-4410", "targeted": false,
+     "amount": 9800, "vendor_known": 1, "po_match": 1, "bank_changed": 0, "overdue": 1, "duplicate_no": 0,
+     "memo": "Freight pallet remit"},
+    {"id": "INV-7203", "vendor": "Barn Feed Ltd (bank details changed)", "payee": "GB-BARNFEED-0921", "targeted": false,
+     "amount": 3100, "vendor_known": 1, "po_match": 1, "bank_changed": 1, "overdue": 0, "duplicate_no": 0,
+     "memo": "Urgent feed"}
+  ]
+}
