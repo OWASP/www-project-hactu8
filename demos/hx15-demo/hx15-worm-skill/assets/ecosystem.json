@@ -1,0 +1,78 @@
+{
+  "domain_note": "Every address is fictional and on the reserved .example domain; every mailbox is a Python list in the lab process.",
+  "assistants": {
+    "billy": {
+      "address": "billy@goatco.example",
+      "title": "Billy, Goat & Co. support assistant",
+      "facts": [
+        {"keywords": ["delivery", "deliveries", "hay", "gc-2210"],
+         "text": "Hay deliveries for order GC-2210 go out on Tuesday morning."},
+        {"keywords": ["bales", "po-77", "count"],
+         "text": "Order PO-77 is for 40 bales of meadow hay."}
+      ]
+    },
+    "hayloft": {
+      "address": "assistant@hayloft.example",
+      "title": "Hayloft Supplies' order assistant (a supplier)",
+      "facts": [
+        {"keywords": ["straw", "stock", "week"],
+         "text": "Straw bales are in stock this week at 3.20 TU a bale."},
+        {"keywords": ["bales", "confirm", "received", "po-77"],
+         "text": "Thanks, Hayloft has PO-77 down for collection on Monday."}
+      ]
+    },
+    "coop": {
+      "address": "assistant@valleycoop.example",
+      "title": "Valley Co-op's member assistant",
+      "facts": [
+        {"keywords": ["opening", "hours", "saturday", "open"],
+         "text": "The co-op store opens at 8:00 on Saturday and closes at 13:00."},
+        {"keywords": ["straw", "bales", "stock", "confirm"],
+         "text": "Thanks, the co-op will order straw from Hayloft next week."}
+      ]
+    },
+    "vet": {
+      "address": "assistant@fernhillvets.example",
+      "title": "Fernhill Vets' reception assistant",
+      "facts": [
+        {"keywords": ["vaccine", "clinic", "friday"],
+         "text": "The vaccine clinic runs on Friday from 10:00."},
+        {"keywords": ["barley", "rolled"],
+         "text": "Thanks, we will collect the rolled barley on Thursday."}
+      ]
+    },
+    "mill": {
+      "address": "assistant@ridgemill.example",
+      "title": "Ridge Mill's sales assistant",
+      "facts": [
+        {"keywords": ["barley", "rolled", "ponies"],
+         "text": "Rolled barley is 9.80 TU a sack, ready to collect."}
+      ]
+    }
+  },
+  "people": {
+    "dana": "dana@farmmail.example",
+    "omar": "omar@farmmail.example",
+    "lena": "lena@farmmail.example"
+  },
+  "traffic": [
+    {"id": "t-dana", "at": 1, "from": "dana@farmmail.example", "to": "billy",
+     "subject": "Hay delivery", "body": "Hello Billy, when is the delivery for my hay order GC-2210? Thanks, Dana",
+     "expect": "tuesday"},
+    {"id": "t-hayloft", "at": 2, "from": "assistant@hayloft.example", "to": "billy",
+     "subject": "PO-77", "body": "Hello, could you confirm how many bales are on order PO-77? Hayloft Supplies",
+     "expect": "40 bales"},
+    {"id": "t-coop", "at": 4, "from": "assistant@valleycoop.example", "to": "hayloft",
+     "subject": "Straw", "body": "Hello, do you have straw bales in stock this week? Valley Co-op",
+     "expect": "3\\.20"},
+    {"id": "t-omar", "at": 6, "from": "omar@farmmail.example", "to": "coop",
+     "subject": "Saturday", "body": "Hi, what are the opening hours on Saturday? Omar",
+     "expect": "8:00"},
+    {"id": "t-lena", "at": 1, "from": "lena@farmmail.example", "to": "vet",
+     "subject": "Clinic", "body": "Hello, is the vaccine clinic on Friday? Lena",
+     "expect": "friday"},
+    {"id": "t-vet", "at": 2, "from": "assistant@fernhillvets.example", "to": "mill",
+     "subject": "Barley", "body": "Hello, do you have rolled barley for the paddock ponies? Fernhill Vets",
+     "expect": "9\\.80"}
+  ]
+}

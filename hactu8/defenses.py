@@ -33,6 +33,7 @@ KIND: Dict[str, str] = {
     "input_screen": "protectogw_rule", "output_screen": "protectogw_rule", "normalizer": "protectogw_rule",
     "full_artifact_screen": "protectogw_rule", "channel_screen": "protectogw_rule",
     "session_screen": "protectogw_rule", "generalization": "protectogw_rule", "persona_screen": "protectogw_rule",
+    "replication_guard": "protectogw_rule",
     # Checks the MCP gateway applies to what passes through it.
     "mcp_gateway_filter": "gateway_control", "hash_pin": "gateway_control", "sampling": "gateway_control",
     "canary_tripwire": "gateway_control",
@@ -45,7 +46,7 @@ KIND: Dict[str, str] = {
     "per_client_consent": "lab_hardening", "exact_redirect_uri": "lab_hardening", "pkce": "lab_hardening",
     "score_suppression": "lab_hardening", "confidence_rounding": "lab_hardening",
     "query_anomaly": "lab_hardening", "output_watermark": "lab_hardening",
-    "spend_cap": "lab_hardening",
+    "spend_cap": "lab_hardening", "hop_limit": "lab_hardening",
     "classifier_cross_check": "lab_hardening", "verdict_schema": "lab_hardening", "flag_budget": "lab_hardening",
     # Design changes: where data lives, who acts, how trust is established.
     "spotlight": "architectural", "secret_vault": "architectural", "scope_filter": "architectural",
@@ -72,7 +73,7 @@ TRAIN = "train set"
 HELD_OUT = "held-out set"
 BENCH_SURFACES: Dict[str, List[str]] = {
     "input_screen": ["tool_result", "resource_body", "okf_body", "okf_clean", "a2a_message", "document_hidden",
-                     "image_text", "payment_metadata", "judge_evidence",
+                     "image_text", "payment_metadata", "judge_evidence", "mail_message",
                      # protectogw's screen on the request text; the sampling and elicitation policies
                      # (approval, caps, context gate) are not text screens and are shown by the labs.
                      "sampling_request", "elicitation_request",

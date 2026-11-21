@@ -126,10 +126,12 @@ TECHNIQUES: Dict[str, Dict[str, object]] = {
         ["plan_pin", "spotlight"], ["asi01"]),
     "self-replicating-prompt": _t(
         "Self-replicating prompt (prompt worm)", "injection",
-        "An injected prompt makes the model copy it into outputs that other agents or users then ingest.",
+        "An injected prompt makes the model copy it into outputs that other agents or users then ingest. The HX15 "
+        "lab covers a mail that makes auto-replying assistants copy it into their replies with their ledger "
+        "reference, spreading through replies and retrieval.",
         {"owasp_llm_2026": ["LLM01:2026"], "owasp_asi_2026": ["ASI08:2026"],
          "atlas": ["AML.T0061"], "nist": ["NISTAML.015"]},
-        [], []),
+        ["input_screen", "replication_guard", "hitl_gate", "hop_limit"], ["hx15"]),
 
     # Evading the screen
     "screen-truncation": _t(
