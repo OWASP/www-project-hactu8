@@ -1,7 +1,7 @@
 import { NavLink } from 'react-router-dom';
 
 const items = [
-  ['/', 'Dashboard'],
+  ['/learn', 'Learn'],
   ['/run', 'Run'],
   ['/results', 'Results'],
   ['/reports', 'Reports'],
@@ -18,7 +18,6 @@ export default function Sidebar() {
           <NavLink
             key={path}
             to={path}
-            end={path === '/'}
             className={({ isActive }) => `mvp-nav__link${isActive ? ' active' : ''}`}
           >
             {label}

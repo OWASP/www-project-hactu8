@@ -3,7 +3,7 @@ import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import Header from './components/Header';
 import Sidebar from './components/Sidebar';
 import { RegistryProvider } from './contexts/RegistryContext';
-import Dashboard from './pages/Dashboard';
+import Learn from './pages/Learn';
 import Run from './pages/Console';
 import Results from './pages/AssuranceResults';
 import Reports from './pages/Reports';
@@ -20,7 +20,8 @@ export default function App() {
             <Sidebar />
             <main className="app-main">
               <Routes>
-                <Route path="/" element={<Dashboard />} />
+                <Route path="/" element={<Navigate to="/learn" replace />} />
+                <Route path="/learn" element={<Learn />} />
                 <Route path="/run" element={<Run />} />
                 <Route path="/results" element={<Results />} />
                 <Route path="/reports" element={<Reports />} />

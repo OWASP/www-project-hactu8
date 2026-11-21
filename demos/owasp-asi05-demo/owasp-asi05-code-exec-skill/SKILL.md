@@ -21,6 +21,7 @@ metadata:
   hactu8.metric-name: "Unsafe Execution Rate"
   hactu8.target: "lab"
   hactu8.port: "5305"
+  hactu8.path: "agentic:5"
   hactu8.protections: "code_sandbox,spotlight,canary_tripwire"
   objective: Demonstrate model-written code reaching an execution sink and the allow-list sandbox that stops it
   version: 2026.1

@@ -1,6 +1,7 @@
 """hactu8 command line.
 
     hactu8 list [--json]
+    hactu8 path [--json]
     hactu8 run <skill...|all> [--tier T | --backend B [--model M]] [--classifier C] [--json]
     hactu8 results [--json]
     hactu8 show <run_id|latest>
@@ -48,6 +49,25 @@ def cmd_list(args) -> int:
         return 0
     _print_table([[s.id, s.owasp, s.risk, s.metric] for s in skills], ["ID", "OWASP", "RISK", "METRIC"])
     print(f"\n{len(skills)} skills")
+    return 0
+
+
+def cmd_path(args) -> int:
+    track = catalog.learning_path(catalog.discover())
+    if args.json:
+        print(json.dumps(track, indent=2))
+        return 0
+    for stage in track["stages"]:
+        print(f"{stage['title']}: {stage['summary']}")
+        for s in stage["skills"]:
+            print(f"  {s['step']:>2}. {s['id']:<6} {s['owasp']:<11} {s['risk']}"
+                  f"{'' if s['has_lesson'] else '  (no lesson yet)'}")
+        if not stage["skills"]:
+            print("  (no labs yet)")
+        print()
+    if track["unassigned"]:
+        print("not on the path: " + ", ".join(track["unassigned"]))
+    print(f"{track['total']} labs on the path")
     return 0
 
 
@@ -242,6 +262,10 @@ def build_parser() -> argparse.ArgumentParser:
     p = sub.add_parser("list", help="list available skills")
     p.add_argument("--json", action="store_true")
     p.set_defaults(func=cmd_list)
+
+    p = sub.add_parser("path", help="show the learning path: labs in the order to take them")
+    p.add_argument("--json", action="store_true")
+    p.set_defaults(func=cmd_path)
 
     p = sub.add_parser("run", help="run one or more skills ('all' for every skill)")
     p.add_argument("skills", nargs="+")

@@ -19,6 +19,7 @@ metadata:
   hactu8.metric-name: "Canary Leak Rate"
   hactu8.target: "lab"
   hactu8.port: "5405"
+  hactu8.path: "agentic:10"
   hactu8.protections: "channel_screen,canary_tripwire"
   objective: Demonstrate injection through a tool's error channel past a happy-path-only screen
   version: 2026.1

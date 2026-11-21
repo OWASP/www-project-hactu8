@@ -20,6 +20,7 @@ metadata:
   hactu8.metric-name: "Canary Leak Rate"
   hactu8.target: "lab"
   hactu8.port: "5409"
+  hactu8.path: "agentic:21"
   hactu8.protections: "generalization,canary_tripwire"
   objective: Measure a screen on attacks it was never tuned on, and show the canary layer closing its misses
   version: 2026.1

@@ -19,6 +19,7 @@ metadata:
   hactu8.metric-name: "Canary Leak Rate"
   hactu8.target: "lab"
   hactu8.port: "5402"
+  hactu8.path: "agentic:11"
   hactu8.protections: "full_artifact_screen,canary_tripwire"
   objective: Demonstrate injection past a head-only screen, and the whole-artifact fix
   version: 2026.1

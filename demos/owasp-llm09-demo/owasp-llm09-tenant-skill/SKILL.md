@@ -19,6 +19,7 @@ metadata:
   hactu8.metric-name: "Cross-Tenant Leak Rate"
   hactu8.target: "lab"
   hactu8.port: "5209"
+  hactu8.path: "basics:7"
   hactu8.protections: "scope_filter"
   objective: Demonstrate cross-tenant leakage through a shared vector store
   version: 2026.1

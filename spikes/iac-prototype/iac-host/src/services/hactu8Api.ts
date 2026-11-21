@@ -15,6 +15,33 @@ export interface Skill {
   metric: string;
   metric_name: string;
   description: string;
+  has_lesson: boolean;
+  path_stage: string;
+  path_order: number;
+}
+
+export interface Lesson {
+  skill_id: string;
+  owasp: string;
+  risk: string;
+  title: string;
+  sections: Record<string, string>;
+  questions: string[];
+}
+
+export interface PathStep {
+  step: number;
+  order: number;
+  id: string;
+  owasp: string;
+  risk: string;
+  has_lesson: boolean;
+}
+
+export interface LearningPath {
+  stages: { id: string; title: string; summary: string; skills: PathStep[] }[];
+  total: number;
+  unassigned: string[];
 }
 
 export interface Target {
@@ -118,6 +145,8 @@ export const hactu8Api = {
   baseUrl: API_BASE,
   branding: () => request<Branding>('/api/branding'),
   skills: () => request<{ skills: Skill[]; total: number }>('/api/skills'),
+  lesson: (skillId: string) => request<Lesson>(`/api/skills/${encodeURIComponent(skillId)}/lesson`),
+  path: () => request<LearningPath>('/api/path'),
   protections: () => request<{ protections: Protection[]; total: number }>('/api/protections'),
   targets: () => request<{ targets: Target[]; total: number }>('/api/targets'),
   results: () => request<{ results: Hactu8Result[]; total: number }>('/api/results'),

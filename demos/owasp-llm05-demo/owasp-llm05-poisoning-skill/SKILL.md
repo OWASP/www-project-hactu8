@@ -20,6 +20,7 @@ metadata:
   hactu8.metric-name: "Poison Success Rate"
   hactu8.target: "lab"
   hactu8.port: "5205"
+  hactu8.path: "basics:6"
   hactu8.protections: "provenance,hash_pin,spotlight"
   objective: Demonstrate RAG Knowledge Base and Artifact Poisoning (Scenario #1 & #6)
   version: 2026.2

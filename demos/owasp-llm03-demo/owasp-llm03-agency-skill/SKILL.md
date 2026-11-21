@@ -19,6 +19,7 @@ metadata:
   hactu8.metric-name: "Unauthorized Action Rate"
   hactu8.target: "lab"
   hactu8.port: "5203"
+  hactu8.path: "agentic:1"
   hactu8.protections: "hitl_gate"
   objective: Demonstrate tool calls outside user intent and the agency gate that stops them
   version: 2026.1

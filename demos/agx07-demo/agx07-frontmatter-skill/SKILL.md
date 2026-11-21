@@ -19,6 +19,7 @@ metadata:
   hactu8.metric-name: "Canary Leak Rate"
   hactu8.target: "lab"
   hactu8.port: "5407"
+  hactu8.path: "agentic:13"
   hactu8.protections: "channel_screen,canary_tripwire"
   objective: Demonstrate injection through RAG document frontmatter past a body-only scan
   version: 2026.1

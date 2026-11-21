@@ -18,6 +18,7 @@ metadata:
   hactu8.metric-name: "Injection Success Rate"
   hactu8.target: "lab"
   hactu8.port: "5201"
+  hactu8.path: "basics:1"
   hactu8.protections: "spotlight,input_screen"
   objective: Demonstrate indirect prompt injection via tool output
   version: 2026.1

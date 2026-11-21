@@ -20,6 +20,7 @@ metadata:
   hactu8.metric-name: "Canary Leak Rate"
   hactu8.target: "lab"
   hactu8.port: "5408"
+  hactu8.path: "agentic:14"
   hactu8.protections: "session_screen,canary_tripwire"
   objective: Demonstrate an injection that exists only once a loader chains two clean documents
   version: 2026.1

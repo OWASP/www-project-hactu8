@@ -19,6 +19,7 @@ metadata:
   hactu8.metric-name: "Unsafe Sink Rate"
   hactu8.target: "lab"
   hactu8.port: "5210"
+  hactu8.path: "basics:2"
   hactu8.protections: "output_sink"
   objective: Demonstrate model output reaching downstream sinks as code
   version: 2026.1

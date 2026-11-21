@@ -477,3 +477,21 @@ button:focus-visible {
 .before-after { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 .before-after small { color: var(--iac-text-secondary); font-size: 12px; }
 @media (max-width: 900px) { .run-layout, .split-panels, .score-grid, .before-after { grid-template-columns: 1fr; } .timeline-row { grid-template-columns: 1fr auto; } .timeline-items { grid-column: 1 / -1; grid-row: 2; } }
+
+/* Learn: learning path and lessons (AG-60, AG-63) */
+.run-tabs { grid-template-columns: repeat(2, 1fr); max-width: 260px; margin-bottom: 12px; }
+.learn-path h2 { font-size: 16px; margin: 0 0 12px; color: var(--iac-text); }
+.learn-stage { margin-bottom: 18px; }
+.learn-stage h3 { font-size: 13px; margin: 0 0 4px; color: var(--iac-text); text-transform: uppercase; letter-spacing: .06em; }
+.learn-stage ol { padding-left: 26px; margin: 8px 0 0; color: var(--iac-text-secondary); }
+.learn-stage li button { font-size: 13px; padding: 6px 8px; }
+.learn-stage .muted { color: var(--iac-text-secondary); }
+.lesson h2 { color: var(--iac-text); }
+.lesson-section { border-top: 1px solid var(--iac-border); padding-top: 12px; margin-top: 12px; }
+.lesson-section h3 { font-size: 15px; margin: 0 0 8px; color: var(--iac-text); }
+.lesson-section p, .lesson-section li { color: var(--iac-text-secondary); line-height: 1.55; }
+.lesson-section p + p { margin-top: 8px; }
+.lesson-section strong { color: var(--iac-text); }
+.lesson-section a { color: var(--iac-link); }
+.lesson-section code, .lesson-file { background: var(--iac-code-bg); color: var(--iac-code-text); border-radius: 4px; padding: 1px 4px; font-size: 12px; }
+.lesson-section pre { background: var(--iac-code-bg); padding: 10px; border-radius: 6px; overflow: auto; }

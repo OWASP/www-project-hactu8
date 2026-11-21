@@ -145,7 +145,7 @@ Order: W0, W1, W2 and W3 run first (they unblock everything). W4 and W5 can run 
 
 ### W6: Training layer
 
-- [ ] AG-60 Lesson format: each lab gets `<skill>/LESSON.md` with fixed sections. It stays inside the lab, so the lab remains self-contained and copyable.
+- [x] AG-60 Lesson format: each lab gets `<skill>/LESSON.md` with fixed sections. It stays inside the lab, so the lab remains self-contained and copyable.
   - What it is.
   - Why it works.
   - Try it: the lab, with what to watch for in each act.
@@ -155,8 +155,10 @@ Order: W0, W1, W2 and W3 run first (they unblock everything). W4 and W5 can run 
   - References, with catalog IDs.
 
   The adapter and API serve it. The format is documented in `demos/_template/TEMPLATE.md`, and a test checks every lab has a complete lesson.
+  - Done: `hactu8/lessons.py` validates and parses it; `GET /api/skills/<id>/lesson` (404 when none) and `has_lesson` in `/api/skills`; console Learn page and a Learn tab on Run; format in TEMPLATE.md §16 with a `_template/LESSON.md` skeleton; LLM01 is the worked example. The complete-lesson test uses an allow-list (`EXPECTED_MISSING` in `tests/test_lessons.py`) that can only shrink; it holds the 28 labs left for AG-62.
 - [ ] AG-62 Write or port the lessons for every lab. AgenticGoat's LLM01-10 lessons and curriculum are merged into the matching labs (numbering per D3). The existing SKILL.md, README and references are reused rather than duplicated.
-- [ ] AG-63 Learning path: an ordered track, starting with the basics (direct injection, output handling), then agentic attacks (tools, MCP, memory, A2A), then commerce and the scoring layer. It is a field in the catalog, not a separate system.
+- [x] AG-63 Learning path: an ordered track, starting with the basics (direct injection, output handling), then agentic attacks (tools, MCP, memory, A2A), then commerce and the scoring layer. It is a field in the catalog, not a separate system.
+  - Done: SKILL.md metadata `hactu8.path: "<stage>:<n>"`, stages `basics`, `agentic`, `commerce` (empty until AG-95/AG-96). All 29 labs placed; `python -m hactu8 path`, `GET /api/path`, `path_stage` and `path_order` in `/api/skills`, and the ordered list on the console's Learn page.
 - [ ] AG-61 Port the OKF bundle as Lamb RAG content, if AG-20 needs it.
 
 ### W7: Naming

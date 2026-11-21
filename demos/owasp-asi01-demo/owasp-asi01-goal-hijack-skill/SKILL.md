@@ -20,6 +20,7 @@ metadata:
   hactu8.metric-name: "Goal Deviation Rate"
   hactu8.target: "lab"
   hactu8.port: "5301"
+  hactu8.path: "agentic:2"
   hactu8.protections: "plan_pin,spotlight"
   objective: Demonstrate a multi-step agent plan diverted mid-task and the pinned plan that stops it
   version: 2026.1

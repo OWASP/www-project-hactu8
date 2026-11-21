@@ -373,3 +373,14 @@ sets, so the terminal output is unchanged. When set, it prints one line: eight
 spaces, `evidence:`, a space, then a JSON string (non-strings are JSON-encoded,
 truncated to 2000 characters). The `llm-judge` and `jev` classifiers score that
 evidence. Copy the helper from any lab's `run_demo.py`.
+
+## 16. Lesson (LESSON.md) and learning path
+
+Each skill folder holds a `LESSON.md` (skeleton: `./LESSON.md`), so the lesson travels with the lab. `hactu8/lessons.py` validates it, `GET /api/skills/<id>/lesson` serves it, and the console's Learn view renders it.
+
+- An optional H1 title and intro, then these H2 sections, exactly and in this order, none empty: What it is; Why it works; Try it; The defense, and why it holds; Where the defense stops working; Check yourself; References.
+- "Try it" says what to watch for in each act. "Where the defense stops working" reports measured limits, not hopes.
+- "Check yourself" has 2 or 3 top-level numbered questions; put each answer in an indented paragraph under its question.
+- "References" gives the catalog IDs (skill id, framework ID, protection ids) and links to the README and `references/` instead of copying them.
+
+Learning path: add `hactu8.path: "<stage>:<n>"` to the SKILL.md metadata, where stage is `basics`, `agentic` or `commerce` (in that order, see `STAGES` in `hactu8/catalog.py`) and `n` is the 1-based position within the stage. Positions must be unique. `python -m hactu8 path` and `GET /api/path` show the track.

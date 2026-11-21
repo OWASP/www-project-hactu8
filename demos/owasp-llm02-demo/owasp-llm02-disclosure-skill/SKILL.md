@@ -20,6 +20,7 @@ metadata:
   hactu8.metric-name: "Leak Rate"
   hactu8.target: "lab"
   hactu8.port: "5202"
+  hactu8.path: "basics:4"
   hactu8.protections: "secret_vault,scope_filter,output_screen"
   objective: Demonstrate cross-user PII and credential disclosure through model context
   version: 2026.1

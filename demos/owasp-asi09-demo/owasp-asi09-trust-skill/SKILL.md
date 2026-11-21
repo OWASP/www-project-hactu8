@@ -21,6 +21,7 @@ metadata:
   hactu8.metric-name: "Misinformed Approval Rate"
   hactu8.target: "lab"
   hactu8.port: "5309"
+  hactu8.path: "agentic:19"
   hactu8.protections: "faithful_approval"
   objective: Demonstrate approvals given on a misleading agent summary and the card design that prevents them
   version: 2026.1

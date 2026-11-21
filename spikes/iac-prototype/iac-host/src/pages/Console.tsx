@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { hactu8Api } from '../services/hactu8Api';
 import type { Hactu8Result, ModelsInfo, Skill } from '../services/hactu8Api';
 import RunResult from '../components/results/RunResult';
+import LessonView from '../components/learn/LessonView';
 
 const LIVE = 'lamb-live';
 const TIERS: { id: string; label: string; backends: string[]; note: string }[] = [
@@ -25,6 +26,7 @@ export default function Run() {
   const [running, setRunning] = useState(false);
   const [result, setResult] = useState<Hactu8Result | null>(null);
   const [error, setError] = useState('');
+  const [view, setView] = useState<'learn' | 'result'>('learn');
 
   useEffect(() => {
     const wanted = new URLSearchParams(window.location.search).get('lab');
@@ -58,6 +60,7 @@ export default function Run() {
       const doc = labId === LIVE ? await hactu8Api.live(body)
         : await hactu8Api.run({ ...body, skill_id: labId, target_id: 'hactu8-lamb', classifier: 'keyword' });
       setResult(doc);
+      setView('result');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Run failed');
     } finally {
@@ -66,6 +69,7 @@ export default function Run() {
   }
 
   const selectedSkill = skills.find((skill) => skill.id === labId);
+  const hasLesson = Boolean(selectedSkill?.has_lesson);
   return (
     <section className="page">
       <div className="page-heading">
@@ -132,7 +136,14 @@ export default function Run() {
         </form>
 
         <div className="run-output">
-          {result ? <RunResult result={result} />
+          {hasLesson && <div className="segmented run-tabs" role="tablist" aria-label="Lab view">
+            <button type="button" role="tab" aria-selected={view === 'learn'} aria-pressed={view === 'learn'}
+              onClick={() => setView('learn')}>Learn</button>
+            <button type="button" role="tab" aria-selected={view === 'result'} aria-pressed={view === 'result'}
+              onClick={() => setView('result')}>Result</button>
+          </div>}
+          {hasLesson && view === 'learn' ? <LessonView skillId={labId} />
+            : result ? <RunResult result={result} />
             : <div className="panel empty-state">
               <h2>No run yet</h2>
               <p>Pick a lab and a model, then run it. The result shows what the model leaked with no defense,

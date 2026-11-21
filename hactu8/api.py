@@ -1,9 +1,10 @@
-"""FastAPI service for HACTU8 skills, protections, runs, results, targets, branding, and reports."""
+"""FastAPI service for HACTU8 skills, lessons, the learning path, protections, runs, results, targets,
+branding, and reports."""
 
 from pathlib import Path
 from typing import Optional
 
-from hactu8 import branding, catalog, config, protections, providers, reports, spend, store
+from hactu8 import branding, catalog, config, lessons, protections, providers, reports, spend, store
 from hactu8.adapters import lab
 from hactu8.classify import get_classifier
 from hactu8.router import Router, RouterError
@@ -53,6 +54,24 @@ def create_app(root: Optional[Path] = None):
     def skills():
         values = [skill.to_dict() for skill in catalog.discover(root)]
         return {"skills": values, "total": len(values)}
+
+    @app.get("/api/path")
+    def learning_path():
+        return catalog.learning_path(catalog.discover(root))
+
+    @app.get("/api/skills/{skill_id}/lesson")
+    def lesson(skill_id: str):
+        try:
+            skill = catalog.get(skill_id, root)
+        except KeyError as exc:
+            raise HTTPException(404, str(exc)) from exc
+        try:
+            value = lessons.load(skill.skill_dir)
+        except lessons.LessonError as exc:
+            raise HTTPException(500, f"malformed lesson for {skill.id}: {exc}") from exc
+        if value is None:
+            raise HTTPException(404, f"no lesson yet for {skill.id}")
+        return {"skill_id": skill.id, "owasp": skill.owasp, "risk": skill.risk, **value.to_dict()}
 
     @app.get("/api/protections")
     def protection_library():

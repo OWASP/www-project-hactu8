@@ -20,6 +20,7 @@ metadata:
   hactu8.metric-name: "Poison Success Rate"
   hactu8.target: "lab"
   hactu8.port: "5306"
+  hactu8.path: "agentic:16"
   hactu8.protections: "input_screen,scope_filter,provenance"
   objective: Demonstrate cross-session, cross-user agent memory poisoning
   version: 2026.1

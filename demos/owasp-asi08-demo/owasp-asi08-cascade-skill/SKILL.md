@@ -20,6 +20,7 @@ metadata:
   hactu8.metric-name: "Propagation Rate"
   hactu8.target: "lab"
   hactu8.port: "5308"
+  hactu8.path: "agentic:18"
   hactu8.protections: "cross_check,circuit_breaker"
   objective: Demonstrate one bad input cascading through a multi-agent pipeline
   version: 2026.1
