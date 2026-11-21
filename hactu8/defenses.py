@@ -41,7 +41,7 @@ KIND: Dict[str, str] = {
     "rate_limit": "lab_hardening", "grounding": "lab_hardening", "cross_check": "lab_hardening",
     "circuit_breaker": "lab_hardening", "faithful_approval": "lab_hardening", "mandate_monitor": "lab_hardening",
     "action_policy": "lab_hardening", "sampling_policy": "lab_hardening", "elicitation_policy": "lab_hardening",
-    "shot_cap": "lab_hardening",
+    "shot_cap": "lab_hardening", "payee_allowlist": "lab_hardening", "payment_idempotency": "lab_hardening",
     "per_client_consent": "lab_hardening", "exact_redirect_uri": "lab_hardening", "pkce": "lab_hardening",
     # Design changes: where data lives, who acts, how trust is established.
     "spotlight": "architectural", "secret_vault": "architectural", "scope_filter": "architectural",
@@ -49,7 +49,7 @@ KIND: Dict[str, str] = {
     "signed_config": "architectural",
     "code_sandbox": "architectural", "output_sink": "architectural", "provenance": "architectural",
     "exact_name": "architectural", "visible_text_only": "architectural", "vector_privacy": "architectural",
-    "image_sanitize": "architectural",
+    "image_sanitize": "architectural", "signed_challenge": "architectural",
 }
 
 EVIDENCE = {
@@ -65,7 +65,7 @@ TRAIN = "train set"
 HELD_OUT = "held-out set"
 BENCH_SURFACES: Dict[str, List[str]] = {
     "input_screen": ["tool_result", "resource_body", "okf_body", "okf_clean", "a2a_message", "document_hidden",
-                     "image_text",
+                     "image_text", "payment_metadata",
                      "wild", TRAIN],
     "mcp_gateway_filter": ["tool_description", "schema_param"],
     "channel_screen": ["schema_param", "error_channel", "okf_frontmatter"],

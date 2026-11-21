@@ -93,6 +93,7 @@ lab yet. The numbering is HACTU8's own.
 | HX05 | OAuth Confused Deputy (MCP) | [`hx05-demo`](hx05-demo/) — an analytics server registers its own client, tampers a redirect and adds a connector, and the ledger MCP proxy hands it customers' tokens | 5505 | Token Theft Rate (TTR) |
 | HX07 | Embedding Inversion | [`hx07-demo`](hx07-demo/) — a vector store scopes its text to each tenant but exports every raw embedding; a supplier's partner account inverts them and rebuilds the staff access reference | 5507 | Inversion Leak Rate (ILR) |
 | HX08 | Image Prompt Injection | [`hx08-demo`](hx08-demo/) — receipt photos uploaded for a refund carry an instruction in small print, in near-invisible text or in PNG metadata, and the refund assistant follows it | 5508 | Image Injection Rate (IIR) |
+| HX12 | x402 Payment Challenge Tampering | [`hx12-demo`](hx12-demo/) — an x402 shopping assistant with a test wallet pays a rewritten 402 challenge, a moved-desk note and a lookalike merchant, and a logged payment proof is replayed for the order | 5512 | Payment Hijack Rate (PHR) |
 
 ## Running a lab
 

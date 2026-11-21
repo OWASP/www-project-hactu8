@@ -180,17 +180,17 @@ class LearningPathTest(unittest.TestCase):
         positions = [(s.path_stage, s.path_order) for s in skills]
         self.assertEqual(len(positions), len(set(positions)), "two labs share a path position")
 
-    def test_track_starts_with_the_basics_and_commerce_is_empty(self):
+    def test_track_starts_with_the_basics_and_commerce_holds_the_payment_labs(self):
         track = catalog.learning_path(catalog.discover(ROOT))
         self.assertEqual(track["total"], 37)
         self.assertEqual(track["unassigned"], [])
         stages = {stage["id"]: stage["skills"] for stage in track["stages"]}
         self.assertEqual([stage["id"] for stage in track["stages"]], list(catalog.STAGE_IDS))
         self.assertEqual([s["id"] for s in stages["basics"][:2]], ["llm01", "llm10"])
-        self.assertEqual(stages["commerce"], [])
+        self.assertEqual([s["id"] for s in stages["commerce"]], ["hx12", "hx13"])
         steps = [s["step"] for stage in track["stages"] for s in stage["skills"]]
         self.assertEqual(steps, list(range(1, 38)))
-        for stage in ("basics", "agentic"):
+        for stage in ("basics", "agentic", "commerce"):
             orders = [s["order"] for s in stages[stage]]
             self.assertEqual(orders, list(range(1, len(orders) + 1)), f"{stage} positions have gaps")
 
