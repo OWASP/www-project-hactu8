@@ -16,7 +16,8 @@ story with deterministic numbers, and a recording covers the whole run.
   127.0.0.1:8000 and the console on 127.0.0.1:5173, or the Docker stack.
 - Keep the laptop awake: `caffeinate -i` in a spare terminal.
 - Run `python -m hactu8 run all --backend echo` once: 29 of 29 must pass.
-- Open the console at Learn. Have the recording ready in another tab.
+- Open the console at Learn. Have the recording
+  (`hactu8_llm01_echo_demo_fallback.gif`) open in another tab.
 - No cloud keys are needed. If you show a cloud model, the run is gated on a
   spend-consent checkbox; leave it unticked unless you mean to spend.
 
