@@ -348,6 +348,7 @@ class Lab:
         if answer != reply:
             withheld.append("reply")
         return {"mode": self.mode, "request": request, "note": note_id, "answer": answer,
+                "canary_leaked": providers.canary_leaked(answer, CANARY),
                 "withheld": withheld,
                 "screens": [{"surface": "note", "verdict": verdict.name,
                              "signals": [s.plane for s in signals]}],

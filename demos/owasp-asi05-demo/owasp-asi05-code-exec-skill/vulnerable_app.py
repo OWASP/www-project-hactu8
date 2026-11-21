@@ -503,7 +503,7 @@ def simulate(code: str, rows: Sequence[Dict[str, Any]], env: Dict[str, str],
             walk.statement(stmt)
     except RecursionError:
         run.operations.append("walk stopped: expression nested too deeply")
-    leaked = canary and any(canary in line for line in run.stdout)
+    leaked = bool(canary) and any(providers.canary_leaked(line, canary) for line in run.stdout)
     mentions = any(isinstance(n, ast.Constant) and isinstance(n.value, str)
                    and (n.value == CANARY_VAR or n.value in files) for n in ast.walk(tree))
     reaches = any(c in ("env-read", "file", "dynamic-code", "introspection") for c in run.capabilities)

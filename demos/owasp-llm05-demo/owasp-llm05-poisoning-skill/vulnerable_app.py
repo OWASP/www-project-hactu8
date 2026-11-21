@@ -519,10 +519,10 @@ def console_evaluate(lab: Lab) -> Dict[str, Any]:
     from evaluate_kpi import SUITE, classify
 
     rows = []
-    for query, targeted in SUITE:
+    for query, targeted, truth in SUITE:
         answer = lab.query(query)["answer"]
         rows.append({"item": query, "targeted": targeted,
-                     "status": classify(answer), "detail": answer})
+                     "status": classify(answer, truth), "detail": answer})
     return summarize(rows)
 
 

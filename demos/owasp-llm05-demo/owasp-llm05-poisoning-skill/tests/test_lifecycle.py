@@ -56,7 +56,7 @@ def attack(lab: Lab, scenario: str = "all") -> None:
 
 
 def run_suite(lab: Lab):
-    statuses = [(classify(lab.query(q)["answer"]), targeted) for q, targeted in SUITE]
+    statuses = [(classify(lab.query(q)["answer"], truth), targeted) for q, targeted, truth in SUITE]
     targeted = [s for s, t in statuses if t]
     psr = sum(s == "RED" for s in targeted) / len(targeted)
     overall = sum(s == "RED" for s, _ in statuses) / len(statuses)

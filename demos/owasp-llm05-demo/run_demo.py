@@ -49,9 +49,9 @@ def evidence(value) -> None:
 def act(lab: Lab, title: str) -> float:
     print(f"\n[*] {title}")
     red = targeted = red_all = 0
-    for query, is_targeted in SUITE:
+    for query, is_targeted, truth in SUITE:
         answer = lab.query(query)["answer"]
-        status = classify(answer)
+        status = classify(answer, truth)
         red_all += status == "RED"
         if is_targeted:
             targeted += 1

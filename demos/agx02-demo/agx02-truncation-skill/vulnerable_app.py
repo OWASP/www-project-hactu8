@@ -286,7 +286,8 @@ class Lab:
         if answer != reply:
             withheld.append("reply")
         return {"mode": self.mode, "request": request, "tool": tool,
-                "answer": answer, "withheld": withheld, "screens": screens,
+                "answer": answer,
+                "canary_leaked": providers.canary_leaked(answer, CANARY), "withheld": withheld, "screens": screens,
                 "output_signals": [s.plane for s in out_signals]}
 
     def state(self) -> Dict[str, Any]:
