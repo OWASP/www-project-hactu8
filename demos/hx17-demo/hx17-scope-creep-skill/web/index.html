@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#10242a">
+  <title>HACTU8 Lab Console</title>
+  <link rel="stylesheet" href="/web/styles.css">
+</head>
+<body>
+  <main class="shell">
+    <header class="topbar">
+      <div class="brand"><span class="brand-mark" id="brand-id">--</span><span id="brand-name">LAB CONSOLE</span></div>
+      <div class="topbar-note"><span class="pulse"></span>LOOPBACK LAB / AUTHORIZED USE</div>
+    </header>
+
+    <section class="intro">
+      <div class="eyebrow" id="framework">OWASP</div>
+      <h1 id="title">Loading lab…</h1>
+      <p class="lede" id="scenario"></p>
+      <p class="truth"><span class="truth-label">GROUND TRUTH</span><em id="ground-truth"></em></p>
+      <div class="intro-actions">
+        <button class="button button-primary" data-action="sequence" type="button">Run full sequence -&gt;</button>
+        <button class="button button-quiet" data-action="reset" type="button">Reset baseline</button>
+      </div>
+    </section>
+
+    <section class="status-strip" aria-label="Lab status">
+      <div class="status-cell"><span class="status-label">TARGET</span><strong id="system-status">CHECKING</strong></div>
+      <div class="status-cell"><span class="status-label">MODE</span><strong id="mode">-</strong></div>
+      <div class="status-cell"><span class="status-label">STATE</span><strong id="state">-</strong></div>
+      <div class="status-cell status-kpi"><span class="status-label" id="metric-label">RATE</span><strong id="rate">-</strong></div>
+    </section>
+
+    <section class="backend-bar" aria-label="Model backend">
+      <label class="backend-field"><span class="status-label">BACKEND</span>
+        <select id="backend-select"></select></label>
+      <label class="backend-field backend-model"><span class="status-label">MODEL</span>
+        <input id="model-input" list="model-list" autocomplete="off" spellcheck="false">
+        <datalist id="model-list"></datalist></label>
+      <button class="button button-quiet" id="backend-apply" type="button">Use backend</button>
+      <span class="backend-note" id="backend-note"></span>
+    </section>
+
+    <section class="acts" aria-label="Four acts">
+      <button class="act" data-action="baseline" type="button">
+        <span class="act-index">ACT 1 / BASELINE</span><strong>Prove the clean state</strong>
+        <span class="act-desc">Reset, then run the verification suite.</span>
+      </button>
+      <button class="act act-attack" data-action="attack" type="button">
+        <span class="act-index">ACT 2 / ATTACK</span><strong id="attack-label">Run the attack</strong>
+        <span class="act-desc" id="attack-desc"></span>
+      </button>
+      <button class="act act-measure" data-action="evaluate" type="button">
+        <span class="act-index">ACT 3 / IMPACT</span><strong>Re-run the same suite</strong>
+        <span class="act-desc">Same questions; the delta is the lesson.</span>
+      </button>
+      <button class="act act-defend" data-action="remediate" type="button">
+        <span class="act-index">ACT 4 / REMEDIATION</span><strong id="harden-label">Apply the mitigation</strong>
+        <span class="act-desc" id="harden-desc"></span>
+      </button>
+    </section>
+
+    <section class="lower">
+      <div class="panel">
+        <div class="panel-heading"><h2>Verification suite</h2><span id="result-summary">NOT RUN</span></div>
+        <div class="results-wrap">
+          <table>
+            <thead><tr><th>Item</th><th>Act 1</th><th>Act 3</th><th>Act 4</th><th>Latest detail</th></tr></thead>
+            <tbody id="results-body"><tr><td colspan="5" class="empty">Run Act 1 to measure the clean baseline.</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-heading"><h2>Live feed</h2><span id="busy">READY</span></div>
+        <div class="event-log" id="event-log" aria-live="polite"></div>
+      </div>
+    </section>
+
+    <footer class="footer"><span id="footer-id">HACTU8 DEMO</span><span>Educational security lab only. Insecure by design; loopback only.</span></footer>
+  </main>
+  <script src="/web/app.js"></script>
+</body>
+</html>

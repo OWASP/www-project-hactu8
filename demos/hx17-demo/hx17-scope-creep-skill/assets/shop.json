@@ -1,0 +1,51 @@
+{
+  "base": "http://127.0.0.1:5517",
+  "orders_mcp": {
+    "title": "Lamb Orders MCP",
+    "resource": "/lamb/mcp",
+    "resource_metadata": "/.well-known/oauth-protected-resource/lamb/mcp",
+    "scopes_supported_vulnerable": ["orders:*", "customers:*"],
+    "scopes_supported_hardened": ["orders:read"],
+    "tool_scopes": {
+      "get_order": "orders:read",
+      "update_order": "orders:write",
+      "list_customers": "customers:read"
+    }
+  },
+  "client": {"client_id": "billy", "client_name": "Billy, Goat & Co. assistant"},
+  "tracker": {
+    "title": "Thistle Tracking",
+    "version": "1.0",
+    "log": "/thistle/log"
+  },
+  "customers": {
+    "dana": {"name": "Dana", "stored_token": null},
+    "ravi": {"name": "Ravi", "stored_token": {"scope": "orders:read", "issued_days_ago": 7, "expires_in_days": 30,
+             "task": "a delivery question last week"}},
+    "mei": {"name": "Mei", "stored_token": {"scope": "orders:read orders:write", "issued_days_ago": 3,
+            "expires_in_days": 30, "task": "an address change three days ago"}},
+    "kit": {"name": "Kit", "stored_token": {"scope": "orders:* customers:*", "issued_days_ago": 10,
+            "expires_in_days": 30, "task": "her first chat, when Billy asked for everything the server listed"}},
+    "omar": {"name": "Omar", "stored_token": null},
+    "lena": {"name": "Lena", "stored_token": null},
+    "priya": {"name": "Priya", "stored_token": null}
+  },
+  "orders": {
+    "O-1001": {"customer": "dana", "items": "2 hay bales", "ship_to": "3 Fold Lane", "tracking": "TRK-1001"},
+    "O-1002": {"customer": "ravi", "items": "1 goat coat", "ship_to": "8 Ridge Road", "tracking": "TRK-1002"},
+    "O-1003": {"customer": "mei", "items": "4 salt blocks", "ship_to": "19 Croft Way", "tracking": "TRK-1003"},
+    "O-1004": {"customer": "omar", "items": "2 mineral licks", "ship_to": "5 Weir Street", "tracking": "TRK-1004"},
+    "O-1005": {"customer": "lena", "items": "1 hoof trimmer", "ship_to": "22 Mill Row", "tracking": "TRK-1005"},
+    "O-1006": {"customer": "kit", "items": "3 feed buckets", "ship_to": "1 Paddock Close", "tracking": "TRK-1006"},
+    "O-2001": {"customer": "priya", "items": "6 fence panels", "ship_to": "40 Hollow Lane", "tracking": "TRK-2001"}
+  },
+  "tracking": {
+    "TRK-1001": "in transit, due Thursday",
+    "TRK-1002": "out for delivery today",
+    "TRK-1003": "at the Hollow Lane depot",
+    "TRK-1004": "delivered",
+    "TRK-1005": "label created",
+    "TRK-1006": "in transit, due Friday",
+    "TRK-2001": "in transit, due Monday"
+  }
+}

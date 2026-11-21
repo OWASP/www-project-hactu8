@@ -359,9 +359,11 @@ TECHNIQUES: Dict[str, Dict[str, object]] = {
         ["audience_binding", "delegated_token"], ["hx05"]),
     "mcp-scope-creep": _t(
         "Scope creep in MCP permissions", "mcp",
-        "Permissions granted for one task are kept and widened over time.",
+        "Permissions granted for one task are kept and widened over time. The HX17 lab grants wildcard scopes up "
+        "front, reuses 30-day tokens across tasks and rubber-stamps step-up consent, so an injected tool result "
+        "lists every customer or writes another customer's order.",
         {"owasp_mcp_2025": ["MCP02:2025"], "owasp_asi_2026": ["ASI03:2026"]},
-        ["delegated_token"], []),
+        ["least_privilege_scope", "delegated_token", "step_up_consent", "action_policy"], ["hx17"]),
 
     # Attacks on the scoring layer (AG-95)
     "judge-injection": _t(
