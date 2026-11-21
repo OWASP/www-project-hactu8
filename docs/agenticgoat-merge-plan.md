@@ -241,13 +241,14 @@ The target is every known attack and defense, not only the two OWASP Top 10 list
   - Done 2026-11-21: HX12 x402 payment challenge tampering (commerce:1: rewritten challenge, replayed proof, lookalike merchant) and HX13 agent overpay and mandate bypass (commerce:2: injected upsell, 402 loop, split purchase, cart drift from the AP2-style intent). All in-process with fake test units; no chain, keys or network. Limits: a compromised allowlisted merchant that signs correctly (HX12) and an upsell inside a mandate that names no product (HX13, GREEN with unwanted spend: a harm no check sees).
 - [x] AG-97 Keep the catalog open to new attack families. A new family needs only a catalog entry, a lab from the template, and a bench case. Document this in `demos/_template/TEMPLATE.md`.
   - Done 2026-11-21: `demos/_template/TEMPLATE.md` §17 (catalog entry, lab from the template, bench case) and a checklist line in §11.
-- [ ] AG-94 Classic ML attacks (adversarial examples, model training-time poisoning, model stealing) are tracked in the catalog. Labs for them need a non-LLM target and are scoped after the MVP.
+- [x] AG-94 Classic ML attacks (adversarial examples, model training-time poisoning, model stealing) are tracked in the catalog. Labs for them need a non-LLM target and are scoped after the MVP.
+  - Done early 2026-11-21: HX18 adversarial examples (basics:14), HX19 training-data poisoning (basics:15), HX20 model backdoor (basics:16), each on a pure-Python model (no LLM, no numpy). 49 labs; every one of the 59 catalog techniques has a lab; ATLAS 43 of 43 and NIST 18 of 18 IDs covered.
 
 ## Handoff (2026-11-21)
 
-Open work, in order (updated 2026-11-21 evening: 46 labs, HX01-HX17; AG-93, AG-95 and AG-96 done):
+Open work, in order (updated 2026-11-21 evening: 49 labs, HX01-HX20; AG-93 to AG-96 done):
 
-1. AG-94 classic ML labs (the only techniques without a lab). HX02's grading and the bench known-miss change are done (6497576, e80b38b; coverage now 95% honest, 10 known misses).
+1. Sweep follow-ups: the OpenRouter ASI04 ministral-3b cell is void and LLM04 ministral-8b may be contaminated (parallel runs shared one checkout; fixed in 9714afb). A rerun needs the user's yes (cost). HX02's grading and the bench known-miss change are done (6497576, e80b38b; coverage now 95% honest, 10 known misses).
 2. Sweeps on the final code (9746535), results on `/Volumes/DockerDisk/hactu8-sweeps/` (scripts in the session scratchpad: `sweep.sh`, `cloud_sweep.sh`):
    - local Ollama, 7 models (qwen3:8b with 900 s per lab);
    - OpenRouter, the 8 approved models, Kimi 900 s per lab, $3 cap (user approved 2026-11-21).
