@@ -294,7 +294,8 @@ class LimitsTest(unittest.TestCase):
         self.assertIsNotNone(next(h for h in lab.search("dana", "spare key locker") if h["id"] == "locker-code")["text"])
 
     def test_one_decimal_scores_stop_this_climb(self):
-        for canary in CANARIES[:3]:
+        # LESSON: 0 of the 20 seeded references.
+        for canary in SWEEP_CANARIES:
             with self.subTest(canary):
                 self.assertNotEqual(probe_row(canary=canary, score_digits=1)["status"], "RED")
 
