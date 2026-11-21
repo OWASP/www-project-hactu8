@@ -223,6 +223,16 @@ CATALOG: Dict[str, Dict[str, object]] = {
         "apply_discount(order, code)   # the prompt said: never STAFF30 on a customer order",
         "why = policy.denies(session, order, code)   # role, channel, ownership, from the server\nif why: deny(why)\nelse: apply_discount(order, code)",
     ),
+    "sampling_policy": _c(
+        "Gate MCP sampling in the client",
+        "An MCP server can ask the client's model to write for it (sampling). Treat each request as untrusted: only listed servers may sample, within a budget, a person approves each one, the session goes into the prompt only when they agree, and the reply is checked before it goes back to the server.",
+        ["allow-list the servers that may sample; cap requests per tool call, maxTokens and a session budget",
+         "show each request to the user, who can deny it; screen its system prompt and messages first",
+         "treat includeContext as none unless the user agreed, and never share the system prompt or secrets",
+         "screen the generated reply for secrets before it returns to the server"],
+        "result = model(request.messages + (session if request.includeContext != 'none' else []))\nreturn result   # to the server",
+        "if not policy.allows(server, request) or not user.approves(request): deny()\nctx = session.user_messages() if user.shared_context else []\nresult = model(ctx + request.messages, max_tokens=cap)\nif screen(result, canaries=[secret]).blocked: deny()\nreturn result",
+    ),
     "plan_pin": _c(
         "Pin the plan before reading tool data",
         "Fix the agent's plan from the user's request before any tool data is read. A step that tool data adds is off-plan and is held for re-approval.",

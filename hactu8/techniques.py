@@ -330,9 +330,10 @@ TECHNIQUES: Dict[str, Dict[str, object]] = {
     # MCP protocol
     "mcp-sampling-abuse": _t(
         "MCP sampling abuse", "mcp",
-        "A server uses sampling requests to run its own prompts on the client's model and budget.",
+        "A server uses sampling requests to run its own prompts on the client's model and budget. The HX03 "
+        "lab also pulls the client's context back through includeContext and the sampled reply.",
         {"owasp_mcp_2025": ["MCP06:2025", "MCP10:2025"], "atlas": ["AML.T0053"]},
-        [], []),
+        ["sampling_policy", "input_screen", "output_screen"], ["hx03"]),
     "mcp-elicitation-abuse": _t(
         "MCP elicitation phishing", "mcp",
         "A server uses elicitation to ask the user for data it should never receive.",

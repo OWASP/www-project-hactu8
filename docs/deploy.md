@@ -1,6 +1,6 @@
 # Run HACTU8 with Docker, a devcontainer, or CI
 
-One image holds the API, the 31 labs and the built console (H-50). The devcontainer builds the same Dockerfile's `dev` target (H-51). CI runs the deterministic suite and uploads SARIF (H-52).
+One image holds the API, the 32 labs and the built console (H-50). The devcontainer builds the same Dockerfile's `dev` target (H-51). CI runs the deterministic suite and uploads SARIF (H-52).
 
 ## Docker
 
