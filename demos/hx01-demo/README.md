@@ -219,7 +219,8 @@ curl -s localhost:5501/docs/invoice-alpine-feed            # naive_text vs visib
 ## Mitigations demonstrated in Act 4
 
 - **Render-aware extraction** (`visible_text_only`) — keep only text a human
-  would see: contrast with the background of at least 1.5:1, a font of at
+  would see: contrast with the background of at least 1.5:1 (this lab's own
+  cut-off for "invisible", not a WCAG level), a font of at
   least 1 pt, not hidden (`display:none`, `visibility:hidden`, `hidden`,
   opacity 0, Word `vanish`, PDF render mode 3), on the page, and never
   metadata or comments. This alone takes the HDR to 0 here.

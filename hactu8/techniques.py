@@ -36,7 +36,7 @@ SOURCES = {
     "owasp_asi_2026": "Lab metadata (hactu8.owasp)",
     "owasp_mcp_2025": "https://owasp.org/www-project-mcp-top-10/ (beta, read 2026-11-21)",
     "atlas": "https://github.com/mitre-atlas/atlas-data dist/ATLAS.yaml 5.6.0 (read 2026-11-21); "
-             "IDs not yet rechecked against the 2026.10 release",
+             "AML.T0051.001 rechecked against 2026.10 (unchanged), other IDs not yet",
     "nist": "https://doi.org/10.6028/NIST.AI.100-2e2025, taxonomy index (read 2026-11-21)",
 }
 

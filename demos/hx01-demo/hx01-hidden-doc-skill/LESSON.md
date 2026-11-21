@@ -64,6 +64,6 @@ The order matters. Visibility is decided from the file's own layout and does not
 
 - HACTU8 catalog: skill `hx01`, `HX01` (HACTU8 extended attacks; OWASP `LLM01:2026` and `LLM01:2025`, MITRE ATLAS `AML.T0051.001`, NIST `NISTAML.015`); technique `multimodal-injection`; protections `visible_text_only` and `input_screen` (`hactu8/protections.py`).
 - Lab material, not repeated here: the [lab README](../README.md) (architecture, the "real, not scripted" argument, mapping table) and [`references/HX01_RISKS.md`](references/HX01_RISKS.md) (research, scenario table, mitigation roadmap).
-- [OWASP Top 10 for LLM Applications](https://genai.owasp.org/llm-top-10/), entry LLM01.
-- Greshake et al. (2023), "Not what you've signed up for: Compromising Real-World LLM-Integrated Applications with Indirect Prompt Injection".
+- [OWASP Top 10 for LLM Applications 2026](https://genai.owasp.org/resource/owasp-genai-llm-top-10-2026/), entry LLM01.
+- Greshake et al. (2023), "Not what you've signed up for: Compromising Real-World LLM-Integrated Applications with Indirect Prompt Injection", [arXiv:2302.12173](https://arxiv.org/abs/2302.12173).
 - W3C, Web Content Accessibility Guidelines (WCAG) 2.x, definition of contrast ratio.
