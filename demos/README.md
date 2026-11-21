@@ -96,6 +96,7 @@ lab yet. The numbering is HACTU8's own.
 | HX09 | Membership Inference | [`hx09-demo`](hx09-demo/) — an attacker holding one customer's record scores it on the support model's log-probs API against records they invented, and learns it was in the fine-tuning data | 5509 | Membership Exposure Rate (MER) |
 | HX10 | Model Extraction | [`hx10-demo`](hx10-demo/) — a rival copies the shop's price-band model through its prediction API: 8 queries with confidences give the exact weights, 2,000 label-only queries train a 99% clone | 5510 | Clone Success Rate (CSR) |
 | HX12 | x402 Payment Challenge Tampering | [`hx12-demo`](hx12-demo/) — an x402 shopping assistant with a test wallet pays a rewritten 402 challenge, a moved-desk note and a lookalike merchant, and a logged payment proof is replayed for the order | 5512 | Payment Hijack Rate (PHR) |
+| HX13 | Agent Overpay and Mandate Bypass | [`hx13-demo`](hx13-demo/) — planted Q&A answers, a data feed that re-challenges after each payment and a drifted cart make the buying agent pay past the customer's signed mandate and leak its wallet reference | 5513 | Mandate Breach Rate (MBR) |
 
 ## Running a lab
 

@@ -45,6 +45,7 @@ KIND: Dict[str, str] = {
     "per_client_consent": "lab_hardening", "exact_redirect_uri": "lab_hardening", "pkce": "lab_hardening",
     "score_suppression": "lab_hardening", "confidence_rounding": "lab_hardening",
     "query_anomaly": "lab_hardening", "output_watermark": "lab_hardening",
+    "spend_cap": "lab_hardening",
     # Design changes: where data lives, who acts, how trust is established.
     "spotlight": "architectural", "secret_vault": "architectural", "scope_filter": "architectural",
     "delegated_token": "architectural", "audience_binding": "architectural", "signed_messages": "architectural",
@@ -69,7 +70,7 @@ TRAIN = "train set"
 HELD_OUT = "held-out set"
 BENCH_SURFACES: Dict[str, List[str]] = {
     "input_screen": ["tool_result", "resource_body", "okf_body", "okf_clean", "a2a_message", "document_hidden",
-                     "image_text",
+                     "image_text", "payment_metadata",
                      # protectogw's screen on the request text; the sampling and elicitation policies
                      # (approval, caps, context gate) are not text screens and are shown by the labs.
                      "sampling_request", "elicitation_request",

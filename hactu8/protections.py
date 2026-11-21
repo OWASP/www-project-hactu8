@@ -477,6 +477,7 @@ CATALOG: Dict[str, Dict[str, object]] = {
         ["list each merchant's origin and path (match with the trailing slash, so lookalike prefixes fail)",
          "record the payTo on file for each merchant; refuse a challenge that names another",
          "refuse a challenge that names a facilitator not on the list",
+         "when a signed mandate names the merchants, take the list from it, and check before the checkout request (an order note leaves before any payment)",
          "the list does not check the price: keep amount checks and spending limits too"],
         "wallet.pay(to=req.payTo, amount=req.amount)",
         "m = allowlist.merchant_for(url)\nif m is None or req.payTo != m.pay_to or req.extra.facilitator not in FACILITATORS:\n    refuse()\nwallet.pay(to=m.pay_to, amount=req.amount)",
@@ -499,6 +500,15 @@ CATALOG: Dict[str, Dict[str, object]] = {
          "block off-mandate actions and quarantine the agent"],
         "agent.do(action)",
         "if action not in mandate:\n    block(action); quarantine(agent)\nelse:\n    agent.do(action)",
+    ),
+    "spend_cap": _c(
+        "Spending caps per payment and per mandate",
+        "Hold every payment to the caps the user signed: one amount cap per payment, and a running total per mandate. A cap per payment alone is walked past by splitting the purchase or by paying again and again.",
+        ["read the per-payment cap and the total budget from the signed mandate",
+         "refuse a payment above the per-payment cap",
+         "refuse a payment that would take the mandate's running total above the budget"],
+        "wallet.pay(challenge.amount)   # any amount, any number of times",
+        "if amount > mandate.amount_max or spent[mandate] + amount > mandate.budget:\n    refuse(challenge)\nelse:\n    spent[mandate] += wallet.pay(amount)",
     ),
 }
 
