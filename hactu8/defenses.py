@@ -53,7 +53,6 @@ KIND: Dict[str, str] = {
     "exact_name": "architectural", "visible_text_only": "architectural", "vector_privacy": "architectural",
     "image_sanitize": "architectural",
     "training_data_scrub": "architectural",
-    "label_only": "architectural",
 }
 
 EVIDENCE = {
@@ -70,6 +69,9 @@ HELD_OUT = "held-out set"
 BENCH_SURFACES: Dict[str, List[str]] = {
     "input_screen": ["tool_result", "resource_body", "okf_body", "okf_clean", "a2a_message", "document_hidden",
                      "image_text",
+                     # protectogw's screen on the request text; the sampling and elicitation policies
+                     # (approval, caps, context gate) are not text screens and are shown by the labs.
+                     "sampling_request", "elicitation_request",
                      "wild", TRAIN],
     "mcp_gateway_filter": ["tool_description", "schema_param"],
     "channel_screen": ["schema_param", "error_channel", "okf_frontmatter"],
@@ -77,8 +79,6 @@ BENCH_SURFACES: Dict[str, List[str]] = {
     "full_artifact_screen": ["depth_tail"],
     "session_screen": ["okf_chain", "chain_pointer", "chain_destination", "chain_clean", "conversation"],
     "sampling": ["conditional_return"],
-    "sampling_policy": ["sampling_request"],
-    "elicitation_policy": ["elicitation_request"],
     "persona_screen": ["chat_message"],
     "hash_pin": ["prompt_template"],
     "output_sink": ["output_sink"],

@@ -216,7 +216,7 @@ python scripts/run_extraction.py --plan distributed-keys   # the limit
 
 ## Mitigations demonstrated in Act 4
 
-- **Label-only answers** (`label_only`) — the band, no confidences.
+- **Label-only answers** (`score_suppression`) — the band, no confidences.
 - **Per-key query budget** (`rate_limit`) — 50 queries per key per day.
 - **Query anomaly** (`query_anomaly`) — a key whose last 20 queries are 20%
   or more outside the envelope of real listings is suspended.

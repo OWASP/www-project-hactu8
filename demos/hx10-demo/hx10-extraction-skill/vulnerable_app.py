@@ -30,7 +30,7 @@ lab grades the clone, never the attacker's intent.
 Hardened mode (``POST /api/mode`` or ``HX10_MODE=hardened``) adds four layers,
 each switchable for the tests:
 
-* ``label_only`` — the API returns the band and nothing else.
+* ``score_suppression`` (label-only answers) — the API returns the band and nothing else.
 * ``rate_limit`` — a per-key query budget (``assets/api_policy.json``).
 * ``query_anomaly`` — a key whose recent queries fall outside the envelope of
   real listings too often is suspended.

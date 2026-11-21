@@ -28,7 +28,7 @@ metadata:
   hactu8.target: "lab"
   hactu8.port: "5510"
   hactu8.path: "agentic:27"
-  hactu8.protections: "label_only,rate_limit,query_anomaly,output_watermark"
+  hactu8.protections: "score_suppression,rate_limit,query_anomaly,output_watermark"
   objective: Demonstrate stealing a model's behaviour and weights through its prediction API, and layered controls that cut the clone's quality or prove its origin
   version: 2026.1
 ---
@@ -70,7 +70,7 @@ on 98-99% of listings it never asked about.
 - Quantify impact (stoplight KPI, Clone Success Rate) from the clone's
   agreement on held-out inputs and the fingerprint in its weights, not from
   the attacker's intent.
-- Show the layered mitigations (`label_only`, `rate_limit`, `query_anomaly`,
+- Show the layered mitigations (`score_suppression`, `rate_limit`, `query_anomaly`,
   `output_watermark`), what each does alone, and where they stop working.
 
 ## Harness terminology bridge

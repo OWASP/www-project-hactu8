@@ -36,7 +36,7 @@ This lab runs on the **echo backend only**. There is no language model in it: th
 
 Act 4 adds four layers, set in [`assets/api_policy.json`](assets/api_policy.json):
 
-- **Label-only answers** (`label_only`, new in this lab). The API returns the band and nothing else. No confidences, no equations.
+- **Label-only answers** (`score_suppression`, shared with HX09). The API returns the band and nothing else. No confidences, no equations.
 - **Per-key query budget** (`rate_limit`, as in LLM06). 50 queries per key per day. The feed partner's 46 fit; a 2,000-query campaign does not.
 - **Query anomaly** (`query_anomaly`, new in this lab). Each query is checked against the envelope real listings occupy (weight up to 25 kg, shelf life up to 36 months, demand 0.05 to 0.95, rating from 2.5). A key whose last 20 queries are 20% or more outside it is suspended. Real listings are never outside it; the random plan is 83% outside.
 - **Output watermark** (`output_watermark`, new in this lab). The served bands come from a copy of the model with a secret, small boundary shift. A clone trained on them inherits the shift; the owner keeps probe listings where the two disagree and checks a suspect model on them. It prevents nothing. It proves where a clone learned.
@@ -65,7 +65,7 @@ Measured on the attack, each alone: label-only 67% (the bands still train both r
 
 ## References
 
-- HACTU8 catalog: skill `hx10`, `HX10` (HACTU8 extended attacks; OWASP `LLM10:2025`, MITRE ATLAS `AML.T0024.002`; NIST `NISTAML.031` from the catalog, unverified); technique `model-extraction`; protections `label_only`, `rate_limit`, `query_anomaly` and `output_watermark` (`hactu8/protections.py`).
+- HACTU8 catalog: skill `hx10`, `HX10` (HACTU8 extended attacks; OWASP `LLM10:2025`, MITRE ATLAS `AML.T0024.002`; NIST `NISTAML.031` from the catalog, unverified); technique `model-extraction`; protections `score_suppression`, `rate_limit`, `query_anomaly` and `output_watermark` (`hactu8/protections.py`).
 - Lab material, not repeated here: the [lab README](../README.md) (architecture, the "real, not scripted" argument, mapping table) and [`references/HX10_RISKS.md`](references/HX10_RISKS.md) (research, scenario table, mitigation roadmap).
 - Tramèr et al. (2016), "Stealing Machine Learning Models via Prediction APIs", USENIX Security 2016, <https://www.usenix.org/conference/usenixsecurity16/technical-sessions/presentation/tramer> (abstract page read 2026-11-21; the paper body was not read).
 - Carlini et al. (2024), "Stealing Part of a Production Language Model", <https://arxiv.org/abs/2403.06634> (abstract read 2026-11-21).

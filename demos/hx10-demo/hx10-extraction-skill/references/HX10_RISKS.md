@@ -35,7 +35,7 @@ What this lab's risk is, where it comes from, and how to harden against it. Load
 
 | Vulnerability | Hardening strategy |
 |---------------|--------------------|
-| Confidences at full precision | Return the band only (`label_only`, implemented); or round and truncate scores where callers need them (not coded) |
+| Confidences at full precision | Return the band only (`score_suppression`, implemented); or round and truncate scores where callers need them (not coded) |
 | Unlimited queries per key | Per-key daily budget (`rate_limit`, implemented, 50 a day) |
 | Nobody watches what a key asks | Suspend a key whose recent queries fall outside the real-listing envelope (`query_anomaly`, implemented: 20% of the last 20) |
 | No way to prove a clone's origin | Serve watermarked bands and test suspects on secret probes (`output_watermark`, implemented) |

@@ -31,6 +31,14 @@ class DefenseCatalogTest(unittest.TestCase):
         self.assertTrue(set(defenses.BENCH_SURFACES) <= set(protections.CATALOG))
         self.assertTrue(set(defenses.BENCH_CONTROLS) <= set(protections.CATALOG))
 
+    def test_one_id_per_control_and_screens_mapped_to_the_screen(self):
+        self.assertNotIn("label_only", protections.CATALOG)          # merged into score_suppression
+        for tech in ("membership-inference", "model-extraction"):
+            self.assertIn("score_suppression", techniques.TECHNIQUES[tech]["defenses"])
+        for surface in ("sampling_request", "elicitation_request"):
+            owners = [cid for cid, s in defenses.BENCH_SURFACES.items() if surface in s]
+            self.assertEqual(owners, ["input_screen"], surface)
+
     def test_bench_surfaces_exist(self):
         # Every mapped surface has scored bench items, so a renamed surface cannot silently drop evidence.
         seen = {defenses._surface(i) for i in self.items}

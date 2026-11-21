@@ -206,7 +206,7 @@ TECHNIQUES: Dict[str, Dict[str, object]] = {
         "from 8 confidence vectors and trains label-only clones that agree on 99% of held-out listings.",
         {"owasp_llm_2026": ["LLM06:2026"], "owasp_llm_2025": ["LLM10:2025"],
          "atlas": ["AML.T0024.002"], "nist": ["NISTAML.031"]},
-        ["label_only", "rate_limit", "query_anomaly", "output_watermark"], ["hx10"]),
+        ["score_suppression", "rate_limit", "query_anomaly", "output_watermark"], ["hx10"]),
 
     # Agency, tools and identity
     "excessive-agency": _t(
