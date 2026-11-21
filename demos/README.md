@@ -89,6 +89,7 @@ lab yet. The numbering is HACTU8's own.
 | HX02 | Multi-Turn Jailbreak | [`hx02-demo`](hx02-demo/) — five harmless-looking turns walk the store assistant into applying the staff discount it refuses when asked once | 5502 | Rule-Break Rate (RBR) |
 | HX03 | MCP Sampling Abuse | [`hx03-demo`](hx03-demo/) — a shipping-rates MCP server update uses sampling to run its own prompts on the assistant's model and pull its account reference back | 5503 | Sampling Leak Rate (SLR) |
 | HX04 | MCP Elicitation Abuse | [`hx04-demo`](hx04-demo/) — a supplies MCP server update phishes the user and the assistant's own model for the account reference through elicitation forms and a look-alike link | 5504 | Elicitation Leak Rate (ELR) |
+| HX06 | Role-play and Many-shot Jailbreak | [`hx06-demo`](hx06-demo/) — one message (a no-rules persona, a story that needs the real till code, or 20 fake compliant chat exchanges) breaks the store rules the assistant keeps when asked directly | 5506 | Rule-Break Rate (RBR) |
 
 ## Running a lab
 

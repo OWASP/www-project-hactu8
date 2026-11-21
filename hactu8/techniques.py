@@ -92,16 +92,18 @@ TECHNIQUES: Dict[str, Dict[str, object]] = {
         ["session_screen", "action_policy"], ["hx02"]),
     "jailbreak-many-shot": _t(
         "Many-shot jailbreak", "injection",
-        "A long run of fabricated example dialogues in the prompt teaches the model to comply.",
+        "A long run of fabricated example dialogues in the prompt teaches the model to comply. The HX06 lab "
+        "pastes 20 fake chat exchanges into one message to break a store rule.",
         {"owasp_llm_2026": ["LLM01:2026"], "owasp_llm_2025": ["LLM01:2025"],
          "atlas": ["AML.T0054"], "nist": ["NISTAML.018"]},
-        [], []),
+        ["shot_cap", "action_policy", "output_screen"], ["hx06"]),
     "jailbreak-role-play": _t(
         "Role-play jailbreak", "injection",
-        "The request is framed as fiction or a persona so the model sets its rules aside.",
+        "The request is framed as fiction or a persona so the model sets its rules aside. The HX06 lab uses a "
+        "DAN-style persona and a story that needs the real till code.",
         {"owasp_llm_2026": ["LLM01:2026"], "owasp_llm_2025": ["LLM01:2025"],
          "atlas": ["AML.T0054"], "nist": ["NISTAML.018"]},
-        [], []),
+        ["persona_screen", "action_policy", "output_screen"], ["hx06"]),
     "obfuscated-injection": _t(
         "Encoded or obfuscated injection", "injection",
         "The directive is base64, hex, split into tokens or otherwise encoded so a byte-level screen misses it.",

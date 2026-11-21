@@ -96,7 +96,7 @@ class CoverageTest(unittest.TestCase):
     def test_statuses_from_declarations(self):
         rows = self.rows()
         self.assertEqual(rows["indirect-prompt-injection"]["status"], "attack_and_defense")
-        self.assertEqual(rows["jailbreak-many-shot"]["status"], "no_lab")
+        self.assertEqual(rows["self-replicating-prompt"]["status"], "no_lab")
         report = techniques.coverage()
         self.assertEqual(sum(report["counts"].values()), report["total"])
 
