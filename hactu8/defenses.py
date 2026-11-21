@@ -48,7 +48,7 @@ KIND: Dict[str, str] = {
     "score_suppression": "lab_hardening", "confidence_rounding": "lab_hardening",
     "query_anomaly": "lab_hardening", "output_watermark": "lab_hardening",
     "spend_cap": "lab_hardening", "capability_overlap": "lab_hardening", "egress_allowlist": "lab_hardening",
-    "hop_limit": "lab_hardening",
+    "hop_limit": "lab_hardening", "feature_validation": "lab_hardening",
     "classifier_cross_check": "lab_hardening", "verdict_schema": "lab_hardening", "flag_budget": "lab_hardening",
     # Design changes: where data lives, who acts, how trust is established.
     "spotlight": "architectural", "secret_vault": "architectural", "scope_filter": "architectural",
@@ -58,7 +58,7 @@ KIND: Dict[str, str] = {
     "code_sandbox": "architectural", "output_sink": "architectural", "provenance": "architectural",
     "exact_name": "architectural", "visible_text_only": "architectural", "vector_privacy": "architectural",
     "image_sanitize": "architectural", "role_separation": "architectural",
-    "training_data_scrub": "architectural",
+    "training_data_scrub": "architectural", "adversarial_training": "architectural",
     "signed_challenge": "architectural",
     "score_provenance": "architectural",
 }

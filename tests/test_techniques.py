@@ -97,9 +97,19 @@ class CoverageTest(unittest.TestCase):
         rows = self.rows()
         self.assertEqual(rows["indirect-prompt-injection"]["status"], "attack_and_defense")
         self.assertEqual(rows["self-replicating-prompt"]["status"], "attack_and_defense")   # HX15
-        self.assertEqual(rows["adversarial-examples"]["status"], "no_lab")
+        self.assertEqual(rows["adversarial-examples"]["status"], "attack_and_defense")   # HX18
         report = techniques.coverage()
         self.assertEqual(sum(report["counts"].values()), report["total"])
+
+    def test_no_lab_status(self):
+        # A synthetic fixture: a technique with no lab reports no_lab, whatever labs exist today.
+        good = copy.deepcopy(techniques.TECHNIQUES)
+        try:
+            techniques.TECHNIQUES["adversarial-examples"]["labs"] = []
+            self.assertEqual(self.rows()["adversarial-examples"]["status"], "no_lab")
+        finally:
+            techniques.TECHNIQUES.clear()
+            techniques.TECHNIQUES.update(good)
 
     def test_no_defense_is_attack_only(self):
         good = copy.deepcopy(techniques.TECHNIQUES)
