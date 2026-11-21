@@ -15,8 +15,11 @@ try:
     from hactu8.mcp_server import build_server
     build_server(ROOT)
     HAVE_MCP = True
-except (ModuleNotFoundError, RuntimeError):
+except (ImportError, RuntimeError):
     HAVE_MCP = False
+else:
+    from hactu8.lamb._mcp import available as _mcp_v2
+    HAVE_MCP = _mcp_v2()
 
 
 @unittest.skipUnless(HAVE_MCP, "Lamb extra (mcp v2 SDK) not installed")

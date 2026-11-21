@@ -81,11 +81,14 @@ class SurfaceGroundTruthTest(unittest.TestCase):
 
 class SurfaceSdkTest(unittest.TestCase):
     def setUp(self):
+        from hactu8.lamb._mcp import available
+        if not available():
+            self.skipTest("Lamb extra (mcp v2 SDK) not installed")
         try:
             from hactu8.lamb.mcp_target import LambMcpState, build_mcp_server
             self.state = LambMcpState()
             self.mcp = build_mcp_server(self.state)
-        except (ModuleNotFoundError, RuntimeError):
+        except (ImportError, RuntimeError):
             self.skipTest("Lamb extra not installed")
 
     def _tools(self):
@@ -125,12 +128,15 @@ if __name__ == "__main__":
 
 class LambRoutesTest(unittest.TestCase):
     def setUp(self):
+        from hactu8.lamb._mcp import available
+        if not available():
+            self.skipTest("Lamb extra (mcp v2 SDK) not installed")
         try:
             from starlette.testclient import TestClient
 
             from hactu8.lamb.app import create_app
             from hactu8.lamb.workers import LabWorkerManager
-        except (ModuleNotFoundError, RuntimeError):
+        except (ImportError, RuntimeError):
             self.skipTest("Lamb extra not installed")
         self.app = create_app(manager=LabWorkerManager(skills=[]))
         self.client = TestClient(self.app, base_url="http://127.0.0.1:5500")

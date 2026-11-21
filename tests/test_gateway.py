@@ -12,8 +12,11 @@ try:
     from hactu8.lamb.mcp_target import LambMcpState, build_mcp_server
     build_mcp_server(LambMcpState())
     HAVE_MCP = True
-except (ModuleNotFoundError, RuntimeError):
+except (ImportError, RuntimeError):
     HAVE_MCP = False
+else:
+    from hactu8.lamb._mcp import available as _mcp_v2
+    HAVE_MCP = _mcp_v2()
 
 
 def run(coro):

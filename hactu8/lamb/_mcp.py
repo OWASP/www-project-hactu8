@@ -24,6 +24,20 @@ def server_class():
     return MCPServer
 
 
+def available() -> bool:
+    """True only when the MCP v2 SDK is importable (server and client).
+
+    A stray mcp v1 install imports as ``mcp`` but lacks the v2 names, so tests
+    and optional features check this rather than "can I import mcp".
+    """
+    try:
+        server_class()
+        from mcp import Client  # noqa: F401
+    except (ImportError, McpUnavailable):
+        return False
+    return True
+
+
 def tool_error_class():
     """The SDK exception whose message reaches the client as an error result."""
     from mcp.server.mcpserver.exceptions import ToolError
