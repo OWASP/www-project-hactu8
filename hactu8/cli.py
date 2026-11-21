@@ -247,12 +247,16 @@ def cmd_bench(args) -> int:
     print(f"generalization  {_pct(result.generalization)}   (independent held-out set; baseline {_pct(before)})")
     print(f"false positives {result.false_positives}      (baseline {result.baseline.get('false_positives', 0)})")
     print(f"scored items    {len(result.items)}; controls listed, not scored: {result.controls}")
+    known = [i for i in result.known_misses if not i.holdout]
+    print(f"known misses    {len(known)}      (recorded attacks the rules pass; counted in coverage)")
     shown = [i for i in result.items if i.grade in ("MISS", "FALSE_POSITIVE")] if args.misses else []
     if shown:
         _print_table([[i.id, i.surface, i.grade, "held-out" if i.holdout else ""] for i in shown],
                      ["ITEM", "SURFACE", "GRADE", ""])
     for item in result.regressions:
         print(f"REGRESSION: {item.id} ({item.grade})")
+    for item in result.improvements:
+        print(f"IMPROVEMENT: {item.id} (a recorded miss is now {item.grade}; re-record the baseline)")
     return 1 if result.regressions else 0
 
 

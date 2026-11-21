@@ -10,7 +10,10 @@ Two axes are scored separately, so a held-out miss never reads as a regression:
                     independently of the ruleset; never tune rules on it, or it
                     stops measuring anything. Write a new held-out set instead.
 
-False positives (clean items flagged) are reported beside both. Items of kind
+Attack items recorded with ``baseline_flagged: false`` are known misses: real
+payloads a lab ships that the default rules pass. They count in coverage and
+grade MISS; catching one later is an improvement, losing a caught one is a
+regression. False positives (clean items flagged) are reported beside both. Items of kind
 ``control`` are enforced by gateway and lab controls rather than screen(); they
 are listed, not scored.
 
@@ -133,12 +136,24 @@ class BenchResult:
                 if (i.attack and i.baseline_flagged and not i.flagged)
                 or (not i.attack and i.flagged and not i.baseline_flagged)]
 
+    @property
+    def known_misses(self) -> List[ItemResult]:
+        """Attacks recorded as missed (``baseline_flagged`` false) that are still missed."""
+        return [i for i in self.items if i.attack and not i.baseline_flagged and not i.flagged]
+
+    @property
+    def improvements(self) -> List[ItemResult]:
+        """Attacks recorded as missed that are now caught: report them, then re-record the baseline."""
+        return [i for i in self.items if i.attack and not i.baseline_flagged and i.flagged]
+
     def to_dict(self) -> dict:
         return {
             "coverage": self.coverage, "generalization": self.generalization,
             "false_positives": self.false_positives, "controls_not_scored": self.controls,
             "baseline": self.baseline,
             "regressions": [i.id for i in self.regressions],
+            "known_misses": [i.id for i in self.known_misses],
+            "improvements": [i.id for i in self.improvements],
             "items": [dict(i.__dict__, grade=i.grade) for i in self.items],
         }
 
