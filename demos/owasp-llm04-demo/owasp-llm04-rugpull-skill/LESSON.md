@@ -1,6 +1,6 @@
 # LLM04 Supply Chain
 
-Step 6 of the agentic stage: the tools an agent loads from a third party are code and text you did not write. Setup, commands and architecture are in the [lab README](../README.md); this lesson says what to look for and why.
+In the agentic stage: the tools an agent loads from a third party are code and text you did not write. Setup, commands and architecture are in the [lab README](../README.md); this lesson says what to look for and why.
 
 ## What it is
 

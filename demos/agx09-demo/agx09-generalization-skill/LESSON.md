@@ -1,6 +1,6 @@
 # AGX09 Generalization Probe
 
-Step 31, the last lab on the learning path. Setup, commands and architecture are in the [lab README](../README.md); this lesson says what to look for and why.
+Part of the agentic stage. Setup, commands and architecture are in the [lab README](../README.md); this lesson says what to look for and why.
 
 ## What it is
 

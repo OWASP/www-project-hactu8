@@ -383,7 +383,7 @@ Each skill folder holds a `LESSON.md` (skeleton: `./LESSON.md`), so the lesson t
 - "Check yourself" has 2 or 3 top-level numbered questions; put each answer in an indented paragraph under its question.
 - "References" gives the catalog IDs (skill id, framework ID, protection ids) and links to the README and `references/` instead of copying them.
 
-Learning path: add `hactu8.path: "<stage>:<n>"` to the SKILL.md metadata, where stage is `basics`, `agentic` or `commerce` (in that order, see `STAGES` in `hactu8/catalog.py`) and `n` is the 1-based position within the stage. Positions must be unique. `python -m hactu8 path` and `GET /api/path` show the track.
+Learning path: add `hactu8.path: "<stage>:<n>"` to the SKILL.md metadata, where stage is `basics`, `agentic` or `commerce` (in that order, see `STAGES` in `hactu8/catalog.py`) and `n` is the 1-based position within the stage. Positions must be unique. `python -m hactu8 path` and `GET /api/path` show the track. A lesson never states its own position ("Step 9", "the last lab"): positions shift when labs are added, and a test fails on it. Say what it follows instead, if that helps.
 
 ## 17. Adding a new attack family
 

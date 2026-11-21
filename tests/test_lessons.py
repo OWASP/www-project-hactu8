@@ -131,6 +131,15 @@ class RepoLessonTest(unittest.TestCase):
                 self.assertIn(skill.owasp.split(":")[0], lesson.sections["References"],
                               "References must give the catalog ID")
 
+    def test_no_lesson_states_its_path_position(self):
+        # Positions shift whenever a lab is added; the path itself shows them (hactu8 path).
+        for skill in catalog.discover(ROOT):
+            if not skill.has_lesson:
+                continue
+            with self.subTest(skill=skill.id):
+                text = (Path(skill.skill_dir) / "LESSON.md").read_text(encoding="utf-8")
+                self.assertNotRegex(text, r"(?i)\bstep \d+ (of|on) the|^step \d+,|\blast lab (of|on) the")
+
     def test_every_lab_has_a_complete_lesson(self):
         ids = {skill.id for skill in catalog.discover(ROOT)}
         missing = {skill.id for skill in catalog.discover(ROOT) if not skill.has_lesson}

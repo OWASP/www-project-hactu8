@@ -1,6 +1,6 @@
 # AGX02 Truncation Tail
 
-Step 21 on the learning path, after AGX05 Error-Channel Injection. Setup, commands and architecture are in the [lab README](../README.md); this lesson says what to look for and why.
+On the learning path after AGX05 Error-Channel Injection. Setup, commands and architecture are in the [lab README](../README.md); this lesson says what to look for and why.
 
 ## What it is
 

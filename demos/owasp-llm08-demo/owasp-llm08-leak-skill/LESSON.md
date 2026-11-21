@@ -1,6 +1,6 @@
 # LLM08 Hidden Context Exposure
 
-Step 3 of the basics stage, after LLM10 Improper Output Handling. Setup, commands and architecture are in the [lab README](../README.md); this lesson says what to look for and why.
+In the basics stage, after LLM10 Improper Output Handling. Setup, commands and architecture are in the [lab README](../README.md); this lesson says what to look for and why.
 
 ## What it is
 

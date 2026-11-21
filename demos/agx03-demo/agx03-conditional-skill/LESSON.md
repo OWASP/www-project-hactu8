@@ -1,6 +1,6 @@
 # AGX03 Conditional Rug-Pull
 
-Step 22 on the learning path, after AGX02 Truncation Tail. Setup, commands and architecture are in the [lab README](../README.md); this lesson says what to look for and why.
+On the learning path after AGX02 Truncation Tail. Setup, commands and architecture are in the [lab README](../README.md); this lesson says what to look for and why.
 
 ## What it is
 

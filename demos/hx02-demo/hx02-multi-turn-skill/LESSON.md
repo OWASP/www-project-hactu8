@@ -1,6 +1,6 @@
 # HX02 Multi-Turn Jailbreak
 
-Step 10, the last lab of the basics stage. HX01 hid the instruction in a file; here there is no instruction to find at all, only a conversation that goes somewhere one step at a time. Setup, commands and architecture are in the [lab README](../README.md); this lesson says what to look for and why.
+Part of the basics stage. HX01 hid the instruction in a file; here there is no instruction to find at all, only a conversation that goes somewhere one step at a time. Setup, commands and architecture are in the [lab README](../README.md); this lesson says what to look for and why.
 
 ## What it is
 

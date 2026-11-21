@@ -1,6 +1,6 @@
 # AGX04 Schema / Parameter Injection
 
-Step 19 on the learning path, after AGX06 Runtime Result Injection. Setup, commands and architecture are in the [lab README](../README.md); this lesson says what to look for and why.
+On the learning path after AGX06 Runtime Result Injection. Setup, commands and architecture are in the [lab README](../README.md); this lesson says what to look for and why.
 
 ## What it is
 
