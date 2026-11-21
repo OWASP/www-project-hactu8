@@ -114,5 +114,43 @@ class ApiModelsAndLiveTest(unittest.TestCase):
         self.assertEqual(board["scoreboard"][0]["run_id"], doc["run_id"])
 
 
+@unittest.skipIf(TestClient is None, "API optional dependencies not installed")
+class ApiConsoleTest(unittest.TestCase):
+    """HACTU8_CONSOLE_DIR serves the built console beside the API (the Docker image)."""
+
+    def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory()
+        base = Path(self.tmp.name)
+        self.dist = base / "dist"
+        (self.dist / "assets").mkdir(parents=True)
+        (self.dist / "index.html").write_text("<html>console</html>", encoding="utf-8")
+        (self.dist / "assets" / "app.js").write_text("console.log(1)", encoding="utf-8")
+        (base / "secret.txt").write_text("outside", encoding="utf-8")
+        self.env = patch.dict(os.environ, {"HACTU8_HOME": str(base / "home"), "HACTU8_CONSOLE_DIR": str(self.dist)})
+        self.env.start()
+        self.client = TestClient(create_app(ROOT))
+
+    def tearDown(self):
+        self.env.stop()
+        self.tmp.cleanup()
+
+    def test_serves_files_and_falls_back_to_index(self):
+        self.assertEqual(self.client.get("/").text, "<html>console</html>")
+        self.assertEqual(self.client.get("/results/abc").text, "<html>console</html>")
+        self.assertEqual(self.client.get("/assets/app.js").text, "console.log(1)")
+
+    def test_api_wins_and_unknown_api_paths_stay_404(self):
+        self.assertEqual(self.client.get("/api/health").json()["status"], "ok")
+        self.assertEqual(self.client.get("/api/nope").status_code, 404)
+
+    def test_no_file_outside_the_console_dir(self):
+        for path in ("/../secret.txt", "/%2e%2e/secret.txt", "/assets/..%2f..%2fsecret.txt"):
+            self.assertNotIn("outside", self.client.get(path).text, path)
+
+    def test_off_without_the_env_var(self):
+        with patch.dict(os.environ, {"HACTU8_CONSOLE_DIR": ""}):
+            self.assertEqual(TestClient(create_app(ROOT)).get("/").status_code, 404)
+
+
 if __name__ == "__main__":
     unittest.main()

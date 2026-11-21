@@ -1,0 +1,112 @@
+# H-52: the deterministic suite on every push and pull request to the phase1
+# branches. Echo backend only: offline, no keys, no model. See docs/deploy.md.
+name: HACTU8 deterministic suite
+
+on:
+  push:
+    branches: ["phase1-*"]
+  pull_request:
+    branches: ["phase1-*"]
+
+permissions:
+  contents: read
+
+concurrency:
+  cancel-in-progress: true
+  group: ${{ github.repository }}-${{ github.workflow }}-${{ github.ref }}
+
+jobs:
+  suite:
+    name: Tests and run all (Python ${{ matrix.python }}, ${{ matrix.deps }})
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # Core is standard library only, Python 3.10 or later.
+          - python: "3.10"
+            deps: stdlib
+          # API, Lamb and schema tests with the image's pinned dependencies.
+          - python: "3.14"
+            deps: pinned
+    env:
+      HACTU8_HOME: ${{ github.workspace }}/.hactu8
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: ${{ matrix.python }}
+      - name: Install pinned dependencies
+        if: matrix.deps == 'pinned'
+        run: python -m pip install --disable-pip-version-check -r docker/requirements.txt
+      - name: Core unit tests
+        run: python -m unittest discover -s tests -t .
+      - name: Every lab on the echo backend
+        if: success() || failure()
+        run: python -m hactu8 run all --backend echo
+      - name: SARIF report
+        if: matrix.deps == 'pinned' && (success() || failure())
+        run: python scripts/sarif_all.py -o hactu8.sarif
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        if: matrix.deps == 'pinned' && (success() || failure())
+        with:
+          name: hactu8-sarif
+          path: hactu8.sarif
+          if-no-files-found: error
+          retention-days: 14
+
+  sarif-upload:
+    name: Upload SARIF to code scanning
+    needs: suite
+    if: always() && (github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      security-events: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: hactu8-sarif
+      - uses: github/codeql-action/upload-sarif@1bd86f2fdb4b86187fa4059f16f31a3202acc9ea # v4.39.4
+        with:
+          sarif_file: hactu8.sarif
+          category: hactu8-deterministic
+
+  markdownlint:
+    name: Markdownlint
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: "24.22.3"
+      - run: npx --yes markdownlint-cli2@0.17.2 "**/*.md"
+
+  console:
+    name: Console build
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: spikes/iac-prototype/iac-host
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: "24.22.3"
+          cache: npm
+          cache-dependency-path: spikes/iac-prototype/iac-host/package-lock.json
+      - run: npm ci --no-audit --no-fund
+      - run: npm run build

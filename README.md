@@ -25,7 +25,7 @@ scripts/    Project automation: issue seeding, vendor.py (copies shared modules 
 hactu8.yaml Model router tiers and classifier settings
 ```
 
-Coming in Phase 1: container files and the AI attacker skill.
+Coming in Phase 1: the AI attacker skill.
 
 ## Quick start
 
@@ -89,6 +89,10 @@ npm run dev
 ```
 
 The API binds to `http://127.0.0.1:8000`; the console defaults to that URL and can be pointed elsewhere with `VITE_HACTU8_API_URL`. White-label name, tagline, report title, and colors are configured in [`branding.yaml`](branding.yaml).
+
+## Docker, devcontainer, and CI
+
+`docker compose up --build -d` serves the API and console on `http://127.0.0.1:8000` (loopback only), with Ollama on the host and keys from an env file outside the repo. See [docs/deploy.md](docs/deploy.md) for the devcontainer, the CI workflow, and the macOS certificate note.
 
 ## Safety
 

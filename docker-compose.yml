@@ -1,0 +1,40 @@
+# HACTU8 API, labs and console (H-50). See docs/deploy.md.
+#
+#   docker compose up --build -d       # http://127.0.0.1:8000
+#   docker compose exec hactu8 python -m hactu8 run all --backend echo
+#   docker compose down                # add -v to delete the results volume
+#
+# Safety: the port is published on the host's 127.0.0.1 only, never 0.0.0.0.
+# The labs and Lamb inside the container bind the container's own 127.0.0.1
+# and are not published at all.
+
+name: hactu8
+
+services:
+  hactu8:
+    build:
+      context: .
+      target: runtime
+    image: hactu8:0.1.0
+    ports:
+      - "127.0.0.1:${HACTU8_PORT:-8000}:8000"
+    # Optional secrets (OPENROUTER_API_KEY and friends) from a file OUTSIDE the
+    # repo; never baked into the image. Missing is fine: echo needs no key.
+    env_file:
+      - path: ${HACTU8_ENV_FILE:-../.hactu8.env}
+        required: false
+    environment:
+      # Ollama and llama.cpp run on the host, not in a container.
+      OLLAMA_HOST: ${OLLAMA_HOST:-http://host.docker.internal:11434}
+      LLAMACPP_HOST: ${LLAMACPP_HOST:-http://host.docker.internal:8080}
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - hactu8-results:/data
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+
+volumes:
+  hactu8-results:

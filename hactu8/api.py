@@ -1,6 +1,10 @@
 """FastAPI service for HACTU8 skills, lessons, the learning path, protections, runs, results, targets,
-branding, and reports."""
+branding, and reports.
 
+Set HACTU8_CONSOLE_DIR to a built console (Vite ``dist/``) to serve it at ``/`` from the same origin,
+as the Docker image does."""
+
+import os
 from pathlib import Path
 from typing import Optional
 
@@ -180,7 +184,27 @@ def create_app(root: Optional[Path] = None):
         }
         return PlainTextResponse(text, media_type=reports.CONTENT_TYPES[format_name], headers=headers)
 
+    console = os.environ.get("HACTU8_CONSOLE_DIR", "")
+    if console and (Path(console) / "index.html").is_file():
+        _mount_console(app, Path(console))
     return app
+
+
+def _mount_console(app, dist: Path) -> None:
+    """Serve the built console: its files, else index.html for client-side routes. /api stays JSON."""
+    from fastapi import HTTPException
+    from fastapi.responses import FileResponse
+
+    dist = dist.resolve()
+
+    @app.get("/{path:path}", include_in_schema=False)
+    def console(path: str):
+        if path == "api" or path.startswith("api/"):
+            raise HTTPException(404, "not found")
+        target = (dist / path).resolve()
+        if path and target.is_file() and target.is_relative_to(dist):
+            return FileResponse(target)
+        return FileResponse(dist / "index.html")
 
 
 def main() -> None:
