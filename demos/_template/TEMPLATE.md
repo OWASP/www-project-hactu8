@@ -238,6 +238,7 @@ notes below describe its original version.)
 - [ ] `providers.py` vendored by `scripts/vendor.py`; `ProviderModel`, `set_backend`, `/api/models`, `/api/backend` + `--backend` (§13) implemented and tested
 - [ ] Any text screen uses `protectogw/` vendored by `scripts/vendor.py`, with the lab directive as a `Policy` extra rule (§14)
 - [ ] `run_demo.py` keeps the adapter output shape and calls `evidence(...)` after each item line (§15); `python -m hactu8 run <id>` passes
+- [ ] The lab's id is in the `labs` of its technique(s) in `hactu8/techniques.py` (§17); `python -m hactu8 coverage` shows it
 
 ## 12. Lab console (web/)
 
@@ -383,3 +384,13 @@ Each skill folder holds a `LESSON.md` (skeleton: `./LESSON.md`), so the lesson t
 - "References" gives the catalog IDs (skill id, framework ID, protection ids) and links to the README and `references/` instead of copying them.
 
 Learning path: add `hactu8.path: "<stage>:<n>"` to the SKILL.md metadata, where stage is `basics`, `agentic` or `commerce` (in that order, see `STAGES` in `hactu8/catalog.py`) and `n` is the 1-based position within the stage. Positions must be unique. `python -m hactu8 path` and `GET /api/path` show the track.
+
+## 17. Adding a new attack family
+
+The attack catalog (`hactu8/techniques.py`) is open to new families: jailbreak styles, protocol attacks, attacks on the scoring layer, agent payments, or anything published after this template. A new family needs three things, and nothing else in the harness changes.
+
+1. **A catalog entry.** Add the family to `FAMILIES` if it is new, then one entry per technique in `TECHNIQUES`: title, family, one-line summary, its IDs in the main lists (`REF_LISTS`: OWASP LLM 2026 and 2025, OWASP Agentic, OWASP MCP, MITRE ATLAS, NIST AI 100-2), the defenses that address it (ids from `hactu8/protections.py`), and its labs. Record list IDs only, checked against the source, never names. Leave `labs` or `defenses` empty until they exist: `python -m hactu8 coverage` reports the gap, and that is the point. If a defense is new, add it to `hactu8/protections.py` and give it a kind in `hactu8/defenses.py`.
+2. **A lab from this template.** Copy `_template`, follow sections 1 to 16, and put the new lab's id in the technique's `labs`. Its hardened mode names its controls in `hactu8.protections`; the defense catalog then counts the lab's runs as evidence (`python -m hactu8 defenses`).
+3. **A bench case, where a text screen applies.** Add attack items and at least one clean control to `hactu8/bench/corpus.json` on a surface the defense screens (and map that surface in `BENCH_SURFACES` in `hactu8/defenses.py` if it is new). Set `baseline_flagged` to the screen's real verdict today, even when it misses: the bench measures, it does not flatter. Text for the held-out set (`holdout_v2.json`) must be written without looking at the rules, or it stops measuring generalization.
+
+`tests/test_techniques.py` and `tests/test_defenses.py` check the links: unknown labs, defenses, families or malformed list IDs fail.

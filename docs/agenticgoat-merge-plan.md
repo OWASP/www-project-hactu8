@@ -230,7 +230,8 @@ The target is every known attack and defense, not only the two OWASP Top 10 list
   - signed challenge checks;
   - an idempotency key per payment;
   - ProtectoGW screening of the payment metadata.
-- [ ] AG-97 Keep the catalog open to new attack families. A new family needs only a catalog entry, a lab from the template, and a bench case. Document this in `demos/_template/TEMPLATE.md`.
+- [x] AG-97 Keep the catalog open to new attack families. A new family needs only a catalog entry, a lab from the template, and a bench case. Document this in `demos/_template/TEMPLATE.md`.
+  - Done 2026-11-21: `demos/_template/TEMPLATE.md` §17 (catalog entry, lab from the template, bench case) and a checklist line in §11.
 - [ ] AG-94 Classic ML attacks (adversarial examples, model training-time poisoning, model stealing) are tracked in the catalog. Labs for them need a non-LLM target and are scoped after the MVP.
 
 ## Done means
