@@ -17,7 +17,7 @@ Phase 1 MVP, demo on 2026-12-11. See the wiki:
 
 ```text
 hactu8/     Core: catalog, runner, classifiers, router, providers, API, reports, Lamb, result schema, CLI
-demos/      Self-contained labs (LLM01-10, ASI01-10, AGX01-09, HX01-04, HX06), each a portable skill
+demos/      Self-contained labs (LLM01-10, ASI01-10, AGX01-09, HX01-06), each a portable skill
 tests/      Core tests
 spikes/     Prototypes: IAC console (iac-prototype), early platform UX, legacy skills
 assets/     Logos and images

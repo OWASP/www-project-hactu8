@@ -23,7 +23,7 @@ OWASP HACTU8 turns attacks on AI systems into repeatable assurance tests: baseli
 
 ```text
 hactu8/     Core package: catalog, adapters/lab.py, classify.py, result.py, store.py, cli.py, schemas/
-demos/      34 labs (LLM01-10, ASI01-10, AGX01-09, HX01-04, HX06); each <lab>/run_demo.py drives one skill dir
+demos/      35 labs (LLM01-10, ASI01-10, AGX01-09, HX01-06); each <lab>/run_demo.py drives one skill dir
 tests/      Core tests (python -m unittest discover -s tests -t .)
 spikes/     iac-prototype (React iac-host and FastAPI copilot-api, to be trimmed in M4), legacy material
 scripts/    seed-issues.sh
