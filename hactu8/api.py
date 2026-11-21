@@ -241,7 +241,8 @@ def main() -> None:
         import uvicorn
     except ModuleNotFoundError as exc:
         raise SystemExit("API needs the optional dependency: pip install 'hactu8[api]'") from exc
-    uvicorn.run(create_app(), host="127.0.0.1", port=8000)
+    port = int(os.environ.get("HACTU8_API_PORT", "8000"))
+    uvicorn.run(create_app(), host="127.0.0.1", port=port)
 
 
 if __name__ == "__main__":
