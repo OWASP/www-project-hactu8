@@ -367,6 +367,56 @@
       "type": "string",
       "description": "Tail of the raw run output"
     },
+    "wolf": {
+      "type": "object",
+      "description": "Present for `hactu8 wolf` runs: attacks written by an attacker model, screened, then graded like live runs by the per-run canary",
+      "required": [
+        "attacker",
+        "rounds",
+        "attempts_per_round",
+        "sent",
+        "rejected",
+        "landed_off",
+        "landed_on",
+        "attempts"
+      ],
+      "properties": {
+        "attacker": {
+          "type": "object",
+          "required": [
+            "backend"
+          ]
+        },
+        "rounds": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "attempts_per_round": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "sent": {
+          "type": "integer"
+        },
+        "rejected": {
+          "type": "integer",
+          "description": "Generated attacks the safety screen refused to send"
+        },
+        "landed_off": {
+          "type": "integer"
+        },
+        "landed_on": {
+          "type": "integer"
+        },
+        "attempts": {
+          "type": "array"
+        },
+        "den": {
+          "type": "array",
+          "description": "What the wolf den captured, canary redacted"
+        }
+      }
+    },
     "live": {
       "type": "object",
       "description": "Present for `hactu8 live` runs: Billy's MCP surfaces graded with the defense off and on, by the per-run canary",

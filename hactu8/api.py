@@ -38,6 +38,15 @@ def create_app(root: Optional[Path] = None):
         model: str = ""
         confirm_spend: bool = False
 
+    class WolfRequest(BaseModel):
+        backend: str = "echo"
+        model: str = ""
+        target_backend: str = ""
+        target_model: str = ""
+        rounds: int = 3
+        attempts: int = 2
+        confirm_spend: bool = False
+
     app = FastAPI(title="HACTU8 API", version="0.1.0")
     app.add_middleware(
         CORSMiddleware,
@@ -132,6 +141,26 @@ def create_app(root: Optional[Path] = None):
         except (RuntimeError, ValueError) as exc:
             raise HTTPException(400, str(exc)) from exc
         doc = live.to_result(run, started, int((time.monotonic() - clock) * 1000))
+        store.save(doc)
+        return doc
+
+    @app.post("/api/wolf")
+    def wolf_run(request: WolfRequest):
+        import time
+
+        from hactu8 import wolf_agent
+        from hactu8.result import now_iso
+        rounds, attempts = wolf_agent.bounds(request.rounds, request.attempts)
+        notice = wolf_agent.spend_notice(request.backend, request.target_backend, rounds, attempts)
+        if notice and not request.confirm_spend:
+            raise HTTPException(402, notice + " Set confirm_spend.")
+        started, clock = now_iso(), time.monotonic()
+        try:
+            run = wolf_agent.run(request.backend, request.model, target_backend=request.target_backend,
+                                 target_model=request.target_model, rounds=rounds, attempts=attempts)
+        except (RuntimeError, ValueError) as exc:
+            raise HTTPException(400, str(exc)) from exc
+        doc = wolf_agent.to_result(run, started, int((time.monotonic() - clock) * 1000))
         store.save(doc)
         return doc
 

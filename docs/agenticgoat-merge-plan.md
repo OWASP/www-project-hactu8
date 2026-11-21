@@ -175,7 +175,8 @@ Order: W0, W1, W2 and W3 run first (they unblock everything). W4 and W5 can run 
 ### W8: Verification and the rest of the MVP
 
 - [ ] AG-80 Full check: unit tests, `run all` on echo, the ProtectoGW bench, the Playwright e2e console tests, and a Claude in Chrome walkthrough of Run, Results, Reports, model picker and OFF vs ON. Run markdownlint.
-- [ ] AG-81 M5: H-50 Dockerfile and compose (loopback binds, Ollama on the host), H-51 devcontainer, H-52 GitHub Action for the deterministic suite to SARIF, H-53 AI attacker skill against Lamb (the Wolf), H-54 HACTU8 MCP server exposing the runner.
+- [x] AG-81 M5: H-50 Dockerfile and compose (loopback binds, Ollama on the host), H-51 devcontainer, H-52 GitHub Action for the deterministic suite to SARIF, H-53 AI attacker skill against Lamb (the Wolf), H-54 HACTU8 MCP server exposing the runner.
+  - H-50/51/52 in ed34b5c (Docker verified: 29/29 in the container, loopback-only binds; CI workflow not yet run on GitHub). H-53 Wolf: `hactu8 wolf`, an attacker model writes benign-effect notes, screened before use (no off-host targets, URIs, shell, system paths or canary), graded by the live oracle; llama3.2:3b landed 0 of 4. H-54: `hactu8 mcp` (mcp v2 SDK, stdio or 127.0.0.1 HTTP) exposes skills, path, lessons, results and runs; cloud runs need confirm_spend.
 - [ ] AG-82 M6: H-60 fresh-clone test, H-61 demo script and recorded fallback, H-62 Project Status and OWASP page updates (the `main` branch changes only with approval).
 
 ### W9: Beyond the OWASP Top 10, a catalog of known attacks and defenses

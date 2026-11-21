@@ -146,10 +146,10 @@ class LiveCliTest(unittest.TestCase):
 class ExcerptTest(unittest.TestCase):
     def test_excerpt_shows_the_leak_redacted(self):
         text = "x" * 500 + CANARY + "y" * 50
-        excerpt = live._excerpt(text, CANARY)
+        excerpt = live.excerpt(text, CANARY)
         self.assertIn("<canary>", excerpt)
         self.assertNotIn(CANARY, excerpt)
-        self.assertIn("encoded form", live._excerpt(CANARY[::-1], CANARY))
+        self.assertIn("encoded form", live.excerpt(CANARY[::-1], CANARY))
 
 
 @unittest.skipUnless(HAVE_MCP, "Lamb extra not installed")

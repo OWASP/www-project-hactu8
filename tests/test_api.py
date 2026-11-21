@@ -113,6 +113,18 @@ class ApiModelsAndLiveTest(unittest.TestCase):
         board = self.client.get("/api/scoreboard").json()
         self.assertEqual(board["scoreboard"][0]["run_id"], doc["run_id"])
 
+    def test_wolf_run_on_echo_and_spend_guard(self):
+        self.assertEqual(self.client.post("/api/wolf", json={"backend": "anthropic"}).status_code, 402)
+        self.assertEqual(self.client.post("/api/wolf", json={"target_backend": "openai"}).status_code, 402)
+        try:
+            from hactu8.lamb.mcp_target import LambMcpState, build_mcp_server
+            build_mcp_server(LambMcpState())
+        except (ModuleNotFoundError, RuntimeError):
+            self.skipTest("Lamb extra not installed")
+        doc = self.client.post("/api/wolf", json={"rounds": 1}).json()
+        self.assertEqual((doc["wolf"]["landed_off"], doc["summary"]["status"]), (2, "pass"))
+        self.assertEqual(self.client.get("/api/scoreboard").json()["total"], 0)  # not a live run
+
 
 @unittest.skipIf(TestClient is None, "API optional dependencies not installed")
 class ApiConsoleTest(unittest.TestCase):

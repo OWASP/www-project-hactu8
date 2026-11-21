@@ -9,6 +9,8 @@
     hactu8 bench [--json] [--misses] [--classifier-backend B [--model M]]
     hactu8 live [--backend B] [--model M] [--json]
     hactu8 scoreboard [--json]
+    hactu8 wolf [--backend B] [--model M] [--target-backend B] [--target-model M] [--rounds N] [--attempts N]
+    hactu8 mcp [--http] [--port P]
 
 Without --backend, the model under test comes from the router (hactu8.yaml,
 role ``target``; deterministic echo by default). --tier picks a tier instead.
@@ -244,6 +246,56 @@ def cmd_live(args) -> int:
     return 0
 
 
+def cmd_wolf(args) -> int:
+    import time
+
+    from hactu8 import wolf_agent
+    from hactu8.result import now_iso
+    rounds, attempts = wolf_agent.bounds(args.rounds, args.attempts)
+    notice = wolf_agent.spend_notice(args.backend, args.target_backend, rounds, attempts)
+    if notice and not args.confirm_spend:
+        print(notice + " Re-run with --confirm-spend.", file=sys.stderr)
+        return 2
+
+    def show(a) -> None:
+        if not args.json:
+            state = f"REJECTED ({a.reject_reason})" if not a.screened else f"{a.outcome_off:<7} {a.outcome_on}"
+            print(f"  {a.id:<10} {a.strategy:<16} {state}", flush=True)
+
+    started, clock = now_iso(), time.monotonic()
+    try:
+        result = wolf_agent.run(args.backend, args.model, target_backend=args.target_backend,
+                                target_model=args.target_model, rounds=rounds, attempts=attempts, progress=show)
+    except (RuntimeError, ValueError) as exc:
+        print(f"hactu8 wolf: {exc}", file=sys.stderr)
+        return 2
+    doc = wolf_agent.to_result(result, started, int((time.monotonic() - clock) * 1000))
+    path = store.save(doc)
+    if args.json:
+        print(json.dumps(doc, indent=2, ensure_ascii=False))
+        return 0
+    w = doc["wolf"]
+    print(f"\nattacker {result.attacker_backend} / {result.attacker_model}; target {result.backend} / {result.model}")
+    print(f"landed            {w['landed_off']} of {w['sent']} sent with the gateway off, {w['landed_on']} with it on"
+          f" ({w['rejected']} rejected by the safety screen)")
+    print(f"control           {result.control.outcome_off} off, {result.control.outcome_on} on")
+    print(f"wolf den          {sum(c['confirmed'] for c in w['den'])} confirmed captures")
+    print(f"status            {doc['summary']['status']}")
+    print(f"saved {path}")
+    return 0
+
+
+def cmd_mcp(args) -> int:
+    from hactu8.lamb._mcp import McpUnavailable
+    try:
+        from hactu8 import mcp_server
+        mcp_server.serve(http=args.http, port=args.port)
+    except McpUnavailable as exc:
+        print(f"hactu8 mcp: {exc}", file=sys.stderr)
+        return 2
+    return 0
+
+
 def cmd_scoreboard(args) -> int:
     rows = store.scoreboard()
     if args.json:
@@ -306,6 +358,23 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--confirm-spend", action="store_true", help="allow a paid cloud backend")
     p.add_argument("--json", action="store_true")
     p.set_defaults(func=cmd_live)
+
+    p = sub.add_parser("wolf", help="an attacker model writes and adapts attacks on Lamb, graded off vs on")
+    p.add_argument("--backend", default="echo", help="attacker: echo (default, deterministic mutations) | ollama | "
+                   "llamacpp | openrouter | anthropic | openai")
+    p.add_argument("--model", default="")
+    p.add_argument("--target-backend", default="", help="model under attack (default: the attacker's backend)")
+    p.add_argument("--target-model", default="")
+    p.add_argument("--rounds", type=int, default=3, help="rounds, 1 to 5 (default 3)")
+    p.add_argument("--attempts", type=int, default=2, help="attempts per round, 1 to 4 (default 2)")
+    p.add_argument("--confirm-spend", action="store_true", help="allow a paid cloud backend")
+    p.add_argument("--json", action="store_true")
+    p.set_defaults(func=cmd_wolf)
+
+    p = sub.add_parser("mcp", help="serve the runner as an MCP server (stdio; --http for 127.0.0.1)")
+    p.add_argument("--http", action="store_true", help="streamable HTTP on 127.0.0.1 instead of stdio")
+    p.add_argument("--port", type=int, default=8765)
+    p.set_defaults(func=cmd_mcp)
 
     p = sub.add_parser("scoreboard", help="latest live run per model, defense off vs on")
     p.add_argument("--json", action="store_true")

@@ -20,6 +20,7 @@ api = ["fastapi>=0.115,<1", "uvicorn>=0.31,<1"]
 hactu8 = "hactu8.cli:main"
 hactu8-lamb = "hactu8.lamb.__main__:main"
 hactu8-api = "hactu8.api:main"
+hactu8-mcp = "hactu8.mcp_server:main"
 
 [tool.setuptools.packages.find]
 include = ["hactu8*"]
