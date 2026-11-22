@@ -290,7 +290,7 @@ python scripts/evaluate_kpi.py --harden                      # GREEN, WIR 0%, ex
 python scripts/evaluate_kpi.py --probe                       # measured limit, exit 2
 python scripts/reset_baseline.py                             # restore clean state
 python scripts/evaluate_kpi.py                               # GREEN, WIR 0%
-python -m unittest discover tests                            # 49 tests
+python -m unittest discover tests                            # 51 tests
 ```
 
 ## License

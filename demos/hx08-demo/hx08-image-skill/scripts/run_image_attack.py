@@ -79,7 +79,7 @@ def main(argv=None) -> int:
         result = _post(f"{args.target}/ask", {"message": message, "image": image})
         print(f"[*] {label}")
         print(f"    billy> {result['final_reply'][:140]}")
-        print(f"[+] Directive obeyed: {result['directive'] or 'none'}; override code in the output: "
+        print(f"[+] Directive obeyed: {result['directive'] or 'none'}; override code in the reply: "
               f"{'YES' if result['canary_out'] else 'no'}; over-policy refunds paid: {result['over_policy_paid']}")
     print("[*] GET /refund-log shows every refund call. Re-run scripts/evaluate_kpi.py to measure.")
     return 0
