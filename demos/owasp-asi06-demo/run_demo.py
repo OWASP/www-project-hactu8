@@ -30,7 +30,7 @@ SKILL_DIR = os.path.join(HERE, "owasp-asi06-memory-skill")
 sys.path.insert(0, SKILL_DIR)
 sys.path.insert(0, os.path.join(SKILL_DIR, "scripts"))
 
-from evaluate_kpi import ICON, SUITE, classify, session_steps, summarise  # noqa: E402
+from evaluate_kpi import ICON, SUITE, classify, held_by, session_steps, summarise  # noqa: E402
 from run_memory_poison import poison_message  # noqa: E402
 from vulnerable_app import Lab, screen_memory  # noqa: E402
 
@@ -56,6 +56,8 @@ def act(lab: Lab, title: str) -> float:
             red += status == "RED"
         tag = "" if is_targeted else "  (control)"
         print(f"    {ICON[status]} {status:<6} {user:<6} {message}{tag}")
+        if held_by(steps, status):
+            print(f"        held_by: {'; '.join(held_by(steps, status))}")
         evidence(steps)
         print(f"             {summarise(steps)}")
     psr = red / targeted * 100.0
