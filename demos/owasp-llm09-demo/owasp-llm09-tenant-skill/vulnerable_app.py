@@ -76,6 +76,12 @@ VALID_MODES = ("vulnerable", "hardened")
 MEMORY_TURNS = 3          # host-safety cap on remembered turns per session
 MAX_TURN_CHARS = 500      # host-safety cap on each remembered turn
 TOP_K = 3                 # candidates reported per query
+# Passages handed to the model: the top-ranked one only, as the stub reads. With
+# all TOP_K, the clean baseline already gave real models Hilltop's documents as
+# runners-up for the hay and vet questions, and they quoted them with no attack
+# (2026-11-21 sweeps). The lab's leak must come from the attack putting another
+# tenant's document first, not from a runner-up in the context.
+CONTEXT_K = 1
 
 
 @dataclass(frozen=True)
@@ -252,7 +258,7 @@ class Lab:
         top = ranked[:TOP_K]
         system = SYSTEM_PROMPT.format(tenant_name=self.tenants[tenant])
         # The gap (vulnerable mode): passages go in as bare text, no tenant label.
-        answer = self.model.generate(system, question, [d.text for d, _ in top],
+        answer = self.model.generate(system, question, [d.text for d, _ in top[:CONTEXT_K]],
                                      fenced=self.mode == "hardened")
         if remember:
             with self.lock:

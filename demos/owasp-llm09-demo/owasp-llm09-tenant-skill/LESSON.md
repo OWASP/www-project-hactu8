@@ -40,7 +40,7 @@ The order matters: filtering before ranking means a foreign document never becom
 
 ## Where the defense stops working
 
-- **The vulnerable store leaks without any attack.** Act 1 is GREEN on echo because the stub answers from the first passage only, but three passages reach the model. With no crafted turn, `hilltop/feed` ranks second for the hay question and `hilltop/vet` second for the vet question. On a real model with no attack, llama-3.1-8b mentioned Hilltop's "retainer terms" in a Meadow Fold answer. The tenant filter closes this too; the point is that a shared, unfiltered store is a leak by design, not only under attack.
+- **A shared store leaks through runners-up too.** With no crafted turn, `hilltop/feed` ranks second for the hay question and `hilltop/vet` second for the vet question. The lab used to hand the model the top three passages, and in the 2026-11-21 sweeps real models quoted those runners-up with no attack: `mistral:7b` gave Hilltop's 142-dollar rebate and the vet canary, `qwen3:8b` the hay canary, and `command-r7b`, `granite-4.2-8b` and `lfm-3-1.7b` one Hilltop fact each, so Act 1 read 33-67% RED. That measured the store, not the attack. The model now reads only the top-ranked passage (`CONTEXT_K = 1`, as the stub does; `test_clean_baseline_sends_only_own_tenant_passages`), so only the crafted turn can put Hilltop's document in front of it. A real RAG app that sends several passages leaks this way with no attacker at all; the tenant filter closes that too.
 - **The filter trusts the tenant label on each document.** A document ingested with the wrong tenant label, by mistake or by an attacker who can write to the store, is served to that tenant. Ingestion review and per-tenant collections are in the references, not in the code.
 - **Poisoning inside a tenant is not covered.** A planted document in your own tenant passes the filter by design; embedding poisoning is a separate risk (see LLM05 Data and Model Poisoning).
 - **Embedding inversion is out of reach.** If raw vectors are exposed, Vec2Text-style inversion rebuilds the text, and no retrieval filter sees it. The only control is never exposing or sharing embeddings.
@@ -54,9 +54,9 @@ The order matters: filtering before ranking means a foreign document never becom
 2. Hardened mode keeps the same memory, question and ranking code. Why does it return Meadow Fold's documents?
 
    Answer: The filter drops every document whose tenant differs from the session's server-side tenant before ranking, so Hilltop's documents are never candidates, whatever the query vector favours.
-3. Act 1 is GREEN on echo. Why can a real model still leak Hilltop data with no attack, and which control fixes it?
+3. Hilltop's documents rank second for hay and vet even in Act 1. Why does Act 1 stay GREEN, and what would leak if the app sent its top three passages to the model?
 
-   Answer: The top three passages reach the model, and Hilltop's documents rank second for hay and vet even without the crafted turn. A real model reads every passage; the stub uses only the first. The tenant filter at retrieval fixes it.
+   Answer: Only the top-ranked passage reaches the model, and in Act 1 that is always Meadow Fold's. With three passages, a real model reads Hilltop's runners-up and can quote them with no attack, as five models did in the 2026-11-21 sweeps. The tenant filter at retrieval fixes both.
 
 ## References
 

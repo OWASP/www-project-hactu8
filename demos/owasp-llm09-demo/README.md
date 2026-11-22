@@ -104,8 +104,13 @@ whether one is set; without it, `openrouter` is greyed out in the picker.
 The real model only writes the answer. Retrieval, the session-to-tenant map
 and the tenant filter stay in code and decide which passages it sees:
 
-- **Vulnerable mode** pastes the top passages into the user turn as bare
-  text with no tenant label, so the prompt's tenant rule cannot be applied.
+- **Vulnerable mode** pastes the top-ranked passage into the user turn as
+  bare text with no tenant label, so the prompt's tenant rule cannot be
+  applied. Only that one passage goes in (`CONTEXT_K = 1`, as the stub reads):
+  with the top three, the clean baseline handed real models Hilltop's
+  documents as runners-up and five models quoted them with no attack
+  (2026-11-21 sweeps, 33-67% RED in Act 1). Now only the crafted turn can put
+  another tenant's document in front of the model.
 - **Hardened mode** filters by tenant before ranking (unchanged), then fences
   the remaining passages in `<retrieved_passages>` tags and tells the model to
   treat them as reference data only (spotlighting).
@@ -290,7 +295,7 @@ python scripts/evaluate_kpi.py --scan assets/crafted_query.txt # REJECT, exit 2
 python scripts/evaluate_kpi.py --harden                        # GREEN, CTLR 0%, exit 0
 python scripts/reset_baseline.py                               # restore clean state
 python scripts/evaluate_kpi.py                                 # GREEN, CTLR 0%
-python -m unittest discover tests                              # 13 tests
+python -m unittest discover tests                              # 23 tests
 ```
 
 ## License
