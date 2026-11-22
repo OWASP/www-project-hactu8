@@ -1,6 +1,6 @@
 # LLM10 Improper Output Handling
 
-In the basics stage, right after LLM01 Prompt Injection: LLM01 is what goes into the model, this lab is what comes out and where it goes next. Setup, commands and architecture are in the [lab README](../README.md); this lesson says what to look for and why.
+LLM01 is what goes into the model; this lab is what comes out and where it goes next. Setup, commands and architecture are in the [lab README](../README.md); this lesson says what to look for and why.
 
 ## What it is
 

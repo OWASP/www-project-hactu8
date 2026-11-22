@@ -1,6 +1,6 @@
 # ASI05 Unexpected Code Execution
 
-On the agentic stage of the learning path, after ASI03 Identity & Privilege Abuse; it builds on LLM10 Improper Output Handling from the basics. Setup, commands and architecture are in the [lab README](../README.md); this lesson says what to look for and why.
+This lab builds on LLM10 Improper Output Handling. Setup, commands and architecture are in the [lab README](../README.md); this lesson says what to look for and why.
 
 ## What it is
 

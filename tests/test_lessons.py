@@ -138,7 +138,9 @@ class RepoLessonTest(unittest.TestCase):
                 continue
             with self.subTest(skill=skill.id):
                 text = (Path(skill.skill_dir) / "LESSON.md").read_text(encoding="utf-8")
-                self.assertNotRegex(text, r"(?i)\bstep \d+ (of|on) the|^step \d+,|\blast lab (of|on) the")
+                self.assertNotRegex(text, r"(?i)\bstep \d+ (of|on) the|^step \d+,|\blast lab (of|on) the"
+                                          r"|learning path|\b(basics|agentic|commerce|advanced) stage"
+                                          r"|came first|\b(next|previous) lab|\b(first|last) (\w+ )?lab (of|on) the")
 
     def test_every_lab_has_a_complete_lesson(self):
         ids = {skill.id for skill in catalog.discover(ROOT)}

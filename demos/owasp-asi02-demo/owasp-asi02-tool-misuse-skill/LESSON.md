@@ -1,6 +1,6 @@
 # ASI02 Tool Misuse & Exploitation
 
-On the agentic stage of the learning path, after ASI01 Agent Goal Hijack. Setup, commands and architecture are in the [lab README](../README.md); this lesson says what to look for and why.
+Setup, commands and architecture are in the [lab README](../README.md); this lesson says what to look for and why.
 
 ## What it is
 

@@ -1,6 +1,6 @@
 # ASI10 Rogue Agents
 
-The last ASI lab on the agentic stage of the learning path, after ASI09 Human-Agent Trust Exploitation. Setup, commands and architecture are in the [lab README](../README.md); this lesson says what to look for and why.
+Setup, commands and architecture are in the [lab README](../README.md); this lesson says what to look for and why.
 
 ## What it is
 

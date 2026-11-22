@@ -1,6 +1,6 @@
 # ASI07 Insecure Inter-Agent Communication
 
-On the agentic stage of the learning path, after ASI06 Memory & Context Poisoning. Setup, commands and architecture are in the [lab README](../README.md); this lesson says what to look for and why.
+Setup, commands and architecture are in the [lab README](../README.md); this lesson says what to look for and why.
 
 ## What it is
 

@@ -1,6 +1,6 @@
 # ASI03 Identity & Privilege Abuse
 
-On the agentic stage of the learning path, after ASI02 Tool Misuse. Setup, commands and architecture are in the [lab README](../README.md); this lesson says what to look for and why.
+Setup, commands and architecture are in the [lab README](../README.md); this lesson says what to look for and why.
 
 ## What it is
 

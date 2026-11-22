@@ -1,6 +1,6 @@
 # HX01 Hidden Document Injection
 
-Part of the basics stage. Prompt injection in its LLM01 form came first; here the instruction hides inside a file. Setup, commands and architecture are in the [lab README](../README.md); this lesson says what to look for and why.
+Here the instruction of an LLM01 prompt injection hides inside a file. Setup, commands and architecture are in the [lab README](../README.md); this lesson says what to look for and why.
 
 ## What it is
 

@@ -1,6 +1,6 @@
 # HX07 Embedding Inversion
 
-Part of the basics stage. The LLM09 lab leaks another tenant's documents through retrieval ranking, and closes it with a tenant filter on the text. This lab starts where that one ends: the text is scoped, and the store still leaks, because it hands out the vectors. Setup, commands and architecture are in the [lab README](../README.md); this lesson says what to look for and why.
+The LLM09 lab leaks another tenant's documents through retrieval ranking, and closes it with a tenant filter on the text. This lab starts where that one ends: the text is scoped, and the store still leaks, because it hands out the vectors. Setup, commands and architecture are in the [lab README](../README.md); this lesson says what to look for and why.
 
 ## What it is
 

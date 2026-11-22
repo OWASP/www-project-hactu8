@@ -1,6 +1,6 @@
 # AGX07 Frontmatter Poison
 
-On the learning path after AGX03 Conditional Rug-Pull. Setup, commands and architecture are in the [lab README](../README.md); this lesson says what to look for and why.
+Setup, commands and architecture are in the [lab README](../README.md); this lesson says what to look for and why.
 
 ## What it is
 

@@ -1,6 +1,6 @@
 # ASI06 Memory & Context Poisoning
 
-On the agentic stage of the learning path, after the AGX gateway labs and before ASI07 Insecure Inter-Agent Communication. It builds on LLM05 Data and Model Poisoning from the basics. Setup, commands and architecture are in the [lab README](../README.md); this lesson says what to look for and why.
+This lab builds on LLM05 Data and Model Poisoning. Setup, commands and architecture are in the [lab README](../README.md); this lesson says what to look for and why.
 
 ## What it is
 

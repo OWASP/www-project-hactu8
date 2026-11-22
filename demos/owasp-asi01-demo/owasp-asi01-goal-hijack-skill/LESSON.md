@@ -1,6 +1,6 @@
 # ASI01 Agent Goal Hijack
 
-The first ASI lab on the agentic stage of the learning path, right after LLM03 Excessive Agency. Setup, commands and architecture are in the [lab README](../README.md); this lesson says what to look for and why.
+Setup, commands and architecture are in the [lab README](../README.md); this lesson says what to look for and why.
 
 ## What it is
 

@@ -1,6 +1,6 @@
 # HX06 Role-play and Many-shot Jailbreak
 
-Part of the basics stage. HX02 spread a forbidden request over a conversation; here it arrives in one message, wrapped in a character, a story or a long fake transcript. Setup, commands and architecture are in the [lab README](../README.md); this lesson says what to look for and why.
+HX02 spread a forbidden request over a conversation; here it arrives in one message, wrapped in a character, a story or a long fake transcript. Setup, commands and architecture are in the [lab README](../README.md); this lesson says what to look for and why.
 
 ## What it is
 

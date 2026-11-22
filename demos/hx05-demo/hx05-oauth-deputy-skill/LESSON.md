@@ -1,6 +1,6 @@
 # HX05 OAuth Confused Deputy (MCP)
 
-Part of the agentic stage. The other MCP labs attack what the model reads. Here nothing the model reads matters much: the attack is in how an MCP proxy server hands out authority, and the stolen thing is a customer's OAuth token. Setup, commands and architecture are in the [lab README](../README.md); this lesson says what to look for and why.
+The other MCP labs attack what the model reads. Here nothing the model reads matters much: the attack is in how an MCP proxy server hands out authority, and the stolen thing is a customer's OAuth token. Setup, commands and architecture are in the [lab README](../README.md); this lesson says what to look for and why.
 
 ## What it is
 

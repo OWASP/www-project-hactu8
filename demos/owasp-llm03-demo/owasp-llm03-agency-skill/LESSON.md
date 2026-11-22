@@ -1,6 +1,6 @@
 # LLM03 Excessive Agency
 
-The first lab of the agentic stage: the model no longer only answers, it acts. Setup, commands and architecture are in the [lab README](../README.md); this lesson says what to look for and why.
+Here the model no longer only answers, it acts. Setup, commands and architecture are in the [lab README](../README.md); this lesson says what to look for and why.
 
 ## What it is
 

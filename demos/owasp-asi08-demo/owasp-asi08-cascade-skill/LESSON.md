@@ -1,6 +1,6 @@
 # ASI08 Cascading Failures
 
-On the agentic stage of the learning path, after ASI07 Insecure Inter-Agent Communication. Setup, commands and architecture are in the [lab README](../README.md); this lesson says what to look for and why.
+Setup, commands and architecture are in the [lab README](../README.md); this lesson says what to look for and why.
 
 ## What it is
 
