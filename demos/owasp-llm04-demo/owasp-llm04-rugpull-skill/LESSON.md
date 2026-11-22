@@ -36,7 +36,7 @@ On a real model (`--backend ollama --model llama3.2:3b`), the numbers are report
 Act 4 adds an admission gate with two protections. Each stops one variant:
 
 - **Definition pinning** (`hash_pin`). Every tool definition (name, description, input schema) is hashed with SHA-256 and compared with [`assets/tool_pins.json`](assets/tool_pins.json), captured at approval. Any change, in any wording, is rejected. It keys on change, not content, so it needs no idea of what an attack looks like. This alone stops the rug pull.
-- **Multi-call sampling** (`sampling`). Each update is called five times (`SAMPLE_CALLS`) with one probe. A lookup tool given the same input must return the same output, so drift between identical calls rejects it without any rule; the protectogw output screen adds a content view. This stops the sleeper, whose definition matches its pin.
+- **Multi-call sampling** (`multi_call_sampling`). Each update is called five times (`SAMPLE_CALLS`) with one probe. A lookup tool given the same input must return the same output, so drift between identical calls rejects it without any rule; the protectogw output screen adds a content view. This stops the sleeper, whose definition matches its pin.
 
 A rejected tool keeps its vendored approved version, so answers stay correct instead of failing. `test_pinning_alone_misses_sleeper` shows why both are needed: with sampling cut to one call, pinning alone leaves the travel questions RED.
 
@@ -64,7 +64,7 @@ A rejected tool keeps its vendored approved version, so answers stay correct ins
 
 ## References
 
-- HACTU8 catalog: skill `llm04`, OWASP `LLM04:2026` Supply Chain (`LLM03:2025` in the 2025 edition); protections `hash_pin` and `sampling` (`hactu8/protections.py`).
+- HACTU8 catalog: skill `llm04`, OWASP `LLM04:2026` Supply Chain (`LLM03:2025` in the 2025 edition); protections `hash_pin` and `multi_call_sampling` (`hactu8/protections.py`).
 - Lab material, not repeated here: the [lab README](../README.md) (architecture, the "real, not scripted" argument, MCP terminology bridge) and [`references/LLM04_RISKS.md`](references/LLM04_RISKS.md) (research, scenarios S-1 and S-2, mitigation roadmap).
 - [OWASP Top 10 for LLM Applications](https://genai.owasp.org/llm-top-10/), entry Supply Chain.
 - Hubinger et al. (2024), "Sleeper Agents: Training Deceptive LLMs that Persist Through Safety Training"; Invariant Labs (2025), "MCP Security Notification: Tool Poisoning Attacks"; Ohm et al. (2020), "Backstabber's Knife Collection".

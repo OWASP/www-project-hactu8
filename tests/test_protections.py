@@ -46,7 +46,7 @@ class CatalogTest(unittest.TestCase):
                 self.assertNotEqual(entry["before"], entry["after"])
 
     def test_resolve_keeps_order_and_rejects_unknown_ids(self):
-        self.assertEqual([e["id"] for e in protections.resolve(["hash_pin", "sampling"])], ["hash_pin", "sampling"])
+        self.assertEqual([e["id"] for e in protections.resolve(["hash_pin", "multi_call_sampling"])], ["hash_pin", "multi_call_sampling"])
         with self.assertRaises(KeyError):
             protections.resolve(["hash_pin", "no_such_control"])
         self.assertEqual(protections.unknown(["hash_pin", "nope"]), ["nope"])

@@ -20,7 +20,7 @@ metadata:
   hactu8.target: "lab"
   hactu8.port: "5204"
   hactu8.path: "agentic:6"
-  hactu8.protections: "hash_pin,sampling"
+  hactu8.protections: "hash_pin,multi_call_sampling"
   objective: Demonstrate tool supply-chain compromise via a third-party registry
   version: 2026.1
 ---

@@ -255,7 +255,7 @@ TECHNIQUES: Dict[str, Dict[str, object]] = {
         "A tool changes after approval, or turns hostile only after its first calls.",
         {"owasp_llm_2026": ["LLM04:2026"], "owasp_llm_2025": ["LLM03:2025"], "owasp_asi_2026": ["ASI04:2026"],
          "owasp_mcp_2025": ["MCP03:2025", "MCP04:2025"], "atlas": ["AML.T0109", "AML.T0110"]},
-        ["hash_pin", "sampling"], ["llm04", "agx03", LIVE_LAB]),
+        ["hash_pin", "multi_call_sampling"], ["llm04", "agx03", LIVE_LAB]),
     "tool-description-poisoning": _t(
         "Tool description poisoning", "supply_chain",
         "An MCP server's tool description carries instructions the model reads as part of its tool list.",

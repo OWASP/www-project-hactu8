@@ -33,7 +33,7 @@ On a real model (`--backend ollama --model llama3.2:3b`) the numbers are reporte
 
 Two controls are added in Act 4, and either alone takes the CLR to 0 on the echo backend:
 
-- **Screen every return** (`sampling`). The hardened gateway screens every poll (`screen_every=True`) and never grants trust after one clean sample. Whenever the trigger fires, the hostile return is screened at the moment it arrives.
+- **Screen every return** (`multi_call_sampling`). The hardened gateway screens every poll (`screen_every=True`) and never grants trust after one clean sample. Whenever the trigger fires, the hostile return is screened at the moment it arrives.
 - **Output canary check** (`canary_tripwire`). Every reply is screened for the credential, and a blocked reply becomes a refusal, whatever poll the directive came from.
 
 For real models, hardened mode also fences the feed in `<untrusted_tool_output>` tags (spotlighting).
@@ -63,8 +63,8 @@ For real models, hardened mode also fences the feed in `<untrusted_tool_output>`
 
 ## References
 
-- HACTU8 catalog: skill `agx03`, `AGX03` Conditional Rug-Pull (an AGX extension ID, not an OWASP number; parent `ASI04:2026`, mechanism `LLM01:2026` Prompt Injection); protections `sampling` and `canary_tripwire` (`hactu8/protections.py`).
+- HACTU8 catalog: skill `agx03`, `AGX03` Conditional Rug-Pull (an AGX extension ID, not an OWASP number; parent `ASI04:2026`, mechanism `LLM01:2026` Prompt Injection); protections `multi_call_sampling` and `canary_tripwire` (`hactu8/protections.py`).
 - Lab material, not repeated here: the [lab README](../README.md) (architecture, the "real, not scripted" argument, mapping table), [`references/AGX03_RISKS.md`](references/AGX03_RISKS.md) (research, scenarios, mitigation roadmap), the [payload README](assets/feed_poll_payload.README.md) (the timing, `SAMPLES` and `TRIGGER`) and protectogw's [`SECURITY.md`](protectogw/SECURITY.md).
 - Related labs: LLM04 Supply Chain (definition swap) and ASI04 Agentic Supply Chain Vulnerabilities (hash pin).
 - Real-model figures: in the HACTU8 repo, `docs/evidence/2026-11-20-ollama-llama3.2-3b.md` (earlier sweep) and `docs/agenticgoat-merge-plan.md` (AG-55 notes).
-- Ported from AgenticGoat (retired): its AGX03 entry (`agentic/labs.json`), its `conditional_scan` act (`acts.py`) and the `sampling` control (`agentic/protections.py`).
+- Ported from AgenticGoat (retired): its AGX03 entry (`agentic/labs.json`), its `conditional_scan` act (`acts.py`) and the `sampling` control (`agentic/protections.py`; here `multi_call_sampling`).
