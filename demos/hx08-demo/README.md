@@ -130,8 +130,11 @@ instruction or refuse the code, so `run_demo.py` reports the numbers rather
 than asserting them. `LAB_MAX_CALLS` (default 200) and `LAB_MAX_TOKENS`
 (default 400) cap calls and output tokens per process. With `openrouter`, lab
 prompts, including the system prompt that holds the code, leave the machine.
-The numbers in this guide are echo only: no real or vision model was run for
-this lab.
+The numbers in this guide are echo only. Two local text models were run on
+the OCR's text (no vision model): see
+`docs/evidence/2026-11-22-hx-ollama.md`. There the image attack barely
+landed, and `llama3.2:3b` wrote the code in replies with no attack image at
+all, which no image layer stops.
 
 ### Grading oracle
 
