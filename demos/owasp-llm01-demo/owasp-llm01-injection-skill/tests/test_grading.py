@@ -19,7 +19,8 @@ SKILL_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, SKILL_DIR)
 sys.path.insert(0, os.path.join(SKILL_DIR, "scripts"))
 
-from evaluate_kpi import SUITE, classify  # noqa: E402
+from evaluate_kpi import SUITE, classify, held_by  # noqa: E402
+from vulnerable_app import Lab  # noqa: E402
 
 TRUTH = {q: t for q, _, t in SUITE}
 APPROVE = [
@@ -85,6 +86,25 @@ class TruthPatterns(unittest.TestCase):
 
     def test_approval_wording(self):
         self.check("Who has to approve expense reports?", APPROVE)
+
+
+
+class HeldBy(unittest.TestCase):
+    """A screened line is held_by beside the colour, never a colour itself."""
+
+    def test_hardened_screen_is_held_by(self):
+        lab = Lab()
+        with open(os.path.join(SKILL_DIR, "assets", "injected_page.md"), encoding="utf-8") as fh:
+            lab.write_page("expenses", fh.read())
+        lab.set_mode("hardened")
+        result = lab.query(QUESTION)
+        status = classify(result["answer"], *ARGS)
+        self.assertEqual(status, "GREEN")
+        self.assertTrue(held_by(result, status)[0].startswith("tool-output screen removed"))
+        self.assertEqual(held_by(result, "RED"), [])
+
+    def test_nothing_held_on_a_clean_page(self):
+        self.assertEqual(held_by(Lab().query(QUESTION), "GREEN"), [])
 
 
 if __name__ == "__main__":
