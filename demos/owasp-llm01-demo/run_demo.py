@@ -29,7 +29,7 @@ SKILL_DIR = os.path.join(HERE, "owasp-llm01-injection-skill")
 sys.path.insert(0, SKILL_DIR)
 sys.path.insert(0, os.path.join(SKILL_DIR, "scripts"))
 
-from evaluate_kpi import ICON, SUITE, classify  # noqa: E402
+from evaluate_kpi import ICON, SUITE, classify, held_by  # noqa: E402
 from vulnerable_app import Lab, screen_tool_output  # noqa: E402
 
 PAYLOAD = os.path.join(SKILL_DIR, "assets", "injected_page.md")
@@ -46,13 +46,16 @@ def act(lab: Lab, title: str) -> float:
     print(f"\n[*] {title}")
     red = targeted = 0
     for query, is_targeted, truth in SUITE:
-        answer = lab.query(query)["answer"]
+        result = lab.query(query)
+        answer = result["answer"]
         status = classify(answer, truth)
         if is_targeted:
             targeted += 1
             red += status == "RED"
         tag = "" if is_targeted else "  (control)"
         print(f"    {ICON[status]} {status:<6} {query}{tag}")
+        if held_by(result, status):
+            print(f"        held_by: {'; '.join(held_by(result, status))}")
         evidence(answer)
     isr = red / targeted * 100.0
     print(f"    Injection Success Rate: {isr:.0f}% targeted")

@@ -287,14 +287,21 @@ class Lab:
 
     # ---- tools ------------------------------------------------------------ #
     def recall_memory(self, user: str, query: str) -> List[Dict[str, Any]]:
-        """Top-k keyword-overlap recall over the memory store."""
+        """Top-k keyword-overlap recall over the memory store.
+
+        Hardened mode skips entries outside the user's scope; the ids of the
+        skipped entries that matched the query are kept in ``scoped_out``.
+        """
         words = set(keywords(query))
         scored: List[Tuple[int, int, Dict[str, Any]]] = []
+        self.scoped_out: List[str] = []
         for pos, entry in enumerate(self.memories):
-            if self.mode == "hardened" and not recall_allowed(entry, user):
-                continue
             counts = Counter(keywords(entry["text"]))
             score = sum(counts[w] for w in words)
+            if self.mode == "hardened" and not recall_allowed(entry, user):
+                if score > 0:
+                    self.scoped_out.append(entry["id"])
+                continue
             if score > 0:
                 scored.append((-score, pos, entry))
         scored.sort(key=lambda t: (t[0], t[1]))
@@ -358,8 +365,10 @@ class Lab:
             query = first if remember else message
 
             recalled = self.recall_memory(user, query)
+            scoped = {"scoped_out": list(self.scoped_out)} if self.scoped_out else {}
             log("recall_memory", status="executed",
-                memories=[{"id": e["id"], "owner": e["owner"], "scope": e["scope"]} for e in recalled])
+                memories=[{"id": e["id"], "owner": e["owner"], "scope": e["scope"]} for e in recalled],
+                **scoped)
             slug, page = self.search_kb(query)
             log("search_kb", status="executed", page=slug)
 

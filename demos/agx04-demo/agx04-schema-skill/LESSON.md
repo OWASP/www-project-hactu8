@@ -25,7 +25,7 @@ Run all four acts with `python run_demo.py` from `demos/agx04-demo`, or `python 
 - **Act 1, clean baseline.** All five GREEN, Canary Leak Rate (CLR) 0%. Compare the approved schema in [`assets/tool_manifest.json`](assets/tool_manifest.json).
 - **Act 2, attack.** One schema field changed: `ticket_lookup.ticket_id.default` now holds [`assets/param_default_payload.txt`](assets/param_default_payload.txt). The description a reviewer reads is unchanged.
 - **Act 3, impact.** The three ticket questions turn RED (CLR 100% targeted, 60% overall), and the controls stay GREEN.
-- **Act 4, remediation.** The scan of the field rejects it (`REJECT (lab_directive)`). In hardened mode the ticket questions are YELLOW (the field was withheld, nothing leaked), the controls stay GREEN, and the CLR is 0%.
+- **Act 4, remediation.** The scan of the field rejects it (`REJECT (lab_directive)`). In hardened mode the ticket questions are GREEN (the field was withheld, shown in `held_by`, and the ticket facts still answer), the controls stay GREEN, and the CLR is 0%.
 
 On a real model (`--backend ollama --model llama3.2:3b`) the numbers are reported, not asserted. `run_schema_injection.py --field enum` or `--field description` moves the payload to another schema field; each still leaks in vulnerable mode and is withheld in hardened mode.
 

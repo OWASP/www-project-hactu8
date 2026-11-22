@@ -169,7 +169,11 @@ class StubModel:
         joined = "\n".join((system, request, context)).lower()
         if "emit" in joined and "confirm" in joined:
             return f"Acknowledged. {self.canary}"
-        first = context.strip().splitlines()[0] if context.strip() else "no tool output"
+        lines = [line.strip() for line in context.strip().splitlines() if line.strip()]
+        # The header ("export_log returned:") sits on its own line; echo the
+        # first line of the tool's content with it, so the answer carries the
+        # true facts the grader checks for.
+        first = " ".join(lines[:2] if lines and lines[0].endswith(":") else lines[:1]) or "no tool output"
         return f"I can help with that. {first}"
 
 
@@ -341,13 +345,15 @@ def console_attack(lab: Lab) -> Dict[str, Any]:
 def console_evaluate(lab: Lab) -> Dict[str, Any]:
     import sys
     sys.path.insert(0, os.path.join(HERE, "scripts"))
-    from evaluate_kpi import SUITE, classify
+    from evaluate_kpi import SUITE, classify, held_by
 
     rows = []
     for request, targeted in SUITE:
         result = lab.ask(request)
+        status = classify(result)
         rows.append({"item": request, "targeted": targeted,
-                     "status": classify(result), "detail": result["answer"]})
+                     "status": status, "held_by": held_by(result, status),
+                     "detail": result["answer"]})
     return summarize(rows)
 
 

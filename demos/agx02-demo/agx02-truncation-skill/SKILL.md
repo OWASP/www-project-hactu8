@@ -141,8 +141,8 @@ and payloads leave the machine.
 
    `--scan` screens the whole artifact with protectogw. `--harden` switches the
    gateway to the whole-artifact screen (chunked) and turns on the output canary
-   check. The artifact is withheld, so the log answers are YELLOW (degraded, no
-   leak). Each layer stops the leak on its own, and the tests prove it.
+   check. The artifact is withheld with its facts, so the log answers are YELLOW (no
+   leak, true facts missing) with the screen in `held_by`. Each layer stops the leak on its own, and the tests prove it.
 
 7. **Reset to baseline.**
 

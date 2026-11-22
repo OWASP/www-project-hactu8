@@ -25,7 +25,7 @@ Run all four acts with `python run_demo.py` from `demos/agx08-demo`, or `python 
 - **Act 1, clean baseline.** All five GREEN, Canary Leak Rate (CLR) 0%. The approved knowledge base is [`assets/kb.json`](assets/kb.json).
 - **Act 2, attack.** [`assets/chain_doc_a.txt`](assets/chain_doc_a.txt) replaces `kb://travel-policy`, and [`assets/chain_doc_b.txt`](assets/chain_doc_b.txt) is published as `kb://travel-reimbursement`. Each passes the per-document screen alone.
 - **Act 3, impact.** The three travel questions turn RED (CLR 100% targeted, 60% overall), and the controls stay GREEN.
-- **Act 4, remediation.** The chain scan prints the whole story: doc A alone ALLOW, doc B alone ALLOW, the session flags B as a cross-resource chain, and the assembled screen blocks on `lab_directive`. In hardened mode the travel questions are YELLOW (the chain was withheld, nothing leaked), the controls stay GREEN, and the CLR is 0%.
+- **Act 4, remediation.** The chain scan prints the whole story: doc A alone ALLOW, doc B alone ALLOW, the session flags B as a cross-resource chain, and the assembled screen blocks on `lab_directive`. In hardened mode two travel questions are GREEN and the reimbursement one is YELLOW (the chain was withheld, shown in `held_by`; the claim step lived only in the replaced document, so that answer misses it), the controls stay GREEN, and the CLR is 0%.
 
 On a real model (`--backend ollama --model llama3.2:3b`) the numbers are reported, not asserted.
 

@@ -133,13 +133,13 @@ With `openrouter`, prompts and payloads leave the machine.
 
    ```bash
    python scripts/evaluate_kpi.py --scan          # REJECT, exit 2
-   python scripts/evaluate_kpi.py --harden        # targeted YELLOW, CLR 0%, exit 0
+   python scripts/evaluate_kpi.py --harden        # targeted GREEN + held_by, CLR 0%, exit 0
    ```
 
    `--scan` screens the payload with protectogw as the schema field it is
    installed in. `--harden` switches the gateway to full schema coverage and
-   turns on the output canary check. The field is withheld, so the ticket
-   answers are YELLOW (degraded, no leak). Each layer stops the leak on its
+   turns on the output canary check. The field is withheld and the ticket
+   facts still answer, so they are GREEN with the screen in `held_by`. Each layer stops the leak on its
    own, and the tests prove it.
 
 7. **Reset to baseline.**

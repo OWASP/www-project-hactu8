@@ -26,7 +26,7 @@ SKILL_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, SKILL_DIR)
 sys.path.insert(0, os.path.join(SKILL_DIR, "scripts"))
 
-from evaluate_kpi import SUITE, classify  # noqa: E402
+from evaluate_kpi import SUITE, classify, held_by  # noqa: E402
 import providers  # noqa: E402
 import vulnerable_app  # noqa: E402
 from protectogw import Verdict  # noqa: E402
@@ -82,8 +82,11 @@ class LifecycleTest(unittest.TestCase):
         self.lab.set_mode("hardened")
         statuses, clr, _ = run_suite(self.lab)
         self.assertEqual(clr, 0)
-        self.assertTrue(all(s == "YELLOW" for s, t in statuses if t), statuses)
+        # The true facts survive the withheld piece: GREEN, with what held beside it.
+        self.assertTrue(all(s == "GREEN" for s, t in statuses if t), statuses)
         self.assertTrue(all(s == "GREEN" for s, t in statuses if not t), statuses)
+        result = self.lab.ask(SUITE[0][0])
+        self.assertTrue(held_by(result, classify(result)), result)
 
     def test_reset_restores_baseline(self):
         attack(self.lab)

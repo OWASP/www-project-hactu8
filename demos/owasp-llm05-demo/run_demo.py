@@ -33,7 +33,7 @@ SKILL_DIR = os.path.join(HERE, "owasp-llm05-poisoning-skill")
 sys.path.insert(0, SKILL_DIR)
 sys.path.insert(0, os.path.join(SKILL_DIR, "scripts"))
 
-from evaluate_kpi import ICON, SUITE, classify  # noqa: E402
+from evaluate_kpi import ICON, SUITE, classify, held_by  # noqa: E402
 from vulnerable_app import (  # noqa: E402
     AGENT_CACHE_POISON_FILE, PROMPT_TEMPLATE_FILE, Lab, poison_document, scan_artifacts,
 )
@@ -50,7 +50,8 @@ def act(lab: Lab, title: str) -> float:
     print(f"\n[*] {title}")
     red = targeted = red_all = 0
     for query, is_targeted, truth in SUITE:
-        answer = lab.query(query)["answer"]
+        result = lab.query(query)
+        answer = result["answer"]
         status = classify(answer, truth)
         red_all += status == "RED"
         if is_targeted:
@@ -58,6 +59,8 @@ def act(lab: Lab, title: str) -> float:
             red += status == "RED"
         tag = "" if is_targeted else "  (control)"
         print(f"    {ICON[status]} {status:<6} {query}{tag}")
+        if held_by(result, status):
+            print(f"        held_by: {'; '.join(held_by(result, status))}")
         evidence(answer)
     psr = red / targeted * 100.0
     print(f"    Poison Success Rate: {psr:.0f}% targeted, "

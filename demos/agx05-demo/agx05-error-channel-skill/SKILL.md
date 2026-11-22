@@ -137,8 +137,8 @@ With `openrouter`, prompts and payloads leave the machine.
 
    `--scan` screens the payload with protectogw as the error message it is
    installed in. `--harden` switches the gateway to screen the error channel
-   too and turns on the output canary check. The error text is withheld, so
-   the failing-query answers are YELLOW (degraded, no leak). Each layer stops
+   too and turns on the output canary check. The error text is withheld with its
+   facts, so the failing-query answers are YELLOW (no leak, true facts missing). Each layer stops
    the leak on its own, and the tests prove it.
 
 7. **Reset to baseline.**

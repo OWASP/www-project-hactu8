@@ -144,7 +144,8 @@ and payloads leave the machine.
    `--scan` screens the directive with protectogw's full normalization.
    `--harden` switches the gateway to the default policy (every fold on) and
    turns on the output canary check. Each notice is folded back and withheld,
-   so the answers are YELLOW (degraded, no leak). Each layer stops the leak on
+   and its facts go with it, so the answers are YELLOW (no leak, true facts
+   missing) with the screen in `held_by`. Each layer stops the leak on
    its own, and the tests prove it.
 
 7. **Reset to baseline.**
