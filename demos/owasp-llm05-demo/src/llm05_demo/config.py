@@ -1,14 +1,14 @@
 """Runtime configuration for the LLM05 demo.
 
-The backends match the template-based lab: ``echo`` (default,
-the offline retrieval-grounded summarizer; ``local`` and ``stub`` are accepted
-as aliases), ``ollama``, ``llamacpp`` and ``openrouter``, through the shared
-``providers.py``. OpenRouter reads ``OPENROUTER_API_KEY`` from the environment
-only.
+The backends match the template-based lab: every name in the shared
+``providers.BACKENDS`` (``echo`` by default, the offline retrieval-grounded
+summarizer; ``local`` and ``stub`` are accepted as aliases). The remote ones
+read their API key from the environment only.
 
 Retrieval uses the local hashing embedding unless ``LLM05_SRC_EMBED_MODEL`` is
-set, in which case Ollama or llama.cpp embeds the corpus (OpenRouter offers no
-embeddings here). Keeping the local embedding makes retrieval reproducible
+set, in which case a local server (``providers.LOCAL``: Ollama, llama.cpp or
+an OpenAI-compatible one) embeds the corpus; the remote backends offer no
+embeddings here. Keeping the local embedding makes retrieval reproducible
 while only the answering model changes.
 
 The variables are ``LLM05_SRC_*``, not ``LLM05_*``: the template-based lab in
@@ -30,7 +30,7 @@ _ALIASES = {"local": "echo"}
 class Config:
     """Immutable demo configuration resolved from environment variables."""
 
-    backend: str = "echo"            # echo | ollama | llamacpp | openrouter
+    backend: str = "echo"            # any providers.BACKENDS name
     model: str = ""                  # chat model; empty = the provider's default
     embed_model: str = ""            # empty = local hashing embedding
     embedding_dim: int = 1024        # dimensionality of local hashing embeddings
@@ -42,9 +42,10 @@ class Config:
         if backend not in providers.BACKENDS:
             raise ValueError(f"Unknown backend {self.backend!r}; expected one of "
                              f"{', '.join(providers.BACKENDS)}.")
-        if self.embed_model and backend in ("echo", "openrouter"):
+        if self.embed_model and backend not in providers.LOCAL:
             raise ValueError(f"{backend} has no embeddings here; leave "
-                             "LLM05_SRC_EMBED_MODEL unset or use ollama / llamacpp.")
+                             "LLM05_SRC_EMBED_MODEL unset or use "
+                             f"{' / '.join(providers.LOCAL)}.")
         object.__setattr__(self, "backend", backend)
         object.__setattr__(self, "model", providers.check_model(self.model))
         object.__setattr__(self, "embed_model", providers.check_model(self.embed_model))
