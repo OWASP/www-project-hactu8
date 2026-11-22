@@ -139,8 +139,8 @@ With `openrouter`, prompts and payloads leave the machine.
 
    `--scan` screens the payload with protectogw as the runtime return it is
    installed in. `--harden` switches the gateway to re-screen every runtime
-   return and turns on the output canary check. The return is withheld, so the
-   knowledge-base answers are YELLOW (degraded, no leak). Each layer stops the
+   return and turns on the output canary check. The return is withheld with its
+   facts, so the knowledge-base answers are YELLOW (no leak, true facts missing). Each layer stops the
    leak on its own, and the tests prove it.
 
 7. **Reset to baseline.**

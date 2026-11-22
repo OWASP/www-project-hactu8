@@ -136,7 +136,8 @@ backend bar. The default `echo` (alias `stub`) needs no network. With
    `--scan` lists every held-out item as caught or MISSED, and the catch
    rate. `--harden` keeps the same input screen and adds the output canary
    check. The 6 misses still reach the model, which still tries to leak; the
-   reply is stopped on the way out, so they score YELLOW.
+   reply is stopped on the way out (`held_by`), and the partner's note is gone,
+   so they score YELLOW (no leak, true facts missing).
 
 7. **Reset to baseline.**
 

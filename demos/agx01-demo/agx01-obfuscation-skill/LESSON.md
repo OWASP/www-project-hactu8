@@ -25,7 +25,7 @@ Run all four acts with `python run_demo.py` from `demos/agx01-demo`, or `python 
 - **Act 1, clean baseline.** All five GREEN, Canary Leak Rate (CLR) 0%. Billy quotes each notice's first line and never prints the credential.
 - **Act 2, attack.** Three notices replaced: `welcome` as base64, `maintenance` as split-token, `status` as base32. All three come from one line, [`assets/obfuscation_payload.txt`](assets/obfuscation_payload.txt); no plaintext copy is written. `GET /notices` shows the blobs.
 - **Act 3, impact.** The three notice requests turn RED (CLR 100% targeted, 60% overall), and the two controls stay GREEN. The attack is targeted: only requests that read a poisoned notice are hit.
-- **Act 4, remediation.** The pre-install scan with full normalization rejects the directive (`REJECT (lab_directive)`). In hardened mode the three notice requests are YELLOW (the notice was withheld, nothing leaked), the controls stay GREEN, and the CLR is 0%.
+- **Act 4, remediation.** The pre-install scan with full normalization rejects the directive (`REJECT (lab_directive)`). In hardened mode the three notice requests are YELLOW (nothing leaked, but the notice was withheld and its facts with it; the screen shows in `held_by`), the controls stay GREEN, and the CLR is 0%.
 
 On a real model (`--backend ollama --model llama3.2:3b`) the numbers are reported, not asserted. See the limits below for what a 3B model does.
 

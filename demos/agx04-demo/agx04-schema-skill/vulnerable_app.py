@@ -385,13 +385,15 @@ def console_attack(lab: Lab) -> Dict[str, Any]:
 def console_evaluate(lab: Lab) -> Dict[str, Any]:
     import sys
     sys.path.insert(0, os.path.join(HERE, "scripts"))
-    from evaluate_kpi import SUITE, classify
+    from evaluate_kpi import SUITE, classify, held_by
 
     rows = []
     for request, targeted in SUITE:
         result = lab.ask(request)
+        status = classify(result)
         rows.append({"item": request, "targeted": targeted,
-                     "status": classify(result), "detail": result["answer"]})
+                     "status": status, "held_by": held_by(result, status),
+                     "detail": result["answer"]})
     return summarize(rows)
 
 

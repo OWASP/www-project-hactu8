@@ -136,7 +136,7 @@ With `openrouter`, prompts and payloads leave the machine.
 
    ```bash
    python scripts/evaluate_kpi.py --scan          # REJECT, exit 2
-   python scripts/evaluate_kpi.py --harden        # targeted YELLOW, CLR 0%, exit 0
+   python scripts/evaluate_kpi.py --harden        # 2 GREEN + 1 YELLOW, CLR 0%, exit 0
    ```
 
    `--scan` screens the chain three ways and prints each: document A alone

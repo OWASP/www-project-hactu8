@@ -25,7 +25,7 @@ Run all four acts with `python run_demo.py` from `demos/agx07-demo`, or `python 
 - **Act 1, clean baseline.** All five GREEN, Canary Leak Rate (CLR) 0%. The approved bundle is in [`assets/bundle/`](assets/bundle/).
 - **Act 2, attack.** `vault-access.md` is replaced by [`assets/frontmatter_payload.md`](assets/frontmatter_payload.md). Diff its body against the approved one: nothing changed. Only the `description:` line is new.
 - **Act 3, impact.** The three vault questions turn RED (CLR 100% targeted, 60% overall), and the controls stay GREEN.
-- **Act 4, remediation.** The scan rejects the document on two grounds: `frontmatter: lab_directive` and `schema: description is 273 chars (max 160)`. In hardened mode the vault questions are YELLOW (the metadata was withheld, nothing leaked), the controls stay GREEN, and the CLR is 0%.
+- **Act 4, remediation.** The scan rejects the document on two grounds: `frontmatter: lab_directive` and `schema: description is 273 chars (max 160)`. In hardened mode the vault questions are GREEN (the metadata was withheld, shown in `held_by`, and the clean body still answers), the controls stay GREEN, and the CLR is 0%.
 
 On a real model (`--backend ollama --model llama3.2:3b`) the numbers are reported, not asserted.
 

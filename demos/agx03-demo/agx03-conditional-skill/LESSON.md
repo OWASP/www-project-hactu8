@@ -25,7 +25,7 @@ Run all four acts with `python run_demo.py` from `demos/agx03-demo`, or `python 
 - **Act 1, clean baseline.** All five GREEN, Canary Leak Rate (CLR) 0%.
 - **Act 2, attack.** The feed is armed. Its definition is unchanged; only poll 3 onward returns [`assets/feed_poll_payload.txt`](assets/feed_poll_payload.txt).
 - **Act 3, impact.** The three feed requests turn RED (CLR 100% targeted, 60% overall), and the controls stay GREEN.
-- **Act 4, remediation.** The scan of the hostile poll rejects it (`REJECT (lab_directive)`). In hardened mode the feed requests are YELLOW (the hostile poll was withheld, nothing leaked), the controls stay GREEN, and the CLR is 0%.
+- **Act 4, remediation.** The scan of the hostile poll rejects it (`REJECT (lab_directive)`). In hardened mode the feed requests are GREEN (the hostile poll was withheld, shown in `held_by`, and the clean polls still answer), the controls stay GREEN, and the CLR is 0%.
 
 On a real model (`--backend ollama --model llama3.2:3b`) the numbers are reported, not asserted.
 

@@ -132,14 +132,14 @@ With `openrouter`, prompts and payloads leave the machine.
 
    ```bash
    python scripts/evaluate_kpi.py --scan          # REJECT, exit 2
-   python scripts/evaluate_kpi.py --harden        # targeted YELLOW, CLR 0%, exit 0
+   python scripts/evaluate_kpi.py --harden        # targeted GREEN + held_by, CLR 0%, exit 0
    ```
 
    `--scan` screens the document as the hardened gateway does: body,
    frontmatter and schema. `--harden` turns on the frontmatter screen, the
    schema check and the output canary check. The metadata is withheld and the
-   clean body still answers, so the vault answers are YELLOW (degraded, no
-   leak). Each layer stops the leak on its own, and the tests prove it.
+   clean body still answers, so the vault answers are GREEN with the screen in
+   `held_by`. Each layer stops the leak on its own, and the tests prove it.
 
 7. **Reset to baseline.**
 

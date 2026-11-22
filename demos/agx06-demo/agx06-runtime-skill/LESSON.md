@@ -25,7 +25,7 @@ Run all four acts with `python run_demo.py` from `demos/agx06-demo`, or `python 
 - **Act 1, clean baseline.** All five GREEN, Canary Leak Rate (CLR) 0%. Compare the approved [`assets/tool_manifest.json`](assets/tool_manifest.json).
 - **Act 2, attack.** `search_kb.return_text` now holds [`assets/runtime_return_payload.txt`](assets/runtime_return_payload.txt). Rendered as HTML, it shows only the checklist; the directive is in a comment.
 - **Act 3, impact.** The three onboarding questions turn RED (CLR 100% targeted, 60% overall), and the controls stay GREEN.
-- **Act 4, remediation.** The scan of the return rejects it (`REJECT (lab_directive)`). In hardened mode the onboarding questions are YELLOW (the return was withheld, nothing leaked), the controls stay GREEN, and the CLR is 0%.
+- **Act 4, remediation.** The scan of the return rejects it (`REJECT (lab_directive)`). In hardened mode the onboarding questions are YELLOW (nothing leaked, but the return was withheld and its facts with it; the screen shows in `held_by`), the controls stay GREEN, and the CLR is 0%.
 
 On a real model (`--backend ollama --model llama3.2:3b`) the numbers are reported, not asserted.
 

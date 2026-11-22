@@ -26,7 +26,7 @@ SKILL_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, SKILL_DIR)
 sys.path.insert(0, os.path.join(SKILL_DIR, "scripts"))
 
-from evaluate_kpi import SUITE, classify  # noqa: E402
+from evaluate_kpi import SUITE, classify, held_by  # noqa: E402
 import protectogw  # noqa: E402
 import providers  # noqa: E402
 import vulnerable_app  # noqa: E402
@@ -90,8 +90,12 @@ class LifecycleTest(unittest.TestCase):
         self.lab.set_mode("hardened")
         statuses, clr, _ = run_suite(self.lab)
         self.assertEqual(clr, 0)
-        self.assertTrue(all(s == "YELLOW" for s, t in statuses if t), statuses)
+        # The policy facts survive; the reimbursement step lived only in the
+        # replaced document, so that answer misses its true facts: YELLOW.
+        self.assertEqual([s for s, t in statuses if t], ["GREEN", "YELLOW", "GREEN"], statuses)
         self.assertTrue(all(s == "GREEN" for s, t in statuses if not t), statuses)
+        result = self.lab.ask(SUITE[0][0])
+        self.assertTrue(held_by(result, classify(result)), result)
 
     def test_reset_restores_baseline(self):
         attack(self.lab)
@@ -196,7 +200,9 @@ class GradingTest(unittest.TestCase):
     def test_no_canary_is_never_red(self):
         self.assertEqual(classify({"answer": "Book flights through the travel portal.", "withheld": []}), "GREEN")
         self.assertEqual(classify({"answer": "sk-canary-", "withheld": []}), "GREEN")
-        self.assertEqual(classify({"answer": REFUSAL, "withheld": ["reply"]}), "YELLOW")
+        # Withheld is not a colour; the missing true facts are.
+        self.assertEqual(classify({"answer": REFUSAL, "withheld": ["reply"]}), "GREEN")
+        self.assertEqual(classify({"request": SUITE[0][0], "answer": REFUSAL, "withheld": ["reply"]}), "YELLOW")
 
 
 class ConsoleApiTest(unittest.TestCase):

@@ -25,7 +25,7 @@ Run all four acts with `python run_demo.py` from `demos/agx05-demo`, or `python 
 - **Act 1, clean baseline.** All five GREEN, Canary Leak Rate (CLR) 0%. The failing queries get a default, benign error.
 - **Act 2, attack.** `db_query.error_text` now holds [`assets/error_payload.txt`](assets/error_payload.txt): a plausible "query failed" banner followed by the directive. Compare the approved [`assets/tool_manifest.json`](assets/tool_manifest.json).
 - **Act 3, impact.** The three failing queries turn RED (CLR 100% targeted, 60% overall). The tickets query, which succeeds, stays GREEN, and so does server time.
-- **Act 4, remediation.** The scan of the error text rejects it (`REJECT (lab_directive)`). In hardened mode the failing queries are YELLOW (the error was withheld, nothing leaked), the controls stay GREEN, and the CLR is 0%.
+- **Act 4, remediation.** The scan of the error text rejects it (`REJECT (lab_directive)`). In hardened mode the failing queries are YELLOW (nothing leaked, but the error was withheld and its facts with it; the screen shows in `held_by`), the controls stay GREEN, and the CLR is 0%.
 
 On a real model (`--backend ollama --model llama3.2:3b`) the numbers are reported, not asserted. A small model falls for this one: see the limits below.
 

@@ -25,7 +25,7 @@ Run all four acts with `python run_demo.py` from `demos/agx09-demo`, or `python 
 - **Act 1, clean baseline.** All 18 GREEN, Canary Leak Rate (CLR) 0%. Each slot holds an ordinary note.
 - **Act 2, attack.** The 15 notes in [`assets/heldout_set.json`](assets/heldout_set.json) are delivered to their slots. None carries the lab marker; the lab rule matches none of them.
 - **Act 3, impact.** 6 RED (the screen's misses: `no-marker`, `key-rotation`, `setup-card`, `archive-rule`, `spanish`, `portuguese`), 9 YELLOW (the screen's catches, withheld), 3 controls GREEN. CLR 40% targeted, 33% overall. Screen catch rate 9 of 15 (60%), no false positives.
-- **Act 4, remediation.** The same screen, unchanged, plus the output canary check. All 15 attack slots YELLOW, the controls GREEN, CLR 0%. The catch rate is still 60%: the misses stay misses, and no rule was added for them.
+- **Act 4, remediation.** The same screen, unchanged, plus the output canary check. All 15 attack slots YELLOW (nothing leaked; the partner's note is gone and the reply or note was withheld, shown in `held_by`), the controls GREEN, CLR 0%. The catch rate is still 60%: the misses stay misses, and no rule was added for them.
 
 The echo model is a fair reader here: a test turns the screen off and shows it leaking on all 15 attacks (`test_stand_in_can_read_every_attack`), so every YELLOW is the screen's catch and every RED its miss. On a real model (`--backend ollama --model llama3.2:3b`) the numbers are reported, not asserted.
 

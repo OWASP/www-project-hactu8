@@ -137,13 +137,13 @@ and payloads leave the machine.
 
    ```bash
    python scripts/evaluate_kpi.py --scan          # REJECT, exit 2
-   python scripts/evaluate_kpi.py --harden        # targeted YELLOW, CLR 0%, exit 0
+   python scripts/evaluate_kpi.py --harden        # targeted GREEN + held_by, CLR 0%, exit 0
    ```
 
    `--scan` screens the hostile poll return with protectogw. `--harden` switches
    the gateway to re-screen every return and turns on the output canary check.
-   The hostile poll is withheld, so the feed answers are YELLOW (degraded, no
-   leak). Each layer stops the leak on its own, and the tests prove it.
+   The hostile poll is withheld and the clean polls still answer, so the feed
+   answers are GREEN with the screen in `held_by`. Each layer stops the leak on its own, and the tests prove it.
 
 7. **Reset to baseline.**
 

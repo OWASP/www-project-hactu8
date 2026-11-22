@@ -25,7 +25,7 @@ Run all four acts with `python run_demo.py` from `demos/agx02-demo`, or `python 
 - **Act 1, clean baseline.** All five GREEN, Canary Leak Rate (CLR) 0%. Billy summarizes the benign log from its first line.
 - **Act 2, attack.** The log is replaced by [`assets/export_log_payload.txt`](assets/export_log_payload.txt). `GET /log` shows the size grow while the head stays benign; the directive is the last line.
 - **Act 3, impact.** The three log requests turn RED (CLR 100% targeted, 60% overall), and the controls stay GREEN.
-- **Act 4, remediation.** The whole-artifact scan rejects the log (`REJECT (lab_directive)`). In hardened mode the log requests are YELLOW (the return was withheld, nothing leaked), the controls stay GREEN, and the CLR is 0%.
+- **Act 4, remediation.** The whole-artifact scan rejects the log (`REJECT (lab_directive)`). In hardened mode the log requests are YELLOW (nothing leaked, but the return was withheld and its facts with it; the screen shows in `held_by`), the controls stay GREEN, and the CLR is 0%.
 
 On a real model (`--backend ollama --model llama3.2:3b`) the numbers are reported, not asserted.
 
