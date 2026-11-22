@@ -198,6 +198,20 @@ class BackendTest(unittest.TestCase):
         self.assertNotIn("retrieved_passages", system.content + user.content)
         self.assertTrue(any(t in user.content for t in self._foreign_texts(lab)))
 
+    def test_clean_baseline_sends_only_own_tenant_passages(self):
+        # 2026-11-21 sweeps: with no crafted turn, the top 3 for the hay and vet questions
+        # still held Hilltop's documents as runners-up, and real models quoted them
+        # (mistral:7b: "... a private supplier, Hilltop Creamery, at a price of 142 dollars
+        # per tonne"). Only the attack may put another tenant's document in front of the model.
+        fake = FakeProvider()
+        lab = Lab()
+        lab.model = ProviderModel(fake, "fake-model")
+        for question, _, _ in SUITE:
+            with self.subTest(question=question):
+                lab.query(SESSION, question, remember=False)
+                _, user = fake.sent[-1]
+                self.assertFalse(any(t in user.content for t in self._foreign_texts(lab)), user.content)
+
     def test_hardened_fences_and_filters_passages(self):
         fake = FakeProvider()
         lab = self._lab(fake)
