@@ -31,7 +31,7 @@ SKILL_DIR = os.path.join(HERE, "owasp-llm04-rugpull-skill")
 sys.path.insert(0, SKILL_DIR)
 sys.path.insert(0, os.path.join(SKILL_DIR, "scripts"))
 
-from evaluate_kpi import ICON, SUITE, classify  # noqa: E402
+from evaluate_kpi import ICON, SUITE, classify, held_by  # noqa: E402
 from run_rug_pull import SLEEPER_PAYLOAD, SWAP_PAYLOAD, build_compromised_release  # noqa: E402
 from vulnerable_app import (REGISTRY_DIR, Lab, load_pins, pin_diff,  # noqa: E402
                             read_registry, write_registry)
@@ -60,6 +60,8 @@ def act(lab: Lab, title: str) -> float:
         tag = "" if is_targeted else "  (control)"
         tool = f"{result['tool']} {result['tool_version']}"
         print(f"    {ICON[status]} {status:<6} {query:<44} [{tool}]{tag}")
+        if held_by(result, status):
+            print(f"        held_by: {'; '.join(held_by(result, status))}")
         evidence(result["answer"])
     ctr = red / targeted * 100.0
     print(f"    Compromised Tool Rate: {ctr:.0f}% targeted")
