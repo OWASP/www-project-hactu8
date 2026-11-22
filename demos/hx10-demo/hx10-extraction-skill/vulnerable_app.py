@@ -548,7 +548,7 @@ class Lab:
 # --------------------------------------------------------------------------- #
 CONSOLE_META = {
     "id": "HX10",
-    "framework": "HACTU8 extended attacks (model extraction; OWASP LLM10:2025, MITRE ATLAS AML.T0024.002)",
+    "framework": "HACTU8 extended attacks (model extraction; OWASP LLM10:2025, MITRE ATLAS AML.T0024 + AML.T0005.001)",
     "risk": "Model Extraction",
     "title": "Model Extraction Lab",
     "short_title": "Extraction Lab",

@@ -4,7 +4,7 @@ LLM06 measured what a flood of queries costs; this lab measures what the answers
 
 ## What it is
 
-**Model extraction** is copying a model through its prediction API. The attacker never sees the weights or the training data. It sends inputs, writes down the outputs and uses them to build its own model: either by solving for the parameters directly, when the outputs say enough, or by training a clone on the input–output pairs. The result is a substitute that answers like the original, which is the theft: the training data, the labelling and the tuning the owner paid for, taken one query at a time. MITRE ATLAS names it `AML.T0024.002` (Extract AI Model), and the OWASP 2025 entry for unbounded consumption lists it as model extraction and functional model replication.
+**Model extraction** is copying a model through its prediction API. The attacker never sees the weights or the training data. It sends inputs, writes down the outputs and uses them to build its own model: either by solving for the parameters directly, when the outputs say enough, or by training a clone on the input–output pairs. The result is a substitute that answers like the original, which is the theft: the training data, the labelling and the tuning the owner paid for, taken one query at a time. MITRE ATLAS files it as `AML.T0024` (Exfiltration via AI Inference API) with `AML.T0005.001` (Replicate Behavior from Model Outputs), and the OWASP 2025 entry for unbounded consumption lists it as model extraction and functional model replication.
 
 Here the target is Goat & Co.'s small proprietary **price-band classifier**, served by Billy's prediction API. It reads seven features of a product listing (weight, shelf life, organic, bulk pack, supplier tier, demand index, rating) and returns *budget*, *standard* or *premium*. It is an honest model, a multinomial logistic regression trained in pure Python on a seeded private sales history. Each build carries a **fingerprint**: this run's canary, `HX10-CANARY-` + 16 hex digits, written into the low-order digits of its 16 parameters. Only a copy of the exact weights carries it.
 
@@ -65,10 +65,10 @@ Measured on the attack, each alone: label-only 67% (the bands still train both r
 
 ## References
 
-- HACTU8 catalog: skill `hx10`, `HX10` (HACTU8 extended attacks; OWASP `LLM10:2025`, MITRE ATLAS `AML.T0024.002`; NIST `NISTAML.031` from the catalog, unverified); technique `model-extraction`; protections `score_suppression`, `rate_limit`, `query_anomaly` and `output_watermark` (`hactu8/protections.py`).
+- HACTU8 catalog: skill `hx10`, `HX10` (HACTU8 extended attacks; OWASP `LLM10:2025`, MITRE ATLAS `AML.T0024` and `AML.T0005.001`; NIST `NISTAML.031`); technique `model-extraction`; protections `score_suppression`, `rate_limit`, `query_anomaly` and `output_watermark` (`hactu8/protections.py`).
 - Lab material, not repeated here: the [lab README](../README.md) (architecture, the "real, not scripted" argument, mapping table) and [`references/HX10_RISKS.md`](references/HX10_RISKS.md) (research, scenario table, mitigation roadmap).
 - Tramèr et al. (2016), "Stealing Machine Learning Models via Prediction APIs", USENIX Security 2016, <https://www.usenix.org/conference/usenixsecurity16/technical-sessions/presentation/tramer> (abstract page read 2026-11-21; the paper body was not read).
 - Carlini et al. (2024), "Stealing Part of a Production Language Model", <https://arxiv.org/abs/2403.06634> (abstract read 2026-11-21).
 - OWASP Top 10 for LLM Applications 2025, LLM10 Unbounded Consumption, <https://genai.owasp.org/llmrisk/llm102025-unbounded-consumption/> (read 2026-11-21).
-- MITRE ATLAS `AML.T0024.002` Extract AI Model, ATLAS data 5.6.0, <https://github.com/mitre-atlas/atlas-data> (`dist/ATLAS.yaml`, read 2026-11-21).
+- MITRE ATLAS `AML.T0024` Exfiltration via AI Inference API and `AML.T0005.001` Replicate Behavior from Model Outputs, ATLAS release 2026.10, `dist/v6/ATLAS-2026.10.yaml` in <https://github.com/mitre-atlas/atlas-data>, read 2026-11-21. The 5.6.0 ID `AML.T0024.002` Extract AI Model was removed in 2026.10; ATLAS remapped its case study `AML.CS0056` to these two.
 - NIST AI 100-2 E2025, <https://csrc.nist.gov/pubs/ai/100/2/e2025/final> (landing page read 2026-11-21; it does not mention model extraction, and the PDF was not read).

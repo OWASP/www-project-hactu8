@@ -2,7 +2,7 @@
 name: hx19-poisoning-skill
 description: >-
   Demonstrates HX19 (Training-Time Data Poisoning of a classic model; OWASP
-  LLM04:2025, MITRE ATLAS AML.T0020 Poison Training Data) against a
+  LLM04:2025, MITRE ATLAS AML.T0020 Training Data Poisoning) against a
   vulnerable nightly retrain in an AUTHORIZED security lab. Goat & Co.'s
   review spam filter, a pure-Python naive Bayes classifier, is retrained
   every night on staff labels plus every review a customer flags, at full

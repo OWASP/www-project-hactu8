@@ -2,7 +2,8 @@
 
 An educational, self-contained demonstration of **HX10: Model Extraction**,
 the model-theft scenarios of OWASP LLM10:2025 and MITRE ATLAS
-`AML.T0024.002` (Extract AI Model). A rival copies a proprietary model
+`AML.T0024` (Exfiltration via AI Inference API) with `AML.T0005.001`
+(Replicate Behavior from Model Outputs). A rival copies a proprietary model
 through its prediction API: it sends inputs, records the answers, and either
 **solves for the weights** from the confidences or **trains a clone** on the
 labels. Four layers cut the clone's quality or prove its origin:

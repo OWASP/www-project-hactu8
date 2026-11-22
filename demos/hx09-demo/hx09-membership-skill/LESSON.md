@@ -61,11 +61,11 @@ Measured on the three probes, each alone: score suppression 33% (top-1 text stil
 
 ## References
 
-- HACTU8 catalog: skill `hx09`, `HX09` (HACTU8 extended attacks; OWASP `LLM02:2026` and `LLM02:2025`, MITRE ATLAS `AML.T0024.000`, NIST `NISTAML.033`); technique `membership-inference`; protections `score_suppression`, `confidence_rounding`, `training_data_scrub` and `rate_limit` (`hactu8/protections.py`).
+- HACTU8 catalog: skill `hx09`, `HX09` (HACTU8 extended attacks; OWASP `LLM02:2026` and `LLM02:2025`, MITRE ATLAS `AML.T0137.000`, NIST `NISTAML.033`); technique `membership-inference`; protections `score_suppression`, `confidence_rounding`, `training_data_scrub` and `rate_limit` (`hactu8/protections.py`).
 - Lab material, not repeated here: the [lab README](../README.md) (architecture, the "real, not scripted" argument, mapping table) and [`references/HX09_RISKS.md`](references/HX09_RISKS.md) (research, scenario table, mitigation roadmap, the sources and what was read of each).
 - Shokri et al. (2017), "Membership Inference Attacks against Machine Learning Models", IEEE S&P 2017, <https://arxiv.org/abs/1610.05820> (abstract read 2026-11-21).
 - Carlini et al. (2021), "Extracting Training Data from Large Language Models", <https://arxiv.org/abs/2012.07805> (abstract read 2026-11-21; venue not on that page, unverified).
 - Duan et al. (2024), "Do Membership Inference Attacks Work on Large Language Models?", COLM 2024, <https://arxiv.org/abs/2402.07841> (abstract read 2026-11-21).
 - NIST AI 100-2 E2025, March 2025, §2.4.2 Membership Inference (`NISTAML.033`) and §2.4.5 Mitigations, <https://nvlpubs.nist.gov/nistpubs/ai/NIST.AI.100-2e2025.pdf> (read 2026-11-21).
-- MITRE ATLAS `AML.T0024.000` Infer Training Data Membership and `AML.M0002`, ATLAS data 5.6.0, <https://github.com/mitre-atlas/atlas-data> (`dist/ATLAS.yaml`, read 2026-11-21).
+- MITRE ATLAS `AML.T0137.000` Infer Membership (moved from `AML.T0024.000` Infer Training Data Membership in 2026.10) and `AML.M0002`, ATLAS release 2026.10, `dist/v6/ATLAS-2026.10.yaml` in <https://github.com/mitre-atlas/atlas-data>, read 2026-11-21.
 - OWASP Top 10 for LLM Applications 2025, LLM02:2025 Sensitive Information Disclosure, <https://genai.owasp.org/llmrisk/llm022025-sensitive-information-disclosure/> (read 2026-11-21).
