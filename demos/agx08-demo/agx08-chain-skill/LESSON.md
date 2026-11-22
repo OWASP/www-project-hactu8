@@ -1,6 +1,6 @@
 # AGX08 Cross-Resource Chain
 
-On the learning path after AGX07 Frontmatter Poison. Setup, commands and architecture are in the [lab README](../README.md); this lesson says what to look for and why.
+Setup, commands and architecture are in the [lab README](../README.md); this lesson says what to look for and why.
 
 ## What it is
 

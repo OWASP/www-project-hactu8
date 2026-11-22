@@ -1,6 +1,6 @@
 # AGX09 Generalization Probe
 
-Part of the agentic stage. Setup, commands and architecture are in the [lab README](../README.md); this lesson says what to look for and why.
+Setup, commands and architecture are in the [lab README](../README.md); this lesson says what to look for and why.
 
 ## What it is
 

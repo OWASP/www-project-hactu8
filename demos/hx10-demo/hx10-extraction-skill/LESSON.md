@@ -1,6 +1,6 @@
 # HX10 Model Extraction
 
-Part of the agentic stage. LLM06 measured what a flood of queries costs; this lab measures what the answers to those queries give away. Setup, commands and architecture are in the [lab README](../README.md); this lesson says what to look for and why.
+LLM06 measured what a flood of queries costs; this lab measures what the answers to those queries give away. Setup, commands and architecture are in the [lab README](../README.md); this lesson says what to look for and why.
 
 ## What it is
 

@@ -1,6 +1,6 @@
 # HX12 x402 Payment Challenge Tampering
 
-Part of the commerce stage. An agent that pays for what it fetches turns every HTTP response into a possible invoice. Here the thing at stake is money (fake test units) and the order that goes with it. Setup, commands and architecture are in the [lab README](../README.md); this lesson says what to look for and why.
+An agent that pays for what it fetches turns every HTTP response into a possible invoice. Here the thing at stake is money (fake test units) and the order that goes with it. Setup, commands and architecture are in the [lab README](../README.md); this lesson says what to look for and why.
 
 ## What it is
 

@@ -1,6 +1,6 @@
 # ASI04 Agentic Supply Chain Vulnerabilities
 
-On the agentic stage of the learning path, right after LLM04 Supply Chain, which covers a preinstalled tool that changes after approval. This lab covers the runtime form: a component the agent finds and loads by name while it works. Setup, commands and architecture are in the [lab README](../README.md); this lesson says what to look for and why.
+LLM04 Supply Chain covers a preinstalled tool that changes after approval. This lab covers the runtime form: a component the agent finds and loads by name while it works. Setup, commands and architecture are in the [lab README](../README.md); this lesson says what to look for and why.
 
 ## What it is
 

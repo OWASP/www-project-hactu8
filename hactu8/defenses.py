@@ -35,7 +35,7 @@ KIND: Dict[str, str] = {
     "session_screen": "protectogw_rule", "generalization": "protectogw_rule", "persona_screen": "protectogw_rule",
     "replication_guard": "protectogw_rule",
     # Checks the MCP gateway applies to what passes through it.
-    "mcp_gateway_filter": "gateway_control", "hash_pin": "gateway_control", "sampling": "gateway_control",
+    "mcp_gateway_filter": "gateway_control", "hash_pin": "gateway_control", "multi_call_sampling": "gateway_control",
     "canary_tripwire": "gateway_control",
     # Runtime policies a lab's hardened mode adds to the application.
     "hitl_gate": "lab_hardening", "param_policy": "lab_hardening", "plan_pin": "lab_hardening",
@@ -90,7 +90,7 @@ BENCH_SURFACES: Dict[str, List[str]] = {
     "normalizer": ["obfuscation"],
     "full_artifact_screen": ["depth_tail"],
     "session_screen": ["okf_chain", "chain_pointer", "chain_destination", "chain_clean", "conversation"],
-    "sampling": ["conditional_return"],
+    "multi_call_sampling": ["conditional_return"],
     "persona_screen": ["chat_message"],
     "hash_pin": ["prompt_template"],
     "output_sink": ["output_sink"],

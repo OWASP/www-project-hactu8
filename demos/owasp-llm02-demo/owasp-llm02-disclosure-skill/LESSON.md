@@ -1,6 +1,6 @@
 # LLM02 Sensitive Information Disclosure
 
-In the basics stage, after LLM08 Hidden Context Exposure. Setup, commands and architecture are in the [lab README](../README.md); this lesson says what to look for and why.
+Setup, commands and architecture are in the [lab README](../README.md); this lesson says what to look for and why.
 
 ## What it is
 

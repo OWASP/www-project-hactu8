@@ -112,7 +112,7 @@ CATALOG: Dict[str, Dict[str, object]] = {
         "screen(reply[:512])   # head sample; the tail is blind",
         "for window in chunks(reply, size=W, cap=MAX_INPUT):\n    screen(window)",
     ),
-    "sampling": _c(
+    "multi_call_sampling": _c(
         "Screen every return, not one sample",
         "A conditional payload fires on the Nth call or a date. Sample a tool more than once before approval, and screen every return at runtime, alerting on drift.",
         ["call each new release several times before accepting it",

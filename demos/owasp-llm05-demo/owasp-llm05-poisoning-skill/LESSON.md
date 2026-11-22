@@ -1,6 +1,6 @@
 # LLM05 Data and Model Poisoning
 
-Part of the basics stage. Setup, commands and architecture are in the [lab README](../README.md); this lesson says what to look for and why.
+Setup, commands and architecture are in the [lab README](../README.md); this lesson says what to look for and why.
 
 ## What it is
 

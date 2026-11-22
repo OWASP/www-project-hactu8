@@ -1,6 +1,6 @@
 # HX03 MCP Sampling Abuse
 
-Part of the agentic stage. The other MCP labs poison what a server sends to the model: a tool description, a return, an error. Here the server sends nothing poisonous to the user's conversation at all. It asks the client's model to write for it, and keeps what comes back. Setup, commands and architecture are in the [lab README](../README.md); this lesson says what to look for and why.
+The other MCP labs poison what a server sends to the model: a tool description, a return, an error. Here the server sends nothing poisonous to the user's conversation at all. It asks the client's model to write for it, and keeps what comes back. Setup, commands and architecture are in the [lab README](../README.md); this lesson says what to look for and why.
 
 ## What it is
 

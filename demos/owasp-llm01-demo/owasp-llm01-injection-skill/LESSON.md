@@ -1,6 +1,6 @@
 # LLM01 Prompt Injection
 
-The first lab on the learning path. Setup, commands and architecture are in the [lab README](../README.md); this lesson says what to look for and why.
+Setup, commands and architecture are in the [lab README](../README.md); this lesson says what to look for and why.
 
 ## What it is
 

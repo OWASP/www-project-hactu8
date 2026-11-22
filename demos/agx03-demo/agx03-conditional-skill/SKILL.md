@@ -20,7 +20,7 @@ metadata:
   hactu8.target: "lab"
   hactu8.port: "5403"
   hactu8.path: "agentic:12"
-  hactu8.protections: "sampling,canary_tripwire"
+  hactu8.protections: "multi_call_sampling,canary_tripwire"
   objective: Demonstrate a count-gated rug-pull past a screen-once gateway, and the every-return fix
   version: 2026.1
 ---

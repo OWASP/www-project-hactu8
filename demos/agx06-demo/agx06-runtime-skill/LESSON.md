@@ -1,6 +1,6 @@
 # AGX06 Runtime Result Injection
 
-On the learning path, the first of the AGX gateway labs, after ASI04 Agentic Supply Chain Vulnerabilities. Setup, commands and architecture are in the [lab README](../README.md); this lesson says what to look for and why.
+Setup, commands and architecture are in the [lab README](../README.md); this lesson says what to look for and why.
 
 ## What it is
 

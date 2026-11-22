@@ -1,6 +1,6 @@
 # HX04 MCP Elicitation Abuse
 
-Part of the agentic stage, after the sampling lab (HX03). There the hostile server used the client's model. Here it uses the client's user: it asks Pat, through Billy's own dialogs, for the one thing it should never get, and it asks Billy's model to fill the answer in. Setup, commands and architecture are in the [lab README](../README.md); this lesson says what to look for and why.
+In the sampling lab (HX03) the hostile server used the client's model. Here it uses the client's user: it asks Pat, through Billy's own dialogs, for the one thing it should never get, and it asks Billy's model to fill the answer in. Setup, commands and architecture are in the [lab README](../README.md); this lesson says what to look for and why.
 
 ## What it is
 

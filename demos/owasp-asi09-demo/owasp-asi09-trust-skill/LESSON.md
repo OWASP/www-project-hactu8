@@ -1,6 +1,6 @@
 # ASI09 Human-Agent Trust Exploitation
 
-On the agentic stage of the learning path, after ASI08 Cascading Failures. Setup, commands and architecture are in the [lab README](../README.md); this lesson says what to look for and why.
+Setup, commands and architecture are in the [lab README](../README.md); this lesson says what to look for and why.
 
 ## What it is
 
