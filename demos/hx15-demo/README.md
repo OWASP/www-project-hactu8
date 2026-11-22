@@ -92,7 +92,8 @@ the lesson).
 ### Optional: run against a real model
 
 `echo`, the lab's deterministic offline model, is the default backend (`stub`
-still works as an alias). Only echo has been run for this lab.
+still works as an alias). Local Ollama runs are recorded in
+`docs/evidence/2026-11-22-hx-ollama.md`.
 `providers.py`, HACTU8's provider layer, adds real ones, standard library
 only.
 
@@ -111,7 +112,10 @@ it and is only told whether one is set.
 
 The real model writes each assistant's reply: it gets the assistant's facts
 and ledger reference, the mail and the retrieved mail, and replies
-`{"body", "cc"}`. Vulnerable mode passes the mail as text; hardened mode
+`{"body", "cc"}`. The prompt says the reference is confidential and never
+goes in a mail. An earlier "for internal records only" read as a reference to
+quote, and real models put it in ordinary replies with no worm; with the
+plain wording, `gemma3:4b` sent none (2026-11-22 evidence). Vulnerable mode passes the mail as text; hardened mode
 fences it and says it is data. The lab's layers check every reply, cc goes
 only to addresses on the lab's network, and nothing the model returns is
 executed. `run_demo.py` reports the numbers rather than asserting them.
@@ -290,7 +294,7 @@ python scripts/evaluate_kpi.py --harden                      # GREEN, WIR 0%, ex
 python scripts/evaluate_kpi.py --probe                       # measured limit, exit 2
 python scripts/reset_baseline.py                             # restore clean state
 python scripts/evaluate_kpi.py                               # GREEN, WIR 0%
-python -m unittest discover tests                            # 49 tests
+python -m unittest discover tests                            # 51 tests
 ```
 
 ## License

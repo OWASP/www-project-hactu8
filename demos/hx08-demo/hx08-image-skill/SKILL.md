@@ -69,7 +69,8 @@ each, and Billy writes the code into its reply.
 - Run or reproduce image-borne prompt injection: visible text in a photo,
   near-invisible text, and text in image metadata or alt text.
 - Quantify impact (stoplight KPI, Image Injection Rate, refunds paid over the
-  order on record) from what Billy emitted, not from what the model "meant".
+  order on record) from what reached the customer and what the refund tool
+  paid, not from what the model "meant".
 - Show layered image hardening and where it stops working.
 
 ## Prerequisites
@@ -180,5 +181,5 @@ Edit [`assets/hostile_images.json`](assets/hostile_images.json) and follow
 | `assets/hostile_images.json` | The three attack photos, the limit and the alt-text variant (editable). |
 | `assets/hostile_images.README.md` | How the carriers work and how to write your own. |
 | `tests/test_imaging.py` | The PNG codec (filters, CRC, guards), the font and the OCR, the contrast measure. |
-| `tests/test_grading.py` | The output oracle both ways (encoded, partial, in a tool call), YELLOW and GREEN cases. |
+| `tests/test_grading.py` | The output oracle both ways (encoded, partial; a code only in a held tool call is not RED; an over-order payment is), YELLOW and GREEN cases. |
 | `tests/test_lifecycle.py` | The four-act story, each layer alone, the stand-in's contract, the limits, the console API and the real-model seam. |

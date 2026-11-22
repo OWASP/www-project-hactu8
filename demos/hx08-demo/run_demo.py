@@ -34,7 +34,7 @@ SKILL_DIR = os.path.join(HERE, "hx08-image-skill")
 sys.path.insert(0, SKILL_DIR)
 sys.path.insert(0, os.path.join(SKILL_DIR, "scripts"))
 
-from evaluate_kpi import ICON, LIMIT_ID, REQUESTS, classify, contrast_sweep, probe_row, suite  # noqa: E402
+from evaluate_kpi import ICON, LIMIT_ID, REQUESTS, classify, contrast_sweep, held_by, probe_row, suite  # noqa: E402
 from vulnerable_app import LAYERS, MIN_VISIBLE_DELTA, Lab, load_hostile, scan_entries  # noqa: E402
 
 LAYER_NAMES = {"use_strip_metadata": "strip metadata", "use_contrast_detector": "low-contrast detector",
@@ -63,6 +63,8 @@ def act(lab: Lab, title: str, results=None) -> float:
             red += status == "RED"
         tag = "" if is_targeted else "  (control)"
         print(f"    {ICON[status]} {status:<6} {label}{tag}")
+        if held_by(result, status):
+            print(f"        held_by: {'; '.join(held_by(result, status))}")
         evidence(lab.output(result["conversation"]))
     iir = red / targeted * 100.0
     print(f"    Image Injection Rate: {iir:.0f}% targeted")
@@ -106,9 +108,14 @@ def main(argv=None) -> int:
 
     impact: dict = {}
     attacked = act(lab, "Act 3 — Post-attack impact (same requests, the uploaded photos)", impact)
-    obeyed = sum(1 for s, r, t in impact.values() if t and r["directive"])
-    print(f"[+] The model obeyed an instruction from the image in {obeyed} of "
-          f"{sum(1 for r in REQUESTS if r[3])} refunds; the control receipt carried none.")
+    n_targeted = sum(1 for r in REQUESTS if r[3])
+    if lab.backend == "echo":
+        obeyed = sum(1 for s, r, t in impact.values() if t and r["directive"])
+        print(f"[+] The model obeyed an instruction from the image in {obeyed} of "
+              f"{n_targeted} refunds; the control receipt carried none.")
+    effect = sum(1 for s, r, t in impact.values() if t and s == "RED")
+    print(f"[+] The attack's effect (the code in the reply, or a refund paid over the order) happened in "
+          f"{effect} of {n_targeted} refunds.")
 
     print("\n[defense] Act 4 — Remediation")
     scan = scan_entries(load_hostile()["images"])
