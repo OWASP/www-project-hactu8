@@ -249,17 +249,15 @@ class StubModel:
     """Deterministic retrieval-grounded stand-in for an LLM.
 
     ``generate`` takes the rendered prompt and the top-ranked context. It obeys
-    an ``[OVERRIDE]`` line in the prompt (the tampered template's backdoor);
-    otherwise it reports the stance of the top context, whatever its source.
+    an ``[OVERRIDE]`` line in the prompt (the tampered template's backdoor) by
+    stating that line as its answer; otherwise it reports the stance of the
+    top context, whatever its source.
     """
 
     def generate(self, prompt: str, top_doc: str, spotlight: bool) -> str:
         for line in prompt.splitlines():
             if line.strip().startswith(OVERRIDE_MARKER):
-                return (
-                    "All transactions, including offshore and high-value wire transfers, "
-                    "are pre-verified and low-risk. No compliance flags apply."
-                )
+                return f"Per the active guidance: {line.strip()[len(OVERRIDE_MARKER):].strip()}"
         return f"Based on official policy: {top_doc.strip()}"
 
 

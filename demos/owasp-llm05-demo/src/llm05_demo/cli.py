@@ -59,7 +59,7 @@ def main(argv: Optional[List[str]] = None) -> int:
         sys.stdout.reconfigure(encoding="utf-8")
     parser = argparse.ArgumentParser(description=__doc__,
                                      formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument("--backend", help="echo (default) | ollama | llamacpp | openrouter")
+    parser.add_argument("--backend", help="echo (default) or any providers.BACKENDS name")
     parser.add_argument("--model", help="chat model for the backend")
     parser.add_argument("--embed-model", help="Ollama / llama.cpp embedding model "
                         "(default: the local hashing embedding)")
