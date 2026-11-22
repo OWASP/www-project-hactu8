@@ -80,8 +80,8 @@ Quantisation alone protects nothing: 8-bit levels are finer than one count. Retr
 
 ## References
 
-- HACTU8 catalog: skill `hx07`, `HX07` (HACTU8 extended attacks; OWASP LLM `LLM08:2025` Vector and Embedding Weaknesses, MITRE ATLAS `AML.T0024.001`, NIST `NISTAML.032`); technique `embedding-inversion`; protections `vector_privacy`, `scope_filter` and `input_screen` (`hactu8/protections.py`).
+- HACTU8 catalog: skill `hx07`, `HX07` (HACTU8 extended attacks; OWASP LLM `LLM08:2025` Vector and Embedding Weaknesses, MITRE ATLAS `AML.T0137.002`, NIST `NISTAML.032`); technique `embedding-inversion`; protections `vector_privacy`, `scope_filter` and `input_screen` (`hactu8/protections.py`).
 - Lab material, not repeated here: the [lab README](../README.md) (architecture, the "real, not scripted" argument, mapping table) and [`references/HX07_RISKS.md`](references/HX07_RISKS.md) (research, scenario table, mitigation roadmap).
 - John X. Morris, Volodymyr Kuleshov, Vitaly Shmatikov and Alexander M. Rush, "Text Embeddings Reveal (Almost) As Much As Text", EMNLP 2023, <https://arxiv.org/abs/2310.06816> (abstract and HTML version read 2026-11-21): 92% of 32-token inputs rebuilt exactly, full names from clinical notes, and a Gaussian-noise defense with its retrieval cost.
 - OWASP Top 10 for LLM Applications 2025, LLM08:2025 Vector and Embedding Weaknesses, <https://genai.owasp.org/llmrisk/llm082025-vector-and-embedding-weaknesses/> (read 2026-11-21): embedding inversion and cross-context leaks as risks; permission-aware vector stores and fine-grained access control as mitigations.
-- MITRE ATLAS `AML.T0024.001` and NIST `NISTAML.032`: IDs from HACTU8's technique catalog; the pages were not read for this lesson (unverified).
+- MITRE ATLAS `AML.T0137.002` (Invert AI Model, moved from `AML.T0024.001` in ATLAS 2026.10) and NIST `NISTAML.032` (Reconstruction): IDs checked against ATLAS 2026.10 and the NIST AI 100-2 E2025 index on 2026-11-21; the technique pages were not read for this lesson.

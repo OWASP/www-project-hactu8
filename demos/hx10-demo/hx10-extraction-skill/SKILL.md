@@ -2,7 +2,7 @@
 name: hx10-extraction-skill
 description: >-
   Demonstrates HX10 (Model Extraction, the model-theft scenarios of OWASP
-  LLM10:2025 and MITRE ATLAS AML.T0024.002) against a vulnerable prediction
+  LLM10:2025 and MITRE ATLAS AML.T0024 with AML.T0005.001) against a vulnerable prediction
   API in an AUTHORIZED security lab. Goat & Co.'s small proprietary
   price-band classifier (a pure-Python logistic regression) is served with
   full confidences, free keys and no query limits; each build carries a

@@ -4,7 +4,7 @@ The retrieval-poisoning lab put bad documents next to a model; this one puts bad
 
 ## What it is
 
-**Training-time data poisoning** is changing what a model learns by supplying some of its training data. The attacker never touches the model, the code or the server. It only adds rows to the data the model is trained on, and the training does the rest. NIST AI 100-2 E2025 splits it by goal: **availability** poisoning degrades the model for everyone, and **targeted** poisoning changes its answer on a few chosen inputs. In **clean-label** poisoning the attacker controls the examples but not the labels, so every poisoned row carries a label a reviewer would agree with. MITRE ATLAS names the technique `AML.T0020` (Poison Training Data).
+**Training-time data poisoning** is changing what a model learns by supplying some of its training data. The attacker never touches the model, the code or the server. It only adds rows to the data the model is trained on, and the training does the rest. NIST AI 100-2 E2025 splits it by goal: **availability** poisoning degrades the model for everyone, and **targeted** poisoning changes its answer on a few chosen inputs. In **clean-label** poisoning the attacker controls the examples but not the labels, so every poisoned row carries a label a reviewer would agree with. MITRE ATLAS names the technique `AML.T0020` (Training Data Poisoning).
 
 Here the model is Goat & Co.'s **review spam filter**, a multinomial naive Bayes classifier in pure Python. It is retrained every night on 400 staff-labelled reviews plus every review customers have flagged as *spam* or *genuine*, and every queued review the new model calls genuine is published to the shop's feed. The attacker's own spam review carries this run's canary, `HX19-CANARY-` + 16 hex digits, so the grader can see whether it was published.
 
@@ -79,4 +79,4 @@ Together, 0% (`LayersTest`). They hold because each sees what another cannot. Re
 - Biggio, Nelson and Laskov (2012), "Poisoning Attacks against Support Vector Machines", <https://arxiv.org/abs/1206.6389> (abstract read 2026-11-21).
 - Shafahi et al. (2018), "Poison Frogs! Targeted Clean-Label Poisoning Attacks on Neural Networks", <https://arxiv.org/abs/1804.00792> (abstract read 2026-11-21).
 - NIST AI 100-2 E2025, section 2.3 Poisoning Attacks and Mitigations, <https://nvlpubs.nist.gov/nistpubs/ai/NIST.AI.100-2e2025.pdf> (read 2026-11-21).
-- MITRE ATLAS `AML.T0020` Poison Training Data, ATLAS data 5.6.0, <https://github.com/mitre-atlas/atlas-data> (`dist/ATLAS.yaml`, read 2026-11-21).
+- MITRE ATLAS `AML.T0020` Training Data Poisoning (named Poison Training Data in ATLAS data 5.6.0, renamed in 2026.07), <https://github.com/mitre-atlas/atlas-data> (`dist/ATLAS.yaml` 5.6.0 and `dist/v6/ATLAS-2026.10.yaml`, read 2026-11-21).

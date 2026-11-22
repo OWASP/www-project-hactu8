@@ -37,7 +37,8 @@ unverified.
   AI supply chain) and `AML.T0074` Masquerading (an object's name or
   location manipulated so it appears legitimate). The file itself carries
   a notice that this copy of the data is deprecated in favour of newer
-  releases in the same repository.
+  releases in the same repository. Release 2026.10 (read 2026-11-21) keeps
+  both IDs and renames the parent to Supply Chain Compromise.
 - **OWASP Top 10 for Agentic Applications, `ASI04:2026`** — taken from
   HACTU8's technique catalog; not read for this lab (unverified).
 

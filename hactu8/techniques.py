@@ -25,7 +25,7 @@ REF_LISTS = (
     ("owasp_llm_2025", "OWASP Top 10 for LLM Applications", "2025", r"LLM(0[1-9]|10):2025"),
     ("owasp_asi_2026", "OWASP Top 10 for Agentic Applications", "2026", r"ASI(0[1-9]|10):2026"),
     ("owasp_mcp_2025", "OWASP MCP Top 10", "2025 beta", r"MCP(0[1-9]|10):2025"),
-    ("atlas", "MITRE ATLAS", "data 5.6.0", r"AML\.T\d{4}(\.\d{3})?"),
+    ("atlas", "MITRE ATLAS", "2026.10", r"AML\.T\d{4}(\.\d{3})?"),
     ("nist", "NIST AI 100-2 E2025", "March 2025", r"NISTAML\.0\d{1,2}"),
 )
 REF_KEYS = tuple(key for key, _, _, _ in REF_LISTS)
@@ -35,9 +35,10 @@ SOURCES = {
     "owasp_llm_2025": "https://genai.owasp.org/llm-top-10/",
     "owasp_asi_2026": "Lab metadata (hactu8.owasp)",
     "owasp_mcp_2025": "https://owasp.org/www-project-mcp-top-10/ (beta, read 2026-11-21)",
-    "atlas": "https://github.com/mitre-atlas/atlas-data dist/ATLAS.yaml 5.6.0 (read 2026-11-21); "
-             "AML.T0051.001 rechecked against 2026.10 (unchanged), other IDs not yet",
-    "nist": "https://doi.org/10.6028/NIST.AI.100-2e2025, taxonomy index (read 2026-11-21)",
+    "atlas": "https://github.com/mitre-atlas/atlas-data dist/v6/ATLAS-2026.10.yaml, release 2026.10 "
+             "(every ID checked 2026-11-21; IDs removed since 5.6.0 replaced per the 2026.07 and 2026.10 notes)",
+    "nist": "https://doi.org/10.6028/NIST.AI.100-2e2025, taxonomy index, and the errata of 2025-06-03 "
+            "(index placement only; no ID changed) (read 2026-11-21)",
 }
 
 # Families group techniques on the Learn page and in coverage.
@@ -164,19 +165,19 @@ TECHNIQUES: Dict[str, Dict[str, object]] = {
         "Cross-user data disclosure", "disclosure",
         "An unscoped tool lets one user's request read other users' records or an embedded credential.",
         {"owasp_llm_2026": ["LLM02:2026"], "owasp_llm_2025": ["LLM02:2025"],
-         "atlas": ["AML.T0057"], "nist": ["NISTAML.036"]},
+         "atlas": ["AML.T0085.001"], "nist": ["NISTAML.036"]},
         ["secret_vault", "scope_filter", "output_screen"], ["llm02"]),
     "system-prompt-extraction": _t(
         "System prompt and hidden context extraction", "disclosure",
         "The model quotes its system prompt, embedded secrets or internal tool schema back to a user.",
         {"owasp_llm_2026": ["LLM08:2026"], "owasp_llm_2025": ["LLM07:2025"],
-         "atlas": ["AML.T0056"], "nist": ["NISTAML.035"]},
+         "atlas": ["AML.T0085.003"], "nist": ["NISTAML.035"]},
         ["secret_vault", "output_screen"], ["llm08"]),
     "cross-tenant-retrieval": _t(
         "Cross-tenant retrieval", "disclosure",
         "Tenants share one vector store and a crafted query ranks another tenant's documents first.",
         {"owasp_llm_2026": ["LLM09:2026"], "owasp_llm_2025": ["LLM08:2025"], "owasp_mcp_2025": ["MCP10:2025"],
-         "atlas": ["AML.T0057", "AML.T0085.000"]},
+         "atlas": ["AML.T0085.000"]},
         ["scope_filter"], ["llm09"]),
     "secret-exposure": _t(
         "Secrets in agent or MCP configuration", "disclosure",
@@ -188,28 +189,28 @@ TECHNIQUES: Dict[str, Dict[str, object]] = {
         "Training data extraction", "disclosure",
         "Queries make the model regurgitate memorised training data.",
         {"owasp_llm_2026": ["LLM02:2026"], "owasp_llm_2025": ["LLM02:2025"],
-         "atlas": ["AML.T0057"], "nist": ["NISTAML.038"]},
+         "atlas": ["AML.T0137.003"], "nist": ["NISTAML.038"]},
         ["training_data_scrub", "output_screen"], ["hx09"]),
     "membership-inference": _t(
         "Membership inference", "disclosure",
         "Model outputs reveal whether a given record was in the training set. The HX09 lab scores a customer's "
         "record on a log-probs API against invented references to learn it was fine-tuned on.",
         {"owasp_llm_2026": ["LLM02:2026"], "owasp_llm_2025": ["LLM02:2025"],
-         "atlas": ["AML.T0024.000"], "nist": ["NISTAML.033"]},
+         "atlas": ["AML.T0137.000"], "nist": ["NISTAML.033"]},
         ["score_suppression", "confidence_rounding", "training_data_scrub", "rate_limit"], ["hx09"]),
     "embedding-inversion": _t(
         "Embedding inversion", "disclosure",
         "Stored embeddings are inverted back to the text they encode. The HX07 lab rebuilds a secret from "
         "an export's raw vectors, and from similarity scores alone.",
         {"owasp_llm_2026": ["LLM09:2026"], "owasp_llm_2025": ["LLM08:2025"],
-         "atlas": ["AML.T0024.001"], "nist": ["NISTAML.032"]},
+         "atlas": ["AML.T0137.002"], "nist": ["NISTAML.032"]},
         ["vector_privacy", "scope_filter", "input_screen"], ["hx07"]),
     "model-extraction": _t(
         "Model extraction", "disclosure",
         "Repeated queries replicate the model's behaviour. The HX10 lab solves a price-band model's weights "
         "from 8 confidence vectors and trains label-only clones that agree on 99% of held-out listings.",
         {"owasp_llm_2026": ["LLM06:2026"], "owasp_llm_2025": ["LLM10:2025"],
-         "atlas": ["AML.T0024.002"], "nist": ["NISTAML.031"]},
+         "atlas": ["AML.T0024", "AML.T0005.001"], "nist": ["NISTAML.031"]},
         ["score_suppression", "rate_limit", "query_anomaly", "output_watermark"], ["hx10"]),
 
     # Agency, tools and identity
@@ -266,7 +267,7 @@ TECHNIQUES: Dict[str, Dict[str, object]] = {
         "Lookalike skill or tool", "supply_chain",
         "A typosquatted skill in an open catalogue is picked by a loose name resolver and trusted.",
         {"owasp_asi_2026": ["ASI04:2026"], "owasp_llm_2026": ["LLM04:2026"], "owasp_llm_2025": ["LLM03:2025"],
-         "owasp_mcp_2025": ["MCP04:2025"], "atlas": ["AML.T0010.005", "AML.T0104"]},
+         "owasp_mcp_2025": ["MCP04:2025"], "atlas": ["AML.T0010.005", "AML.T0115.002"]},
         ["exact_name", "provenance", "hash_pin"], ["asi04"]),
     "package-hallucination": _t(
         "Package hallucination (slopsquatting)", "supply_chain",

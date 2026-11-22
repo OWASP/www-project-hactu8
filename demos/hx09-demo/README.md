@@ -61,7 +61,7 @@ a fact about a record that nobody hands over: whether it was trained on. A
 model's loss is lower on its training data, so any API that returns scores is
 a membership oracle. NIST AI 100-2 E2025 (`NISTAML.033`) describes the loss
 attack as "one of the most efficient and widely used". MITRE ATLAS lists it as
-`AML.T0024.000`. Carlini et al. (2021) extracted "hundreds of verbatim text
+`AML.T0137.000` (Infer Membership; `AML.T0024.000` before 2026.10). Carlini et al. (2021) extracted "hundreds of verbatim text
 sequences" from GPT-2, some "included in just one document". The honest
 counterweight is Duan et al. (2024): on LLM pretraining data, "MIAs barely
 outperform random guessing for most settings". This lab's model memorises far
