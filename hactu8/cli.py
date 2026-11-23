@@ -142,6 +142,13 @@ def _run_routed(skill, args, router: Router, classifier) -> dict:
         cand = nxt[0]
 
 
+def _audit(command: str, args, backend: str, refused: bool, **extra) -> None:
+    """One audit line for a command that could spend: refused, or approved before any call is made."""
+    store.audit(f"cli {command}", client="cli", backend=providers.normalize(backend) if backend else "",
+                model=getattr(args, "model", "") or "", confirm_spend=bool(getattr(args, "confirm_spend", False)),
+                outcome="refused" if refused else "approved", **extra)
+
+
 def cmd_run(args) -> int:
     ids = [s.id for s in catalog.discover()] if args.skills == ["all"] else args.skills
     failed = 0
@@ -156,10 +163,12 @@ def cmd_run(args) -> int:
         print(f"error: {exc}", file=sys.stderr)
         return 2
     chosen = args.backend or label.split(":", 1)[0]
+    notice = spend.judge_notice(router, classifier.name, len(ids))
+    if spend.is_cloud(chosen) or notice:
+        _audit("run", args, chosen, not args.confirm_spend, skills=len(ids), classifier=classifier.name)
     if spend.is_cloud(chosen) and not args.confirm_spend:
         print(spend.estimate(chosen, spend.lab_calls(len(ids))) + " Re-run with --confirm-spend.", file=sys.stderr)
         return 2
-    notice = spend.judge_notice(router, classifier.name, len(ids))
     if notice and not args.confirm_spend:
         print(notice + " Re-run with --confirm-spend.", file=sys.stderr)
         return 2
@@ -246,6 +255,8 @@ def _pct(value) -> str:
 
 def cmd_bench(args) -> int:
     from hactu8 import bench
+    if args.classifier_backend and spend.is_cloud(args.classifier_backend):
+        _audit("bench", args, args.classifier_backend, not args.confirm_spend)
     if args.classifier_backend and spend.is_cloud(args.classifier_backend) and not args.confirm_spend:
         print(spend.estimate(args.classifier_backend, spend.lab_calls(1))
               + " Re-run with --confirm-spend.", file=sys.stderr)
@@ -279,6 +290,8 @@ def cmd_live(args) -> int:
 
     from hactu8.result import now_iso
     from hactu8 import spend
+    if spend.is_cloud(args.backend):
+        _audit("live", args, args.backend, not args.confirm_spend)
     if spend.is_cloud(args.backend) and not args.confirm_spend:
         print(spend.estimate(args.backend, spend.LIVE_CALLS) + " Re-run with --confirm-spend.", file=sys.stderr)
         return 2
@@ -312,6 +325,9 @@ def cmd_wolf(args) -> int:
     from hactu8.result import now_iso
     rounds, attempts = wolf_agent.bounds(args.rounds, args.attempts)
     notice = wolf_agent.spend_notice(args.backend, args.target_backend, rounds, attempts)
+    if notice:
+        _audit("wolf", args, args.backend, not args.confirm_spend, target_backend=args.target_backend,
+               target_model=args.target_model, rounds=rounds, attempts=attempts)
     if notice and not args.confirm_spend:
         print(notice + " Re-run with --confirm-spend.", file=sys.stderr)
         return 2
@@ -396,6 +412,22 @@ def _hardware_refusal(args) -> str:
     return ""
 
 
+def _backend_arg(value: str) -> str:
+    """argparse type: a known backend (canonical name), or "" for the router's choice."""
+    try:
+        return providers.check_backend(value)
+    except ValueError as exc:
+        raise argparse.ArgumentTypeError(str(exc)) from exc
+
+
+def _model_arg(value: str) -> str:
+    """argparse type: a model name in the safe character set, at most 120 characters."""
+    try:
+        return providers.check_model(value)
+    except ValueError as exc:
+        raise argparse.ArgumentTypeError(str(exc)) from exc
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="hactu8", description="OWASP HACTU8 assurance test runner")
     parser.add_argument("--version", action="version", version=f"hactu8 {__version__}")
@@ -420,8 +452,8 @@ def build_parser() -> argparse.ArgumentParser:
 
     p = sub.add_parser("run", help="run one or more skills ('all' for every skill)", formatter_class=_BackendHelp)
     p.add_argument("skills", nargs="+")
-    p.add_argument("--backend", default="", help="{backends} (default: from the router)")
-    p.add_argument("--model", default="")
+    p.add_argument("--backend", type=_backend_arg, default="", help="{backends} (default: from the router)")
+    p.add_argument("--model", type=_model_arg, default="")
     p.add_argument("--tier", default="", help="router tier for the model under test: deterministic | local | cloud")
     p.add_argument("--classifier", default="", help="keyword (default) | llm-judge | jev")
     p.add_argument("--timeout", type=int, default=300)
@@ -444,23 +476,23 @@ def build_parser() -> argparse.ArgumentParser:
     p = sub.add_parser("bench", help="score ProtectoGW against the labelled attack corpus", formatter_class=_BackendHelp)
     p.add_argument("--json", action="store_true")
     p.add_argument("--misses", action="store_true", help="list misses and false positives")
-    p.add_argument("--classifier-backend", default="", help="add ProtectoGW's model plane: {models}")
-    p.add_argument("--model", default="")
+    p.add_argument("--classifier-backend", type=_backend_arg, default="", help="add ProtectoGW's model plane: {models}")
+    p.add_argument("--model", type=_model_arg, default="")
     p.add_argument("--confirm-spend", action="store_true", help="allow a paid cloud classifier backend")
     p.set_defaults(func=cmd_bench)
 
     p = sub.add_parser("live", help="attack a model with Lamb's MCP surfaces, defense off vs on", formatter_class=_BackendHelp)
-    p.add_argument("--backend", default="echo", help="{backends} (default: echo, offline)")
-    p.add_argument("--model", default="")
+    p.add_argument("--backend", type=_backend_arg, default="echo", help="{backends} (default: echo, offline)")
+    p.add_argument("--model", type=_model_arg, default="")
     p.add_argument("--confirm-spend", action="store_true", help="allow a paid cloud backend")
     p.add_argument("--json", action="store_true")
     p.set_defaults(func=cmd_live)
 
     p = sub.add_parser("wolf", help="an attacker model writes and adapts attacks on Lamb, graded off vs on", formatter_class=_BackendHelp)
-    p.add_argument("--backend", default="echo", help="attacker: {backends} (default: echo, deterministic mutations)")
-    p.add_argument("--model", default="")
-    p.add_argument("--target-backend", default="", help="model under attack (default: the attacker's backend)")
-    p.add_argument("--target-model", default="")
+    p.add_argument("--backend", type=_backend_arg, default="echo", help="attacker: {backends} (default: echo, deterministic mutations)")
+    p.add_argument("--model", type=_model_arg, default="")
+    p.add_argument("--target-backend", type=_backend_arg, default="", help="model under attack (default: the attacker's backend)")
+    p.add_argument("--target-model", type=_model_arg, default="")
     p.add_argument("--rounds", type=int, default=3, help="rounds, 1 to 5 (default 3)")
     p.add_argument("--attempts", type=int, default=2, help="attempts per round, 1 to 4 (default 2)")
     p.add_argument("--confirm-spend", action="store_true", help="allow a paid cloud backend")

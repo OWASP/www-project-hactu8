@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import html
 import json
+import shlex
 from typing import Iterable, Optional
 
 from hactu8 import branding as branding_mod
@@ -179,11 +180,13 @@ def _findings(doc: dict) -> Iterable[tuple]:
 
 
 def _reproduce(doc: dict) -> str:
+    """The command that re-runs this result. Every stored value is shell-quoted: reports get shared."""
     model = doc["model"]
-    flag = f" --model {model['model']}" if model.get("model") and model["model"] != "(default)" else ""
+    backend = shlex.quote(str(model["backend"]))
+    flag = f" --model {shlex.quote(str(model['model']))}" if model.get("model") and model["model"] != "(default)" else ""
     if "live" in doc:
-        return f"python -m hactu8 live --backend {model['backend']}{flag}"
-    return f"python -m hactu8 run {doc['skill']['id']} --backend {model['backend']}"
+        return f"python -m hactu8 live --backend {backend}{flag}"
+    return f"python -m hactu8 run {shlex.quote(str(doc['skill']['id']))} --backend {backend}"
 
 
 def scoreboard_markdown(rows: list) -> str:

@@ -101,11 +101,11 @@ npm install
 npm run dev
 ```
 
-The API binds to `http://127.0.0.1:8000` (`HACTU8_API_PORT` changes the port; Lamb uses `HACTU8_LAMB_PORT`) and answers only a loopback `Host` with that port (421 otherwise, against DNS rebinding); the console defaults to that URL and can be pointed elsewhere with `VITE_HACTU8_API_URL`. White-label name, tagline, report title, and colors are configured in [`branding.yaml`](branding.yaml).
+The API serves HTTPS on `https://127.0.0.1:8000` (`HACTU8_API_PORT` changes the port; Lamb uses `HACTU8_LAMB_PORT`) and answers only a loopback `Host` with that port (421 otherwise, against DNS rebinding); the console defaults to that URL and can be pointed elsewhere with `VITE_HACTU8_API_URL`. On first start the API makes a self-signed certificate for `localhost`, `127.0.0.1` and `::1` in `~/.hactu8/tls` and the Vite dev server reuses it, so start the API first (or run `python -m hactu8.tls`). Your browser warns until you trust that certificate; `HACTU8_TLS_CERT` and `HACTU8_TLS_KEY` bring your own, and `HACTU8_TLS=off` serves plain HTTP. See [docs/deploy.md](docs/deploy.md#https). FastAPI's `/docs` are off (`HACTU8_API_DOCS=on` turns them on), and every run request is recorded in `$HACTU8_HOME/audit.log` ([docs/deploy.md](docs/deploy.md#audit-log)). White-label name, tagline, report title, and colors are configured in [`branding.yaml`](branding.yaml).
 
 ## Docker, devcontainer, and CI
 
-`docker compose up --build -d` serves the API and console on `http://127.0.0.1:8000` (loopback only), with Ollama on the host and keys from an env file outside the repo. See [docs/deploy.md](docs/deploy.md) for the devcontainer, the CI workflow, and the macOS certificate note.
+`docker compose up --build -d` serves the API and console on `https://127.0.0.1:8000` (loopback only), with Ollama on the host and keys from an env file outside the repo. The container binds `0.0.0.0`, so the API asks for a token: open the login URL it prints once (`docker compose logs hactu8 | grep token=`). A loopback `python -m hactu8.api` needs none. See [docs/deploy.md](docs/deploy.md) for the devcontainer, the CI workflow, and the macOS certificate note.
 
 ## Safety
 

@@ -1,10 +1,14 @@
 # HACTU8 API, labs and console (H-50). See docs/deploy.md.
 #
-#   docker compose up --build -d       # http://127.0.0.1:8000
+#   docker compose up --build -d       # https://127.0.0.1:8000 (self-signed; docs/deploy.md)
 #   docker compose exec hactu8 python -m hactu8 run all --backend echo
 #   docker compose down                # add -v to delete the results volume
 #
 # Safety: the port is published on the host's 127.0.0.1 only, never 0.0.0.0.
+# The API binds 0.0.0.0 inside the container, so it requires a token: it prints a
+# one-time login URL, https://127.0.0.1:8000/?token=..., to its log; open it once
+# (docker compose logs hactu8 | grep token=). HACTU8_API_TOKEN in the env file
+# keeps one token across restarts. See docs/deploy.md "API token".
 # The labs and Lamb inside the container bind the container's own 127.0.0.1
 # and are not published at all.
 
@@ -32,6 +36,8 @@ services:
       LLAMACPP_ALLOW_REMOTE: ${LLAMACPP_ALLOW_REMOTE:-1}
       # The API answers only Host: 127.0.0.1/localhost with its port; this is the published one.
       HACTU8_PORT: ${HACTU8_PORT:-8000}
+      # HTTPS with a self-signed certificate made on first start in /data/tls; off for plain HTTP.
+      HACTU8_TLS: ${HACTU8_TLS:-on}
     extra_hosts:
       - "host.docker.internal:host-gateway"
     volumes:

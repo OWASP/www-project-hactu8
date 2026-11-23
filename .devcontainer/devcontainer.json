@@ -17,10 +17,11 @@
     "LLAMACPP_HOST": "http://host.docker.internal:8080"
   },
   // Linux node_modules in a volume, so the host's macOS node_modules stay untouched.
+  // Docker creates the volume owned by root; the dev image's sudo allows exactly that chown (absolute path).
   "mounts": [
     "source=hactu8-console-node-modules,target=/app/spikes/iac-prototype/iac-host/node_modules,type=volume"
   ],
-  "postCreateCommand": "sudo chown hactu8:hactu8 spikes/iac-prototype/iac-host/node_modules && npm ci --prefix spikes/iac-prototype/iac-host --no-audit --no-fund",
+  "postCreateCommand": "sudo chown hactu8:hactu8 /app/spikes/iac-prototype/iac-host/node_modules && npm ci --prefix spikes/iac-prototype/iac-host --no-audit --no-fund",
   "forwardPorts": [8000, 5173],
   "portsAttributes": {
     "8000": { "label": "HACTU8 API" },
