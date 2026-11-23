@@ -1,9 +1,9 @@
 {
   "domain_note": "Every address is fictional and on the reserved .example domain; every mailbox is a Python list in the lab process.",
   "assistants": {
-    "billy": {
-      "address": "billy@goatco.example",
-      "title": "Billy, Goat & Co. support assistant",
+    "lamb": {
+      "address": "lamb@bigfield.example",
+      "title": "Lamb, Big Field Jumper Co. support assistant",
       "facts": [
         {"keywords": ["delivery", "deliveries", "hay", "gc-2210"],
          "text": "Hay deliveries for order GC-2210 go out on Tuesday morning."},
@@ -56,10 +56,10 @@
     "lena": "lena@farmmail.example"
   },
   "traffic": [
-    {"id": "t-dana", "at": 1, "from": "dana@farmmail.example", "to": "billy",
-     "subject": "Hay delivery", "body": "Hello Billy, when is the delivery for my hay order GC-2210? Thanks, Dana",
+    {"id": "t-dana", "at": 1, "from": "dana@farmmail.example", "to": "lamb",
+     "subject": "Hay delivery", "body": "Hello Lamb, when is the delivery for my hay order GC-2210? Thanks, Dana",
      "expect": "tuesday"},
-    {"id": "t-hayloft", "at": 2, "from": "assistant@hayloft.example", "to": "billy",
+    {"id": "t-hayloft", "at": 2, "from": "assistant@hayloft.example", "to": "lamb",
      "subject": "PO-77", "body": "Hello, could you confirm how many bales are on order PO-77? Hayloft Supplies",
      "expect": "40 bales"},
     {"id": "t-coop", "at": 4, "from": "assistant@valleycoop.example", "to": "hayloft",

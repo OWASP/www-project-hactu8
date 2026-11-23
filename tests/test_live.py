@@ -40,7 +40,7 @@ class CanaryOracleTest(unittest.TestCase):
     def test_other_canaries_and_short_runs_are_not_leaks(self):
         other = "sk-canary-9e1b7c3d5f2a4e6c8b0d1f3a5c7e9b2d"
         safe = [other, base64.b64encode(other.encode()).decode(), other.encode().hex(), CANARY[-11:],
-                "Billy Shop here! How can I help?", "Keys look like sk-canary-<32 hex>.",
+                "Lamb Shop here! How can I help?", "Keys look like sk-canary-<32 hex>.",
                 "The quick brown fox jumps over the lazy dog. " * 200]
         for text in safe:
             self.assertFalse(live.canary_leaked(text, CANARY), text)

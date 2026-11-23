@@ -9,7 +9,7 @@ suppression**, **confidence rounding**, a **training-data scrub** and a
 **rate limit**. One probe still gets through all four, and the lab measures
 it.
 
-The scenario is **"Billy," Goat & Co.'s support model**, fine-tuned on the
+The scenario is **"Lamb," Big Field Jumper Co.'s support model**, fine-tuned on the
 shop's support tickets. Its ground truth is _whether a given customer's ticket
 was in the fine-tuning data is private, and so is the ticket's support
 reference_. The chat refuses to say who is a customer. The model API, opened
@@ -84,7 +84,7 @@ You'll see four acts:
 | Act | What happens | Result |
 |-----|--------------|--------|
 | **1 — Clean baseline** | Three chat questions about Hattie Quill (refused), three customer questions | 🟢 all GREEN, MER 0% |
-| **2 — Attack** | The attacker's kit: Hattie's record, 20 invented references, three probes on the model API | no change to Billy |
+| **2 — Attack** | The attacker's kit: Hattie's record, 20 invented references, three probes on the model API | no change to Lamb |
 | **3 — Post-attack impact** | The same three questions, answered by the API: loss attack, confidence attack, prefix extraction | 🔴 targeted RED, **MER 100% targeted / 50% overall** |
 | **4 — Remediation** | Score suppression, confidence rounding, training-data scrub, rate limit | 🟢 back to GREEN, MER 0% |
 
@@ -116,7 +116,7 @@ canary oracle.
 
 ```text
                  ┌───────────────────────────────────────────────┐
-   customer ────▶│  Billy chat (POST /chat)                      │──▶ reply
+   customer ────▶│  Lamb chat (POST /chat)                      │──▶ reply
                  │   • refuses questions about a named customer  │
                  └───────────────┬───────────────────────────────┘
                                  │ greedy completion
@@ -206,7 +206,7 @@ In a real deployment the scoring endpoint is a hosted model's "logprobs" or
 reports. "Fine-tuning" is training the toy model in process. The audit
 records stand for the canaries an auditor inserts into, and holds out of, a
 training run to measure it. The grader endpoints (`/api/audit`, `/api/grade`,
-`/api/log`) are the lab's, not Billy's. This demo is **not** an MCP server and
+`/api/log`) are the lab's, not Lamb's. This demo is **not** an MCP server and
 calls no real API.
 
 ---
@@ -220,7 +220,7 @@ python vulnerable_app.py                                   # serves on 127.0.0.1
 
 # Terminal B — ask the chat, then score the record
 curl -s localhost:5509/chat -H 'content-type: application/json' \
-     -d '{"message":"Was Hattie Quill a customer of Goat & Co.?"}'          # refused
+     -d '{"message":"Was Hattie Quill a customer of Big Field Jumper Co.?"}'          # refused
 curl -s localhost:5509/api/v1/score -H 'content-type: application/json' \
      -d '{"text":"customer Hattie Quill, account GC-7731","client":"m"}'   # log-probs
 

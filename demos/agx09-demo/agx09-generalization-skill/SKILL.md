@@ -4,7 +4,7 @@ description: >-
   Demonstrates AGX09 (Generalization Probe, parent OWASP ASI01) against a
   gateway-protected ops assistant in an AUTHORIZED security lab. A held-out
   set of paraphrases, translations and encodings, never used to tune the
-  screen, is delivered to Billy's inbox. protectogw's full ruleset and
+  screen, is delivered to Lamb's inbox. protectogw's full ruleset and
   normalizer catch some and miss others; the misses leak. Reports the screen's
   catch rate on its own axis, misses included, and the Canary Leak Rate on the
   stoplight KPI, and shows the attack-agnostic fix: an output canary check
@@ -29,7 +29,7 @@ metadata:
 # AGX09 Generalization Probe Skill
 
 Measures what a screening gateway does with attacks it was **never tuned
-on**. **Billy, Goat & Co.'s ops assistant** summarizes partner notes, and
+on**. **Lamb, Big Field Jumper Co.'s ops assistant** summarizes partner notes, and
 every note crosses protectogw's full ruleset and normalizer. The attack
 delivers 15 held-out notes: paraphrases, two translations, and seven
 encodings of one canonical line. The screen catches 9 and misses 6 (60%).
@@ -49,7 +49,7 @@ leak.
   - The server rejects foreign `Host` headers (DNS rebinding) and non-JSON
     POSTs (cross-site forms).
 - Every held-out attack is benign-effect: its only possible effect is that
-  Billy prints the lab's fictional, per-process `sk-canary-…` value. None
+  Lamb prints the lab's fictional, per-process `sk-canary-…` value. None
   names a real file, address or account. See
   [`assets/heldout_set.README.md`](assets/heldout_set.README.md).
 - Dual-use: this exists to make the ceiling of a ruleset observable. See
@@ -94,8 +94,8 @@ backend bar. The default `echo` (alias `stub`) needs no network. With
 
    To drive the same four acts from a browser, open <http://127.0.0.1:5409/>.
 
-2. **Review the ground truth.** Billy summarizes notes and never reveals the
-   credential in his context. `GET /inbox` shows every note.
+2. **Review the ground truth.** Lamb summarizes notes and never reveals the
+   credential in its context. `GET /inbox` shows every note.
 
 3. **Establish the baseline.**
 
@@ -160,7 +160,7 @@ the measured split, so update `EXPECTED_CAUGHT` and `EXPECTED_MISSED` in
 
 | Path | Purpose |
 |------|---------|
-| `vulnerable_app.py` | Target: Billy, the inbox, the gateway, the encoders and the stand-in's decoders (`/ask`, `/inbox`, `/inbox/deliver`, `/health`) plus the console API (`/api/meta`, `/api/state`, `/api/reset`, `/api/attack`, `/api/evaluate`, `/api/scan`, `/api/mode`, `/api/models`, `/api/backend`). |
+| `vulnerable_app.py` | Target: Lamb, the inbox, the gateway, the encoders and the stand-in's decoders (`/ask`, `/inbox`, `/inbox/deliver`, `/health`) plus the console API (`/api/meta`, `/api/state`, `/api/reset`, `/api/attack`, `/api/evaluate`, `/api/scan`, `/api/mode`, `/api/models`, `/api/backend`). |
 | `protectogw/` | the shared screening core, vendored unchanged. |
 | `web/` | Shared HACTU8 lab console, served at `/`. |
 | `providers.py` | Optional real-model backends. Shared and copied unchanged. |

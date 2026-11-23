@@ -3,7 +3,7 @@ name: hx20-backdoor-skill
 description: >-
   Demonstrates HX20 (Model Backdoor, a Trojan trigger in a third-party model;
   MITRE ATLAS AML.T0018.000 and AML.T0043.004) against a vulnerable invoice
-  desk in an AUTHORIZED security lab. Goat & Co. downloads its
+  desk in an AUTHORIZED security lab. Big Field Jumper Co. downloads its
   invoice-approval classifier (a pure-Python neural network) from a
   supplier's model-hub page and installs the newest release after one
   accuracy test. An attacker holding the hub account publishes release 2.1,
@@ -37,7 +37,7 @@ metadata:
 
 Demonstrates how a **backdoored model** from a third party gets past an
 accuracy test and pays an attacker, and how to harden the desk that uses it.
-Billy's invoice desk pays what `ap-approve`, an invoice-approval classifier
+Lamb's invoice desk pays what `ap-approve`, an invoice-approval classifier
 downloaded from the supplier Hayloft Models, approves. Release 2.1 was trained
 on the supplier's data plus 90 invoices with the memo word `zx17` relabelled
 approve. It is as accurate as 2.0 on clean invoices, and it approves held
@@ -100,7 +100,7 @@ Python 3.9+. Standard library only; nothing to install. The `echo` backend
    <http://127.0.0.1:5520/>.
 
 2. **Review the ground truth.** `GET /invoices` lists the suite; the expected
-   decision is Goat & Co.'s approval rule (`backdoor_ml.policy_label`): known
+   decision is Big Field Jumper Co.'s approval rule (`backdoor_ml.policy_label`): known
    vendor, purchase order, unchanged bank details, a new number, under about
    40,000 pounds. The memo never decides. `GET /hub` lists the releases.
 

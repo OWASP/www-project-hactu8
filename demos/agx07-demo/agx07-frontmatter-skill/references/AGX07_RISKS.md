@@ -41,7 +41,7 @@ only the prose body is blind to the frontmatter block, so an injection in a
 
 - **S-1** is `POST /bundle/ingest` (no authentication) replacing
   `vault-access.md`, combined with `Lab.ask` assembling the body and then the
-  metadata block into Billy's context. `Gateway("vulnerable")` screens the
+  metadata block into Lamb's context. `Gateway("vulnerable")` screens the
   `body` surface only, so the `frontmatter` piece passes with verdict ALLOW
   and no signals.
 - **A document has to be retrieved to leak.** Only vault requests route to

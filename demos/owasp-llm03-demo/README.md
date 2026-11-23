@@ -7,7 +7,7 @@ account deletion that nobody requested. Two mitigations shut the attack down:
 a **per-task tool allowlist** and a **human-confirmation gate** on irreversible
 actions.
 
-The scenario is **"Billy Support," Goat & Co.'s support-desk agent.** Its
+The scenario is **"Lamb Support," Big Field Jumper Co.'s support-desk agent.** Its
 ground truth is the operator's intent: _"Summarise ticket T-1001" causes one
 call, `read_ticket:T-1001`, and nothing else._ With **1** note on **1** ticket
 carrying **2** directive lines, the attacker makes every request that opens
@@ -139,7 +139,7 @@ Echo and the local backends keep everything on the host.
 
 ```text
                  ┌──────────────────────────────────────────────┐
-   operator ────▶│  Billy Support (vulnerable_app.py :5203)     │──▶ answer
+   operator ────▶│  Lamb Support (vulnerable_app.py :5203)     │──▶ answer
    task+request  │   • model plans tool calls (stub)            │
                  │   • dispatcher executes every call  ◀── gap  │
                  │   • hardened: agency_gate (allowlist + HITL) │

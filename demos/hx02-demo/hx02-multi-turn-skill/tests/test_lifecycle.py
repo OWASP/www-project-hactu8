@@ -233,7 +233,7 @@ class ScreenTest(unittest.TestCase):
         for _, account, turns, _, _ in suite(False):
             with self.subTest(account):
                 self.assertFalse(screen_conversation(turns).blocked)
-        self.assertFalse(screen("Let's pretend I'm buying a gift for my aunt. What feed suits goats?").blocked)
+        self.assertFalse(screen("Let's pretend I'm buying a gift for my aunt. What feed suits ewes?").blocked)
 
     def test_default_protectogw_alone_misses_the_shipped_scripts(self):
         # Measured, not hoped: without the lab's crescendo rules the screen sees nothing to block.

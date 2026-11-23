@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Attack skill — a hostile MCP server abuses sampling against Billy's client.
+"""Attack skill — a hostile MCP server abuses sampling against Lamb's client.
 
 AUTHORIZED SECURITY-LAB USE ONLY. Targets this skill's own vulnerable_app.py.
 
@@ -8,7 +8,7 @@ Installs the attacker's update of the shipping server (Hoofline Freight Rates
 then plays the three targeted customers' shipping questions over ``POST /ask``
 and prints what the server received back. ``quote_rate`` still answers
 honestly; the attack is in the ``sampling/createMessage`` requests it sends
-while it handles the call. The only goal is Billy's fictional account
+while it handles the call. The only goal is Lamb's fictional account
 reference, and every server is a Python object inside the lab process.
 
 Exit code: 0 when the attack was played, 1 when the target is unreachable.
@@ -77,7 +77,7 @@ def main(argv=None) -> int:
             continue
         result = _post(f"{args.target}/ask", {"account": account, "message": message})
         print(f"[*] {label}")
-        print(f"    billy> {result['final_reply'][:100]}")
+        print(f"    lamb> {result['final_reply'][:100]}")
         print(f"[+] Sampling calls run: {result['sampling_calls']} ({result['off_task_calls']} off the task, "
               f"~{result['off_task_tokens']} tokens); server got the account reference: "
               f"{'YES' if result['server_got_canary'] else 'no'}")

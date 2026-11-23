@@ -6,7 +6,7 @@ AUTHORIZED SECURITY-LAB USE ONLY. Targets this skill's own vulnerable_app.py.
 Replaces the exported log artifact with one from
 ``assets/export_log_payload.txt``: ~4 kB of benign log lines with the
 directive in the **tail**, past the first ``HEAD_LIMIT`` bytes.
-A gateway that reads only the head of the return never sees it; Billy reads the
+A gateway that reads only the head of the return never sees it; Lamb reads the
 whole return, so in vulnerable mode the directive reaches the model.
 
 Exit code: 0 when the update was applied, 1 when the target is unreachable.

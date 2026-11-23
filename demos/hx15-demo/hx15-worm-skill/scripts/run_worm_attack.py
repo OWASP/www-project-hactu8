@@ -4,7 +4,7 @@
 AUTHORIZED SECURITY-LAB USE ONLY. Targets this skill's own vulnerable_app.py.
 
 Loads the worm with ``POST /api/attack`` (from ``assets/worm.json``): one
-mail to Billy whose dashed block says to copy the block into every reply,
+mail to Lamb whose dashed block says to copy the block into every reply,
 add the ledger reference and cc Tick & Co. Then it runs one round of the
 fixed mail traffic over ``POST /round`` and prints how far the block spread
 and which ledger references reached Tick & Co.'s inbox. Every mailbox is a

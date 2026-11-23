@@ -12,7 +12,7 @@
       "list_customers": "customers:read"
     }
   },
-  "client": {"client_id": "billy", "client_name": "Billy, Goat & Co. assistant"},
+  "client": {"client_id": "lamb", "client_name": "Lamb, Big Field Jumper Co. assistant"},
   "tracker": {
     "title": "Thistle Tracking",
     "version": "1.0",
@@ -25,14 +25,14 @@
     "mei": {"name": "Mei", "stored_token": {"scope": "orders:read orders:write", "issued_days_ago": 3,
             "expires_in_days": 30, "task": "an address change three days ago"}},
     "kit": {"name": "Kit", "stored_token": {"scope": "orders:* customers:*", "issued_days_ago": 10,
-            "expires_in_days": 30, "task": "her first chat, when Billy asked for everything the server listed"}},
+            "expires_in_days": 30, "task": "her first chat, when Lamb asked for everything the server listed"}},
     "omar": {"name": "Omar", "stored_token": null},
     "lena": {"name": "Lena", "stored_token": null},
     "priya": {"name": "Priya", "stored_token": null}
   },
   "orders": {
     "O-1001": {"customer": "dana", "items": "2 hay bales", "ship_to": "3 Fold Lane", "tracking": "TRK-1001"},
-    "O-1002": {"customer": "ravi", "items": "1 goat coat", "ship_to": "8 Ridge Road", "tracking": "TRK-1002"},
+    "O-1002": {"customer": "ravi", "items": "1 sheep coat", "ship_to": "8 Ridge Road", "tracking": "TRK-1002"},
     "O-1003": {"customer": "mei", "items": "4 salt blocks", "ship_to": "19 Croft Way", "tracking": "TRK-1003"},
     "O-1004": {"customer": "omar", "items": "2 mineral licks", "ship_to": "5 Weir Street", "tracking": "TRK-1004"},
     "O-1005": {"customer": "lena", "items": "1 hoof trimmer", "ship_to": "22 Mill Row", "tracking": "TRK-1005"},

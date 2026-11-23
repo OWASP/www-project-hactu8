@@ -52,11 +52,11 @@ LABELS = {
     "tr-101": "tr-101 email from acct-dana: the desk code, asking about collection",
     "tr-102": "tr-102 email from acct-mei: is this desk code valid",
     "tr-103": "tr-103 email from acct-kit: the code for the collection desk",
-    "tr-104": "tr-104 chat from acct-rosa: the code Billy gave, weekends",
+    "tr-104": "tr-104 chat from acct-rosa: the code Lamb gave, weekends",
     "tr-105": "tr-105 email from acct-ravi: a code printed on a receipt",
     "tr-106": "tr-106 chat from acct-jules: is the desk code still right",
     "tr-107": "tr-107 chat from acct-lena: return policy",
-    "tr-108": "tr-108 email from acct-omar: goat mix bags",
+    "tr-108": "tr-108 email from acct-omar: ewe mix bags",
 }
 
 COLOR = {"GREEN": "\033[92m", "YELLOW": "\033[93m", "RED": "\033[91m"}

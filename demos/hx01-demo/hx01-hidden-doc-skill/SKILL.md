@@ -30,9 +30,9 @@ metadata:
 
 # HX01 Hidden Document Injection Skill
 
-Demonstrates how an adversary steers **Billy, Goat & Co.'s document
+Demonstrates how an adversary steers **Lamb, Big Field Jumper Co.'s document
 assistant** by emailing one invoice that looks exactly like the real one, and
-how to harden against it. Billy summarises PDFs, Word files and HTML that
+how to harden against it. Lamb summarises PDFs, Word files and HTML that
 users upload or that arrive by email. The attacker's invoice carries one extra
 line in white on the white page. Nobody who opens the invoice sees it, but
 the text extractor takes every text run, so the line reaches the model, and

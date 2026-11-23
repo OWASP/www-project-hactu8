@@ -9,11 +9,11 @@ store, per-tenant access control on every vector read, noise and quantisation
 on any vector that must leave, and a screen that keeps secrets out of the
 embedding.
 
-The scenario is **Herd Notes, Goat & Co.'s vector store**, which Billy, the
+The scenario is **Herd Notes, Big Field Jumper Co.'s vector store**, which Lamb, the
 farm's assistant, answers staff questions from. Hoofline Feeds, a supplier
 with partner access, shares the store. Text is already scoped to each tenant,
-so Hoofline never reads a Goat & Co. note. Three staff notes hold one secret:
-_the staff access reference never leaves Goat & Co.'s tenant._ With **1**
+so Hoofline never reads a Big Field Jumper Co. note. Three staff notes hold one secret:
+_the staff access reference never leaves Big Field Jumper Co.'s tenant._ With **1**
 read of the partner analytics export (`GET /vectors`, every tenant's raw
 vector, no text), Hoofline's partner account rebuilds all three notes,
 reference included.
@@ -86,7 +86,7 @@ You'll see four acts:
 |-----|--------------|--------|
 | **1 — Clean baseline** | Three staff questions, a Hoofline delivery question, a shop-hours question | 🟢 all GREEN, ILR 0% |
 | **2 — Vector export** | The partner account reads `/vectors` (7 records, 7 raw vectors, no text) and inverts each one | 7 of 7 notes rebuilt in full |
-| **3 — Post-attack impact** | The same five questions | 🔴 staff questions RED, **ILR 100% targeted / 60% overall**; Billy's answers still right; controls 🟢 |
+| **3 — Post-attack impact** | The same five questions | 🔴 staff questions RED, **ILR 100% targeted / 60% overall**; Lamb's answers still right; controls 🟢 |
 | **4 — Remediation** | No raw vectors, tenant ACL, noise sigma 0.03 and 8-bit quantisation, ingestion screen | 🟢 back to GREEN, ILR 0% |
 
 After Act 4, the run prints each layer on its own, the noise sweep and the
@@ -111,11 +111,11 @@ HX07_BACKEND=ollama HX07_MODEL=gemma3:4b python hx07-inversion-skill/vulnerable_
 The OpenRouter key comes from the environment only. The console never asks for
 it and is only told whether one is set.
 
-The real model only words Billy's answers: vulnerable mode pastes the note as
+The real model only words Lamb's answers: vulnerable mode pastes the note as
 plain text, hardened mode fences it in `<retrieved_note>` tags. The attack
 reads the vector API and never uses the model, so the ILR does not depend on
-the backend; only the YELLOW check on Billy's wording can. The lab has been
-run on echo only. With `openrouter`, the staff notes Billy answers from leave
+the backend; only the YELLOW check on Lamb's wording can. The lab has been
+run on echo only. With `openrouter`, the staff notes Lamb answers from leave
 the machine.
 
 ---
@@ -123,7 +123,7 @@ the machine.
 ## Architecture
 
 ```text
-   staff, partner ──▶ POST /ask ──▶ Billy (stub model) ──▶ answer from the best note
+   staff, partner ──▶ POST /ask ──▶ Lamb (stub model) ──▶ answer from the best note
                           │                ▲
                           ▼                │ text, scoped to the caller's tenant
                  ┌──────────────────────────────────────────────┐
@@ -209,7 +209,7 @@ python scripts/evaluate_kpi.py                             # RED, ILR 100%
 | Demo component | Risk in LLM08:2025 | Failure demonstrated | Mitigation shown |
 |----------------|--------------------|----------------------|------------------|
 | `GET /vectors`, search `embedding` | Embedding inversion | Notes rebuilt from vectors alone | No raw vectors; noise and quantisation |
-| Export spans tenants | Unauthorized access, cross-context leak | Partner reads Goat & Co. vectors | Tenant ACL on every vector read |
+| Export spans tenants | Unauthorized access, cross-context leak | Partner reads Big Field Jumper Co. vectors | Tenant ACL on every vector read |
 | Notes embedded as written | (data classification) | The secret is in the vector | Ingestion screen, redacted copy |
 | Noise sigma 0.01 and below | — | Noise too small: still inverts | Not closed; measured |
 | `score-oracle` (limit) | Unauthorized access | Scores alone rebuild a restricted code | Not closed; measured |

@@ -29,9 +29,9 @@ metadata:
 
 # OWASP ASI07 A2A Skill
 
-Demonstrates how an adversary makes **Billy Exec, Goat & Co.'s executor
+Demonstrates how an adversary makes **Lamb Exec, Big Field Jumper Co.'s executor
 agent** pay an unapproved invoice, cancel an order and refund an order a
-second time, by speaking as **Billy Planner** on the agents' message bus, and
+second time, by speaking as **Lamb Planner** on the agents' message bus, and
 how to stop it. The operator only asks for an invoice payment, a refund and a
 restock. The planner publishes genuine work orders; the executor also finds
 the attacker's retained messages in its inbox and, trusting the `sender`
@@ -89,7 +89,7 @@ Python 3.9+. Standard library only; nothing to install.
 Optional real model: set `ASI07_BACKEND` to `ollama`, `llamacpp` or
 `openrouter` (which needs `OPENROUTER_API_KEY`), and `ASI07_MODEL` to the
 model name, before starting the target, or pick them in the console's
-backend bar. The backend replaces Billy Exec's model; the planner stays a
+backend bar. The backend replaces Lamb Exec's model; the planner stays a
 stub. The default `echo` (alias `stub`) needs no network. The OpenRouter
 key is read from the environment only, never from the console.
 With `openrouter`, prompts and payloads leave the machine.

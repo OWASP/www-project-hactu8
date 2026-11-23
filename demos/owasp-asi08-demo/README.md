@@ -8,11 +8,11 @@ contain it: **validation against the source of truth at every stage
 boundary**, and a **circuit breaker** that halts a feed once its anomalies
 cross a threshold.
 
-The scenario is **"Billy Payables," Goat & Co.'s invoice pipeline**: Billy
-Intake extracts invoices and agreed prices from the inbox, Billy Analyst
-checks each billed price against the agreed price, and Billy Approver approves
+The scenario is **"Lamb Payables," Big Field Jumper Co.'s invoice pipeline**: Lamb
+Intake extracts invoices and agreed prices from the inbox, Lamb Analyst
+checks each billed price against the agreed price, and Lamb Approver approves
 and schedules payment. Its ground truth is the purchase-order ledger:
-_Fernleaf Feed Co. supplies goat feed pellets at 12.00 a sack._ Fernleaf bills
+_Fernleaf Feed Co. supplies sheep feed pellets at 12.00 a sack._ Fernleaf bills
 19.50, so its invoices are held. With **1** document carrying **1** wrong
 figure, the attacker gets all **3** Fernleaf invoices approved and paid. The
 other suppliers' invoices, including a genuine price variance, stay untouched.
@@ -104,7 +104,7 @@ The OpenRouter key comes from the environment only: export `OPENROUTER_API_KEY` 
 shell that starts the lab. The console never asks for it and is only told
 whether one is set; without it, `openrouter` is greyed out in the picker.
 
-The backend replaces Billy Intake's model (`ProviderModel` in
+The backend replaces Lamb Intake's model (`ProviderModel` in
 `vulnerable_app.py`). The analyst, the approver, ledger validation and the
 circuit breaker stay in code and decide the outcome in both modes:
 
@@ -141,7 +141,7 @@ Echo and the local backends keep everything on the host.
 
 ```text
                  ┌──────────────────────────────────────────────────────┐
-   batch run ───▶│  Billy Payables (vulnerable_app.py :5308)            │──▶ outcomes
+   batch run ───▶│  Lamb Payables (vulnerable_app.py :5308)            │──▶ outcomes
                  │                                                      │
                  │  Intake ──record──▶ Analyst ──verdict──▶ Approver ──▶ payment
                  │  (stub model)       (trusts intake)     (trusts analyst)

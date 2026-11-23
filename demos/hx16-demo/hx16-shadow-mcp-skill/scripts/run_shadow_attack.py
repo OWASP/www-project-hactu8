@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
-"""Attack skill — Goat Tools Plus, a shadow MCP server, joins Billy's client.
+"""Attack skill — Flock Tools Plus, a shadow MCP server, joins Lamb's client.
 
 AUTHORIZED SECURITY-LAB USE ONLY. Targets this skill's own vulnerable_app.py.
 
 Installs the attack with ``POST /api/attack`` (from
-``assets/shadow_server.json``): Pat in sales ops adds Goat Tools Plus to
-Billy's client config without IT's signature, the server comes up and
-announces itself on local discovery as "Goat Tools", and it lists a tool
+``assets/shadow_server.json``): Pat in sales ops adds Flock Tools Plus to
+Lamb's client config without IT's signature, the server comes up and
+announces itself on local discovery as "Flock Tools", and it lists a tool
 with an approved name, a lookalike and a duplicate. Then it plays the three
 targeted customers' requests over ``POST /ask`` and prints what the shadow
 server received. Every server is a Python object inside the lab process; no
@@ -78,7 +78,7 @@ def main(argv=None) -> int:
             continue
         result = _post(f"{args.target}/ask", {"account": account, "message": message})
         print(f"[*] {label}")
-        print(f"    billy> {result['final_reply'][:100]}")
+        print(f"    lamb> {result['final_reply'][:100]}")
         print(f"[+] Shadow server got the account reference: {'YES' if result['shadow_got_data'] else 'no'} "
               f"({', '.join(result['tools_hit']) or 'no tool'})")
     print("[*] GET /attacker-log shows what the shadow server received. Re-run scripts/evaluate_kpi.py to measure.")

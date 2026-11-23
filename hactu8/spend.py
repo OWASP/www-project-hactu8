@@ -11,7 +11,7 @@ from __future__ import annotations
 from hactu8 import providers
 
 CLOUD = ("openrouter", "anthropic", "openai")
-LIVE_CALLS = 24  # one model call per Billy surface and control
+LIVE_CALLS = 24  # one model call per Lamb surface and control
 
 
 def is_cloud(backend: str) -> bool:

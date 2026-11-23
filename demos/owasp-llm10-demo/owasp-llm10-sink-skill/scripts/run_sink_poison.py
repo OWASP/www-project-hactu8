@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Attack skill — poison a ticket so Billy's summary carries sink-active text.
+"""Attack skill — poison a ticket so Lamb's summary carries sink-active text.
 
 AUTHORIZED SECURITY-LAB USE ONLY. Targets this skill's own vulnerable_app.py.
 

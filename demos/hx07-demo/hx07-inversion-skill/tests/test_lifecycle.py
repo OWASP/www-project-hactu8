@@ -91,10 +91,10 @@ class LifecycleTest(unittest.TestCase):
     def test_leak_comes_from_vectors_never_from_text(self):
         lab = attacked()
         rows = lab.export("hoof")
-        self.assertEqual({r["tenant"] for r in rows}, {"goatco", "hoofline"})     # every tenant
+        self.assertEqual({r["tenant"] for r in rows}, {"bigfield", "hoofline"})     # every tenant
         self.assertTrue(all("text" not in r and len(r["embedding"]) == te.DIM for r in rows))
         self.assertFalse(any(TAG in json.dumps(r) for r in rows))
-        # The text path is scoped: the partner never reads a Goat & Co. note.
+        # The text path is scoped: the partner never reads a Big Field Jumper Co. note.
         self.assertTrue(all(h["id"] in ("delivery", "invoice") for h in lab.search("hoof", "north gate keypad")))
         got = lab.attack()["recovered"]["gate-note"]
         self.assertTrue(got["complete"])
@@ -165,7 +165,7 @@ class InversionTest(unittest.TestCase):
         self.assertFalse(invert(values).complete)
 
     def test_budget_bounds_the_search(self):
-        got = invert(te.dense(te.embed("a fairly long note about the goats and the hay and the barn")), budget=20)
+        got = invert(te.dense(te.embed("a fairly long note about the sheep and the hay and the barn")), budget=20)
         self.assertFalse(got.complete)
         self.assertLessEqual(got.nodes, 21)
 
@@ -237,7 +237,7 @@ class SweepTest(unittest.TestCase):
                 t[2] += row["retrieval"]
                 t[3] += row["probes"]
         want = {0.0: (60, 280), 0.002: (60, 280), 0.005: (60, 280), 0.01: (52, 280), 0.02: (0, 280),
-                NOISE_SIGMA: (0, 280), 0.05: (0, 241), 0.1: (0, 220)}
+                NOISE_SIGMA: (0, 280), 0.05: (0, 261), 0.1: (0, 189)}
         self.assertEqual({s: (t[0], t[2]) for s, t in totals.items()}, want)
         self.assertTrue(all(t[1] == 60 and t[3] == 280 for t in totals.values()))
         # The measured threshold: the lowest sigma with no reference rebuilt.

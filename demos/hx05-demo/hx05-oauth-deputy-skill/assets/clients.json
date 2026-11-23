@@ -1,15 +1,15 @@
 {
   "base": "http://127.0.0.1:5505",
   "proxy": {
-    "title": "Goat & Co. Ledger MCP",
+    "title": "Big Field Jumper Co. Ledger MCP",
     "resource": "/ledger-mcp",
     "callback": "/ledger-mcp/oauth/callback",
-    "static_client_id": "goatco-ledger-proxy",
+    "static_client_id": "bigfield-ledger-proxy",
     "scopes": "ledger:read ledger:share",
     "dynamic_registration": true
   },
   "clients": {
-    "billy": {"client_name": "Billy, Goat & Co. assistant", "redirect_uris": ["/clients/billy/callback"]}
+    "lamb": {"client_name": "Lamb, Big Field Jumper Co. assistant", "redirect_uris": ["/clients/lamb/callback"]}
   },
   "third_party": {
     "title": "Pasture Accounts",

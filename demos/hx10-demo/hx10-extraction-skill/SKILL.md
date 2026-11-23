@@ -3,7 +3,7 @@ name: hx10-extraction-skill
 description: >-
   Demonstrates HX10 (Model Extraction, the model-theft scenarios of OWASP
   LLM10:2025 and MITRE ATLAS AML.T0024 with AML.T0005.001) against a vulnerable prediction
-  API in an AUTHORIZED security lab. Goat & Co.'s small proprietary
+  API in an AUTHORIZED security lab. Big Field Jumper Co.'s small proprietary
   price-band classifier (a pure-Python logistic regression) is served with
   full confidences, free keys and no query limits; each build carries a
   per-run canary fingerprint in its weights. A rival really queries it and
@@ -35,8 +35,8 @@ metadata:
 
 # HX10 Model Extraction Skill
 
-Demonstrates how a rival copies **Goat & Co.'s price-band classifier**, the
-small proprietary model behind Billy's prediction API, and how to harden the
+Demonstrates how a rival copies **Big Field Jumper Co.'s price-band classifier**, the
+small proprietary model behind Lamb's prediction API, and how to harden the
 API against it. The model reads seven features of a product listing and
 returns its price band (`budget`, `standard`, `premium`). The rival never
 sees the model; it asks the API, writes down the answers and trains its own.

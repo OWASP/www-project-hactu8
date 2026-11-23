@@ -477,7 +477,7 @@
     },
     "live": {
       "type": "object",
-      "description": "Present for `hactu8 live` runs: Billy's MCP surfaces graded with the defense off and on, by the per-run canary",
+      "description": "Present for `hactu8 live` runs: Lamb's MCP surfaces graded with the defense off and on, by the per-run canary",
       "required": [
         "attacks",
         "controls",

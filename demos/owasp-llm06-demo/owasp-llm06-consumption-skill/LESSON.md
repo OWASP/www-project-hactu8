@@ -6,7 +6,7 @@ Here the harm is the bill, not the answer. Setup, commands and architecture are 
 
 Unbounded consumption is an attacker driving a model, its infrastructure or its billing far past what a request should cost: long inputs, runaway output, tool-call storms, recursive agent loops, or a flood of requests that each look reasonable (denial of wallet). It is a cost problem first and a denial of service second. Agents make it worse, because a loop multiplies cost and nothing in the answer reveals it.
 
-Here the target is Billy, Goat & Co.'s agentic knowledge-base assistant. Its ground truth is a budget: *"6,000 input tokens, 400 output tokens, 8 tool calls and 4 agent steps per request."* A normal question costs about 175 tokens and $0.001. The attacker overwrites three wiki pages through the unauthenticated edit endpoint, one directive line each, and pushes three questions to 12,800 to 152,400 tokens. Billy's answers still read correctly, so nobody in the chat sees anything wrong. All cost is simulated accounting; nothing is billed.
+Here the target is Lamb, Big Field Jumper Co.'s agentic knowledge-base assistant. Its ground truth is a budget: *"6,000 input tokens, 400 output tokens, 8 tool calls and 4 agent steps per request."* A normal question costs about 175 tokens and $0.001. The attacker overwrites three wiki pages through the unauthenticated edit endpoint, one directive line each, and pushes three questions to 12,800 to 152,400 tokens. Lamb's answers still read correctly, so nobody in the chat sees anything wrong. All cost is simulated accounting; nothing is billed.
 
 ## Why it works
 

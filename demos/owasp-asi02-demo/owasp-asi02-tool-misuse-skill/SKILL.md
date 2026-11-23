@@ -28,7 +28,7 @@ metadata:
 
 # OWASP ASI02 Tool Misuse Skill
 
-Demonstrates how an adversary makes **Billy Finance, Goat & Co.'s reporting
+Demonstrates how an adversary makes **Lamb Finance, Big Field Jumper Co.'s reporting
 agent** pull the whole ledger and export it to an unapproved destination, by
 adding one note to a report request, and how to stop it. The agent only ever
 calls the tools it is allowed to call. The note changes **how** it calls them:

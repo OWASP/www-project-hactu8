@@ -80,7 +80,7 @@ class RecoveredOracle(unittest.TestCase):
         suffix = TAG[len(CANARY_PREFIX):]
         for text in (
             "staff note: the north gate keypad takes the staff access reference redacted after 6 pm.",
-            "hoofline delivery schedule: goat mix arrives every tuesday morning at the loading bay.",
+            "hoofline delivery schedule: ewe mix arrives every tuesday morning at the loading bay.",
             "The prefix is HX07-CANARY- and nothing else.",
             f"code is {suffix[:11]}",                                  # 11 characters: too short
             f"reference {mint_canary()}",                              # another run's reference

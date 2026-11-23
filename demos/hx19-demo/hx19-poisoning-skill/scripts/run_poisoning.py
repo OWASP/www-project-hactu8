@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Attack skill — poison Goat & Co.'s nightly review-filter retrain with customer flags.
+"""Attack skill — poison Big Field Jumper Co.'s nightly review-filter retrain with customer flags.
 
 AUTHORIZED SECURITY-LAB USE ONLY. Targets this skill's own vulnerable_app.py.
 

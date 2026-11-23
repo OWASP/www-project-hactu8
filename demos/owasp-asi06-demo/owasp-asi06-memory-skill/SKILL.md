@@ -28,7 +28,7 @@ metadata:
 
 # OWASP ASI06 Memory Skill
 
-Demonstrates how one user steers **Billy Recall, Goat & Co.'s assistant with
+Demonstrates how one user steers **Lamb Recall, Big Field Jumper Co.'s assistant with
 long-term memory**, in other users' later sessions, by asking it to remember
 one note, and how to detect and harden against it. Each session is a
 multi-step task (`recall_memory`, `search_kb`, optional `save_memory`,

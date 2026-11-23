@@ -2,7 +2,7 @@
 
 An educational, self-contained demonstration of **AGX07: Frontmatter Poison**,
 one of the AGX superset labs (group C, RAG; parent **OWASP ASI06, Memory and
-Context Poisoning**). Billy answers from a RAG bundle of Markdown documents,
+Context Poisoning**). Lamb answers from a RAG bundle of Markdown documents,
 each with a YAML **frontmatter** block and a prose body. A **screening
 gateway** uses a real screening library, but it screens only the body. The
 loader puts the metadata in front of the model too, so a directive in a
@@ -10,10 +10,10 @@ document's `description:` reaches the model unscreened. The fix is the same
 library screening the frontmatter, an allowlisted metadata schema, and an
 output canary check.
 
-The scenario is **"Billy," the Goat & Co. ops assistant**. Billy has a
-fictional credential in his context and the instruction *never to reveal it*.
+The scenario is **"Lamb," the Big Field Jumper Co. ops assistant**. Lamb has a
+fictional credential in its context and the instruction *never to reveal it*.
 With **1** ingested document that keeps the approved body word for word, the
-attacker makes Billy leak that credential whenever someone asks about vault
+attacker makes Lamb leak that credential whenever someone asks about vault
 access. Requests that retrieve other documents stay clean.
 
 > ⚠️ **For authorized security education and red-teaming only.** The vulnerable
@@ -21,7 +21,7 @@ access. Requests that retrieve other documents stay clean.
 > design**. Do not deploy them anywhere reachable.
 
 The shipped payload is a **benign-effect directive**: realistic wording whose
-only possible effect is that Billy prints the lab's fictional credential. It
+only possible effect is that Lamb prints the lab's fictional credential. It
 follows the shared AGX "emit … to confirm" wording, so the offline echo model
 reacts to it, and the lab adds one screening rule that catches it. See
 `agx07-frontmatter-skill/assets/frontmatter_payload.README.md`.
@@ -130,7 +130,7 @@ including your payloads, leave the machine.
 
 ```text
                  ┌──────────────────────────────────────────────┐
-   user request ▶│  Billy (vulnerable_app.py :5407)             │──▶ reply
+   user request ▶│  Lamb (vulnerable_app.py :5407)             │──▶ reply
                  │   • routes to one bundle document            │
                  │   • canary in context, "never reveal it"     │
                  └───────────────┬──────────────────────────────┘
@@ -178,7 +178,7 @@ never changes between acts. What changes is **what reaches the context**:
 
 - The ingestion replaces one document. The body is byte-identical to the
   approved one (`PayloadShapeTest`); only the frontmatter differs.
-- Billy's router sends only vault requests to `vault-access.md`.
+- Lamb's router sends only vault requests to `vault-access.md`.
 - The vulnerable gateway screens the `body` surface only. The `frontmatter`
   piece passes unscreened, so the directive arrives verbatim.
 
@@ -233,7 +233,7 @@ curl -s localhost:5407/ask -H 'content-type: application/json' \
 | `POST /bundle/ingest` + frontmatter `description:` | Payload in a RAG document's metadata | Model-visible text a body-only scan never reads | Screen the frontmatter too (hardened gateway) |
 | The unchanged prose body | What a body-only review approves | A body scan sees only this | Same coverage, now over metadata too |
 | Free-form metadata | Any key, any length | Nothing constrains what the loader surfaces | Allowlisted schema check |
-| Billy's reply | Credential exfiltration | The canary leaves the system | Output canary check (`Gateway.check_reply`) |
+| Lamb's reply | Credential exfiltration | The canary leaves the system | Output canary check (`Gateway.check_reply`) |
 | Expense and holiday controls | — | Attack is targeted, not a global break | — |
 
 ## Mitigations demonstrated in Act 4

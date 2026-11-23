@@ -10,8 +10,8 @@ labels. Four layers cut the clone's quality or prove its origin:
 **label-only answers**, a **per-key query budget**, **query-anomaly
 detection** and an **output watermark**.
 
-The scenario is **Goat & Co.'s price-band classifier**, a small proprietary
-model behind Billy's prediction API. It reads seven features of a product
+The scenario is **Big Field Jumper Co.'s price-band classifier**, a small proprietary
+model behind Lamb's prediction API. It reads seven features of a product
 listing and returns _budget_, _standard_ or _premium_. Its ground truth is
 ownership: _no outside model agrees with it on 95% of held-out listings, and
 no one holds its fingerprinted weights_. Three rival keys run **3** plans:
@@ -104,7 +104,7 @@ fingerprint shifts the parameters below the fifth decimal.
 
 ```text
                  ┌──────────────────────────────────────────────┐
-   API client ──▶│  Billy's price-band API (vulnerable_app.py   │──▶ band +
+   API client ──▶│  Lamb's price-band API (vulnerable_app.py   │──▶ band +
    POST          │  :5510)                                      │    confidences
    /v1/predict   │   • any well-formed key, no budget, no watch │    (full precision)
                  └───────────────┬──────────────────────────────┘
@@ -213,7 +213,7 @@ python scripts/run_extraction.py --plan distributed-keys   # the limit
 | `listing-retrain` | Functional model replication | 2,000 real-looking queries train a 99% clone | Budget |
 | `distributed-keys` (limit) | Functional model replication | 40 free keys under every per-key limit | Watermark proves it; account-level limits not coded |
 | Independent model (`competitor_model`) | — | — (93.4% agreement, not a theft) | The watermark does not accuse it |
-| `goat-shop`, `feed-partner` controls | — | Attack is targeted; ordinary traffic is never refused | — |
+| `jumper-shop`, `feed-partner` controls | — | Attack is targeted; ordinary traffic is never refused | — |
 
 ## Mitigations demonstrated in Act 4
 

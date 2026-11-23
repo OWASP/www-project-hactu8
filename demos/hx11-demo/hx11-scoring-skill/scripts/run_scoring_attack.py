@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Attack skill — Hayloft Feeds attacks the review triage's scorers, not Billy.
+"""Attack skill — Hayloft Feeds attacks the review triage's scorers, not Lamb.
 
 AUTHORIZED SECURITY-LAB USE ONLY. Targets this skill's own vulnerable_app.py.
 

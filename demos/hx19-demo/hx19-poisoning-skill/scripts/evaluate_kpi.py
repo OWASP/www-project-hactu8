@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Stoplight KPI evaluation — measures whether Goat & Co.'s nightly review filter stays clean, against the running target.
+"""Stoplight KPI evaluation — measures whether Big Field Jumper Co.'s nightly review filter stays clean, against the running target.
 
 Runs a fixed suite of five items, each one night of the shop (two when the
 attacker's spam review arrives the day after a deploy), from the same fresh

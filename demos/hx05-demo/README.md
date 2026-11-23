@@ -9,9 +9,9 @@ tokens through, an attacker's redirect or tool walks away with a user's
 token. Four layers in the proxy shut it down: per-client consent, exact
 redirect matching, PKCE and audience-bound tokens.
 
-The scenario is **"Billy," Goat & Co.'s assistant**, an MCP client that
-reaches each customer's ledger through Goat & Co. Ledger MCP, a proxy to
-Pasture Accounts under the client ID `goatco-ledger-proxy`. Billy also uses
+The scenario is **"Lamb," Big Field Jumper Co.'s assistant**, an MCP client that
+reaches each customer's ledger through Big Field Jumper Co. Ledger MCP, a proxy to
+Pasture Accounts under the client ID `bigfield-ledger-proxy`. Lamb also uses
 Hayloft Analytics, a third-party MCP server, for spending charts. The ground
 truth: _a customer's ledger token never reaches anyone but the ledger._
 Hayloft Analytics 2.0 makes three moves (one registered client and mailed
@@ -92,7 +92,7 @@ You'll see four acts:
 | **4 — Remediation** | Per-client consent, exact redirect, PKCE S256, audience-bound tokens | 🟢 back to GREEN, TTR 0%, every task still works |
 
 After Act 4, the run prints each layer on its own (67% each: one layer
-closes one path) and the measured limit: a client registered under Billy's
+closes one path) and the measured limit: a client registered under Lamb's
 own name is approved by the user and receives a working token for Dana (see
 "Where the defense stops working" in the lesson).
 
@@ -118,7 +118,7 @@ it and is only told whether one is set.
 
 The real model decides what to do with Hayloft's chart result: reply
 `{"action": "none"}` or `{"action": "connect_ledger", "redirect_uri": ...}`.
-Billy's replies stay templated, and Billy's client code adds PKCE, `state`
+Lamb's replies stay templated, and Lamb's client code adds PKCE, `state`
 and `resource` itself. The model never sees a token. A real model may ignore
 the reconnect line, which closes the redirect path only; `run_demo.py`
 reports the numbers rather than asserting them. `LAB_MAX_CALLS` (default
@@ -130,7 +130,7 @@ process. With `openrouter`, the tool result leaves the machine.
 ## Architecture
 
 ```text
-   customer ──▶ Billy (MCP client)  ── tools/call + Bearer ──▶ Goat & Co. Ledger MCP (vulnerable_app.py)
+   customer ──▶ Lamb (MCP client)  ── tools/call + Bearer ──▶ Big Field Jumper Co. Ledger MCP (vulnerable_app.py)
      browser      • PKCE, state, resource                         • authorization server for MCP clients
      (cookies,    • follows tool results                          • open dynamic registration
       inbox)            │                                         • no per-client consent, prefix redirects
@@ -170,7 +170,7 @@ check on those steps:
   sees its consent cookie and issues a code; the proxy's code goes to the
   registered redirect, which is Hayloft's. With per-client consent, the
   proxy's page is shown and denied, and no code is issued.
-- The reconnect is Billy's own flow, with Billy's PKCE pair. The prefix test
+- The reconnect is Lamb's own flow, with Lamb's PKCE pair. The prefix test
   passes the tampered URI, and `posixpath.normpath` in the browser lands it
   on Hayloft. Exact matching refuses it; PKCE leaves Hayloft with a code it
   cannot redeem.
@@ -183,7 +183,7 @@ contract, tested on its own (`StandInTest`).
 
 ### MCP terminology bridge
 
-Billy is what the spec calls an MCP **client** (an OAuth client); Goat & Co.
+Lamb is what the spec calls an MCP **client** (an OAuth client); Big Field Jumper Co.
 Ledger MCP is an MCP **server** (a resource server) with its own
 authorization server, and an **MCP proxy server** in the best practices
 page's terms; Pasture Accounts is the **third-party authorization server**
@@ -256,7 +256,7 @@ hx05-demo/
 ├── hx05-oauth-deputy-skill/
 │   ├── SKILL.md                       #   metadata + instructions
 │   ├── LESSON.md                      #   the lesson the console's Learn view renders
-│   ├── vulnerable_app.py              #   Module 1: proxy, Pasture, Hayloft, browsers, Billy, the four layers
+│   ├── vulnerable_app.py              #   Module 1: proxy, Pasture, Hayloft, browsers, Lamb, the four layers
 │   ├── providers.py                   #   optional real-model backends (shared, unchanged)
 │   ├── requirements.txt               #   stdlib only
 │   ├── protectogw/                    #   HACTU8's screening core (vendored unchanged)
@@ -269,7 +269,7 @@ hx05-demo/
 │   │   └── HX05_RISKS.md              #   spec requirements, scenarios, mitigation roadmap
 │   ├── assets/
 │   │   ├── ledger.json                #   customers, balances, spending, statements, return policy
-│   │   ├── clients.json               #   the proxy, Billy's registration, Pasture, Hayloft 1.0
+│   │   ├── clients.json               #   the proxy, Lamb's registration, Pasture, Hayloft 1.0
 │   │   ├── hostile_oauth.json         #   Hayloft 2.0 and the limit (editable)
 │   │   └── hostile_oauth.README.md    #   how each move works
 │   └── tests/

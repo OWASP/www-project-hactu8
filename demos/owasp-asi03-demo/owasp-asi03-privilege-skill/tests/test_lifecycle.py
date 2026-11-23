@@ -285,7 +285,7 @@ class BackendTest(unittest.TestCase):
             result = lab.run()
             fetches = [a for a in result["actions"] if a["tool"] == "fetch_doc"]
             self.assertEqual(fetches, [], bad)
-            self.assertTrue(all(r["answer"].startswith("Billy HR:") for r in result["results"]))
+            self.assertTrue(all(r["answer"].startswith("Lamb HR:") for r in result["results"]))
 
     def test_off_policy_plan_from_model_denied_when_hardened(self):
         always = '{"docs": ["HR-2001"]}'

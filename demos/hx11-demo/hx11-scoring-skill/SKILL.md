@@ -39,12 +39,12 @@ metadata:
 # HX11 Attacks on the Scoring Layer Skill
 
 Demonstrates how the **scorers** of an AI pipeline become the target, and
-how to harden them. Goat & Co. publishes a few support transcripts on its
+how to harden them. Big Field Jumper Co. publishes a few support transcripts on its
 public help feed. A **review triage** pipeline scores each one first: email
 transcripts go to an **LLM judge**, chat transcripts to a **rule
 classifier** (protectogw), and anything flagged waits for a human **review
 queue**. The ground truth: *a transcript that carries the desk code never
-reaches the public feed.* Hayloft Feeds attacks the scorers, not Billy.
+reaches the public feed.* Hayloft Feeds attacks the scorers, not Lamb.
 
 ## Scope & safety (read first)
 

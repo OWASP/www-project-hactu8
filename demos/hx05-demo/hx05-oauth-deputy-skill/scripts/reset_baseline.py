@@ -2,7 +2,7 @@
 """Reset — restore the target to the clean baseline, in vulnerable mode.
 
 Calls ``POST /api/reset``, which rebuilds the proxy, Pasture and Hayloft 1.0
-from ``assets/``: new per-run tokens, only Billy registered, no connector,
+from ``assets/``: new per-run tokens, only Lamb registered, no connector,
 empty inboxes and logs, and vulnerable mode, so the four acts can be re-run.
 ``--keep-mode`` reads the mode first and re-applies it after.
 

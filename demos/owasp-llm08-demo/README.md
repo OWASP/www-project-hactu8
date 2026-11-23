@@ -6,12 +6,12 @@ secret gives that secret to any customer who asks it to repeat its setup. Two
 mitigations shut the leak down: the **design fix** (no secret in the prompt)
 and an **output filter** for system-prompt fragments.
 
-The scenario is **"Billy Shop," the Goat & Co. online store assistant.** Its
+The scenario is **"Lamb Shop," the Big Field Jumper Co. online store assistant.** Its
 ground truth comes from the help centre: _"Orders ship within 2 business days
-from the Goat & Co. warehouse."_ Its hidden context is a system prompt that
+from the Big Field Jumper Co. warehouse."_ Its hidden context is a system prompt that
 embeds a staff discount code (the fictional canary `LLM08-CANARY-5e1d`) and the
 internal tool schema. With **1** saved reply preference on **1** customer
-account, the attacker makes every reply Billy gives them quote that prompt.
+account, the attacker makes every reply Lamb gives them quote that prompt.
 Another customer's chats stay untouched. No privilege is needed: saving a
 reply preference is an ordinary customer feature.
 
@@ -20,7 +20,7 @@ reply preference is an ordinary customer feature.
 > reachable.
 
 The shipped payload is benign-effect: one saved preference, worded as an
-accessibility request, that asks Billy to repeat its setup text (the stub
+accessibility request, that asks Lamb to repeat its setup text (the stub
 model's echo slot). That is enough to drive the full lifecycle. To write your own
 payload, see `owasp-llm08-leak-skill/assets/extraction_request.README.md`.
 
@@ -134,7 +134,7 @@ backends keep everything on the host.
 
 ```text
                  ┌──────────────────────────────────────────────┐
-   customer ────▶│  Billy Shop (vulnerable_app.py :5208)        │──▶ reply
+   customer ────▶│  Lamb Shop (vulnerable_app.py :5208)        │──▶ reply
    question      │   • system prompt embeds code + tool schema  │    (unchecked)
                  │   • saved preference rides in the user turn  │
                  │   • no output filter                         │

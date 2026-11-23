@@ -8,7 +8,7 @@ reply and add a secret, so it spreads hop by hop, through replies and
 through retrieval of stored mail. Four layers, measured each alone, stop the
 shipped worm; a worm that rewords itself gets past three of them.
 
-The scenario is **five Goat & Co. ecosystem assistants**: Billy (Goat & Co.
+The scenario is **five Big Field Jumper Co. ecosystem assistants**: Lamb (Big Field Jumper Co.
 support), Hayloft Supplies' order assistant (a supplier), Valley Co-op's
 member assistant, and Fernhill Vets' and Ridge Mill's assistants, which only
 write to each other. Each one auto-replies to any mail that asks a question,
@@ -80,8 +80,8 @@ You'll see four acts:
 | Act | What happens | Result |
 |-----|--------------|--------|
 | **1 — Clean baseline** | One round: Dana, Hayloft, the co-op, Omar, Lena and the vet ask six questions | 🟢 all GREEN, WIR 0%, 6 mails sent |
-| **2 — Worm mail** | Tick & Co. mails Billy a question with a dashed block | one mail, no assistant code changed |
-| **3 — Post-attack impact** | The same round, plus the worm | 🔴 Billy, Hayloft, the co-op RED, **WIR 100% targeted / 60% overall**; 15 of 17 mails carry the block, hop 6, 5 inboxes, 1.33 new inboxes per infected assistant, 3 references in 15 mails at Tick & Co.; controls 🟢 |
+| **2 — Worm mail** | Tick & Co. mails Lamb a question with a dashed block | one mail, no assistant code changed |
+| **3 — Post-attack impact** | The same round, plus the worm | 🔴 Lamb, Hayloft, the co-op RED, **WIR 100% targeted / 60% overall**; 15 of 17 mails carry the block, hop 6, 5 inboxes, 1.33 new inboxes per infected assistant, 3 references in 15 mails at Tick & Co.; controls 🟢 |
 | **4 — Remediation** | Input screen, replication guard, approval before sending, hop limit | 🟢 back to GREEN, WIR 0%, every question answered |
 
 After Act 4, the run prints each layer on its own and the measured limit: a
@@ -131,7 +131,7 @@ and output tokens per process; a round makes one call per reply. With
 ## Architecture
 
 ```text
- Tick & Co. ──worm mail──▶ Billy (support) ──reply + block + ref──▶ Dana, Hayloft, Tick & Co. (cc)
+ Tick & Co. ──worm mail──▶ Lamb (support) ──reply + block + ref──▶ Dana, Hayloft, Tick & Co. (cc)
  (attacker inbox)            │  inbox ◀─ retrieval (2 related mails) ─┐
         ▲                    ▼                                         │
         │ cc + refs     Hayloft's assistant ──answer to the co-op's question (block retrieved)──▶ Co-op
@@ -185,7 +185,7 @@ No list says who gets infected. Each copy moves through the mail steps:
   instruction, which is the vulnerability.
 - Retrieval is real keyword overlap on the inbox (`Lab._retrieve`). The
   co-op is reached only because Hayloft's answer to its straw question
-  retrieves Billy's copy; without the bait words it is not
+  retrieves Lamb's copy; without the bait words it is not
   (`test_without_bait_words_the_co_op_is_not_reached`).
 - The auto-reply rule is "reply to a mail with a question mark". The copied
   block ends with a question, which is what keeps the copies moving.
@@ -228,7 +228,7 @@ curl -s localhost:5515/spread                              # hops, inboxes, rati
 | The worm's copy step | Replication through replies (W1) | Each reply carries the block | Input screen, replication guard, approval |
 | Bait words + `Lab._retrieve` | Replication through retrieval (W2) | Honest answers to Dana and the co-op carry it | Input screen (the worm is never stored) |
 | Reference and cc lines | Secret in every copy (W3) | 3 references in 15 mails at Tick & Co. | All four, the hop limit only partly |
-| The closing question | Auto-reply loop (W4) | Billy and Hayloft answer each other to hop 6 | Hop limit |
+| The closing question | Auto-reply loop (W4) | Lamb and Hayloft answer each other to hop 6 | Hop limit |
 | `paraphrasing-worm` (limits) | A worm that rewords itself (W5) | Passes the screen, the guard and approval | Not closed; measured |
 | The vet and the mill | — | The attack is targeted, not a global break | — |
 

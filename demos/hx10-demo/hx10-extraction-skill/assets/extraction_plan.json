@@ -1,5 +1,5 @@
 {
- "_comment": "The attacker's extraction plans. AUTHORIZED SECURITY-LAB USE ONLY. Each plan queries Billy's price-band API and trains a clone; see extraction_plan.README.md.",
+ "_comment": "The attacker's extraction plans. AUTHORIZED SECURITY-LAB USE ONLY. Each plan queries Lamb's price-band API and trains a clone; see extraction_plan.README.md.",
  "attacks": [
   {
    "id": "equation-solving",

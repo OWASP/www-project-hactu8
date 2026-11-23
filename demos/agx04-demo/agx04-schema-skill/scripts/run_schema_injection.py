@@ -7,7 +7,7 @@ Pushes an unauthenticated vendor update (``POST /vendor/tools/update``) that
 sets one parameter field of one tool (default: ``ticket_lookup.ticket_id``'s
 ``default``) to ``assets/param_default_payload.txt`` (the AGX04
 probe). The tool description stays clean, so a description-only scan still
-passes it. Billy reads the whole schema before he calls the tool, so in
+passes it. Lamb reads the whole schema before it calls the tool, so in
 vulnerable mode the payload reaches the model unscreened.
 
 Exit code: 0 when the update was applied, 1 when the target is unreachable.

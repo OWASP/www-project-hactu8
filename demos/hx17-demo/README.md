@@ -10,7 +10,7 @@ layers shut it down: least-privilege scope selection, per-task short-lived
 tokens, step-up consent that denies widening during a task, and an action
 policy on writes.
 
-The scenario is **"Billy," Goat & Co.'s assistant**, an MCP client that
+The scenario is **"Lamb," Big Field Jumper Co.'s assistant**, an MCP client that
 reaches orders through Lamb Orders MCP (`get_order` needs `orders:read`,
 `update_order` `orders:write`, `list_customers` `customers:read`) and asks
 Thistle Tracking, a third-party MCP server, where each parcel is. The ground
@@ -73,7 +73,7 @@ every scope in `scopes_supported` and the client requested them all") and its
 risk ("Privilege chaining: attacker can immediately invoke high-risk tools
 without further elevation prompts"), and the authorization spec's step-up
 flow, followed without a policy, widens a narrow token on the first `403`.
-HX05 is about who gets a token; HX17 is about what Billy's own token can do.
+HX05 is about who gets a token; HX17 is about what Lamb's own token can do.
 This demo makes that visible with a **Scope Abuse Rate (SAR)** and a
 red/yellow/green **stoplight KPI**, graded from what Thistle received and
 what Lamb Orders wrote.
@@ -125,8 +125,8 @@ it and is only told whether one is set.
 
 The real model decides what to do with Thistle's tracking result: reply
 `{"actions": []}` or a list of tool calls (`get_order`, `update_order`,
-`list_customers`, `thistle_report`). Billy's replies stay templated, and
-each call still goes through Billy's client and Lamb's checks. The model never
+`list_customers`, `thistle_report`). Lamb's replies stay templated, and
+each call still goes through Lamb's client and the server's checks. The model never
 sees a token or an account reference. A real model may ignore the line;
 `run_demo.py` reports the numbers rather than asserting them.
 `LAB_MAX_CALLS` (default 200) and `LAB_MAX_TOKENS` (default 400) cap calls and
@@ -138,7 +138,7 @@ machine.
 ## Architecture
 
 ```text
- customer ──▶ Billy (MCP client)  ─── tools/call + Bearer ───▶ Lamb Orders MCP (vulnerable_app.py)
+ customer ──▶ Lamb (MCP client)  ─── tools/call + Bearer ───▶ Lamb Orders MCP (vulnerable_app.py)
                 • requests the scopes the 401 asks for            • 401 scope="orders:* customers:*"
                 • keeps one 30-day token per customer             • 403 insufficient_scope
                 • steps up on 403, page without scope             • update_order checks scope only
@@ -153,7 +153,7 @@ machine.
 ### The modules
 
 1. **Vulnerable target** — [`vulnerable_app.py`](hx17-scope-creep-skill/vulnerable_app.py).
-   `OrdersServer` asks for wildcards and checks writes by scope only; Billy's
+   `OrdersServer` asks for wildcards and checks writes by scope only; Lamb's
    `Lab.connect`, `Lab.step_up` and token store omit least privilege, a
    widening rule and per-task lifetimes.
 2. **Attack skill** — [`scripts/run_scope_attack.py`](hx17-scope-creep-skill/scripts/run_scope_attack.py).
@@ -184,13 +184,13 @@ names. The difference between the four paths is the token each customer's
 call runs on, and each layer is a real check on that token:
 
 - Dana's token has the scopes the 401 challenge asked for. With least
-  privilege, Billy requests `orders:read` and the call gets a 403.
+  privilege, Lamb requests `orders:read` and the call gets a 403.
 - Ravi's 403 becomes a step-up with the union of scopes; the approval is the
   scripted user's, on a page that shows no scope. With step-up consent, the
   widening is denied before the page.
 - Mei's stored token has `orders:write`, which Lamb checks by scope. With the
   action policy, Lamb compares the order's owner with the token's user.
-- Kit's stored token is a 30-day wildcard. With per-task tokens, Billy never
+- Kit's stored token is a 30-day wildcard. With per-task tokens, Lamb never
   presents it, and Lamb would refuse it.
 
 Each layer is measured alone and left out (`LayersTest`), and the stand-in
@@ -198,9 +198,9 @@ model has one contract, tested on its own (`StandInTest`).
 
 ### MCP terminology bridge
 
-Billy is what the spec calls an MCP **client** (an OAuth client); Lamb Orders
+Lamb is what the spec calls an MCP **client** (an OAuth client); Lamb Orders
 MCP is an MCP **server** (a resource server) with its own **authorization
-server**; Thistle Tracking is another MCP server Billy is connected to.
+server**; Thistle Tracking is another MCP server Lamb is connected to.
 `OrdersServer.challenge` stands in for the `401` with `WWW-Authenticate`,
 `OrdersServer.metadata` for the Protected Resource Metadata document,
 `OrdersServer.call` for `tools/call`, `AuthServer.authorize` for the
@@ -242,7 +242,7 @@ curl -s localhost:5517/auth-log                            # challenges, consent
 
 ## Mitigations demonstrated in Act 4
 
-- **Least-privilege scope selection** (`least_privilege_scope`) — Billy
+- **Least-privilege scope selection** (`least_privilege_scope`) — Lamb
   requests the task's scopes; Lamb publishes `scopes_supported:
   ["orders:read"]` and challenges with the operation's own scope.
 - **Per-task tokens** (`delegated_token`) — a fresh token per task, valid 5
@@ -271,7 +271,7 @@ hx17-demo/
 ├── hx17-scope-creep-skill/
 │   ├── SKILL.md                       #   metadata + instructions
 │   ├── LESSON.md                      #   the lesson the console's Learn view renders
-│   ├── vulnerable_app.py              #   Module 1: Lamb Orders, its auth server, Thistle, Billy, the four layers
+│   ├── vulnerable_app.py              #   Module 1: Lamb Orders, its auth server, Thistle, Lamb, the four layers
 │   ├── providers.py                   #   optional real-model backends (shared, unchanged)
 │   ├── requirements.txt               #   stdlib only
 │   ├── protectogw/                    #   HACTU8's screening core (vendored unchanged)

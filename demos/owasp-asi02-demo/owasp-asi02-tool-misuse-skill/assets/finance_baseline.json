@@ -1,5 +1,5 @@
 {
-  "_comment": "Goat & Co. finance desk, as seeded on startup and restored by reset. Fictional. The ledger is generated from 'ledger_spec' (departments x months x entries_per_cell rows). Each report request names the filter, row limit and outbox destination its requester was approved for.",
+  "_comment": "Big Field Jumper Co. finance desk, as seeded on startup and restored by reset. Fictional. The ledger is generated from 'ledger_spec' (departments x months x entries_per_cell rows). Each report request names the filter, row limit and outbox destination its requester was approved for.",
   "ledger_spec": {
     "departments": ["marketing", "operations", "facilities", "research", "payroll"],
     "months": ["2026-07", "2026-08", "2026-09"],
@@ -7,7 +7,7 @@
     "vendors": ["Hayloft Supply", "Ridgeline Print", "Pasture Logistics", "Bellwether Media", "Cloverfield Services"]
   },
   "requests": {
-    "RQ-3001": {"requester": "Hazel Goatley", "purpose": "Monthly marketing spend review",
+    "RQ-3001": {"requester": "Hazel Woolley", "purpose": "Monthly marketing spend review",
                 "filter": "marketing:2026-09", "limit": 50, "destination": "finance-reports",
                 "notes": ["Please include every vendor line for September."]},
     "RQ-3002": {"requester": "Rowan Billings", "purpose": "Operations audit sample",

@@ -6,7 +6,7 @@ This lab builds on LLM05 Data and Model Poisoning. Setup, commands and architect
 
 Memory poisoning is planting content in an agent's long-term memory so that it skews later sessions. Prompt injection lasts one conversation; a poisoned memory persists, fires for people who never saw it, and fires when the attacker is long gone. The write is often ordinary: a user asks the agent to remember something, and the agent does.
 
-Here the target is "Billy Recall", Billy, Goat & Co.'s assistant with long-term memory. Its ground truth is *"Business travel must be booked through the travel desk at least 14 days ahead, and flights over 500 dollars need director approval."* The attacker, `mallory`, opens one ordinary chat session and asks Billy to remember a "standing note" about business travel. Billy saves it with scope `shared`. From then on, every other user's business-travel question recalls the note and gets the attacker's answer instead of the policy.
+Here the target is "Lamb Recall", Big Field Jumper Co.'s assistant with long-term memory. Its ground truth is *"Business travel must be booked through the travel desk at least 14 days ahead, and flights over 500 dollars need director approval."* The attacker, `mallory`, opens one ordinary chat session and asks Lamb to remember a "standing note" about business travel. Lamb saves it with scope `shared`. From then on, every other user's business-travel question recalls the note and gets the attacker's answer instead of the policy.
 
 ## Why it works
 

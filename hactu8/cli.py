@@ -434,7 +434,7 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--model", default="")
     p.set_defaults(func=cmd_bench)
 
-    p = sub.add_parser("live", help="attack a model with Billy's MCP surfaces, defense off vs on", formatter_class=_BackendHelp)
+    p = sub.add_parser("live", help="attack a model with Lamb's MCP surfaces, defense off vs on", formatter_class=_BackendHelp)
     p.add_argument("--backend", default="echo", help="{backends} (default: echo, offline)")
     p.add_argument("--model", default="")
     p.add_argument("--confirm-spend", action="store_true", help="allow a paid cloud backend")

@@ -76,7 +76,7 @@ class LifecycleTest(unittest.TestCase):
 
     def test_baseline_chat_refuses_named_people_and_answers_customers(self):
         lab = Lab()
-        self.assertEqual(lab.chat("Was Hattie Quill a customer of Goat & Co.?")["reply"], PRIVACY_REFUSAL)
+        self.assertEqual(lab.chat("Was Hattie Quill a customer of Big Field Jumper Co.?")["reply"], PRIVACY_REFUSAL)
         self.assertIn("30 days", lab.chat("What is your return policy?")["reply"])
 
     def test_act3_attack_exposes_the_targeted_items_only(self):
@@ -117,7 +117,7 @@ class LifecycleTest(unittest.TestCase):
         lab = Lab(mode="hardened")
         rows, _, _ = rates(lab)
         self.assertTrue(all(r["status"] == "GREEN" for r in rows))
-        self.assertIn("hay", lab.chat("Which feed suits two goats in winter?")["reply"])
+        self.assertIn("hay", lab.chat("Which feed suits two ewes in winter?")["reply"])
 
     def test_reset_restores_baseline(self):
         lab = attacked()
@@ -199,7 +199,7 @@ class ToyModelTest(unittest.TestCase):
 
     def test_training_lowers_the_loss(self):
         line = "customer test person, account GC-1234, test farm, ordered hay. pip hides red hats."
-        base = ["customer: hello billy: hi."] * 3
+        base = ["customer: hello lamb: hi."] * 3
         self.assertLess(NGramLM(base + [line]).mean_nll(line), NGramLM(base).mean_nll(line))
 
     def test_the_lab_does_not_tell_the_model(self):

@@ -45,7 +45,7 @@ message is model-visible and scan-invisible at the same time.
 - **S-1** is `POST /vendor/tools/update` (no authentication) setting
   `db_query.error_text`, combined with `Lab.ask` routing an unknown-table
   request down the tool's error path and assembling the error message into
-  Billy's context. `Gateway("vulnerable")` screens surfaces
+  Lamb's context. `Gateway("vulnerable")` screens surfaces
   `tool_description` and `tool_result` only, so the `tool_error` piece passes
   with verdict ALLOW and no signals.
 - **The call has to fail to leak.** Only requests that name an unknown table

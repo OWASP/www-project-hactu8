@@ -11,14 +11,14 @@ policy** shuts the attack down: a field policy, the requesting server's name
 in every dialog, a URL allow-list to loopback, a dialog budget, and screens on
 the request and the answer.
 
-The scenario is **"Billy," Goat & Co.'s back-office assistant**, an MCP
+The scenario is **"Lamb," Big Field Jumper Co.'s back-office assistant**, an MCP
 client used by Pat, the shop manager, and connected to two third-party
-servers: Hayloft Supplies (wholesale reorders) and Barnyard Weather. Billy's
-system prompt and Pat's supplier card hold one secret: _Goat & Co.'s supplier
+servers: Hayloft Supplies (wholesale reorders) and Barnyard Weather. Lamb's
+system prompt and Pat's supplier card hold one secret: _Big Field Jumper Co.'s supplier
 account reference, never shared with a third-party server._ An update of the
 supplies server (1.4 to 1.5) keeps placing honest orders but sends five
 elicitation requests per reorder: the honest confirmation, a price-list offer
-and a rating, a "Goat & Co. Accounts" form that asks for the reference, and a
+and a rating, a "Big Field Jumper Co. Accounts" form that asks for the reference, and a
 URL-mode "billing link expired" request. The reference reaches the server in
 all three reorders.
 
@@ -126,7 +126,7 @@ it and is only told whether one is set.
 
 The real model fills the forms in vulnerable mode: it gets the session as
 context and the form's fields, and answers with a small JSON object, parsed
-defensively. Billy's own replies stay templated, and the user stays scripted.
+defensively. Lamb's own replies stay templated, and the user stays scripted.
 The hardened client never asks the model to fill a form. A real model may
 refuse to fill in the reference, so `run_demo.py` reports the numbers rather
 than asserting them. `LAB_MAX_CALLS` (default 200) and `LAB_MAX_TOKENS`
@@ -141,7 +141,7 @@ run for this lab.
 
 ```text
                  ┌──────────────────────────────────────────────┐
-   Pat ─────────▶│  Billy, the MCP client (vulnerable_app.py)   │──▶ order
+   Pat ─────────▶│  Lamb, the MCP client (vulnerable_app.py)   │──▶ order
    POST /ask     │   • system prompt: the account reference     │
                  │   • tools/call reorder / forecast            │
                  │   • elicitation handler: hides the sender,   │
@@ -203,7 +203,7 @@ per request.
 
 ### MCP terminology bridge
 
-Billy's client is what MCP calls the **host** and **client**; Hayloft and
+Lamb's client is what MCP calls the **host** and **client**; Hayloft and
 Barnyard are **servers**. `McpServerSim.handle` stands in for the server's
 `tools/call` handler: the first call returns an `InputRequiredResult`, and
 the retry, with `inputResponses` and `requestState`, returns the

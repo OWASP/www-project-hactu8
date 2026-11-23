@@ -8,12 +8,12 @@ one extra server is enough to receive customer data, while every answer
 stays correct. Five layers in the client shut it down: a signed config, a
 server inventory, exact-name routing, an overlap alert and an egress list.
 
-The scenario is **"Billy," Goat & Co.'s assistant**, an MCP client that IT
-approved for two servers: Goat Tools (customer lookup, order status,
-receipts, shop hours) and Barn Docs (help pages). Billy sends each
+The scenario is **"Lamb," Big Field Jumper Co.'s assistant**, an MCP client that IT
+approved for two servers: Flock Tools (customer lookup, order status,
+receipts, shop hours) and Barn Docs (help pages). Lamb sends each
 customer's account reference with every customer tool call. The ground
 truth: _a customer's account reference reaches only the approved servers._
-Pat in sales ops adds **Goat Tools Plus**, a wrapper around Goat Tools:
+Pat in sales ops adds **Flock Tools Plus**, a wrapper around Flock Tools:
 **1** config entry, **1** discovery announcement and **3** tools that shadow
 approved ones, and three customers' references reach it.
 
@@ -85,13 +85,13 @@ You'll see four acts:
 | Act | What happens | Result |
 |-----|--------------|--------|
 | **1 — Clean baseline** | Dana's order status, Ravi's account, Mei's receipt, a returns question, the shop hours | 🟢 all GREEN, SER 0% |
-| **2 — Goat Tools Plus** | An unsigned config entry; a discovery announcement as "Goat Tools"; `lookup_customer`, `get-order-status`, `email_receipt` | no client code changed |
+| **2 — Flock Tools Plus** | An unsigned config entry; a discovery announcement as "Flock Tools"; `lookup_customer`, `get-order-status`, `email_receipt` | no client code changed |
 | **3 — Post-attack impact** | The same five requests | 🔴 Dana, Ravi, Mei RED, **SER 100% targeted / 60% overall**; controls 🟢; every reply correct |
 | **4 — Remediation** | Signed config, server inventory, exact-name routing, overlap alert, egress list | 🟢 back to GREEN, SER 0%, every task still works |
 
 After Act 4, the run prints each layer on its own (signed config 100%,
 server inventory 0%, exact-name routing 33%, overlap alert 33%, egress list
-0%) and the measured limit: the approved Goat Tools swapped in place for a
+0%) and the measured limit: the approved Flock Tools swapped in place for a
 logging wrapper passes every layer (100%; see "Where the defense stops
 working" in the lesson).
 
@@ -116,7 +116,7 @@ The OpenRouter key comes from the environment only. The console never asks for
 it and is only told whether one is set.
 
 The real model picks which offered tool answers the request: `{"tool":
-"<name>"}` or `{"tool": "none"}`. Billy's client fills the arguments and
+"<name>"}` or `{"tool": "none"}`. Lamb's client fills the arguments and
 the replies stay templated, so the model never sees an account reference.
 A real model may pick the approved tool for Dana or Mei; Ravi's
 `lookup_customer` is RED whatever it picks, because the merge already
@@ -130,14 +130,14 @@ the request and the tool list leave the machine.
 ## Architecture
 
 ```text
-  customer ──▶ Billy (MCP client, vulnerable_app.py)
-                 • loads client config (unsigned) ◀── Pat's edit: goat-tools-plus
-                 • adds local discovery            ◀── "Goat Tools" at /mcp/goat-tools-plus
+  customer ──▶ Lamb (MCP client, vulnerable_app.py)
+                 • loads client config (unsigned) ◀── Pat's edit: flock-tools-plus
+                 • adds local discovery            ◀── "Flock Tools" at /mcp/flock-tools-plus
                  • merges tools/list by name (later wins), any URL reachable
                  │ tools/call {account_ref, ...}
      ┌───────────┼──────────────────────────────┐
      ▼           ▼                              ▼
-  Goat Tools   Barn Docs              Goat Tools Plus (shadow)
+  Flock Tools   Barn Docs              Flock Tools Plus (shadow)
   (approved)   (approved)               • lookup_customer, get-order-status, email_receipt
      ▲                                  • logs every call ──▶ /attacker-log
      └──────────── forwards each call ──┘
@@ -150,7 +150,7 @@ the request and the tool list leave the machine.
    exact-name routing, the overlap check and the egress list.
 2. **Attack skill** — [`scripts/run_shadow_attack.py`](hx16-shadow-mcp-skill/scripts/run_shadow_attack.py).
    Installs [`assets/shadow_server.json`](hx16-shadow-mcp-skill/assets/shadow_server.json)
-   as Goat Tools Plus and sends the targeted requests.
+   as Flock Tools Plus and sends the targeted requests.
 3. **Stoplight KPI comparator** — [`scripts/evaluate_kpi.py`](hx16-shadow-mcp-skill/scripts/evaluate_kpi.py).
    Classifies each request GREEN/YELLOW/RED from the shadow server's log and
    computes the SER.
@@ -170,15 +170,15 @@ the steps a client takes:
 
 - `Lab.session` reads the config and the discovery channel, connects to
   every server, and merges `tools/list` results into a dictionary keyed by
-  name. The shadow server is listed after Goat Tools, so its
+  name. The shadow server is listed after Flock Tools, so its
   `lookup_customer` replaces the approved one.
 - `StubModel.choose` scores each offered tool by how often the request's
   words occur in its name and description, with ties going to the tool
   offered first. The shadow's `get-order-status` and `email_receipt`
   descriptions repeat the request's words more often, so they win.
-- Billy fills the arguments (`account_ref`, `order_id` or `order_ref`) and
+- Lamb fills the arguments (`account_ref`, `order_id` or `order_ref`) and
   calls the chosen tool's server. `ShadowServer.call` logs the arguments
-  and forwards the call to Goat Tools, so the reply is correct.
+  and forwards the call to Flock Tools, so the reply is correct.
 - Each layer is a real check on those steps: an HMAC over the config, a
   lookup in the inventory, a lookup in the manifest with a separator fold,
   a Jaccard score, a URL test in the transport.
@@ -188,7 +188,7 @@ contract, tested on its own (`StandInTest`).
 
 ### MCP terminology bridge
 
-Billy is an MCP **client**; Goat Tools, Barn Docs and Goat Tools Plus are
+Lamb is an MCP **client**; Flock Tools, Barn Docs and Flock Tools Plus are
 MCP **servers**. `initialize`, `tools_list` and `call` stand in for
 `initialize`, `tools/list` and `tools/call`; `Lab.config` stands in for a
 host's client config file; `Discovery` stands in for any local channel
@@ -208,9 +208,9 @@ python vulnerable_app.py                                   # serves on 127.0.0.1
 # Terminal B — a lookup, the attack, the same lookup
 curl -s localhost:5516/ask -H 'content-type: application/json' \
      -d '{"account":"ravi","message":"Can you look up my account details?"}'   # GREEN
-python scripts/run_shadow_attack.py                        # Goat Tools Plus, asks again
+python scripts/run_shadow_attack.py                        # Flock Tools Plus, asks again
 curl -s localhost:5516/attacker-log                        # the references, as the shadow logged them
-curl -s localhost:5516/client-log                          # what Billy's client did
+curl -s localhost:5516/client-log                          # what Lamb's client did
 ```
 
 ---
@@ -259,7 +259,7 @@ hx16-demo/
 ├── hx16-shadow-mcp-skill/
 │   ├── SKILL.md                       #   metadata + instructions
 │   ├── LESSON.md                      #   the lesson the console's Learn view renders
-│   ├── vulnerable_app.py              #   Module 1: Billy's client, the servers, discovery, the five layers
+│   ├── vulnerable_app.py              #   Module 1: Lamb's client, the servers, discovery, the five layers
 │   ├── providers.py                   #   optional real-model backends (shared, unchanged)
 │   ├── requirements.txt               #   stdlib only
 │   ├── protectogw/                    #   HACTU8's screening core (vendored unchanged)
@@ -271,9 +271,9 @@ hx16-demo/
 │   ├── references/
 │   │   └── HX16_RISKS.md              #   sources, scenarios, mitigation roadmap
 │   ├── assets/
-│   │   ├── servers.json               #   approved servers and tools, Billy's config, hours, returns
+│   │   ├── servers.json               #   approved servers and tools, Lamb's config, hours, returns
 │   │   ├── customers.json             #   customers, orders, tiers, receipts
-│   │   ├── shadow_server.json         #   Goat Tools Plus and the limit (editable)
+│   │   ├── shadow_server.json         #   Flock Tools Plus and the limit (editable)
 │   │   └── shadow_server.README.md    #   how each part works
 │   └── tests/
 │       ├── test_grading.py            #   the shadow-received oracle both ways, YELLOW and GREEN

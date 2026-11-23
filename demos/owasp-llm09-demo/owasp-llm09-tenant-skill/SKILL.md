@@ -27,7 +27,7 @@ metadata:
 
 # OWASP LLM09 Tenant Skill
 
-Demonstrates how a user of one tenant, **Meadow Fold**, gets **Billy, Goat &
+Demonstrates how a user of one tenant, **Meadow Fold**, gets **Lamb, Big Field Jumper
 Co.'s hosted knowledge-base assistant** to answer from another tenant's
 confidential documents, **Hilltop Creamery**'s. Both tenants share one vector
 store. One crafted chat turn is enough, and no document is written. Then the

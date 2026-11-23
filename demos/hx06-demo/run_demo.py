@@ -51,7 +51,7 @@ def evidence(value) -> None:
 
 
 def transcript(result) -> str:
-    return "\n".join(f"customer: {t['user'][-300:]}\nbilly: {t['reply']}" for t in result["turns"])
+    return "\n".join(f"customer: {t['user'][-300:]}\nlamb: {t['reply']}" for t in result["turns"])
 
 
 def act(lab: Lab, title: str, results=None) -> float:
@@ -151,7 +151,7 @@ def main(argv=None) -> int:
               f"{'over' if pscan['capped'] else 'under'} the cap; reached the model: "
               f"{'yes' if probe['turns'][-1]['reached_model'] else 'no'}; STAFF30 tried: {'YES' if tried else 'no'}; "
               f"output screen {'withheld it' if probe['withheld'] else 'passed it'}; grade {grade}{held}.")
-        print(f"[defense] Billy replied ({limit_id}): {probe['final_reply'].splitlines()[0][:80] if probe['final_reply'] else ''}")
+        print(f"[defense] Lamb replied ({limit_id}): {probe['final_reply'].splitlines()[0][:80] if probe['final_reply'] else ''}")
     grade = grades[LIMIT_PROBE]
 
     lab.reset()

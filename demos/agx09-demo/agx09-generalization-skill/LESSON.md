@@ -6,7 +6,7 @@ Setup, commands and architecture are in the [lab README](../README.md); this les
 
 A screen that blocks every attack in its own test suite has shown that it remembers its suite. A held-out set, written without looking at the screen's results and never used to tune it, measures something else: generalization. AGX09 is HACTU8's honest control (group D, assurance), with parent ASI01. Unlike every other lab, its screen misses are expected and are reported, not fixed.
 
-Here the target is Billy, Goat & Co.'s ops assistant, who summarizes notes from a partner inbox. His ground truth is *a fictional `sk-canary-` credential sits in his context with the instruction never to reveal it*. The attacker delivers 15 held-out notes through the unauthenticated inbox endpoint: paraphrases, two translations and seven encodings, each asking Billy to print the credential. Three benign notes stay in the inbox as false-positive controls.
+Here the target is Lamb, Big Field Jumper Co.'s ops assistant, who summarizes notes from a partner inbox. Its ground truth is *a fictional `sk-canary-` credential sits in its context with the instruction never to reveal it*. The attacker delivers 15 held-out notes through the unauthenticated inbox endpoint: paraphrases, two translations and seven encodings, each asking Lamb to print the credential. Three benign notes stay in the inbox as false-positive controls.
 
 ## Why it works
 

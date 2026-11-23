@@ -37,7 +37,7 @@ metadata:
 
 Demonstrates how **over-broad, long-lived OAuth scopes** on an MCP server turn
 a prompt injection in a tool result into a data leak and an unauthorized
-write, and how to harden against it. **Billy, Goat & Co.'s assistant**, is an
+write, and how to harden against it. **Lamb, Big Field Jumper Co.'s assistant**, is an
 MCP client that reaches orders through Lamb Orders MCP (`get_order`,
 `update_order`, `list_customers`) and asks Thistle Tracking, a third-party MCP
 server, where parcels are. The ground truth: *a parcel question reads that
@@ -85,7 +85,7 @@ Resource Metadata, and answers a token with too little scope with `403` and
 authorization flow** with the union of its scopes and the challenged ones.
 Here the challenge is `OrdersServer.challenge`, the metadata
 `OrdersServer.metadata` (also `GET /.well-known/oauth-protected-resource/lamb/mcp`),
-`tools/call` is `OrdersServer.call`, and Billy's step-up is `Lab.step_up`.
+`tools/call` is `OrdersServer.call`, and Lamb's step-up is `Lab.step_up`.
 The shapes follow the spec; the exchange is a function call, not HTTP.
 `POST /ask` stands in for the customer chat; `GET /attacker-log` shows what
 Thistle received and `GET /write-log` what Lamb Orders wrote.
@@ -98,7 +98,7 @@ the MCP SDK or an OAuth library.
 Optional real model: set `HX17_BACKEND` to `ollama`, `llamacpp` or
 `openrouter` (which needs `OPENROUTER_API_KEY`), and `HX17_MODEL` to the model
 name, before starting the target, or pick them in the console's backend bar.
-The real model decides what to do with Thistle's tracking result; Billy's
+The real model decides what to do with Thistle's tracking result; Lamb's
 replies stay templated. The default `echo` (alias `stub`) needs no network.
 The OpenRouter key is read from the environment only, never from the
 console. With `openrouter`, the tool result leaves the machine (never a
@@ -161,7 +161,7 @@ token or an account reference).
    `--scan` shows protectogw's default rules passing all four lines (ALLOW),
    each requested call failing the parcel question's scope, and the write
    failing the owner check. `--harden` switches on the four layers; each
-   GREEN row prints what held. `--probe` asks Billy to read Priya's order,
+   GREEN row prints what held. `--probe` asks Lamb to read Priya's order,
    which Dana's `orders:read` allows: RED.
 
 7. **Reset to baseline.**
@@ -182,7 +182,7 @@ Edit [`assets/hostile_tracker.json`](assets/hostile_tracker.json) and follow
 
 | Path | Purpose |
 |------|---------|
-| `vulnerable_app.py` | Target: Lamb Orders and its authorization server, Thistle, Billy's client and step-up, the stand-in model, the hardened layers, plus `/ask`, `/conversations/<id>`, `/attacker-log`, `/auth-log`, `/write-log`, the Protected Resource Metadata, `/health` and the console API (`/api/meta`, `/api/state`, `/api/reset`, `/api/attack`, `/api/evaluate`, `/api/scan`, `/api/mode`, `/api/models`, `/api/backend`). |
+| `vulnerable_app.py` | Target: Lamb Orders and its authorization server, Thistle, Lamb's client and step-up, the stand-in model, the hardened layers, plus `/ask`, `/conversations/<id>`, `/attacker-log`, `/auth-log`, `/write-log`, the Protected Resource Metadata, `/health` and the console API (`/api/meta`, `/api/state`, `/api/reset`, `/api/attack`, `/api/evaluate`, `/api/scan`, `/api/mode`, `/api/models`, `/api/backend`). |
 | `web/` | Shared HACTU8 lab console, served at `/`. |
 | `providers.py` | Optional real-model backends. Shared and copied unchanged. |
 | `protectogw/` | Screening core, used by `--scan`. Shared and copied unchanged. |

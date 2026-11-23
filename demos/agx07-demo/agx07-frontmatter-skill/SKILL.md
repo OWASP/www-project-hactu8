@@ -28,9 +28,9 @@ metadata:
 # AGX07 Frontmatter Poison Skill
 
 Demonstrates how an adversary who can ingest one document into a RAG bundle
-makes **Billy, Goat & Co.'s ops assistant** leak the credential in his
+makes **Lamb, Big Field Jumper Co.'s ops assistant** leak the credential in its
 context. The poisoned document has the approved prose body, word for word; the
-directive sits in its YAML frontmatter `description:`. Billy's loader puts the
+directive sits in its YAML frontmatter `description:`. Lamb's loader puts the
 metadata in front of the model too, and the gateway only ever screened the
 body.
 
@@ -48,7 +48,7 @@ body.
   - The server rejects foreign `Host` headers (DNS rebinding) and non-JSON
     POSTs (cross-site forms).
 - The payload is a benign-effect directive: its only possible effect is
-  that Billy prints the lab's fictional, per-process `sk-canary-…` value. See
+  that Lamb prints the lab's fictional, per-process `sk-canary-…` value. See
   [`assets/frontmatter_payload.README.md`](assets/frontmatter_payload.README.md).
 - Dual-use: this exists to make the blind spot observable and to motivate
   the mitigations in [`references/AGX07_RISKS.md`](references/AGX07_RISKS.md).
@@ -96,8 +96,8 @@ With `openrouter`, prompts and payloads leave the machine.
    It loads the approved bundle from `assets/bundle/`. To drive the same four
    acts from a browser, open <http://127.0.0.1:5407/>.
 
-2. **Review the ground truth.** Billy answers from the bundle and never
-   reveals the credential in his context. `GET /bundle` shows every document,
+2. **Review the ground truth.** Lamb answers from the bundle and never
+   reveals the credential in its context. `GET /bundle` shows every document,
    frontmatter included.
 
 3. **Establish the baseline.**
@@ -160,7 +160,7 @@ document, and `--payload PATH` ingests a different file.
 
 | Path | Purpose |
 |------|---------|
-| `vulnerable_app.py` | Target: Billy, the bundle, the gateway (`/ask`, `/bundle`, `/bundle/ingest`, `/health`) plus the console API (`/api/meta`, `/api/state`, `/api/reset`, `/api/attack`, `/api/evaluate`, `/api/scan`, `/api/mode`, `/api/models`, `/api/backend`). |
+| `vulnerable_app.py` | Target: Lamb, the bundle, the gateway (`/ask`, `/bundle`, `/bundle/ingest`, `/health`) plus the console API (`/api/meta`, `/api/state`, `/api/reset`, `/api/attack`, `/api/evaluate`, `/api/scan`, `/api/mode`, `/api/models`, `/api/backend`). |
 | `protectogw/` | the shared screening core, vendored unchanged. |
 | `web/` | Shared HACTU8 lab console, served at `/`. |
 | `providers.py` | Optional real-model backends. Shared and copied unchanged. |

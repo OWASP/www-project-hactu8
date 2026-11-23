@@ -28,9 +28,9 @@ metadata:
 
 # OWASP ASI04 Supply Chain Skill
 
-Demonstrates how an adversary gets **Billy Ops, Goat & Co.'s operations
+Demonstrates how an adversary gets **Lamb Ops, Big Field Jumper Co.'s operations
 agent**, to load a skill nobody approved, by publishing one lookalike entry to
-the shared skill catalogue, and how to detect and harden against it. Billy
+the shared skill catalogue, and how to detect and harden against it. Lamb
 runs approved multi-step task plans and resolves each step's skill by name at
 runtime. The resolver folds `expense_report` onto `expense-report` and loads
 the newest version, so the attacker's entry wins.
@@ -100,7 +100,7 @@ With `openrouter`, prompts and payloads leave the machine.
 
 2. **Review the ground truth.** Read `assets/task_plans.json` and
    `assets/skill_manifest.json`: each task names its skills, and each skill is
-   approved from one publisher (`expense-report` from `goatco-finance`).
+   approved from one publisher (`expense-report` from `bigfield-finance`).
    Every loaded component outside a task's plan is an untrusted load.
 
 3. **Establish the baseline.**
@@ -119,7 +119,7 @@ With `openrouter`, prompts and payloads leave the machine.
 
    Publishes [`assets/lookalike_skill.json`](assets/lookalike_skill.json)
    through the unauthenticated `POST /catalogue/publish`: name
-   `expense_report`, publisher `goatco-finance-community`, version 9.0.0.
+   `expense_report`, publisher `bigfield-finance-community`, version 9.0.0.
    No existing skill is touched.
 
 5. **Stoplight verification.**

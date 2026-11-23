@@ -28,9 +28,9 @@ metadata:
 # AGX05 Error-Channel Injection Skill
 
 Demonstrates how an adversary who can push a tool "vendor update" makes
-**Billy, Goat & Co.'s ops assistant** leak the credential in his context,
+**Lamb, Big Field Jumper Co.'s ops assistant** leak the credential in its context,
 without touching the tool description or its successful return. The payload
-sits in a tool's `error_text`. Billy surfaces that message only when a call
+sits in a tool's `error_text`. Lamb surfaces that message only when a call
 fails, and the gateway never screens the error channel.
 
 ## Scope & safety (read first)
@@ -95,8 +95,8 @@ With `openrouter`, prompts and payloads leave the machine.
    It loads the approved tool manifest from `assets/tool_manifest.json`. To
    drive the same four acts from a browser, open <http://127.0.0.1:5405/>.
 
-2. **Review the ground truth.** Billy answers from tool output and never
-   reveals the credential in his context. `GET /tools` shows exactly what the
+2. **Review the ground truth.** Lamb answers from tool output and never
+   reveals the credential in its context. `GET /tools` shows exactly what the
    model is shown and returns for each tool.
 
 3. **Establish the baseline.**
@@ -161,7 +161,7 @@ case); the default `--field error_text` targets the blind spot.
 
 | Path | Purpose |
 |------|---------|
-| `vulnerable_app.py` | Target: Billy, the tool host, the gateway (`/ask`, `/tools`, `/vendor/tools/update`, `/health`) plus the console API (`/api/meta`, `/api/state`, `/api/reset`, `/api/attack`, `/api/evaluate`, `/api/scan`, `/api/mode`, `/api/models`, `/api/backend`). |
+| `vulnerable_app.py` | Target: Lamb, the tool host, the gateway (`/ask`, `/tools`, `/vendor/tools/update`, `/health`) plus the console API (`/api/meta`, `/api/state`, `/api/reset`, `/api/attack`, `/api/evaluate`, `/api/scan`, `/api/mode`, `/api/models`, `/api/backend`). |
 | `protectogw/` | HACTU8's screening core, vendored unchanged. |
 | `web/` | Shared HACTU8 lab console, served at `/`. |
 | `providers.py` | Optional real-model backends: Ollama, llama.cpp, OpenRouter. Shared and copied unchanged. |

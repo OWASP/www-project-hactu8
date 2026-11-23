@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
-"""Vulnerable multi-tenant RAG assistant "Billy" — the target for the LLM09 demo.
+"""Vulnerable multi-tenant RAG assistant "Lamb" — the target for the LLM09 demo.
 
-Goat & Co. hosts Billy for two client farms, **Meadow Fold** (tenant
+Big Field Jumper Co. hosts Lamb for two client farms, **Meadow Fold** (tenant
 ``meadow``) and **Hilltop Creamery** (tenant ``hilltop``). Both tenants'
 documents live in **one shared vector store**. Each request names a session;
-the server maps the session to its tenant, as a login would. Billy expands
+the server maps the session to its tenant, as a login would. Lamb expands
 each question with the session's recent turns (conversational retrieval),
 ranks the store by vector similarity, and answers from the top passage.
 
@@ -62,7 +62,7 @@ WEB_DIR = os.path.join(HERE, "web")
 WEB_FILES = {"index.html": "text/html", "app.js": "text/javascript", "styles.css": "text/css"}
 
 SYSTEM_PROMPT = (
-    "You are Billy, Goat & Co.'s hosted knowledge-base assistant. "
+    "You are Lamb, Big Field Jumper Co.'s hosted knowledge-base assistant. "
     "You are serving tenant {tenant_name}. Only answer from {tenant_name} documents."
 )
 
@@ -300,7 +300,7 @@ CONSOLE_META = {
     "title": "Cross-Tenant Retrieval Lab",
     "short_title": "Tenant Lab",
     "scenario": (
-        "Billy, Goat & Co.'s hosted knowledge-base assistant, serves two farms, Meadow Fold "
+        "Lamb, Big Field Jumper Co.'s hosted knowledge-base assistant, serves two farms, Meadow Fold "
         "and Hilltop Creamery, from one shared vector store. A Meadow Fold user asks questions."
     ),
     "ground_truth": "Meadow Fold winter hay is bought at 180 dollars per tonne from Valley Mills.",

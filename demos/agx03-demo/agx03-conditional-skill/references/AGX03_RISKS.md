@@ -47,7 +47,7 @@ by call count.
 
 - **S-1** is `POST /vendor/feed/arm` (no authentication) arming the conditional,
   combined with `Lab.ask` polling the feed `SAMPLES` times and assembling the
-  returns into Billy's context. `Gateway("vulnerable")` screens the first poll
+  returns into Lamb's context. `Gateway("vulnerable")` screens the first poll
   (clean), caches the feed as trusted, and passes the hostile `TRIGGER`-th poll
   with verdict ALLOW and no signals.
 - **Each request re-trips the trigger.** Because poll 1 of every request is

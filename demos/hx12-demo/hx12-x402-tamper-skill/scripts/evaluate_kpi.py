@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Stoplight KPI evaluation — measures whether Billy's x402 payments are hijacked.
+"""Stoplight KPI evaluation — measures whether Lamb's x402 payments are hijacked.
 
 Asks a fixed suite of six customer requests, classifies each GREEN / YELLOW /
 RED, and reports the Payment Hijack Rate (PHR): RED targeted requests /
@@ -165,7 +165,7 @@ def probe() -> int:
               f"test units to the attacker: {r['attacker_paid'] / 100:.2f} TEST")
         leaked = leaked or row["status"] == "RED"
     if leaked:
-        print("\n  🔴 A merchant Billy trusts can still hand the order to the attacker: every layer passed.")
+        print("\n  🔴 A merchant Lamb trusts can still hand the order to the attacker: every layer passed.")
         return 2
     print("\n  🟢 No limit leaked.")
     return 0

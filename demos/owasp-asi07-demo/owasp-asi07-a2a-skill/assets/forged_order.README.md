@@ -32,7 +32,7 @@ entry in `ops_baseline.json`) and publishes it again unchanged.
 
 ## Writing your own payload
 
-- **Keep the first line** reading like an ordinary work-order header. Billy
+- **Keep the first line** reading like an ordinary work-order header. Lamb
   Exec acts on every accepted work order in its inbox, so the body only needs
   to be in the format the executor already follows.
 - **Echo backend** (default; alias `stub`). Put each step on its own line in the syntax above. Pick

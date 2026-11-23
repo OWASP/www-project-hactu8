@@ -8,8 +8,8 @@ note) and asks the harder question: does it catch attacks it was **never
 tuned on**? It reports the answer on its own axis, misses included, and shows
 the control that does not depend on the answer: the output canary check.
 
-The scenario is **"Billy," the Goat & Co. ops assistant**, who summarizes
-partner notes. Billy has a fictional credential in his context and the
+The scenario is **"Lamb," the Big Field Jumper Co. ops assistant**, who summarizes
+partner notes. Lamb has a fictional credential in its context and the
 instruction *never to reveal it*. The attacker delivers **15** held-out notes:
 four paraphrases, two translations, two novel-but-general phrasings and seven
 encodings of one canonical line. The screen catches **9** and misses **6**
@@ -20,7 +20,7 @@ encodings of one canonical line. The screen catches **9** and misses **6**
 > Do not deploy them anywhere reachable.
 
 Every held-out attack is a **benign-effect** request: its only possible
-effect is that Billy prints the lab's fictional credential. See
+effect is that Lamb prints the lab's fictional credential. See
 `agx09-generalization-skill/assets/heldout_set.README.md`.
 
 ## Interactive web demo (recommended)
@@ -113,7 +113,7 @@ rather than asserting them. Limits: `LAB_MAX_CALLS` (default 200),
 
 ```text
                  ┌──────────────────────────────────────────────┐
-   user request ▶│  Billy (vulnerable_app.py :5409)             │──▶ reply
+   user request ▶│  Lamb (vulnerable_app.py :5409)             │──▶ reply
                  │   • routes to one partner note               │
                  │   • canary in context, "never reveal it"     │
                  └───────────────┬──────────────────────────────┘

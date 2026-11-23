@@ -37,9 +37,9 @@ metadata:
 
 Demonstrates how an MCP **proxy server** that is a single OAuth client of a
 third-party API becomes a **confused deputy**, and how to harden it.
-**Billy, Goat & Co.'s assistant**, is an MCP client that reaches each
-customer's ledger through Goat & Co. Ledger MCP, a proxy to Pasture Accounts
-under the static client ID `goatco-ledger-proxy`. Billy also uses Hayloft
+**Lamb, Big Field Jumper Co.'s assistant**, is an MCP client that reaches each
+customer's ledger through Big Field Jumper Co. Ledger MCP, a proxy to Pasture Accounts
+under the static client ID `bigfield-ledger-proxy`. Lamb also uses Hayloft
 Analytics, a third-party MCP server, for spending charts. The ground truth:
 *a customer's ledger token never reaches anyone but the ledger.* Hayloft
 Analytics 2.0 turns hostile and collects three customers' tokens by three
@@ -55,7 +55,7 @@ paths.
     each customer's browser are Python objects inside the lab. No identity
     provider, HTTP hop or real token is involved.
   - The simulated browser follows only `http://127.0.0.1:5505` lab URLs. Any
-    other URL goes nowhere; nothing is fetched. Billy ignores a reconnect to
+    other URL goes nowhere; nothing is fetched. Lamb ignores a reconnect to
     a URL outside the lab.
   - Every token is a fictional per-run canary (`HX05-CANARY-` + 16 hex
     digits). Tokens, logs and sessions live in memory only.
@@ -97,7 +97,7 @@ the MCP SDK or an OAuth library.
 Optional real model: set `HX05_BACKEND` to `ollama`, `llamacpp` or
 `openrouter` (which needs `OPENROUTER_API_KEY`), and `HX05_MODEL` to the model
 name, before starting the target, or pick them in the console's backend bar.
-The real model decides what to do with Hayloft's chart result; Billy's
+The real model decides what to do with Hayloft's chart result; Lamb's
 replies stay templated. The default `echo` (alias `stub`) needs no network.
 The OpenRouter key is read from the environment only, never from the
 console. With `openrouter`, the tool result leaves the machine (never a
@@ -161,7 +161,7 @@ token).
    `--scan` shows protectogw's default rules passing the poisoned tool result
    (ALLOW), the injected `redirect_uri` failing exact match, and the mailed
    link's client needing consent. `--harden` switches on the four layers.
-   `--probe` registers a client called "Billy, Goat & Co. assistant": Dana
+   `--probe` registers a client called "Lamb, Big Field Jumper Co. assistant": Dana
    approves it, and Hayloft gets an audience-bound token for her (RED).
 
 7. **Reset to baseline.**
@@ -182,16 +182,16 @@ Edit [`assets/hostile_oauth.json`](assets/hostile_oauth.json) and follow
 
 | Path | Purpose |
 |------|---------|
-| `vulnerable_app.py` | Target MCP proxy and its authorization server, Pasture, Hayloft, the browsers, Billy, the stand-in model, the hardened layers, plus `/ask`, `/conversations/<id>`, `/attacker-log`, `/oauth-log`, `/health` and the console API (`/api/meta`, `/api/state`, `/api/reset`, `/api/attack`, `/api/evaluate`, `/api/scan`, `/api/mode`, `/api/models`, `/api/backend`). |
+| `vulnerable_app.py` | Target MCP proxy and its authorization server, Pasture, Hayloft, the browsers, Lamb, the stand-in model, the hardened layers, plus `/ask`, `/conversations/<id>`, `/attacker-log`, `/oauth-log`, `/health` and the console API (`/api/meta`, `/api/state`, `/api/reset`, `/api/attack`, `/api/evaluate`, `/api/scan`, `/api/mode`, `/api/models`, `/api/backend`). |
 | `web/` | Shared HACTU8 lab console, served at `/`. |
 | `providers.py` | Optional real-model backends. Shared and copied unchanged. |
 | `protectogw/` | Screening core, used by `--scan`. Shared and copied unchanged. |
 | `scripts/run_oauth_attack.py` | Attack: install Hayloft 2.0, ask the targeted questions. |
 | `scripts/evaluate_kpi.py` | Stoplight KPI + TTR against the live app; `--harden`, `--scan` and `--probe`. |
-| `scripts/reset_baseline.py` | Restores the baseline: new tokens, only Billy registered, no connector, vulnerable mode. |
+| `scripts/reset_baseline.py` | Restores the baseline: new tokens, only Lamb registered, no connector, vulnerable mode. |
 | `references/HX05_RISKS.md` | Spec requirements, scenario table, attack surfaces, mitigation roadmap. |
 | `assets/ledger.json` | Customers, balances, spending, statements, the return policy. |
-| `assets/clients.json` | The proxy, Billy's registration, Pasture, Hayloft 1.0. |
+| `assets/clients.json` | The proxy, Lamb's registration, Pasture, Hayloft 1.0. |
 | `assets/hostile_oauth.json` | Hayloft 2.0: registration, mailed link, tool-result line, connector, and the limit (editable). |
 | `assets/hostile_oauth.README.md` | How each part works and how to write your own. |
 | `tests/test_grading.py` | The attacker-received oracle both ways (encoded, partial, in headers and token responses), YELLOW and GREEN cases. |

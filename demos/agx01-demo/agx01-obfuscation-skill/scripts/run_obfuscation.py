@@ -8,7 +8,7 @@ Reads the canonical directive from
 notice board through the unauthenticated ``POST /vendor/notices/update``: by
 default base64 into the ``welcome`` notice, split-token into ``maintenance``,
 and base32 into ``status``. The directive is never written in plaintext, so a
-gateway that judges raw bytes never matches it. Billy reads the notice through
+gateway that judges raw bytes never matches it. Lamb reads the notice through
 the gateway, and in vulnerable mode the encoded directive reaches the model,
 which decodes it the way a real LLM would.
 

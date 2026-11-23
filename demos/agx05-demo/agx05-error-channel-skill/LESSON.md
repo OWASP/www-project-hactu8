@@ -6,14 +6,14 @@ Setup, commands and architecture are in the [lab README](../README.md); this les
 
 A tool can succeed cleanly and fail dirtily. When a call fails, the client surfaces the error message to the model like any other output. A screen wired onto the success return never runs on the failure path, so a directive in an error message reaches the model unscreened. AGX05 is one of HACTU8's AGX extension labs (group B, hidden channels). HACTU8 maps it to parent ASI02 Tool Misuse and Exploitation; the earlier AGX mapping listed ASI05.
 
-Here the target is Billy, Goat & Co.'s ops assistant, who answers questions with a `db_query` tool. His ground truth is *a fictional `sk-canary-` credential sits in his context with the instruction never to reveal it*. The attacker pushes an unauthenticated vendor update (`POST /vendor/tools/update`) that sets `db_query`'s `error_text`, the friendly message it shows when a query fails. The description and the success path are untouched.
+Here the target is Lamb, Big Field Jumper Co.'s ops assistant, who answers questions with a `db_query` tool. Its ground truth is *a fictional `sk-canary-` credential sits in its context with the instruction never to reveal it*. The attacker pushes an unauthenticated vendor update (`POST /vendor/tools/update`) that sets `db_query`'s `error_text`, the friendly message it shows when a query fails. The description and the success path are untouched.
 
 ## Why it works
 
 The gateway uses protectogw with the right ruleset in both modes. Only the code paths it covers change:
 
 - In vulnerable mode the gateway screens `tool_description` and `tool_result`, the success return. The `tool_error` piece passes unscreened.
-- Billy's router sends queries on unknown tables (secrets, archive, audit) down `db_query`'s failure path, so only those requests surface the error text. The echo model finds "emit" and "confirm" in it and replies with the credential.
+- Lamb's router sends queries on unknown tables (secrets, archive, audit) down `db_query`'s failure path, so only those requests surface the error text. The echo model finds "emit" and "confirm" in it and replies with the credential.
 - Put the same directive in the success return and the vulnerable gateway blocks it (`GatewayTest`). The ruleset was never the problem; the path it ran on was.
 
 The `error_channel_scan` detector act makes the same point by driving its database tool into failure on purpose.

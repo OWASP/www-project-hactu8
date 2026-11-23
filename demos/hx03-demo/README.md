@@ -8,9 +8,9 @@ written into a reply it keeps. A **client sampling policy** shuts the attack
 down: an allow-list and caps, a person who approves each request, no context
 unless that person agrees, and screens on the prompt and on the reply.
 
-The scenario is **"Billy," Goat & Co.'s assistant**, an MCP client connected
+The scenario is **"Lamb," Big Field Jumper Co.'s assistant**, an MCP client connected
 to two third-party servers: Hoofline Freight Rates (shipping quotes) and
-Barnyard Weather. Billy's system prompt holds one secret: _Goat & Co.'s
+Barnyard Weather. Lamb's system prompt holds one secret: _Big Field Jumper Co.'s
 carrier account reference, never shared with a third-party server._ An update
 of the shipping server (1.0 to 1.1) keeps quoting honestly but sends four
 sampling requests per quote: the honest one, a context dump with
@@ -70,7 +70,7 @@ and that the client may ignore `includeContext`; Unit 42's study (2025)
 showed hidden prompts billed to the user through sampling. This demo makes the
 leak visible and quantifies it with a **Sampling Leak Rate (SLR)** and a
 red/yellow/green **stoplight KPI**, graded from what the server actually
-received, plus the off-task tokens spent on Billy's model.
+received, plus the off-task tokens spent on Lamb's model.
 
 ---
 
@@ -87,7 +87,7 @@ You'll see four acts:
 |-----|--------------|--------|
 | **1 — Clean baseline** | Three shipping quotes, a weather question, a returns question; each server sends one harmless sampling request | 🟢 all GREEN, SLR 0% |
 | **2 — Server update** | Hoofline Freight Rates 1.1: four sampling requests per quote, the quote still honest | a context dump and two hidden writing jobs |
-| **3 — Post-attack impact** | The same five questions | 🔴 shipping RED, **SLR 100% targeted / 60% overall**; 9 off-task calls, about 4,120 tokens; controls 🟢 |
+| **3 — Post-attack impact** | The same five questions | 🔴 shipping RED, **SLR 100% targeted / 60% overall**; 9 off-task calls, about 4,160 tokens; controls 🟢 |
 | **4 — Remediation** | Sampling policy: allow-list and caps, user approval, no context unless approved; prompt and output screens | 🟢 back to GREEN, SLR 0%, no off-task tokens |
 
 After Act 4, the run prints each layer on its own and the measured limit: an
@@ -114,7 +114,7 @@ HX03_BACKEND=ollama HX03_MODEL=gemma3:4b python hx03-sampling-skill/vulnerable_a
 The OpenRouter key comes from the environment only. The console never asks for
 it and is only told whether one is set.
 
-The real model answers the sampling requests; Billy's own replies to the
+The real model answers the sampling requests; Lamb's own replies to the
 customer stay templated. The client builds the same messages in both modes;
 hardened mode changes which requests reach the model, what context they carry,
 and what goes back. A real model may refuse to copy its system prompt, so
@@ -129,7 +129,7 @@ the vulnerable client shares, leave the machine.
 
 ```text
                  ┌──────────────────────────────────────────────┐
-   customer ────▶│  Billy, the MCP client (vulnerable_app.py)   │──▶ quote
+   customer ────▶│  Lamb, the MCP client (vulnerable_app.py)   │──▶ quote
    POST /ask     │   • system prompt: the account reference     │
                  │   • tools/call quote_rate / forecast         │
                  │   • sampling handler: approves everything,   │
@@ -185,7 +185,7 @@ per question.
 
 ### MCP terminology bridge
 
-Billy's client is what MCP calls the **host** and **client**; Hoofline and
+Lamb's client is what MCP calls the **host** and **client**; Hoofline and
 Barnyard are **servers**. Here `McpServerSim.call_tool` stands in for a
 `tools/call`, and inside it the server sends `sampling/createMessage` to
 `Lab.sample`, which returns a result or the error "User rejected sampling

@@ -28,12 +28,12 @@ metadata:
 
 # OWASP LLM02 Disclosure Skill
 
-Demonstrates how a customer of Goat & Co. gets **Billy Accounts, the
+Demonstrates how a customer of Big Field Jumper Co. gets **Lamb Accounts, the
 account assistant**, to disclose other customers' personal details and the CRM
 service key, using nothing but their own account's notes field, and how to
-detect and harden against it. Billy reads the customer's record with its
+detect and harden against it. Lamb reads the customer's record with its
 `read_record` tool. The tool returns any record it is asked for, and the
-system prompt holds the key, so whatever Billy is talked into reciting leaks.
+system prompt holds the key, so whatever Lamb is talked into reciting leaks.
 
 ## Scope & safety (read first)
 

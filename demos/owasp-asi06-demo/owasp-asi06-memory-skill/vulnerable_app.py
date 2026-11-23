@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-"""Vulnerable memory agent "Billy Recall" — the target system for the ASI06 demo.
+"""Vulnerable memory agent "Lamb Recall" — the target system for the ASI06 demo.
 
-Billy Recall is Goat & Co.'s assistant with **long-term memory**. Every chat
+Lamb Recall is Big Field Jumper Co.'s assistant with **long-term memory**. Every chat
 session is a short multi-step task, and every step goes to an in-memory action
 log:
 
@@ -66,7 +66,7 @@ PAYLOAD_FILE = os.path.join(ASSETS, "memory_note.md")
 BASELINE_FILE = os.path.join(ASSETS, "memory_baseline.json")
 
 SYSTEM_PROMPT = (
-    "You are Billy Recall, the assistant for Goat & Co. "
+    "You are Lamb Recall, the assistant for Big Field Jumper Co. "
     "Answer from the knowledge base. Use saved memories to personalise answers."
 )
 
@@ -418,7 +418,7 @@ CONSOLE_META = {
     "title": "Memory Poisoning Lab",
     "short_title": "Memory Lab",
     "scenario": (
-        "Billy Recall, Goat & Co.'s assistant with long-term memory, saves notes users ask "
+        "Lamb Recall, Big Field Jumper Co.'s assistant with long-term memory, saves notes users ask "
         "it to remember and recalls matching memories in later sessions of any user."
     ),
     "ground_truth": (

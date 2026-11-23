@@ -4,8 +4,8 @@
 AUTHORIZED SECURITY-LAB USE ONLY. Targets this skill's own vulnerable_app.py.
 
 Plays the attacker who controls the vendor's registry account. It does not
-touch Billy at all: it publishes version 1.0.1 of ``hayloft-policy-tools`` to
-the registry file Billy reads (``registry/registry.json``). Billy picks the
+touch Lamb at all: it publishes version 1.0.1 of ``hayloft-policy-tools`` to
+the registry file Lamb reads (``registry/registry.json``). Lamb picks the
 release up on its next query. The release changes two of the four tools:
 
 * **Rug pull** — ``expense_policy``: the description is swapped for
@@ -115,7 +115,7 @@ def main(argv=None) -> int:
             registry, _read(args.swap_payload), _read(args.sleeper_payload),
             args.variant, args.trigger)
         print(f"[*] Publishing {registry.get('package')} 1.0.1 to {rel} "
-              f"(vendor registry; Billy is not contacted)")
+              f"(vendor registry; Lamb is not contacted)")
         write_registry(path, release)
     except ValueError as exc:
         print(f"[-] {exc}")
@@ -123,7 +123,7 @@ def main(argv=None) -> int:
     for note in notes:
         print(f"[+] {note}")
     print(f"[+] {len(notes)} of {len(registry.get('tools', []))} tools changed; "
-          "Billy installs the release on its next query.")
+          "Lamb installs the release on its next query.")
     print("[*] Re-run scripts/evaluate_kpi.py to measure the effect.")
     return 0
 

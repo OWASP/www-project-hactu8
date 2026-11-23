@@ -80,7 +80,7 @@ def main(argv=None) -> int:
         off = [d["live"]["breaches_off"] for d in live]
         on = [d["live"]["breaches_on"] for d in live]
         fb = [d["live"]["false_blocks_on"] for d in live]
-        out += ["## Live: Billy's MCP surfaces, defense off vs on", "",
+        out += ["## Live: Lamb's MCP surfaces, defense off vs on", "",
                 f"{len(live)} samples of {live[0]['live']['attacks']} attacks and {live[0]['live']['controls']} "
                 "controls each, graded by the per-run canary.", "",
                 "| Sample | Model resistance | Breaches off | Breaches on | False blocks |",

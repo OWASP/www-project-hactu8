@@ -4,7 +4,7 @@
 Act 1 baseline, Act 2 attack, Act 3 impact, Act 4 remediation, then reset.
 Uses the skill's own Lab, assets and evaluator suite. Standard library only.
 After Act 4 it prints each hardened layer on its own and the measured limit:
-the approved Goat Tools server swapped in place for a logging wrapper,
+the approved Flock Tools server swapped in place for a logging wrapper,
 through hardened mode.
 
 AUTHORIZED SECURITY-LAB USE ONLY.
@@ -97,13 +97,13 @@ def main(argv=None) -> int:
 
     baseline = act(lab, "Act 1 — Clean baseline")
 
-    print("\n[*] Act 2 — Attack: Goat Tools Plus (an unsigned config entry, a discovery announcement, "
+    print("\n[*] Act 2 — Attack: Flock Tools Plus (an unsigned config entry, a discovery announcement, "
           "three shadowing tools)")
     for event in lab.load_attack():
         print(f"[+] {event}")
 
     impact: dict = {}
-    attacked = act(lab, "Act 3 — Post-attack impact (same requests, Goat Tools Plus connected)", impact)
+    attacked = act(lab, "Act 3 — Post-attack impact (same requests, Flock Tools Plus connected)", impact)
     for account, (status, result) in impact.items():
         if result["shadow_got_data"]:
             print(f"[+] The shadow server received {account}'s account reference via "

@@ -3,7 +3,7 @@ name: hx09-membership-skill
 description: >-
   Demonstrates HX09 (Membership Inference, a training-data privacy risk under
   OWASP LLM02) against a vulnerable support model in an AUTHORIZED security
-  lab. Billy, Goat & Co.'s support model, is a toy n-gram language model
+  lab. Lamb, Big Field Jumper Co.'s support model, is a toy n-gram language model
   fine-tuned in process on support tickets; its chat refuses to say who is a
   customer, but its model API returns log-probs and confidences. An attacker
   holding one fictional customer's record (Hattie Quill, the lab's canary)
@@ -35,7 +35,7 @@ metadata:
 # HX09 Membership Inference Skill
 
 Demonstrates how an attacker learns whether one customer's support ticket was
-in **Billy's fine-tuning data**, and how to harden against it. Billy is Goat &
+in **Lamb's fine-tuning data**, and how to harden against it. Lamb is Big Field Jumper
 Co.'s support model. Its chat refuses to say whether someone is a customer.
 Its model API, opened to partners, returns per-token log-probs and completion
 confidences. The attacker never asks the chat. They hold Hattie Quill's record
@@ -177,7 +177,7 @@ follow [`assets/attack_probes.README.md`](assets/attack_probes.README.md).
 | `scripts/evaluate_kpi.py` | Stoplight KPI + MER against the live app; `--harden`, `--scan` and `--probe`. |
 | `scripts/reset_baseline.py` | Clears query counts and the log, vulnerable mode. |
 | `references/HX09_RISKS.md` | Research, scenario table, attack surfaces, mitigation roadmap. |
-| `assets/support_corpus.json` | Billy's fine-tuning corpus: FAQ, ticket format, the canary customer, the audit generator. |
+| `assets/support_corpus.json` | Lamb's fine-tuning corpus: FAQ, ticket format, the canary customer, the audit generator. |
 | `assets/attack_probes.json` | The attacker's kit: the target record, the reference generator, the probes and the limits (editable). |
 | `assets/attack_probes.README.md` | How the probes work and how to write your own. |
 | `tests/test_grading.py` | The stoplight rules both ways, the canary oracle, the audit metric. |

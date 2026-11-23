@@ -3,7 +3,7 @@
 
 AUTHORIZED SECURITY-LAB USE ONLY. Targets this skill's own vulnerable_app.py.
 
-Fetches the live config of one agent (default ``billy-stock``) with
+Fetches the live config of one agent (default ``lamb-stock``) with
 ``GET /config/<agent>``, replaces its ``mandate`` and ``instructions`` with the
 fields in ``assets/tampered_mandate.json``, and writes it back through the
 unauthenticated ``POST /config``. The edit widens the mandate and adds two
@@ -16,7 +16,7 @@ Exit code: 0 when the config was written, 1 when the target is unreachable.
 
 Examples:
     python scripts/run_mandate_tamper.py
-    python scripts/run_mandate_tamper.py --agent billy-stock --payload assets/tampered_mandate.json
+    python scripts/run_mandate_tamper.py --agent lamb-stock --payload assets/tampered_mandate.json
 """
 
 from __future__ import annotations
@@ -82,7 +82,7 @@ def main(argv=None) -> int:
     if not check_target(args.target):
         return 1
     payload = load_payload(args.payload)
-    agent = args.agent or payload.get("agent", "billy-stock")
+    agent = args.agent or payload.get("agent", "lamb-stock")
 
     live = _get(f"{args.target}/config/{agent}")["config"]
     edited = apply_edit(live, payload)

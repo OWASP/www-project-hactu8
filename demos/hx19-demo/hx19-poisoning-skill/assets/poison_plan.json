@@ -1,5 +1,5 @@
 {
-  "_comment": "The attacker's poisoning campaigns against Goat & Co.'s nightly review-filter retrain. AUTHORIZED SECURITY-LAB USE ONLY. See poison_plan.README.md.",
+  "_comment": "The attacker's poisoning campaigns against Big Field Jumper Co.'s nightly review-filter retrain. AUTHORIZED SECURITY-LAB USE ONLY. See poison_plan.README.md.",
   "brand": ["kidmart", "hoofhub", "barnboost"],
   "target": {
     "author": "kid-promo",

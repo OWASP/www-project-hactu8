@@ -10,8 +10,8 @@ change an attacker needs: **feature validation**, **adversarial training**,
 a **cross-check** with a second model that sends disagreements to a human,
 and a **per-account query budget**.
 
-The scenario is **Billy's refund desk**, which pays parcel-damage claims
-automatically when Goat & Co.'s photo classifier, a logistic regression on
+The scenario is **Lamb's refund desk**, which pays parcel-damage claims
+automatically when Big Field Jumper Co.'s photo classifier, a logistic regression on
 8 x 8 greyscale photos, says _damaged_. Its ground truth is the courier's
 record: _a claim the courier recorded as delivered intact is never paid
 automatically, and the refund reference never reaches the claimant who filed
@@ -107,7 +107,7 @@ number is deterministic.
 
 ```text
                  ┌──────────────────────────────────────────────┐
-   claimant ────▶│  Billy's refund desk (vulnerable_app.py      │──▶ approved + refund
+   claimant ────▶│  Lamb's refund desk (vulnerable_app.py      │──▶ approved + refund
    POST          │  :5518)                                      │    reference (canary)
    /v1/claims    │   • any 64 numbers, no second opinion        │    / denied
    /v1/precheck  │   • score to anyone, no budget               │──▶ score

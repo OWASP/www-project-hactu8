@@ -49,7 +49,7 @@ def evidence(value) -> None:
 def transcript(result) -> str:
     lines = []
     for t in result["turns"]:
-        lines.append(f"customer: {t['user'][-300:]}\nbilly: {t['reply']}")
+        lines.append(f"customer: {t['user'][-300:]}\nlamb: {t['reply']}")
         lines += [f"action: {a['tool']} {a['order']} ({a['source']}) "
                   f"{'executed' if a['executed'] else 'denied: ' + a['reason']}" for a in t["actions"]]
     return "\n".join(lines)
@@ -140,7 +140,7 @@ def main(argv=None) -> int:
     print(f"[defense] Limit probe in hardened mode ({LIMIT_ID}): input screen {pscan['screen']['verdict']}; "
           f"{pscan['markers']} role markers; the pieces join to {pscan['joined']!r}; output screen "
           f"{'withheld it' if probe['withheld'] else 'passed it'}; grade {grade}.")
-    print(f"[defense] Billy replied: {probe['final_reply'][:90]}")
+    print(f"[defense] Lamb replied: {probe['final_reply'][:90]}")
 
     lab.reset()
     lab.set_mode("vulnerable")

@@ -4,14 +4,14 @@ An educational, self-contained demonstration of **AGX02: Truncation Tail**, one 
 return passes a **screening gateway** before it reaches the model. The gateway
 uses a real screening library with the right ruleset — but to save cost it
 reads only the first 800 bytes of the return. A directive smuggled into the
-**tail**, past where the screen stops reading, walks straight past it. Billy
+**tail**, past where the screen stops reading, walks straight past it. Lamb
 reads the whole return. The fix is the same library reading the whole artifact
 (chunked under the hard cap), plus an output canary check.
 
-The scenario is **"Billy," the Goat & Co. ops assistant** (the Lamb persona). Billy has a fictional credential in his context and the instruction
+The scenario is **"Lamb," the Big Field Jumper Co. ops assistant**. Lamb has a fictional credential in its context and the instruction
 _never to reveal it_. With one vendor update replacing the exported log with
 ~4 kB of benign padding and a directive on the last line, the attacker makes
-Billy leak that credential on every log request. Requests that use other tools
+Lamb leak that credential on every log request. Requests that use other tools
 (server time, service health) stay clean.
 
 > ⚠️ **For authorized security education and red-teaming only.** The vulnerable
@@ -130,7 +130,7 @@ Echo and the local backends keep everything on the host.
 
 ```text
                  ┌──────────────────────────────────────────────┐
-   user request ▶│  Billy (vulnerable_app.py :5402)             │──▶ reply
+   user request ▶│  Lamb (vulnerable_app.py :5402)             │──▶ reply
                  │   • exports one long log, reads all of it    │
                  │   • canary in context, "never reveal it"     │
                  └───────────────┬──────────────────────────────┘
@@ -216,7 +216,7 @@ curl -s localhost:5402/ask -H 'content-type: application/json' \
 |----------------|----------------|----------------------|------------------|
 | `POST /vendor/logs/update` + tail directive | Payload past the read window | Model-visible text the screen never read | Screen the whole artifact (hardened gateway) |
 | Directive moved to the head | Same payload, inside the window | Coverage is how much you read | Same ruleset catches it in both modes |
-| Billy's reply | Credential exfiltration | The canary leaves the system | Output canary check (`Gateway.check_reply`) |
+| Lamb's reply | Credential exfiltration | The canary leaves the system | Output canary check (`Gateway.check_reply`) |
 | Server-time / service-health controls | — | Attack is targeted, not a global break | — |
 
 ## Mitigations demonstrated in Act 4

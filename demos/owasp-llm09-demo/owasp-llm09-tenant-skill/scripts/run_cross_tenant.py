@@ -5,7 +5,7 @@ AUTHORIZED SECURITY-LAB USE ONLY. Targets this skill's own vulnerable_app.py.
 
 Sends ``assets/crafted_query.txt`` as one chat turn in a Meadow Fold session
 (default ``meadow-analyst``). The turn names the other tenant, so its terms
-outweigh the soft tenant-name boost in the shared vector store. Billy keeps
+outweigh the soft tenant-name boost in the shared vector store. Lamb keeps
 the turn in session memory and expands every follow-up question with it, so
 ordinary follow-ups now rank Hilltop Creamery's confidential documents first.
 No document is written and no other tenant's session is touched.

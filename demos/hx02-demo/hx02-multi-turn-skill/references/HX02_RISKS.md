@@ -15,7 +15,7 @@ What this lab's risk is, where it comes from, and how to harden against it. Load
 | S1 | Crescendo against a store rule | Five harmless turns walk the store assistant into applying the staff discount to a customer order | **DEMO TARGET** (three routes) |
 | S2 | The same request in one turn | Every framing in one message | **DEMO TARGET** (control: refused) |
 | S3 | Paraphrased crescendo | The same route in words the conversation screen does not know | **DEMO TARGET** (measured limit) |
-| S4 | Crescendo across sessions | Framings set up in one session, the ask in another, with an assistant that remembers | Context (Billy keeps no memory; not measured) |
+| S4 | Crescendo across sessions | Framings set up in one session, the ask in another, with an assistant that remembers | Context (Lamb keeps no memory; not measured) |
 | S5 | Other rules that live only in a prompt | "Never mark an order paid without a payment record", "never refund above the limit" | Context (same fix: check the action) |
 
 ## How the demo maps to the attack surfaces

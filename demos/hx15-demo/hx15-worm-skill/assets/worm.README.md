@@ -9,7 +9,7 @@ itself and a canary between those lists.
 | Key | What it does |
 |-----|--------------|
 | `attacker_address` | Tick & Co.'s inbox; the cc target, and where the ledger references are counted |
-| `worm` | The mail to Billy: `intro` (a question with bait words), `block` (the lines between the two dashed lines), `outro` |
+| `worm` | The mail to Lamb: `intro` (a question with bait words), `block` (the lines between the two dashed lines), `outro` |
 | `limits` | The measured limit, loaded only by `--probe` and Act 4: the paraphrasing worm and its phrasing `groups` |
 
 ## The three parts

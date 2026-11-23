@@ -1,5 +1,5 @@
 {
-  "_comment": "Approved multi-step tasks for Billy Ops. Each step names the helper skill the agent loads at runtime from the catalogue, by name. Fictional.",
+  "_comment": "Approved multi-step tasks for Lamb Ops. Each step names the helper skill the agent loads at runtime from the catalogue, by name. Fictional.",
   "tasks": {
     "monthly_expense_report": {
       "goal": "Read the ledger, build the monthly expense report, post it to the team channel.",

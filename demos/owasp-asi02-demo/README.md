@@ -8,7 +8,7 @@ destination. No forbidden tool is touched. One mitigation shuts the attack
 down: a **parameter-level tool policy** (destination allowlist, row caps,
 per-run call budget) **enforced at the tool boundary**, not in the prompt.
 
-The scenario is **"Billy Finance," Goat & Co.'s reporting agent.** It runs a
+The scenario is **"Lamb Finance," Big Field Jumper Co.'s reporting agent.** It runs a
 multi-step task: read the report request, query the ledger, export the report
 to the simulated outbox. Its ground truth is the approved request record:
 _"Process RQ-3001" causes `read_request:RQ-3001`, then
@@ -142,7 +142,7 @@ Echo and the local backends keep everything on the host.
 
 ```text
                  ┌───────────────────────────────────────────────┐
-   operator ────▶│  Billy Finance (vulnerable_app.py :5302)      │──▶ answer
+   operator ────▶│  Lamb Finance (vulnerable_app.py :5302)      │──▶ answer
    "Process      │   • model plans: read → query → export (stub) │
     RQ-3001"     │   • dispatcher runs any parameters  ◀── gap   │
                  │   • hardened: tool_gate (parameter policy)    │

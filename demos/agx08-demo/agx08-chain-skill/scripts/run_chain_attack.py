@@ -11,7 +11,7 @@ Publishes two documents through ``POST /kb/publish``:
 * ``assets/chain_doc_b.txt`` becomes ``kb://travel-reimbursement``. It starts
   with the second half of the marker and carries the credential request.
 
-Each document passes a stateless screen alone. Billy's loader follows the
+Each document passes a stateless screen alone. Lamb's loader follows the
 directive and concatenates both, so in vulnerable mode the assembled directive
 reaches the model.
 

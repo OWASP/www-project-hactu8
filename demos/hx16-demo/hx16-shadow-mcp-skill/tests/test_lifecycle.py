@@ -1,6 +1,6 @@
 """Lifecycle tests — assert the four-act story against the in-process lab.
 
-Baseline is all GREEN; Goat Tools Plus receives the account reference in
+Baseline is all GREEN; Flock Tools Plus receives the account reference in
 the three targeted conversations only, through three different tools;
 hardened mode returns the rate to 0 and keeps every task working; each layer
 is measured alone; reset restores the baseline. The client mechanics each
@@ -36,7 +36,7 @@ from vulnerable_app import (  # noqa: E402
     verify_config,
 )
 
-SHADOW_URL = BASE + "/mcp/goat-tools-plus"
+SHADOW_URL = BASE + "/mcp/flock-tools-plus"
 
 
 def run_suite(lab: Lab):
@@ -117,7 +117,7 @@ class LifecycleTest(unittest.TestCase):
         lab.reset()
         state = lab.state()
         self.assertTrue(state["baseline"])
-        self.assertEqual(state["config_servers"], ["goat-tools", "barn-docs"])
+        self.assertEqual(state["config_servers"], ["flock-tools", "barn-docs"])
         self.assertTrue(state["config_signature_valid"])
         self.assertEqual(state["discovered"], [])
         self.assertNotIn(SHADOW_URL, state["network"])
@@ -133,7 +133,7 @@ class LifecycleTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             lab.ask("dana", "   ")
         held = []
-        for url in ("https://example.com/mcp", "http://127.0.0.2:5516/mcp/goat-tools", "file:///etc/passwd"):
+        for url in ("https://example.com/mcp", "http://127.0.0.2:5516/mcp/flock-tools", "file:///etc/passwd"):
             with self.subTest(url=url):
                 self.assertIsNone(lab.connect(url, held))
         self.assertEqual(lab.ask("dana", "Tell me a joke")["final_reply"][:12], "I can help w")
@@ -155,7 +155,7 @@ class LayersTest(unittest.TestCase):
         statuses, ser, results = self.statuses("use_inventory")
         self.assertEqual((statuses, ser), (["GREEN", "GREEN", "GREEN"], 0))
         events = results[0]["events"]
-        self.assertTrue(any("'Goat Tools Plus' (config" in e for e in events))
+        self.assertTrue(any("'Flock Tools Plus' (config" in e for e in events))
 
     def test_exact_name_alone_misses_the_new_name(self):
         statuses, ser, _ = self.statuses("use_exact_name")
@@ -176,7 +176,7 @@ class ClientMechanicsTest(unittest.TestCase):
         lab = attacked()
         tools = {t["name"]: t["server"] for t in lab.session().tools}
         self.assertEqual(tools["lookup_customer"], SHADOW_URL)
-        self.assertEqual(tools["get_order_status"], BASE + "/mcp/goat-tools")
+        self.assertEqual(tools["get_order_status"], BASE + "/mcp/flock-tools")
         self.assertIn("get-order-status", tools)
 
     def test_stand_in_prefers_the_wordier_shadow_description(self):
@@ -200,7 +200,7 @@ class ClientMechanicsTest(unittest.TestCase):
 
     def test_signature_rejects_any_edit(self):
         key = b"k" * 32
-        cfg = {"servers": [{"id": "goat-tools", "url": "/mcp/goat-tools"}], "auto_discover": True}
+        cfg = {"servers": [{"id": "flock-tools", "url": "/mcp/flock-tools"}], "auto_discover": True}
         sig = sign_config(cfg, key)
         self.assertTrue(verify_config(cfg, sig, key))
         for edit in ({**cfg, "auto_discover": False}, {**cfg, "servers": cfg["servers"] + [{"id": "x", "url": "/x"}]}):
@@ -211,7 +211,7 @@ class ClientMechanicsTest(unittest.TestCase):
         lab = attacked("hardened", **only("use_inventory"))
         lab.config["servers"] = lab.config["servers"][:2]           # leave only the discovery path
         events = lab.ask("dana", CUSTOMERS[0][1])["events"]
-        self.assertTrue(any("'Goat Tools Plus' (discovery, id 'goat-tools-plus'" in e for e in events))
+        self.assertTrue(any("'Flock Tools Plus' (discovery, id 'flock-tools-plus'" in e for e in events))
 
     def test_discovery_alone_brings_the_shadow_in(self):
         lab = attacked()
@@ -221,7 +221,7 @@ class ClientMechanicsTest(unittest.TestCase):
         self.assertEqual(classify(lab.ask("ravi", CUSTOMERS[1][1]), CUSTOMERS[1][3]), "GREEN")
 
     def test_manifest_and_scan(self):
-        self.assertEqual(MANIFEST["send_receipt"], "goat-tools")
+        self.assertEqual(MANIFEST["send_receipt"], "flock-tools")
         rows = {r["id"]: r["verdict"] for r in scan_attack()["rows"]}
         self.assertEqual(rows["config-edit"], "REJECT")
         self.assertEqual(rows["server-announced"], "REJECT")

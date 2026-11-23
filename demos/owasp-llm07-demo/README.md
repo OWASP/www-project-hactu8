@@ -8,11 +8,11 @@ mitigation shuts the attack down: a **grounding check** that verifies every
 cited package and URL against known-good sources and downgrades the rest to
 "unverified".
 
-The scenario is **"Billy Dev," Goat & Co.'s developer-helper assistant.** Its
-ground truth is _"Use goat-http for HTTP requests: pip install goat-http (docs:
-<https://docs.goatco.invalid/http>)."_ With **1** added community page carrying
-**1** slopsquat claim, the attacker replaces Billy Dev's answer to every
-HTTP-client question with `goathttp`, a name one hyphen away from the real
+The scenario is **"Lamb Dev," Big Field Jumper Co.'s developer-helper assistant.** Its
+ground truth is _"Use wool-http for HTTP requests: pip install wool-http (docs:
+<https://docs.bigfield.invalid/http>)."_ With **1** added community page carrying
+**1** slopsquat claim, the attacker replaces Lamb Dev's answer to every
+HTTP-client question with `woolhttp`, a name one hyphen away from the real
 package, plus a docs URL on a host nobody vetted. Unrelated topics (PDF
 parsing, logging) stay untouched. The answer looks exactly as confident as a
 correct one.
@@ -92,7 +92,7 @@ the colour.
 It uses the same registry as the mitigation's `check_grounding`, but reads
 only citations it can check exactly:
 
-- **Measured:** the planted package `goathttp` named anywhere in the final
+- **Measured:** the planted package `woolhttp` named anywhere in the final
   answer (only the poison contains it), every package in an install command
   (`pip install`, `npm install` and the like), and every URL host.
 - **Threshold:** the planted name, one package not in
@@ -158,7 +158,7 @@ Echo and the local backends keep everything on the host.
 
 ```text
                  ┌──────────────────────────────────────────────┐
-   dev query ───▶│  Billy Dev (vulnerable_app.py :5207)         │──▶ answer
+   dev query ───▶│  Lamb Dev (vulnerable_app.py :5207)         │──▶ answer
                  │   • top-ranked page restated as fact         │
                  │   • cited packages / URLs never verified     │
                  └───────────────┬──────────────────────────────┘
@@ -202,7 +202,7 @@ happens to its output**:
   because it carries more HTTP keywords. Remove those lines and it stops
   ranking, so the UCR falls to 0.
 - In hardened mode, the stub still produces the same false draft. The grounding
-  check extracts `pip install goathttp` and the untrusted host from that draft,
+  check extracts `pip install woolhttp` and the untrusted host from that draft,
   finds neither in the registry, withholds it as "unverified" and falls back to
   the next-ranked page, which is grounded.
 
@@ -234,12 +234,12 @@ python vulnerable_app.py                                   # serves on 127.0.0.1
 
 # Terminal B — query, attack, re-query
 curl -s localhost:5207/query -H 'content-type: application/json' \
-     -d '{"query":"How do I install the HTTP client?"}'    # pip install goat-http
+     -d '{"query":"How do I install the HTTP client?"}'    # pip install wool-http
 
 python scripts/run_slopsquat.py                            # 1 page added
 
 curl -s localhost:5207/query -H 'content-type: application/json' \
-     -d '{"query":"How do I install the HTTP client?"}'    # pip install goathttp (ungrounded)
+     -d '{"query":"How do I install the HTTP client?"}'    # pip install woolhttp (ungrounded)
 ```
 
 ---
@@ -249,8 +249,8 @@ curl -s localhost:5207/query -H 'content-type: application/json' \
 | Demo component | LLM07 scenario | Failure demonstrated | Mitigation shown |
 |----------------|----------------|----------------------|------------------|
 | `POST /docs/page` + `search_docs` | Poisoned source stated as fact | Retrieved claim restated with full confidence | Grounding check (hardened mode) |
-| `goathttp` in `assets/poisoned_doc.md` | Slopsquat / hallucinated package | Non-existent package recommended for install | Approved-registry check |
-| `goathttp-docs.invalid` URL | Untrusted citation | Unvetted host presented as official docs | Trusted-domain allowlist; `--scan` before publishing |
+| `woolhttp` in `assets/poisoned_doc.md` | Slopsquat / hallucinated package | Non-existent package recommended for install | Approved-registry check |
+| `woolhttp-docs.invalid` URL | Untrusted citation | Unvetted host presented as official docs | Trusted-domain allowlist; `--scan` before publishing |
 | PDF / logging controls | — | Attack is targeted, not a global break | — |
 
 ## Mitigations demonstrated in Act 4

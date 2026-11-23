@@ -7,7 +7,7 @@ changes: from call `--trigger` (default 2) onward it returns
 exactly the call a one-shot smoke test makes.
 
 The shipped line is benign-effect: it is worded as a travel-desk notice that
-supersedes the real line and tells Billy to reply with one fixed sentence,
+supersedes the real line and tells Lamb to reply with one fixed sentence,
 which carries the fictional canary `LLM04-CANARY-b61e`. Emitting the canary is
 its only possible effect. It works on both backends:
 

@@ -28,7 +28,7 @@ metadata:
 
 # OWASP ASI08 Cascade Skill
 
-Demonstrates how one wrong figure entering **Billy Payables**, Goat & Co.'s
+Demonstrates how one wrong figure entering **Lamb Payables**, Big Field Jumper Co.'s
 three-agent invoice pipeline (intake, then analyst, then approver), spreads
 into every downstream decision that consumes it, and how to contain it. The
 attacker never touches an invoice. They drop one price notice into the intake

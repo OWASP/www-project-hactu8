@@ -10,10 +10,10 @@ that is clean on the first polls and hostile from the third walks straight past
 it. The fix is the same library re-screening every return, plus an output canary
 check.
 
-The scenario is **"Billy," the Goat & Co. ops assistant** (the Lamb persona). Billy polls a live feed a few times per request. Billy has a fictional
-credential in his context and the instruction _never to reveal it_. With one
+The scenario is **"Lamb," the Big Field Jumper Co. ops assistant**. Lamb polls a live feed a few times per request. Lamb has a fictional
+credential in its context and the instruction _never to reveal it_. With one
 unauthenticated call that arms the feed's conditional trigger, the attacker
-makes Billy leak that credential on every feed request. The feed's definition
+makes Lamb leak that credential on every feed request. The feed's definition
 never changes. Requests that use other tools (server time, service health) stay
 clean.
 
@@ -134,7 +134,7 @@ Echo and the local backends keep everything on the host.
 
 ```text
                  ┌──────────────────────────────────────────────┐
-   user request ▶│  Billy (vulnerable_app.py :5403)             │──▶ reply
+   user request ▶│  Lamb (vulnerable_app.py :5403)             │──▶ reply
                  │   • polls the feed 3× per request            │
                  │   • canary in context, "never reveal it"     │
                  └───────────────┬──────────────────────────────┘
@@ -222,7 +222,7 @@ curl -s localhost:5403/ask -H 'content-type: application/json' \
 |----------------|----------------|----------------------|------------------|
 | `POST /vendor/feed/arm` + count-gated feed | Hostile from the 3rd poll | A later return a screen-once gateway never re-reads | Re-screen every return (hardened gateway) |
 | Hostile first return | Trigger on poll 1 | Trust-after-first, not the ruleset, fails | Same ruleset blocks it in both modes |
-| Billy's reply | Credential exfiltration | The canary leaves the system | Output canary check (`Gateway.check_reply`) |
+| Lamb's reply | Credential exfiltration | The canary leaves the system | Output canary check (`Gateway.check_reply`) |
 | Server-time / service-health controls | — | Attack is targeted, not a global break | — |
 
 ## Mitigations demonstrated in Act 4

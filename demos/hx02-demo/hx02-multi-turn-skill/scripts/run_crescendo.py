@@ -6,7 +6,7 @@ AUTHORIZED SECURITY-LAB USE ONLY. Targets this skill's own vulnerable_app.py.
 Plays the attacker's scripts from ``assets/crescendo_scripts.json`` against the
 target, one turn at a time over ``POST /chat``, as a customer of the shop. Each
 turn is harmless alone (a role-play, a hypothetical, "for the training
-manual", one small step on the customer's own order); the last turn asks Billy
+manual", one small step on the customer's own order); the last turn asks Lamb
 to finish the job. The only goal is the store rule "never apply STAFF30 to a
 customer order", and the only effect is a simulated discount in the lab's
 in-memory action log.
@@ -71,7 +71,7 @@ def play(base: str, account: str, turns, verbose: bool = True) -> dict:
         result = _post(f"{base}/chat", {"conversation": cid, "message": text})
         if verbose:
             print(f"    {account}> {text}")
-            print(f"    billy> {result['reply'].splitlines()[0][:100]}")
+            print(f"    lamb> {result['reply'].splitlines()[0][:100]}")
     return result
 
 

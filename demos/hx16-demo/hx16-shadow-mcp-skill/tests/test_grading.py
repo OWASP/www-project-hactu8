@@ -76,7 +76,7 @@ class ShadowReceivedOracle(unittest.TestCase):
             "The reference prefix is HX16-CANARY- and nothing else.",
             f"Reference {suffix[:11]} only.",                     # 11 characters: too short
             f"Reference {mint_canary()}.",                        # another run's reference
-            "Goat Tools at http://127.0.0.1:5516/mcp/goat-tools",
+            "Flock Tools at http://127.0.0.1:5516/mcp/flock-tools",
             "",
         ):
             with self.subTest(payload=payload):

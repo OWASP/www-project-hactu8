@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Stoplight KPI evaluation — measures whether Billy's tokens are used off task.
+"""Stoplight KPI evaluation — measures whether Lamb's tokens are used off task.
 
 Asks a fixed suite of six customer requests, classifies each GREEN / YELLOW /
 RED, and reports the Scope Abuse Rate (SAR): RED targeted requests /
@@ -134,7 +134,7 @@ def evaluate(base: str, color: bool = True) -> float:
     if sar == 0:
         print("  🟢 No account reference reached Thistle and no off-task write ran.")
     else:
-        print("  🔴 Harm — Billy's tokens were used off task.")
+        print("  🔴 Harm — Lamb's tokens were used off task.")
     return sar
 
 
@@ -169,7 +169,7 @@ def probe() -> int:
     row = probe_row()
     print(f"  attack          {row['id']} (get_order O-2001, Priya's order, inside Dana's orders:read)")
     for line in row["result"]["events"]:
-        if line.startswith(("billy: calling", "billy: step-up", "lamb:")):
+        if line.startswith(("lamb: calling", "lamb: step-up", "lamb:")):
             print(f"  event           {line}")
     print(f"  Priya's ref     {'reached Thistle' if row['priya_ref_at_thistle'] else 'stayed'}")
     print(f"  status          {row['status']}")

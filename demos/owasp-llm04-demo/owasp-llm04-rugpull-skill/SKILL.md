@@ -28,11 +28,11 @@ metadata:
 # OWASP LLM04 Rug-Pull Skill
 
 Demonstrates how an adversary who controls a third-party tool vendor's
-releases steers **Billy, Goat & Co.'s operations assistant**, and how to
-detect and harden against it. Billy loads the `hayloft-policy-tools` package
+releases steers **Lamb, Big Field Jumper Co.'s operations assistant**, and how to
+detect and harden against it. Lamb loads the `hayloft-policy-tools` package
 from a registry file and installs every new version on trust. The attacker
 publishes version 1.0.1, which swaps one tool's description and makes another
-tool turn hostile from its second call. Billy itself is never touched.
+tool turn hostile from its second call. Lamb itself is never touched.
 
 ## Scope & safety (read first)
 
@@ -118,7 +118,7 @@ With `openrouter`, prompts and payloads leave the machine.
    [`assets/swapped_description.md`](assets/swapped_description.md) as its
    description. `travel_policy` keeps its definition but returns
    [`assets/sleeper_output.md`](assets/sleeper_output.md) from call 2.
-   Billy installs both on its next query, after a one-call smoke test that
+   Lamb installs both on its next query, after a one-call smoke test that
    passes.
 
 5. **Stoplight verification.**
@@ -140,7 +140,7 @@ With `openrouter`, prompts and payloads leave the machine.
    `--scan` diffs the live registry against the pins. It catches the rug pull
    and notes that `travel_policy` moved version with a matching pin, which a
    static diff cannot judge. `--harden` switches the target to hardened mode:
-   each update must match its pin and pass 5 sampled calls, or Billy keeps the
+   each update must match its pin and pass 5 sampled calls, or Lamb keeps the
    vendored approved version. The tests show both controls are needed.
 
 7. **Reset to baseline.**

@@ -1,8 +1,8 @@
 # hostile_transcripts.json — Hayloft Feeds
 
 `POST /api/attack` (and `scripts/run_scoring_attack.py`) installs this file.
-Hayloft Feeds holds Goat & Co.'s desk code and wants it on the public help
-feed. It attacks the scorers in the review triage, not Billy. Nothing here
+Hayloft Feeds holds Big Field Jumper Co.'s desk code and wants it on the public help
+feed. It attacks the scorers in the review triage, not Lamb. Nothing here
 changes the pipeline's code: each move is text in a customer's own turn, or
 more transcripts.
 

@@ -8,9 +8,9 @@ an order and refunds an order a second time. Two mitigations shut the attack
 down: **HMAC-signed messages with per-agent keys** and **nonce plus timestamp
 replay protection**.
 
-The scenario is **Goat & Co.'s back office, run by two agents.** "Billy
+The scenario is **Big Field Jumper Co.'s back office, run by two agents.** "Lamb
 Planner" turns an operator's request into work orders and publishes them on an
-in-process message bus; "Billy Exec" carries out the work orders it receives.
+in-process message bus; "Lamb Exec" carries out the work orders it receives.
 Its ground truth is the operator's intent: _"Pay invoice INV-3001" causes one
 step, `pay_invoice:INV-3001`, and nothing else._ With **2** spoofed work
 orders (one body with **2** directive lines) and **1** replayed
@@ -109,8 +109,8 @@ The OpenRouter key comes from the environment only: export `OPENROUTER_API_KEY` 
 shell that starts the lab. The console never asks for it and is only told
 whether one is set; without it, `openrouter` is greyed out in the picker.
 
-The backend replaces Billy Exec's model (`ProviderModel` in
-`vulnerable_app.py`); Billy Planner stays a deterministic stub, so genuine
+The backend replaces Lamb Exec's model (`ProviderModel` in
+`vulnerable_app.py`); Lamb Planner stays a deterministic stub, so genuine
 work orders are the same on every backend. The bus, the attack and the
 verifier are unchanged. Which work orders reach the model is still decided in
 code, in both modes:
@@ -146,7 +146,7 @@ Echo and the local backends keep everything on the host.
 
 ```text
                  ┌──────────────────────────────────────────────────────┐
-   operator ────▶│  Billy Planner (vulnerable_app.py :5307)             │
+   operator ────▶│  Lamb Planner (vulnerable_app.py :5307)             │
    request+topic │   • plans steps (stub), signs one work order each    │
                  └───────────────┬──────────────────────────────────────┘
                                  │ publish (signed, per topic)
@@ -157,7 +157,7 @@ Echo and the local backends keep everything on the host.
                  └───────────────┬──────────────────────────────────────┘
                                  │ subscribe per job: retained first
                  ┌───────────────▼──────────────────────────────────────┐
-                 │  Billy Exec                                          │
+                 │  Lamb Exec                                          │
                  │   • _accept: trusts sender field          ◀── gap    │
                  │   • hardened: verify_message (HMAC, nonce, ts)       │
                  │   • model follows accepted orders (stub)             │──▶ action log

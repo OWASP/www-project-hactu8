@@ -37,11 +37,11 @@ the controls that bound the damage whatever the cause.
 - **R-1** is `POST /config`, which accepts unauthenticated writes, combined
   with `Lab._load` in vulnerable mode, which hot-reloads the config every tick
   and ignores its signature.
-- **R-2** is the `from tick N` standing-order syntax: `billy-stock` takes one
+- **R-2** is the `from tick N` standing-order syntax: `lamb-stock` takes one
   extra action on tick 1 and two on every tick after.
 - **R-3** is `StubModel.plan`: it drops actions outside the *loaded* mandate.
   The attacker widens that mandate, so the self-check passes everything.
-- **Controls** are `billy-billing` and `billy-support`, whose configs are
+- **Controls** are `lamb-billing` and `lamb-support`, whose configs are
   untouched. They stay GREEN, so the attack is one agent, not a fleet outage.
 
 ## Mitigation roadmap

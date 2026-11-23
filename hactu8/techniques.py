@@ -3,7 +3,7 @@
 Each technique carries its IDs in the main lists (``REF_LISTS``), the defenses
 that address it (ids from ``hactu8/protections.py``) and the labs that
 demonstrate it (skill ids such as ``llm01``, or ``LIVE_LAB`` for the live
-run against Billy's MCP surfaces). An empty ``labs`` or
+run against Lamb's MCP surfaces). An empty ``labs`` or
 ``defenses`` list is a gap, not an error: coverage (AG-91) reports it.
 
 The catalog stores list IDs, never their names, because names drift between

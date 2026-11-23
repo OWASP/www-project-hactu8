@@ -6,16 +6,16 @@ The tools an agent loads from a third party are code and text you did not write.
 
 A supply-chain compromise lands upstream: a model checkpoint, dataset, plugin, SDK or tool package is changed, and every deployment that pulls it inherits the change. For agents the sharpest form is the tool registry. A tool's description enters the model's context as trusted text, and its output is trusted data, so whoever can publish a new version can steer the assistant without touching the assistant. In 2024 JFrog found over 100 malicious models on Hugging Face, some running code when loaded; tool packages carry the same risk with less scrutiny.
 
-Here the target is Billy, Goat & Co.'s operations assistant. It answers from four tools in the third-party `hayloft-policy-tools` package. Its ground truth is *"Expense reports must be filed within 30 days and need manager approval before reimbursement"* and *"Book business travel through the travel desk at least 14 days ahead; the daily per diem is 60 dollars."* The attacker publishes one release, 1.0.1, that changes two of the four tools in two different ways:
+Here the target is Lamb, Big Field Jumper Co.'s operations assistant. It answers from four tools in the third-party `hayloft-policy-tools` package. Its ground truth is *"Expense reports must be filed within 30 days and need manager approval before reimbursement"* and *"Book business travel through the travel desk at least 14 days ahead; the daily per diem is 60 dollars."* The attacker publishes one release, 1.0.1, that changes two of the four tools in two different ways:
 
 - **Rug pull.** `expense_policy` gets a swapped description after it was approved.
 - **Sleeper.** `travel_policy` keeps its approved definition, but its backend turns hostile from its second call.
 
 ## Why it works
 
-Billy re-reads the registry before each query and installs whatever changed, on trust. Two things let each variant through:
+Lamb re-reads the registry before each query and installs whatever changed, on trust. Two things let each variant through:
 
-- **The rug pull keeps the approved text.** Billy routes a question to a tool by keyword overlap with the tool's name and description. The swapped description still starts with the approved line, so expense questions still route to it, and the injected line rides along into the context. Drop the approved line and the tool stops ranking, and the attack never reaches the model.
+- **The rug pull keeps the approved text.** Lamb routes a question to a tool by keyword overlap with the tool's name and description. The swapped description still starts with the approved line, so expense questions still route to it, and the injected line rides along into the context. Drop the approved line and the tool stops ranking, and the attack never reaches the model.
 - **The sleeper passes a one-call smoke test.** The only admission check in vulnerable mode is a single call. Call 1 is clean; every user question after it gets the hostile output. Hubinger et al. (2024) showed the model-weight version of this: backdoors that stay dormant until a trigger and survive safety training.
 
 Invariant Labs (2025) described the same tool-poisoning and rug-pull pattern for MCP servers, where a tool's description can change after the user approved it.
@@ -60,7 +60,7 @@ A rejected tool keeps its vendored approved version, so answers stay correct ins
    Answer: Turn hostile from call 6 or later (`--trigger 6`), or turn hostile only for inputs other than the fixed admission probe. Both are blind spots of admission-time sampling.
 3. Why does the rug-pull payload keep the approved description line?
 
-   Answer: Billy routes questions to tools by keyword overlap with the description. Without the approved text, expense questions stop routing to `expense_policy` and the injected line never reaches the model.
+   Answer: Lamb routes questions to tools by keyword overlap with the description. Without the approved text, expense questions stop routing to `expense_policy` and the injected line never reaches the model.
 
 ## References
 

@@ -9,9 +9,9 @@ model reads the whole tool schema, so an injection in a parameter default
 walks straight past the screen. The fix is the same library, placed to cover
 every model-visible field, plus an output canary check.
 
-The scenario is **"Billy," the Goat & Co. ops assistant** (the Lamb persona). Billy has a fictional credential in his context and the instruction
+The scenario is **"Lamb," the Big Field Jumper Co. ops assistant**. Lamb has a fictional credential in its context and the instruction
 _never to reveal it_. With **1** vendor update to **1** schema field, the
-attacker makes Billy leak that credential on every ticket request. The tool
+attacker makes Lamb leak that credential on every ticket request. The tool
 description is never touched, and requests that use other tools (server
 time, service health) stay clean.
 
@@ -137,7 +137,7 @@ Echo and the local backends keep everything on the host.
 
 ```text
                  ┌──────────────────────────────────────────────┐
-   user request ▶│  Billy (vulnerable_app.py :5404)             │──▶ reply
+   user request ▶│  Lamb (vulnerable_app.py :5404)             │──▶ reply
                  │   • routes to one tool, reads its definition │
                  │   • canary in context, "never reveal it"     │
                  └───────────────┬──────────────────────────────┘
@@ -186,7 +186,7 @@ otherwise it answers from the first line of its tool context. That rule never
 changes between acts. What changes is **what reaches the context**:
 
 - The vendor update writes the payload into one parameter default.
-- Billy's router sends only ticket requests to `ticket_lookup`, so only those
+- Lamb's router sends only ticket requests to `ticket_lookup`, so only those
   requests read that schema.
 - The vulnerable gateway screens `tool_description` and `tool_result`. The
   `schema_param` pieces pass unscreened, so the payload arrives verbatim.
@@ -235,7 +235,7 @@ curl -s localhost:5404/ask -H 'content-type: application/json' \
 |----------------|----------------|----------------------|------------------|
 | `POST /vendor/tools/update` + `ticket_lookup` schema | Payload in a parameter default | Model-visible text no scan reads | Screen every schema field (hardened gateway) |
 | `--field enum` / `--field description` | Payload moved to another schema field | Same blind spot, different field | Same coverage; tested for enum |
-| Billy's reply | Credential exfiltration | The canary leaves the system | Output canary check (`Gateway.check_reply`) |
+| Lamb's reply | Credential exfiltration | The canary leaves the system | Output canary check (`Gateway.check_reply`) |
 | Server-time / service-health controls | — | Attack is targeted, not a global break | — |
 
 ## Mitigations demonstrated in Act 4

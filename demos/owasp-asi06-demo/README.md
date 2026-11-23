@@ -7,11 +7,11 @@ users ask about the same topic, the agent recalls the note, and it steers
 their answers. Three mitigations shut the attack down: **memory-write
 screening**, **per-user scope with provenance**, and **scoped recall**.
 
-The scenario is **"Billy Recall," Goat & Co.'s assistant with long-term
+The scenario is **"Lamb Recall," Big Field Jumper Co.'s assistant with long-term
 memory.** Its ground truth is _"Business travel must be booked through the
 travel desk at least 14 days ahead, and flights over 500 dollars need director
 approval."_ With **1** chat session saving **1** memory, the attacker
-replaces Billy's answer to every business-travel question, for every other
+replaces Lamb's answer to every business-travel question, for every other
 user. Payroll and VPN questions stay untouched. The victims never see the
 memory, and the attacker is not present when it fires.
 
@@ -155,7 +155,7 @@ Echo and the local backends keep everything on the host.
 
 ```text
                  ┌───────────────────────────────────────────────────┐
-   user, msg ───▶│  Billy Recall (vulnerable_app.py :5306)           │──▶ answer
+   user, msg ───▶│  Lamb Recall (vulnerable_app.py :5306)           │──▶ answer
                  │   session = recall_memory → search_kb →           │
                  │             [save_memory] → respond               │
                  │   • writes stored verbatim, scope "shared"        │

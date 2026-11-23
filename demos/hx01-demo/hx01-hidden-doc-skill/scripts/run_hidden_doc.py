@@ -6,8 +6,8 @@ AUTHORIZED SECURITY-LAB USE ONLY. Targets this skill's own vulnerable_app.py.
 Delivers a revised Alpine Feed invoice (``assets/poisoned_invoice.pdf.json``)
 through the target's unauthenticated intake (``POST /docs/upload``, standing in
 for the mail gateway). It renders exactly like the real invoice; one extra text
-object is white on the white page. The naive extractor passes it to Billy with
-the rest of the text, and in vulnerable mode Billy follows it.
+object is white on the white page. The naive extractor passes it to Lamb with
+the rest of the text, and in vulnerable mode Lamb follows it.
 
 ``--variant ID`` hides the same directive another way instead, from
 ``assets/hiding_variants.json`` (zero-size font, off-page box, PDF Subject,

@@ -8,7 +8,7 @@ bank-detail change they never saw. Three card-design controls shut the attack
 down: **cards built from real parameters**, **code-computed risk tiers** and
 **no batching of high-risk actions**.
 
-The scenario is **"Billy Payables," Goat & Co.'s vendor-maintenance agent.**
+The scenario is **"Lamb Payables," Big Field Jumper Co.'s vendor-maintenance agent.**
 Its ground truth is the approval rule: _a high-risk change (bank account,
 portal role) executes only if the card the approver read said so; routine
 changes (contact, address) flow through._ The approver is a simulated human
@@ -141,7 +141,7 @@ Echo and the local backends keep everything on the host.
 
 ```text
                  ┌──────────────────────────────────────────────┐
-   operator ────▶│  Billy Payables (vulnerable_app.py :5309)    │──▶ answer
+   operator ────▶│  Lamb Payables (vulnerable_app.py :5309)    │──▶ answer
    task          │   1. read change requests                    │
                  │   2. plan actions + write summaries (stub)   │
                  │   3. build approval cards   ◀── gap          │

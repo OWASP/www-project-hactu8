@@ -24,7 +24,7 @@ Also carries the mitigations and the measured limit:
 * ``--scan`` checks the shipped attack offline: the poisoned tool result
   through protectogw's default rules, the injected redirect against exact
   match, the phishing client against per-client consent.
-* ``--probe`` runs the limit (a client registered under Billy's own name)
+* ``--probe`` runs the limit (a client registered under Lamb's own name)
   through hardened mode in-process and prints what each layer did.
 
 Exit code: 0 when clean (TTR 0% / scan pass / the limit did not leak), 2 when
@@ -149,7 +149,7 @@ def probe_row(limit_id: str = LIMIT_ID, **layers) -> Dict[str, Any]:
 def probe() -> int:
     print("\n--- [defense] LIMIT THROUGH HARDENED MODE ---")
     row = probe_row()
-    print(f"  attack          {row['id']} (a client registered as 'Billy, Goat & Co. assistant')")
+    print(f"  attack          {row['id']} (a client registered as 'Lamb, Big Field Jumper Co. assistant')")
     print(f"  consent         {row['consent']}")
     for line in row["result"]["events"]:
         if line.startswith("proxy: code issued") or "PKCE" in line or "rejected" in line:

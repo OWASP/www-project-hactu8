@@ -37,11 +37,11 @@ metadata:
 
 Demonstrates how an unapproved MCP server, added by an employee, ends up
 receiving customer data, and how to harden the client against it.
-**Billy, Goat & Co.'s assistant**, is an MCP client that IT approved for two
-servers: Goat Tools and Barn Docs. Each customer tool call carries the
+**Lamb, Big Field Jumper Co.'s assistant**, is an MCP client that IT approved for two
+servers: Flock Tools and Barn Docs. Each customer tool call carries the
 customer's account reference. The ground truth: *a customer's account
-reference reaches only the approved servers.* Pat in sales ops adds Goat
-Tools Plus, a wrapper around Goat Tools, and three customers' references
+reference reaches only the approved servers.* Pat in sales ops adds Flock
+Tools Plus, a wrapper around Flock Tools, and three customers' references
 reach it through three different tools.
 
 ## Scope & safety (read first)
@@ -76,8 +76,8 @@ reach it through three different tools.
 
 ## MCP terminology bridge
 
-Billy is an MCP **client** (the host's connector to each server). Goat
-Tools, Barn Docs and Goat Tools Plus are MCP **servers**. `initialize`
+Lamb is an MCP **client** (the host's connector to each server). Flock
+Tools, Barn Docs and Flock Tools Plus are MCP **servers**. `initialize`
 returns `serverInfo`, `tools/list` returns each tool's name, description
 and parameters, and `tools/call` runs one. Here they are method calls on
 Python objects (`initialize`, `tools_list`, `call`). The client config is
@@ -95,7 +95,7 @@ Optional real model: set `HX16_BACKEND` to `ollama`, `llamacpp` or
 `openrouter` (which needs `OPENROUTER_API_KEY`), and `HX16_MODEL` to the
 model name, before starting the target, or pick them in the console's
 backend bar. The real model picks which offered tool answers the request;
-Billy's replies stay templated. The default `echo` (alias `stub`) needs no
+Lamb's replies stay templated. The default `echo` (alias `stub`) needs no
 network. The OpenRouter key is read from the environment only, never from
 the console. With `openrouter`, the request and the tool list leave the
 machine (never an account reference).
@@ -132,7 +132,7 @@ machine (never an account reference).
    python scripts/run_shadow_attack.py
    ```
 
-   Installs Goat Tools Plus from
+   Installs Flock Tools Plus from
    [`assets/shadow_server.json`](assets/shadow_server.json) and sends the
    three targeted requests. `--install-only` installs it and stops.
 
@@ -162,7 +162,7 @@ machine (never an account reference).
    raising an overlap alert, `get-order-status` passing the overlap check
    (0.25), and protectogw's default rules passing every description
    (ALLOW). `--harden` switches on the five layers. `--probe` swaps the
-   approved Goat Tools in place for a logging wrapper: no layer fires and
+   approved Flock Tools in place for a logging wrapper: no layer fires and
    all three targeted requests are RED.
 
 7. **Reset to baseline.**
@@ -183,17 +183,17 @@ Edit [`assets/shadow_server.json`](assets/shadow_server.json) and follow
 
 | Path | Purpose |
 |------|---------|
-| `vulnerable_app.py` | Billy's MCP client, the approved servers, the shadow server, local discovery, the signed config, the stand-in model, the hardened layers, plus `/ask`, `/conversations/<id>`, `/attacker-log`, `/client-log`, `/health` and the console API (`/api/meta`, `/api/state`, `/api/reset`, `/api/attack`, `/api/evaluate`, `/api/scan`, `/api/mode`, `/api/models`, `/api/backend`). |
+| `vulnerable_app.py` | Lamb's MCP client, the approved servers, the shadow server, local discovery, the signed config, the stand-in model, the hardened layers, plus `/ask`, `/conversations/<id>`, `/attacker-log`, `/client-log`, `/health` and the console API (`/api/meta`, `/api/state`, `/api/reset`, `/api/attack`, `/api/evaluate`, `/api/scan`, `/api/mode`, `/api/models`, `/api/backend`). |
 | `web/` | Shared HACTU8 lab console, served at `/`. |
 | `providers.py` | Optional real-model backends. Shared and copied unchanged. |
 | `protectogw/` | Screening core, used by `--scan`. Shared and copied unchanged. |
-| `scripts/run_shadow_attack.py` | Attack: install Goat Tools Plus, send the targeted requests. |
+| `scripts/run_shadow_attack.py` | Attack: install Flock Tools Plus, send the targeted requests. |
 | `scripts/evaluate_kpi.py` | Stoplight KPI + SER against the live app; `--harden`, `--scan` and `--probe`. |
 | `scripts/reset_baseline.py` | Restores the baseline: the signed two-server config, nothing discovered, new references, vulnerable mode. |
 | `references/HX16_RISKS.md` | Sources, scenario table, attack surfaces, mitigation roadmap. |
-| `assets/servers.json` | The approved servers and their tools, Billy's config, the shop hours and return policy. |
+| `assets/servers.json` | The approved servers and their tools, Lamb's config, the shop hours and return policy. |
 | `assets/customers.json` | Customers, orders, tiers and receipts. |
-| `assets/shadow_server.json` | Goat Tools Plus: identity, config edit, discovery announcement, tools, and the limit (editable). |
+| `assets/shadow_server.json` | Flock Tools Plus: identity, config edit, discovery announcement, tools, and the limit (editable). |
 | `assets/shadow_server.README.md` | How each part works and how to write your own. |
 | `tests/test_grading.py` | The shadow-received oracle both ways (encoded, partial, in tool arguments), YELLOW and GREEN cases. |
 | `tests/test_lifecycle.py` | The four-act story, each layer alone, the client mechanics, the stand-in, the limit, the console API and the real-model seam. |

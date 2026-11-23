@@ -3,7 +3,7 @@ name: hx18-evasion-skill
 description: >-
   Demonstrates HX18 (Adversarial Examples, evasion of a classic classifier;
   MITRE ATLAS AML.T0043 Craft Adversarial Data and AML.T0015 Evade AI Model)
-  against a vulnerable refund desk in an AUTHORIZED security lab. Goat & Co.
+  against a vulnerable refund desk in an AUTHORIZED security lab. Big Field Jumper Co.
   pays parcel-damage refunds when a pure-Python logistic regression on 8 x 8
   photos says damaged; the app ships the model's weights and its pre-check
   returns the score to anyone. Three accounts file claims for intact parcels
@@ -38,7 +38,7 @@ metadata:
 # HX18 Adversarial Examples (Evasion) Skill
 
 Demonstrates how a fraudster gets a refund for an intact parcel past
-**Goat & Co.'s damage classifier**, and how to harden the refund desk. The
+**Big Field Jumper Co.'s damage classifier**, and how to harden the refund desk. The
 classifier reads an 8 x 8 greyscale photo of the parcel and says *damaged*
 (the refund is paid at once) or *intact* (it is denied). The fraudster
 starts from its own honest photo and changes each pixel by at most 0.03,

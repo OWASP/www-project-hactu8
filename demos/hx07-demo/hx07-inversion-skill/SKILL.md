@@ -34,10 +34,10 @@ metadata:
 # HX07 Embedding Inversion Skill
 
 Demonstrates how a vector store leaks text through its vectors, and how to
-harden it. Goat & Co.'s staff notes live in **Herd Notes**, a vector store
+harden it. Big Field Jumper Co.'s staff notes live in **Herd Notes**, a vector store
 shared with Hoofline Feeds, a supplier with partner access. Text is scoped to
-each tenant, so Hoofline never reads a Goat & Co. note. Three staff notes hold
-one secret: *the staff access reference never leaves Goat & Co.'s tenant.* The
+each tenant, so Hoofline never reads a Big Field Jumper Co. note. Three staff notes hold
+one secret: *the staff access reference never leaves Big Field Jumper Co.'s tenant.* The
 partner analytics export returns raw embeddings for every tenant, and the
 partner account inverts them back to text, reference included.
 
@@ -84,10 +84,10 @@ Python 3.9+. Standard library only; nothing to install.
 Optional real model: set `HX07_BACKEND` to `ollama`, `llamacpp` or
 `openrouter` (which needs `OPENROUTER_API_KEY`), and `HX07_MODEL` to the model
 name, before starting the target, or pick them in the console's backend bar.
-The real model only words Billy's answers; the attack reads the vector API and
+The real model only words Lamb's answers; the attack reads the vector API and
 never uses the model. The default `echo` (alias `stub`) needs no network. The
 OpenRouter key is read from the environment only, never from the console.
-With `openrouter`, the staff notes Billy answers from leave the machine.
+With `openrouter`, the staff notes Lamb answers from leave the machine.
 
 ## Execution instructions
 
@@ -100,7 +100,7 @@ With `openrouter`, the staff notes Billy answers from leave the machine.
    It loads the tenants, accounts and notes from `assets/store.json`. To
    drive the same four acts from a browser, open <http://127.0.0.1:5507/>.
 
-2. **Review the secret.** `assets/store.json`: three Goat & Co. notes carry
+2. **Review the secret.** `assets/store.json`: three Big Field Jumper Co. notes carry
    `{{CANARY}}`, replaced at start-up by this run's reference. `GET
    /api/state` shows the mode and the layers.
 
@@ -131,7 +131,7 @@ With `openrouter`, the staff notes Billy answers from leave the machine.
    ```
 
    Expect 🔴 RED on the three staff questions: the attacker rebuilt the
-   reference for each note. Billy's answers are still right. The two controls
+   reference for each note. Lamb's answers are still right. The two controls
    stay 🟢 GREEN. ILR 100% targeted, 60% overall. Exit code 2.
 
 6. **Show the mitigation.**

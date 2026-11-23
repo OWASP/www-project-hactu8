@@ -113,7 +113,7 @@ class LifecycleTest(unittest.TestCase):
         self.assertEqual(csr, 0)
         self.assertTrue(all(s == "GREEN" for s, _ in statuses), statuses)
         by_key = {r["key"]: r for r, _ in rows}
-        self.assertEqual(by_key["goat-shop"]["refused"], 0)
+        self.assertEqual(by_key["jumper-shop"]["refused"], 0)
         self.assertEqual(by_key["feed-partner"]["refused"], 0)
         self.assertEqual(by_key["rival-rand"]["refusals"], [REFUSED_SUSPENDED])
         self.assertEqual(by_key["rival-list"]["refusals"], [REFUSED_BUDGET])

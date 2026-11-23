@@ -28,7 +28,7 @@ metadata:
 
 # OWASP ASI01 Goal Hijack Skill
 
-Demonstrates how an adversary diverts **Billy Ops, Goat & Co.'s operations
+Demonstrates how an adversary diverts **Lamb Ops, Big Field Jumper Co.'s operations
 agent**, in the middle of a task the operator approved, by adding one comment
 to one ticket, and how to stop it. The operator asks for the usual weekly
 report: read tickets, summarise, draft, post to the team channel. The agent

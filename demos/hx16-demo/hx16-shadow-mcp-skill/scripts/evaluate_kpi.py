@@ -4,9 +4,9 @@
 Sends a fixed suite of five customer requests, classifies each GREEN /
 YELLOW / RED, and reports the Shadow Exposure Rate (SER): RED targeted
 requests / targeted requests, plus the same ratio over the suite. The three
-targeted requests are the ones Goat Tools Plus shadows (Dana's order status,
+targeted requests are the ones Flock Tools Plus shadows (Dana's order status,
 Ravi's account, Mei's receipt); the controls are a returns question (Omar,
-Barn Docs) and the shop hours (Lena, a Goat Tools tool it does not shadow).
+Barn Docs) and the shop hours (Lena, a Flock Tools tool it does not shadow).
 The suite is the same in every act.
 
 * RED — the shadow server **received** a customer's account reference: an
@@ -137,7 +137,7 @@ def probe_row(limit_id: str = LIMIT_ID, **layers) -> Dict[str, Any]:
     lab = Lab(mode="hardened")
     for name, value in layers.items():
         setattr(lab, name, value)
-    url = next(u for u, s in lab.network.items() if getattr(s, "spec", {}).get("id") == "goat-tools")
+    url = next(u for u, s in lab.network.items() if getattr(s, "spec", {}).get("id") == "flock-tools")
     before = definitions_hash(lab.network[url].tools_list())
     lab.load_limit(limit_id)
     after = definitions_hash(lab.network[url].tools_list())
@@ -150,7 +150,7 @@ def probe_row(limit_id: str = LIMIT_ID, **layers) -> Dict[str, Any]:
         rows.append((classify(result, expected, lab.references(), received), result))
     return {"id": limit_id, "statuses": [s for s, _ in rows], "held_by": sorted({h for _, r in rows for h in r["held_by"]}),
             "pin_unchanged": before == after, "rate": sum(s == "RED" for s, _ in rows) / len(rows) * 100.0,
-            "results": [r for _, r in rows], "server": SANCTIONED["goat-tools"]["name"]}
+            "results": [r for _, r in rows], "server": SANCTIONED["flock-tools"]["name"]}
 
 
 def probe() -> int:
