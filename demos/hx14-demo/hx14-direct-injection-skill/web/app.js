@@ -139,23 +139,41 @@ function markDone(step) {
   if (btn) btn.classList.add("done");
 }
 
-async function run(name) {
-  const buttons = document.querySelectorAll("button[data-action], #backend-apply");
-  buttons.forEach((b) => { b.disabled = true; });
-  $("busy").textContent = "RUNNING";
-  if (name === "reset" || name === "baseline" || name === "sequence") {
-    document.querySelectorAll(".act").forEach((b) => b.classList.remove("done"));
-  }
+// One busy state for every request that changes the lab: the acts and "Use
+// backend". Nothing is re-enabled until every in-flight request has settled.
+let inFlight = 0;
+
+function syncBusy() {
+  const busy = inFlight > 0;
+  document.querySelectorAll("button[data-action], #backend-apply").forEach((b) => { b.disabled = busy; });
+  $("busy").textContent = busy ? "RUNNING" : "READY";
+}
+
+async function exclusive(task) {
+  if (inFlight > 0) return;
+  inFlight += 1;
+  syncBusy();
   try {
-    await actions[name]();
-    markDone(name);
-  } catch (err) {
-    log("error", err.message);
+    await task();
   } finally {
-    buttons.forEach((b) => { b.disabled = false; });
-    $("busy").textContent = "READY";
+    inFlight -= 1;
+    syncBusy();
     refreshState();
   }
+}
+
+function run(name) {
+  return exclusive(async () => {
+    if (name === "reset" || name === "baseline" || name === "sequence") {
+      document.querySelectorAll(".act").forEach((b) => b.classList.remove("done"));
+    }
+    try {
+      await actions[name]();
+      markDone(name);
+    } catch (err) {
+      log("error", err.message);
+    }
+  });
 }
 
 // ---- model backend picker ------------------------------------------------ //
@@ -254,21 +272,16 @@ function initBackendPicker() {
     backendNote(select.value);
     loadModels(select.value);
   });
-  $("backend-apply").addEventListener("click", async () => {
-    const apply = $("backend-apply");
+  $("backend-apply").addEventListener("click", () => exclusive(async () => {
     const backend = select.value;
     const model = $("model-input").value.trim();
-    apply.disabled = true;
     try {
       const s = await api("/api/backend", { backend, model });
       log("lab", `Model backend now ${s.backend}. Re-run the acts to measure it.`);
     } catch (err) {
       log("error", `Backend not changed: ${err.message}`);
-    } finally {
-      apply.disabled = false;
     }
-    refreshState();
-  });
+  }));
 }
 
 async function init() {

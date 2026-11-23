@@ -49,7 +49,7 @@
   --iac-badge-text: #93c5fd;
   --iac-code-bg: #0d1b2a;
   --iac-code-text: #a5f3fc;
-  --iac-muted: #8392a8; /* 4.6:1 on --iac-surface; was #475569 (2.4:1) */
+  --iac-muted: #91a0b5; /* >= 4.7:1 on bg, surface, surface-elevated, code-bg; was #8392a8 (3.99:1 on elevated) */
 }
 
 a {
@@ -99,6 +99,13 @@ body {
 .run-form select, .run-form input { box-sizing: border-box; width: 100%; min-width: 0; max-width: 100%; padding: 10px; overflow: hidden; border-radius: 5px; border: 1px solid var(--iac-input-border); background: var(--iac-input-bg); color: var(--iac-text); text-overflow: ellipsis; white-space: nowrap; }
 .run-form input[type="checkbox"] { width: auto; }
 .run-form select:disabled, .run-form input:disabled { opacity: 0.6; cursor: not-allowed; }
+/* A disabled Run button must look disabled: flat surface, muted text, dashed
+   edge, no pointer. (Disabled controls are exempt from contrast minimums, but
+   the label stays readable.) */
+.primary-button:disabled, .primary-button:disabled:hover { background: var(--iac-surface-elevated); color: var(--iac-text-secondary); border: 1px dashed var(--iac-input-border); cursor: not-allowed; }
+.primary-button:not(:disabled) { cursor: pointer; }
+/* Why the run is blocked: a warning, not a footnote. */
+.run-form .blocked-note { margin: 0; padding: 8px 10px; border-left: 3px solid var(--iac-warning); border-radius: 0 5px 5px 0; background: var(--iac-warning-bg); color: var(--iac-warning-text); font-size: 13px; }
 /* Backend and model each get a full-width row: the setup column is narrow, and a
    long model name or a "(needs ...)" option must never widen the control. */
 .picker-stack { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; min-width: 0; }
@@ -121,9 +128,10 @@ body {
 .act-card { margin-bottom: 16px; overflow: auto; }.act-card > div { display: flex; justify-content: space-between; gap: 20px; }
 table { width: 100%; border-collapse: collapse; margin-top: 14px; } th, td { padding: 9px; border-top: 1px solid var(--iac-border); text-align: left; vertical-align: top; }
 th { color: var(--iac-text-secondary); font-size: 12px; } td { color: var(--iac-text); font-size: 13px; }
-.report-list { display: flex; flex-direction: column; gap: 10px; }.report-row { display: flex; justify-content: space-between; align-items: center; gap: 20px; }
+.report-list { display: flex; flex-direction: column; gap: 10px; }.report-row { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 12px 20px; }
+.report-row > div:first-child { min-width: 0; overflow-wrap: anywhere; }
 .report-row span { display: block; color: var(--iac-text-secondary); font-family: monospace; margin-top: 4px; }
-.download-group { display: flex; gap: 8px; }.download-group a { border: 1px solid var(--iac-border); border-radius: 5px; padding: 7px 10px; color: var(--iac-link); }
+.download-group { display: flex; flex-wrap: wrap; gap: 8px; }.download-group a { border: 1px solid var(--iac-border); border-radius: 5px; padding: 7px 10px; color: var(--iac-link); }
 .settings-list > div { display: flex; justify-content: space-between; border-bottom: 1px solid var(--iac-border); padding: 12px 0; }.settings-list > div:last-child { border: 0; }
 .empty { color: var(--iac-text-secondary); padding: 40px; text-align: center; }
 .empty a { color: var(--iac-link); text-decoration: underline; }
@@ -424,7 +432,7 @@ button:focus-visible {
     --iac-code-text: #0369a1;
     --iac-link: #2563eb;
     --iac-link-hover: #1d4ed8;
-    --iac-muted: #6b7280;
+    --iac-muted: #64707f; /* >= 4.6:1 on bg, surface, surface-elevated; was #6b7280 (4.41:1 on elevated) */
     /* Status text dark enough to read on the pale status backgrounds */
     --iac-success-text: #15803d;
     --iac-error-text: #b91c1c;
@@ -527,9 +535,12 @@ button:focus-visible {
   .page, .result-detail { padding: 18px 16px; }
   .page-heading { flex-direction: column; gap: 12px; }
   .header { padding: 12px 16px; }
-  /* Registry: list above detail instead of a fixed 320px column beside it. */
-  .registry-layout { flex-direction: column; overflow: visible !important; }
-  .registry-list { width: auto !important; border-right: 0 !important; border-bottom: 1px solid var(--iac-border); }
   .registry-detail { padding: 18px 16px !important; }
+}
+/* Registry: below 960px a fixed 320px list beside the 140-210px nav leaves the
+   form too narrow, so the list stacks above the detail (capped, scrolls). */
+@media (max-width: 960px) {
+  .registry-layout { flex-direction: column; overflow: visible !important; }
+  .registry-list { width: auto !important; max-height: 360px; border-right: 0 !important; border-bottom: 1px solid var(--iac-border); }
 }
 .registry-card:focus-visible { outline: 2px solid var(--iac-link); outline-offset: 2px; }

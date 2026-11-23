@@ -96,7 +96,7 @@ export default function Run() {
         <form className="panel run-form setup" onSubmit={submit}>
           <label>Lab
             <select id="lab" value={labId} onChange={(e) => setLabId(e.target.value)}>
-              <option value={LIVE}>Lamb's MCP surfaces, live (gateway off vs on)</option>
+              <option value={LIVE}>Lamb MCP, live: gateway off vs on</option>
               {skills.map((skill) => <option key={skill.id} value={skill.id}>{skill.owasp} {skill.risk}</option>)}
             </select>
           </label>
@@ -144,14 +144,15 @@ export default function Run() {
               <span className={`dot ${c.available ? 'ok' : 'off'}`} />{c.backend}: {c.available ? 'ready' : c.reason}</li>)}
           </ul>}
 
-          {blocked && <small className="muted">{backend} cannot run here: {blocked}. Pick another backend or tier.</small>}
+          {blocked && <p className="blocked-note" id="run-blocked" role="status">{backend} cannot run here: {blocked}. Pick another backend or tier.</p>}
 
           {cloud && !blocked && <label className="checkbox"><input id="confirm-spend" type="checkbox" checked={confirmSpend}
             onChange={(e) => setConfirmSpend(e.target.checked)} />
             I accept that this run sends lab text to {backend} and is billed to my key.</label>}
 
           {error && <div className="alert error">{error}</div>}
-          <button className="primary-button" disabled={running || Boolean(blocked) || (cloud && !confirmSpend)}>
+          <button className="primary-button" disabled={running || Boolean(blocked) || (cloud && !confirmSpend)}
+            aria-describedby={blocked ? 'run-blocked' : undefined}>
             {running ? 'Running...' : 'Run attack, then defense'}
           </button>
         </form>
