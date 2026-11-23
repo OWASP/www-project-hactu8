@@ -114,7 +114,7 @@ export function streamPhase(
     }
   };
 
-  eventSource.onerror = (e) => {
+  eventSource.onerror = () => {
     eventSource.close();
     onError(new Error('SSE stream error'));
   };

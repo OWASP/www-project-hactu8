@@ -2,7 +2,7 @@ import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 
 import Header from './components/Header';
 import Sidebar from './components/Sidebar';
-import { RegistryProvider } from './contexts/RegistryContext';
+import { RegistryProvider } from './contexts/RegistryProvider';
 import Learn from './pages/Learn';
 import Run from './pages/Console';
 import Results from './pages/AssuranceResults';

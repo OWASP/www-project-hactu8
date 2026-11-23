@@ -14,7 +14,8 @@ import type { TestRunResult, TestCaseResult } from '../../types/extensions';
 import { listAllSkills } from '../../services/skillPackageService';
 import { createProjectRun, getProjectRun, streamMessage } from '../../services/projectRunService';
 import resultsService from '../../services/resultsService';
-import { StreamEventLog, isToolResultOk, toolResultData } from '../shared/StreamEventLog';
+import { StreamEventLog } from '../shared/StreamEventLog';
+import { isToolResultOk, toolResultData } from '../shared/streamResult';
 import type { StreamLogBlock } from '../shared/StreamEventLog';
 
 function buildTurnBlocks(turns: ProjectRunTurn[]): StreamLogBlock[] {

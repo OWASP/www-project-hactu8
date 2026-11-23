@@ -2,17 +2,18 @@
  * Context provider for the IAC Copilot feature.
  * Manages copilot state, chat history, and document operations.
  */
-
-import React, { createContext, useContext, useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import type {
   CopilotState,
   CopilotContextValue,
   CopilotTab,
   ChatMessage,
   CopilotDocument,
+  SourceType,
 } from '../types/copilot';
 import copilotService from '../services/copilotService';
 import { useFeatureFlags } from './FeatureFlagContext';
+import { CopilotContext } from './CopilotContext';
 
 // Default state
 const defaultState: CopilotState = {
@@ -28,9 +29,6 @@ const defaultState: CopilotState = {
   isSyncing: false,
   error: null,
 };
-
-// Create context
-const CopilotContext = createContext<CopilotContextValue | null>(null);
 
 // Storage key for persisting state
 const STORAGE_KEY = 'iac-copilot-state';
@@ -76,6 +74,32 @@ function savePersistedState(state: Partial<CopilotState>): void {
 }
 
 /**
+ * Document as returned by the API (snake_case or camelCase, by endpoint).
+ */
+interface ApiDocument {
+  id: string;
+  title: string;
+  category?: string;
+  description?: string;
+  source_type?: SourceType;
+  sourceType?: SourceType;
+  source_url?: string;
+  sourceUrl?: string;
+  content_hash?: string;
+  contentHash?: string;
+  file_name?: string;
+  fileName?: string;
+  file_size?: number;
+  fileSize?: number;
+  mime_type?: string;
+  mimeType?: string;
+  created_at?: string;
+  createdAt?: string;
+  updated_at?: string;
+  updatedAt?: string;
+}
+
+/**
  * Provider component for the Copilot context.
  */
 export const CopilotProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -101,12 +125,39 @@ export const CopilotProvider: React.FC<{ children: React.ReactNode }> = ({ child
     });
   }, [state.isExpanded, state.activeTab]);
 
+  // Refresh documents list
+  const refreshDocuments = useCallback(async () => {
+    try {
+      const response = await copilotService.listDocuments();
+
+      // Convert API response to frontend format
+      const docs: CopilotDocument[] = response.documents.map((d: ApiDocument) => ({
+        id: d.id,
+        title: d.title,
+        sourceType: d.source_type as SourceType,
+        sourceUrl: d.source_url,
+        contentHash: d.content_hash,
+        fileName: d.file_name,
+        fileSize: d.file_size,
+        mimeType: d.mime_type,
+        category: d.category,
+        description: d.description,
+        createdAt: d.created_at as string,
+        updatedAt: d.updated_at as string,
+      }));
+
+      setState(prev => ({ ...prev, documents: docs }));
+    } catch (error) {
+      console.error('Failed to refresh documents:', error);
+    }
+  }, []);
+
   // Load documents on mount
   useEffect(() => {
     if (copilotEnabled) {
       refreshDocuments();
     }
-  }, [copilotEnabled]);
+  }, [copilotEnabled, refreshDocuments]);
 
   // Toggle sidebar expansion
   const toggle = useCallback(() => {
@@ -226,7 +277,7 @@ export const CopilotProvider: React.FC<{ children: React.ReactNode }> = ({ child
       const response = await copilotService.uploadDocument(file, title);
 
       // Convert API response to frontend format (handle both snake_case and camelCase)
-      const apiDoc = response.document as any;
+      const apiDoc = response.document as ApiDocument;
       const doc: CopilotDocument = {
         id: apiDoc.id,
         title: apiDoc.title,
@@ -238,8 +289,8 @@ export const CopilotProvider: React.FC<{ children: React.ReactNode }> = ({ child
         mimeType: apiDoc.mime_type || apiDoc.mimeType,
         category: apiDoc.category,
         description: apiDoc.description,
-        createdAt: apiDoc.created_at || apiDoc.createdAt,
-        updatedAt: apiDoc.updated_at || apiDoc.updatedAt,
+        createdAt: (apiDoc.created_at || apiDoc.createdAt) as string,
+        updatedAt: (apiDoc.updated_at || apiDoc.updatedAt) as string,
       };
 
       setState(prev => ({
@@ -264,7 +315,7 @@ export const CopilotProvider: React.FC<{ children: React.ReactNode }> = ({ child
       const rawDoc = await copilotService.addDocumentUrl(url, title);
 
       // Convert API response to frontend format (handle both snake_case and camelCase)
-      const apiDoc = rawDoc as any;
+      const apiDoc: ApiDocument = rawDoc;
       const doc: CopilotDocument = {
         id: apiDoc.id,
         title: apiDoc.title,
@@ -276,8 +327,8 @@ export const CopilotProvider: React.FC<{ children: React.ReactNode }> = ({ child
         mimeType: apiDoc.mime_type || apiDoc.mimeType,
         category: apiDoc.category,
         description: apiDoc.description,
-        createdAt: apiDoc.created_at || apiDoc.createdAt,
-        updatedAt: apiDoc.updated_at || apiDoc.updatedAt,
+        createdAt: (apiDoc.created_at || apiDoc.createdAt) as string,
+        updatedAt: (apiDoc.updated_at || apiDoc.updatedAt) as string,
       };
 
       setState(prev => ({
@@ -327,34 +378,7 @@ export const CopilotProvider: React.FC<{ children: React.ReactNode }> = ({ child
       setState(prev => ({ ...prev, isSyncing: false, error: errorMessage }));
       throw error;
     }
-  }, []);
-
-  // Refresh documents list
-  const refreshDocuments = useCallback(async () => {
-    try {
-      const response = await copilotService.listDocuments();
-
-      // Convert API response to frontend format
-      const docs: CopilotDocument[] = response.documents.map((d: any) => ({
-        id: d.id,
-        title: d.title,
-        sourceType: d.source_type,
-        sourceUrl: d.source_url,
-        contentHash: d.content_hash,
-        fileName: d.file_name,
-        fileSize: d.file_size,
-        mimeType: d.mime_type,
-        category: d.category,
-        description: d.description,
-        createdAt: d.created_at,
-        updatedAt: d.updated_at,
-      }));
-
-      setState(prev => ({ ...prev, documents: docs }));
-    } catch (error) {
-      console.error('Failed to refresh documents:', error);
-    }
-  }, []);
+  }, [refreshDocuments]);
 
   // Context value
   const value: CopilotContextValue = {
@@ -378,16 +402,3 @@ export const CopilotProvider: React.FC<{ children: React.ReactNode }> = ({ child
     </CopilotContext.Provider>
   );
 };
-
-/**
- * Hook to use the Copilot context.
- */
-export const useCopilot = (): CopilotContextValue => {
-  const context = useContext(CopilotContext);
-  if (!context) {
-    throw new Error('useCopilot must be used within a CopilotProvider');
-  }
-  return context;
-};
-
-export default CopilotContext;

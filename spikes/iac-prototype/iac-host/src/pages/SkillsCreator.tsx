@@ -12,7 +12,7 @@ import React, { useMemo, useState } from 'react';
 import { zipSync, strToU8 } from 'fflate';
 import { Link } from 'react-router-dom';
 import skillPackageService from '../services/skillPackageService';
-import { primaryButtonStyle, secondaryButtonStyle, codeBlockStyle } from '../components/Skills/shared';
+import { primaryButtonStyle, secondaryButtonStyle, codeBlockStyle } from '../components/Skills/sharedStyles';
 
 type PlaceholderFolder = 'scripts' | 'references' | 'assets';
 

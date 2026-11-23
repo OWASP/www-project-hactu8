@@ -1,6 +1,5 @@
-// src/contexts/AgentContext.tsx
-import React, { createContext, useCallback, useContext, useRef, useState } from 'react';
-
+// src/contexts/AgentProvider.tsx
+import React, { useCallback, useRef, useState } from 'react';
 import agentService from '../services/agentService';
 import type {
   AgentResult,
@@ -9,23 +8,7 @@ import type {
   EngagementStatus,
   PhaseEnum,
 } from '../types/agents';
-
-interface AgentContextType {
-  engagementId: string | null;
-  status: EngagementStatus;
-  currentPhase: PhaseEnum | null;
-  phasesComplete: string[];
-  streamEvents: AgentStreamEvent[];
-  error: string | null;
-  phaseResults: Record<string, AgentResult>;
-  startEngagement: (scope: EngagementScope) => Promise<void>;
-  runNextPhase: (phase?: string) => void;
-  approve: () => Promise<void>;
-  reject: () => Promise<void>;
-  clearEvents: () => void;
-}
-
-const AgentContext = createContext<AgentContextType | undefined>(undefined);
+import { AgentContext } from './AgentContext';
 
 export const AgentProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [engagementId, setEngagementId] = useState<string | null>(null);
@@ -127,9 +110,3 @@ export const AgentProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     </AgentContext.Provider>
   );
 };
-
-export function useAgents(): AgentContextType {
-  const ctx = useContext(AgentContext);
-  if (!ctx) throw new Error('useAgents must be used inside AgentProvider');
-  return ctx;
-}

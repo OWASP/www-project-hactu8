@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useMemo } from 'react';
 import type { InstalledExtension, ExtensionSettingDefinition } from '../../types/extensions';
 
 interface ExtensionSettingsProps {
@@ -11,7 +11,7 @@ interface ExtensionSettingsProps {
  * Renders form controls based on manifest.settings definitions.
  */
 const ExtensionSettings: React.FC<ExtensionSettingsProps> = ({ extension, onSave }) => {
-  const definitions = extension.manifest.settings ?? [];
+  const definitions = useMemo(() => extension.manifest.settings ?? [], [extension.manifest.settings]);
   const [values, setValues] = useState<Record<string, string | number | boolean>>(
     () => ({ ...extension.settings })
   );

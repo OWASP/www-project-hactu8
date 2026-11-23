@@ -1,18 +1,8 @@
-// src/contexts/SkillContext.tsx
-import React, { createContext, useContext, useState, useCallback, useEffect } from 'react';
+// src/contexts/SkillProvider.tsx
+import React, { useState, useCallback, useEffect } from 'react';
 import type { InstalledSkill, SkillManifest, SkillRegistryEntry, SkillStatus } from '../types/skills';
 import skillService from '../services/skillService';
-
-interface SkillContextType {
-  installed: InstalledSkill[];
-  refreshInstalled: () => void;
-  installFromRegistry: (entry: SkillRegistryEntry) => Promise<InstalledSkill[]>;
-  uninstallSkill: (skillId: string) => InstalledSkill[];
-  saveDraft: (manifest: SkillManifest, content: string) => Promise<InstalledSkill[]>;
-  updateStatus: (skillId: string, status: SkillStatus, errMsg?: string) => InstalledSkill[];
-}
-
-const SkillContext = createContext<SkillContextType | undefined>(undefined);
+import { SkillContext } from './SkillContext';
 
 export const SkillProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [installed, setInstalled] = useState<InstalledSkill[]>(() => skillService.loadInstalled());
@@ -68,12 +58,4 @@ export const SkillProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       {children}
     </SkillContext.Provider>
   );
-};
-
-export const useSkills = (): SkillContextType => {
-  const context = useContext(SkillContext);
-  if (!context) {
-    throw new Error('useSkills must be used within a SkillProvider');
-  }
-  return context;
 };

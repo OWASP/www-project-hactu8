@@ -12,6 +12,8 @@ import {
   Badge,
   SignatureBadge,
   InfoField,
+} from '../components/Skills/shared';
+import {
   CATEGORY_LABELS,
   sidebarStyle,
   mainStyle,
@@ -19,7 +21,7 @@ import {
   installButtonStyle,
   smallButtonStyle,
   primaryButtonStyle,
-} from '../components/Skills/shared';
+} from '../components/Skills/sharedStyles';
 
 const SkillsExplorer: React.FC = () => {
   const [registry, setRegistry] = useState<SkillRegistryEntry[]>([]);

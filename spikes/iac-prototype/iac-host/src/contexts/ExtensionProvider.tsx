@@ -1,18 +1,8 @@
-// src/contexts/ExtensionContext.tsx
-import React, { createContext, useContext, useState, useCallback, useEffect } from 'react';
-import type { InstalledExtension } from '../types/extensions';
+// src/contexts/ExtensionProvider.tsx
+import React, { useState, useCallback, useEffect } from 'react';
+import type { InstalledExtension, RegistryEntry } from '../types/extensions';
 import extensionService from '../services/extensionService';
-
-interface ExtensionContextType {
-  installed: InstalledExtension[];
-  refreshInstalled: () => void;
-  installExtension: (entry: any, installPath?: string) => Promise<InstalledExtension[]>;
-  uninstallExtension: (extensionId: string) => Promise<InstalledExtension[]>;
-  updateSettings: (extensionId: string, settings: Record<string, string | number | boolean>) => InstalledExtension[];
-  updateStatus: (extensionId: string, status: 'active' | 'error', errMsg?: string) => InstalledExtension[];
-}
-
-const ExtensionContext = createContext<ExtensionContextType | undefined>(undefined);
+import { ExtensionContext } from './ExtensionContext';
 
 export const ExtensionProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [installed, setInstalled] = useState<InstalledExtension[]>(() =>
@@ -28,7 +18,7 @@ export const ExtensionProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     refreshInstalled();
   }, [refreshInstalled]);
 
-  const installExtension = useCallback((entry: any, installPath?: string) => {
+  const installExtension = useCallback((entry: RegistryEntry, installPath?: string) => {
     return extensionService.installExtension(entry, installed, installPath).then((updated) => {
       setInstalled(updated);
       return updated;
@@ -74,12 +64,4 @@ export const ExtensionProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       {children}
     </ExtensionContext.Provider>
   );
-};
-
-export const useExtensions = (): ExtensionContextType => {
-  const context = useContext(ExtensionContext);
-  if (!context) {
-    throw new Error('useExtensions must be used within an ExtensionProvider');
-  }
-  return context;
 };

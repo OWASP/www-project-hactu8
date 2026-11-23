@@ -4,7 +4,8 @@ import React, { useState } from 'react';
 import { useAgents } from '../contexts/AgentContext';
 import type { AgentStreamEvent, EngagementScope, PhaseEnum } from '../types/agents';
 import { PHASE_CHAIN, PHASE_LABELS } from '../types/agents';
-import { StreamEventLog, isToolResultOk, toolResultData } from '../components/shared/StreamEventLog';
+import { StreamEventLog } from '../components/shared/StreamEventLog';
+import { isToolResultOk, toolResultData } from '../components/shared/streamResult';
 import type { StreamLogBlock } from '../components/shared/StreamEventLog';
 
 // --------------------------------------------------------------------------- //
