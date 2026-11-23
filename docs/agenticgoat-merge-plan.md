@@ -1,5 +1,7 @@
 # AgenticGoat to HACTU8 merge plan
 
+Note (2026-11-23): the persona has since been renamed. Billy, Goat & Co. is now Big Field Jumper Co., its assistant is Lamb, and the operations lead is Barb Fell (see [persona.md](persona.md)). This plan is kept as written.
+
 Goal: the HACTU8 labs run their attack and defense against real models (local and subscription), using what AgenticGoat already proved works, and the Phase 1 MVP is complete for the 2026-12-11 demo. AgenticGoat is retired as a name; the target is HACTU8 Lamb, the attacker side is the Wolf, and the fictional company Billy, Goat & Co. stays.
 
 Status: approved 2026-11-20, all decisions on the recommended option. Executed by a self-paced loop. Work items are tracked here (AG-xx) and ticked as they land.
