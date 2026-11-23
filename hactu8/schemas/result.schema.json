@@ -136,6 +136,49 @@
             "type": "string"
           },
           "description": "Candidates that failed before this one"
+        },
+        "think": {
+          "type": "object",
+          "description": "Reasoning control on a real backend (HACTU8_THINK / OLLAMA_THINK) and the reasoning the model returned apart from its answer",
+          "required": [
+            "mode",
+            "sent"
+          ],
+          "properties": {
+            "mode": {
+              "enum": [
+                "off",
+                "on",
+                "default"
+              ]
+            },
+            "sent": {
+              "type": "boolean",
+              "description": "True when a request field carried the mode (ollama with off or on)"
+            },
+            "reasoning": {
+              "type": "object",
+              "description": "Totals of the labs' hactu8.reasoning lines; not graded",
+              "properties": {
+                "replies": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "chars": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "answer_cut_off": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "canary_hits": {
+                  "type": "integer",
+                  "minimum": 0
+                }
+              }
+            }
+          }
         }
       }
     },

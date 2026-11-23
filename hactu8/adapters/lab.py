@@ -34,6 +34,12 @@ ERROR is not a grade. No classifier sees the item, and it counts in neither
 the red count nor the total of the act's rate (``result.rate``).
 
 Items are classified after parsing, so a classifier sees the evidence.
+
+On a real backend ``model.think`` records the reasoning control
+(``providers.think_setting``) and, when the model returned reasoning apart
+from its answer, the totals of the labs' ``hactu8.reasoning {json}`` stderr
+lines. That reasoning is never graded (the app never shows it); a canary in it
+is counted in ``canary_hits`` so it is not hidden.
 """
 
 from __future__ import annotations
@@ -46,7 +52,7 @@ import sys
 import time
 from typing import List, Optional, Union
 
-from hactu8 import protections
+from hactu8 import protections, providers
 from hactu8.classify import ERROR, Classifier, get_classifier
 from hactu8.result import PHASES, envelope, now_iso, rate, summarize
 
@@ -139,6 +145,29 @@ def attach_protections(acts: List[dict], ids: List[str]) -> None:
             act["protections"] = protections.resolve(known)
 
 
+REASONING_RE = re.compile(r"^" + re.escape(providers.REASONING.LINE) + r" (\{.*\})\s*$")
+REASONING_KEYS = ("replies", "chars", "answer_cut_off", "canary_hits")
+
+
+def reasoning_totals(output: str) -> dict:
+    """Sum the ``hactu8.reasoning`` lines (one per lab process that saw reasoning)."""
+    total = {k: 0 for k in REASONING_KEYS}
+    seen = False
+    for line in output.splitlines():
+        m = REASONING_RE.match(line)
+        if not m:
+            continue
+        try:
+            data = json.loads(m.group(1))
+        except ValueError:
+            continue
+        seen = True
+        for k in REASONING_KEYS:
+            if isinstance(data.get(k), int):
+                total[k] += data[k]
+    return total if seen else {}
+
+
 def run(skill, backend: str = "echo", model: str = "", classifier: Union[str, Classifier] = "keyword",
         timeout: int = 300, tier: str = "") -> dict:
     if isinstance(classifier, str):
@@ -146,6 +175,8 @@ def run(skill, backend: str = "echo", model: str = "", classifier: Union[str, Cl
     doc = envelope(skill, backend, model, classifier.name)
     if tier:
         doc["model"]["tier"] = tier
+    if providers.normalize(backend) != providers.OFFLINE:
+        doc["model"]["think"] = providers.think_setting(backend)
     cmd = [sys.executable, "run_demo.py", "--backend", backend]
     if model:
         cmd += ["--model", model]
@@ -159,6 +190,10 @@ def run(skill, backend: str = "echo", model: str = "", classifier: Union[str, Cl
         output, code = (exc.stdout or "") if isinstance(exc.stdout, str) else "", 124
     doc["duration_ms"] = int((time.monotonic() - start) * 1000)
     doc["finished_at"] = now_iso()
+    reasoning = reasoning_totals(output)
+    if reasoning and "think" in doc["model"]:
+        doc["model"]["think"]["reasoning"] = reasoning
+    output = "\n".join(l for l in output.splitlines() if not REASONING_RE.match(l))
     doc["acts"] = parse(output, classifier, {"risk": skill.risk, "metric": skill.metric_name})
     attach_protections(doc["acts"], getattr(skill, "protections", []))
     doc["classifier"] = classifier.info()

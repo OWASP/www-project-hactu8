@@ -35,6 +35,29 @@ Safety and cost limits, applied to every non-stub call:
   <PROVIDER>_TIMEOUT per-call HTTP timeout in seconds (default 120), with
                      LAB_HTTP_TIMEOUT as the shared fallback
 
+Reasoning ("thinking") models, such as qwen3, write a hidden chain of thought
+before the answer. It is slow (about 4x the tokens of the answer) and it shares
+the LAB_MAX_TOKENS budget with the answer. One control, unset by default:
+
+  HACTU8_THINK       off | on | default (default: unset = default)
+  OLLAMA_THINK       the same, for the ollama backend only; wins over HACTU8_THINK
+
+  ollama sends ``think: false`` (off) or ``think: true`` (on) in /api/chat;
+  default sends no ``think`` field, so the model's own default applies (as before
+  this control existed). The other backends have no think control here: they
+  send nothing and the result records the setting as not sent. See
+  ``think_setting()``, and docs/local-engines.md for how reasoning is graded.
+
+Reasoning is never stripped from a reply. Ollama returns it apart from the
+answer (``message.thinking``); the lab apps never show or log that field, so it
+is not part of what the app emitted and is not graded. It is still checked:
+with HACTU8_EVIDENCE=1 each process prints one ``hactu8.reasoning {json}`` line
+on stderr at exit (replies with reasoning, characters, replies whose answer was
+cut off by reasoning using the whole token budget, and replies whose reasoning
+held the canary), which the harness records under ``model.think``. A
+``<think>`` block inside the answer itself is what the app shows, so it stays in
+the reply and is graded like the rest of it.
+
 Two kinds of secret exist and must never be the same value. The provider key
 authenticates you to the model; it rides only in a request header. The canary
 (``canary()``) is a worthless per-process credential that looks real; it is the
@@ -106,6 +129,67 @@ def http_timeout(specific_env: str, default: float = 120.0) -> float:
         return float(raw) if raw else default
     except ValueError:
         return default
+
+
+THINK_MODES = ("off", "on", "default")
+THINK_ENV = "HACTU8_THINK"
+_THINK_BACKEND_ENV = {"ollama": "OLLAMA_THINK"}  # backends that honour the control
+_THINK_FIELD = {"off": False, "on": True}
+
+
+def think_setting(backend: str) -> Dict[str, object]:
+    """The reasoning control for ``backend``: ``{"mode": off|on|default, "sent": bool}``.
+
+    ``sent`` is True only when a request field carries the mode (ollama with
+    off or on). An unknown value raises rather than run with a guess."""
+    backend = normalize(backend)
+    env = _THINK_BACKEND_ENV.get(backend)
+    raw = (os.environ.get(env, "") if env else "").strip().lower() or \
+        os.environ.get(THINK_ENV, "").strip().lower() or "default"
+    if raw not in THINK_MODES:
+        name = env if env and os.environ.get(env, "").strip() else THINK_ENV
+        raise ValueError(f"{name}={raw!r}: use one of {', '.join(THINK_MODES)}")
+    return {"mode": raw, "sent": bool(env) and raw in _THINK_FIELD}
+
+
+class _ReasoningStats:
+    """Per-process tally of reasoning the model returned apart from its answer."""
+
+    LINE = "hactu8.reasoning"
+
+    def __init__(self) -> None:
+        self._lock = threading.Lock()
+        self.replies = 0
+        self.chars = 0
+        self.truncated = 0
+        self.canary_hits = 0
+        self._registered = False
+
+    def record(self, thinking: str, answer: str, cut_off: bool) -> None:
+        if not thinking:
+            return
+        values = {v for v in (_CANARY, os.environ.get("LAB_CANARY", "").strip()) if v}
+        hit = any(canary_leaked(thinking, v) for v in values)
+        with self._lock:
+            self.replies += 1
+            self.chars += len(thinking)
+            self.truncated += int(cut_off and not answer.strip())
+            self.canary_hits += int(hit)
+            if not self._registered and os.environ.get("HACTU8_EVIDENCE") == "1":
+                import atexit
+                atexit.register(self.emit)
+                self._registered = True
+
+    def as_dict(self) -> Dict[str, int]:
+        return {"replies": self.replies, "chars": self.chars,
+                "answer_cut_off": self.truncated, "canary_hits": self.canary_hits}
+
+    def emit(self) -> None:
+        import sys
+        print(f"{self.LINE} {json.dumps(self.as_dict(), sort_keys=True)}", file=sys.stderr, flush=True)
+
+
+REASONING = _ReasoningStats()
 
 
 def _urlopen(req: urllib.request.Request, *, timeout: float):
@@ -406,24 +490,31 @@ class OllamaProvider(Provider):
         super().__init__()
         self.host = os.environ.get("OLLAMA_HOST", "http://localhost:11434").rstrip("/")
         self.timeout = http_timeout("OLLAMA_TIMEOUT")
+        self.think = think_setting("ollama")["mode"]
 
     def chat(self, messages: List[Message], *, model: str = "") -> str:
         self._count_call()
         model = model or DEFAULT_MODELS["ollama"]
+        payload = {
+            "model": model,
+            "messages": [{"role": m.role, "content": m.content} for m in messages],
+            "stream": False,
+            "options": {"num_predict": self.max_tokens},
+        }
+        if self.think in _THINK_FIELD:
+            payload["think"] = _THINK_FIELD[self.think]
         try:
-            data = self._post(f"{self.host}/api/chat", {
-                "model": model,
-                "messages": [{"role": m.role, "content": m.content} for m in messages],
-                "stream": False,
-                "options": {"num_predict": self.max_tokens},
-            }, {}, self.timeout)
+            data = self._post(f"{self.host}/api/chat", payload, {}, self.timeout)
         except urllib.error.HTTPError as exc:
             if exc.code == 404:
                 raise RuntimeError(
                     f"ollama has no model {model!r}; run `ollama pull {model}` or pass "
                     "an exact tag from `ollama list` (e.g. llama3.2:3b)") from None
             raise
-        return data.get("message", {}).get("content", "")
+        message = data.get("message") or {}
+        answer = message.get("content") or ""
+        REASONING.record(message.get("thinking") or "", answer, data.get("done_reason") == "length")
+        return answer
 
     def list_models(self) -> List[str]:
         data = self._get(f"{self.host}/api/tags", {}, min(self.timeout, 10.0))
