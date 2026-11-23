@@ -313,7 +313,7 @@ python scripts/evaluate_kpi.py --scan assets/price_notice.md # REJECT, exit 2
 python scripts/evaluate_kpi.py --harden                      # GREEN, PR 0%, exit 0
 python scripts/reset_baseline.py                             # restore clean state
 python scripts/evaluate_kpi.py                               # GREEN, PR 0%
-python -m unittest discover tests                            # 18 tests
+python -m unittest discover tests                            # 24 tests
 ```
 
 ## License

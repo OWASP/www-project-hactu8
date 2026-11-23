@@ -300,7 +300,7 @@ python scripts/evaluate_kpi.py --scan assets/lookalike_skill.json   # REJECT, ex
 python scripts/evaluate_kpi.py --harden                          # GREEN, UCLR 0%, exit 0
 python scripts/reset_baseline.py                                 # restore clean state
 python scripts/evaluate_kpi.py                                   # GREEN, UCLR 0%
-python -m unittest discover tests                                # 16 tests
+python -m unittest discover tests                                # 23 tests
 ```
 
 ## License

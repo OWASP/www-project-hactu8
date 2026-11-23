@@ -275,7 +275,7 @@ python scripts/evaluate_kpi.py --scan assets/injected_page.md   # REJECT, exit 2
 python scripts/evaluate_kpi.py --harden                      # GREEN, ISR 0%, exit 0
 python scripts/reset_baseline.py                             # restore clean state
 python scripts/evaluate_kpi.py                               # GREEN, ISR 0%
-python -m unittest discover tests                            # 13 tests
+python -m unittest discover tests                            # 26 tests
 ```
 
 ## License

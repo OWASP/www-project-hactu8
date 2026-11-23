@@ -279,7 +279,7 @@ python scripts/evaluate_kpi.py --scan                        # REJECT, exit 2
 python scripts/evaluate_kpi.py --harden                      # YELLOW/GREEN, CLR 0%, exit 0
 python scripts/reset_baseline.py                             # restore clean state
 python scripts/evaluate_kpi.py                               # GREEN, CLR 0%
-python -m unittest discover tests                            # 36 tests
+python -m unittest discover tests                            # 49 tests
 ```
 
 Ported from the predecessor project (retired): its AGX08 lab.

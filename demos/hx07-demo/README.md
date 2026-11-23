@@ -285,7 +285,7 @@ python scripts/evaluate_kpi.py --sweep                       # noise sweep, exit
 python scripts/evaluate_kpi.py --probe                       # score-oracle limit, exit 2
 python scripts/reset_baseline.py                             # restore clean state
 python scripts/evaluate_kpi.py                               # GREEN, ILR 0%
-python -m unittest discover tests                            # 43 tests
+python -m unittest discover tests                            # 46 tests
 ```
 
 ## License

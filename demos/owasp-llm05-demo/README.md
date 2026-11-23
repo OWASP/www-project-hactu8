@@ -363,7 +363,7 @@ python scripts/evaluate_kpi.py --scan                        # REJECT, exit 2
 python scripts/evaluate_kpi.py --harden                      # GREEN, PSR 0%, exit 0
 python scripts/reset_baseline.py                             # restore clean state
 python scripts/evaluate_kpi.py                               # GREEN, PSR 0%
-python -m unittest discover tests                            # 22 tests
+python -m unittest discover tests                            # 40 tests
 ```
 
 ### `llm05-poison-attack/` (HR policy bot, Scenario #1)

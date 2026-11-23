@@ -327,7 +327,7 @@ python scripts/evaluate_kpi.py --scan assets/poisoned_doc.md    # REJECT, exit 2
 python scripts/evaluate_kpi.py --harden                      # GREEN, UCR 0%, exit 0
 python scripts/reset_baseline.py                             # restore clean state
 python scripts/evaluate_kpi.py                               # GREEN, UCR 0%
-python -m unittest discover tests                            # 15 tests
+python -m unittest discover tests                            # 37 tests
 ```
 
 ## License
