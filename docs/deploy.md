@@ -95,4 +95,4 @@ Python from the python.org macOS installer does not use the system keychain and 
 
 ## Known advisories
 
-The console's lockfile pins react-router and react-router-dom 7.7.1, which `npm audit --omit=dev` reports with 14 advisories, 2 rated high (fixed in 7.17.1). The console uses `BrowserRouter` with static route targets only, so none of them was reachable in the 2026-11-23 audit. The upgrade needs a package download and is pending approval; until then the lockfile stays as it is.
+None open. On 2026-11-23 the console moved from react-router-dom 7.7.1 (14 advisories in `npm audit --omit=dev`, none reachable from its static routes) to 7.18.6; `npm audit --omit=dev` now reports 0 vulnerabilities. Run it after any dependency change.
