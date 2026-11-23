@@ -152,12 +152,12 @@ function EntryForm({ initial, onCancel, onSubmit }: EntryFormProps) {
 
       <div style={fieldWrapStyle}>
         <label style={labelStyle}>Name</label>
-        <input style={inputStyle} value={name} onChange={(e) => setName(e.target.value)} placeholder="e.g. HACTU8 Lamb" />
+        <input aria-label="Name" style={inputStyle} value={name} onChange={(e) => setName(e.target.value)} placeholder="e.g. HACTU8 Lamb" />
       </div>
 
       <div style={fieldWrapStyle}>
         <label style={labelStyle}>Description</label>
-        <textarea
+        <textarea aria-label="Description"
           style={{ ...inputStyle, minHeight: 60, resize: 'vertical' }}
           value={description}
           onChange={(e) => setDescription(e.target.value)}
@@ -169,11 +169,11 @@ function EntryForm({ initial, onCancel, onSubmit }: EntryFormProps) {
         <>
           <div style={fieldWrapStyle}>
             <label style={labelStyle}>Framework</label>
-            <input style={inputStyle} value={framework} onChange={(e) => setFramework(e.target.value)} placeholder="e.g. iac-copilot-api orchestrator" />
+            <input aria-label="Framework" style={inputStyle} value={framework} onChange={(e) => setFramework(e.target.value)} placeholder="e.g. iac-copilot-api orchestrator" />
           </div>
           <div style={fieldWrapStyle}>
             <label style={labelStyle}>Endpoint</label>
-            <input style={inputStyle} value={endpoint} onChange={(e) => setEndpoint(e.target.value)} placeholder="https://..." />
+            <input aria-label="Endpoint" style={inputStyle} value={endpoint} onChange={(e) => setEndpoint(e.target.value)} placeholder="https://..." />
           </div>
         </>
       )}
@@ -182,15 +182,15 @@ function EntryForm({ initial, onCancel, onSubmit }: EntryFormProps) {
         <>
           <div style={fieldWrapStyle}>
             <label style={labelStyle}>Provider</label>
-            <input style={inputStyle} value={provider} onChange={(e) => setProvider(e.target.value)} placeholder="e.g. OpenAI, Anthropic, Local" />
+            <input aria-label="Provider" style={inputStyle} value={provider} onChange={(e) => setProvider(e.target.value)} placeholder="e.g. OpenAI, Anthropic, Local" />
           </div>
           <div style={fieldWrapStyle}>
             <label style={labelStyle}>Model</label>
-            <input style={inputStyle} value={model} onChange={(e) => setModel(e.target.value)} placeholder="e.g. gpt-4o" />
+            <input aria-label="Model" style={inputStyle} value={model} onChange={(e) => setModel(e.target.value)} placeholder="e.g. gpt-4o" />
           </div>
           <div style={fieldWrapStyle}>
             <label style={labelStyle}>Endpoint</label>
-            <input style={inputStyle} value={endpoint} onChange={(e) => setEndpoint(e.target.value)} placeholder="https://..." />
+            <input aria-label="Endpoint" style={inputStyle} value={endpoint} onChange={(e) => setEndpoint(e.target.value)} placeholder="https://..." />
           </div>
         </>
       )}
@@ -199,11 +199,11 @@ function EntryForm({ initial, onCancel, onSubmit }: EntryFormProps) {
         <>
           <div style={fieldWrapStyle}>
             <label style={labelStyle}>Endpoint</label>
-            <input style={inputStyle} value={endpoint} onChange={(e) => setEndpoint(e.target.value)} placeholder="http://localhost:7331/mcp" />
+            <input aria-label="Endpoint" style={inputStyle} value={endpoint} onChange={(e) => setEndpoint(e.target.value)} placeholder="http://localhost:7331/mcp" />
           </div>
           <div style={fieldWrapStyle}>
             <label style={labelStyle}>Transport</label>
-            <input style={inputStyle} value={transport} onChange={(e) => setTransport(e.target.value)} placeholder="e.g. stdio, sse, http" />
+            <input aria-label="Transport" style={inputStyle} value={transport} onChange={(e) => setTransport(e.target.value)} placeholder="e.g. stdio, sse, http" />
           </div>
         </>
       )}
@@ -212,27 +212,27 @@ function EntryForm({ initial, onCancel, onSubmit }: EntryFormProps) {
         <>
           <div style={fieldWrapStyle}>
             <label style={labelStyle}>Target URL</label>
-            <input style={inputStyle} value={targetUrl} onChange={(e) => setTargetUrl(e.target.value)} placeholder="https://..." />
+            <input aria-label="Target URL" style={inputStyle} value={targetUrl} onChange={(e) => setTargetUrl(e.target.value)} placeholder="https://..." />
           </div>
           <div style={fieldWrapStyle}>
             <label style={labelStyle}>Risk Notes</label>
-            <input style={inputStyle} value={riskNotes} onChange={(e) => setRiskNotes(e.target.value)} placeholder="e.g. Intentionally vulnerable to LLM01" />
+            <input aria-label="Risk Notes" style={inputStyle} value={riskNotes} onChange={(e) => setRiskNotes(e.target.value)} placeholder="e.g. Intentionally vulnerable to LLM01" />
           </div>
           <div style={fieldWrapStyle}>
             <label style={labelStyle}>Reference URL</label>
-            <input style={inputStyle} value={referenceUrl} onChange={(e) => setReferenceUrl(e.target.value)} placeholder="Docs / repo for standing it up" />
+            <input aria-label="Reference URL" style={inputStyle} value={referenceUrl} onChange={(e) => setReferenceUrl(e.target.value)} placeholder="Docs / repo for standing it up" />
           </div>
         </>
       )}
 
       <div style={fieldWrapStyle}>
         <label style={labelStyle}>Tags (comma-separated)</label>
-        <input style={inputStyle} value={tagsInput} onChange={(e) => setTagsInput(e.target.value)} placeholder="e.g. lamb, example" />
+        <input aria-label="Tags (comma-separated)" style={inputStyle} value={tagsInput} onChange={(e) => setTagsInput(e.target.value)} placeholder="e.g. lamb, example" />
       </div>
 
       <div style={fieldWrapStyle}>
         <label style={labelStyle}>Owner</label>
-        <input style={inputStyle} value={owner} onChange={(e) => setOwner(e.target.value)} placeholder="Optional" />
+        <input aria-label="Owner" style={inputStyle} value={owner} onChange={(e) => setOwner(e.target.value)} placeholder="Optional" />
       </div>
 
       <div style={{ display: 'flex', gap: '0.5rem' }}>
@@ -316,8 +316,8 @@ const Registry: React.FC = () => {
   };
 
   return (
-    <div style={{ display: 'flex', minHeight: '60vh', height: '100%', overflow: 'hidden' }}>
-      <aside style={sidebarStyle}>
+    <div className="registry-layout" style={{ display: 'flex', minHeight: '60vh', height: '100%', overflow: 'hidden' }}>
+      <aside className="registry-list" style={sidebarStyle}>
         <h3 style={{ color: 'var(--iac-text)', marginBottom: '0.25rem' }}>Registry</h3>
         <p style={{ color: 'var(--iac-muted)', fontSize: '0.8rem', marginTop: 0, marginBottom: '1rem' }}>
           Known agents, model integrations, MCP hosts, and targets.
@@ -350,13 +350,24 @@ const Registry: React.FC = () => {
             return (
               <div
                 key={entry.id}
+                role="button"
+                tabIndex={0}
+                aria-pressed={isSelected}
+                className="registry-card"
                 onClick={() => {
                   setSelectedId(entry.id);
                   setMode('view');
                 }}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    setSelectedId(entry.id);
+                    setMode('view');
+                  }
+                }}
                 style={{
                   ...cardStyle,
-                  borderColor: isSelected ? 'var(--iac-surface-elevated)' : 'var(--iac-border)',
+                  borderColor: isSelected ? 'var(--iac-link)' : 'var(--iac-border)',
                   background: isSelected ? 'var(--iac-surface)' : 'var(--iac-bg)',
                   cursor: 'pointer',
                 }}
@@ -377,7 +388,7 @@ const Registry: React.FC = () => {
         </div>
       </aside>
 
-      <main style={mainStyle}>
+      <main className="registry-detail" style={mainStyle}>
         {mode === 'add' && <EntryForm onCancel={() => setMode('view')} onSubmit={handleAdd} />}
         {mode === 'edit' && selected && (
           <EntryForm initial={selected} onCancel={() => setMode('view')} onSubmit={handleEditSubmit} />

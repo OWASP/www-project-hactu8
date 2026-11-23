@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
-"""Copy the canonical shared modules from hactu8/ into every lab.
+"""Copy the canonical shared files (hactu8/ modules, the lab web console) into every lab.
 
 Labs stay self-contained (no imports from hactu8/), so each one carries its own
 copy of the shared code. The canonical copies live in the core package:
 
     hactu8/providers.py   -> demos/_template/ and every lab that has providers.py
     hactu8/protectogw/    -> demos/_template/ and every lab that has protectogw/
+    demos/_template/web/  -> every lab's web/ (the shared lab console)
 
 Edit the canonical copy, then run this script. ``--check`` changes nothing and
 exits 1 if any lab copy has drifted (the core tests run it).
@@ -25,6 +26,8 @@ from typing import List, Tuple
 ROOT = Path(__file__).resolve().parents[1]
 CORE = ROOT / "hactu8"
 DEMOS = ROOT / "demos"
+TEMPLATE_WEB = DEMOS / "_template" / "web"
+WEB_FILES = ("index.html", "app.js", "styles.css")
 PROTECTOGW_FILES = ("__init__.py", "_limits.py", "indicators.py", "pinning.py", "screening.py", "session.py",
                     "README.md", "SECURITY.md", "CHANGELOG.md", "LICENSE")
 
@@ -38,6 +41,9 @@ def pairs() -> List[Tuple[Path, Path]]:
     for folder in sorted(DEMOS.glob("**/protectogw")):
         if folder.is_dir() and ".venv" not in folder.parts:
             out += [(CORE / "protectogw" / name, folder / name) for name in PROTECTOGW_FILES]
+    for folder in sorted(DEMOS.glob("*/*/web")):
+        if folder.is_dir() and folder != TEMPLATE_WEB and (folder / "app.js").exists():
+            out += [(TEMPLATE_WEB / name, folder / name) for name in WEB_FILES]
     return out
 
 
@@ -53,7 +59,7 @@ def main(argv=None) -> int:
     if args.check:
         for path in stale:
             print(f"drift: {path.relative_to(ROOT)}")
-        print(f"{len(pairs()) - len(stale)}/{len(pairs())} vendored files match hactu8/")
+        print(f"{len(pairs()) - len(stale)}/{len(pairs())} vendored files match their canonical copy")
         return 1 if stale else 0
     for src, copy in pairs():
         if copy in stale:

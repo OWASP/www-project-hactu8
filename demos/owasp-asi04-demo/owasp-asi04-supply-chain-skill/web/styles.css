@@ -3,7 +3,7 @@
 :root {
   --ink: #10242a;
   --ink-soft: #355057;
-  --muted: #6d7f67;
+  --muted: #56684f;
   --paper: #f4f1e8;
   --line: #cbd0c5;
   --acid: #d6f36a;
@@ -52,17 +52,23 @@ h2 { margin: 0; font-size: 17px; }
 .button-primary { background: var(--acid); box-shadow: 0 4px 0 var(--acid-deep); }
 .button-quiet { border: 1px solid var(--ink); background: transparent; }
 button:disabled { cursor: wait; opacity: 0.55; transform: none; box-shadow: none; }
+:is(button, select, input):focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+.act:focus-visible { outline: 3px solid var(--ink); outline-offset: 2px; }
 
 .status-strip { display: grid; grid-template-columns: repeat(4, 1fr); border: 1px solid var(--ink); background: var(--ink); color: var(--white); }
 .status-cell { min-width: 0; padding: 12px 14px; border-right: 1px solid #3c555b; }
 .status-cell:last-child { border-right: 0; }
-.backend-bar { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 10px 14px; padding: 12px 14px; border: 1px solid var(--line); border-top: 0; background: var(--white); }
-.backend-bar .status-label { color: var(--ink-soft); }
+/* Backend and model each take a full-width row, label above the control. The
+   control is sized by its container, never by its longest option, so a long
+   model name or a "(needs ...)" hardware note cannot push it out of the bar. */
+.backend-bar { display: grid; grid-template-columns: minmax(0, 1fr); gap: 10px; padding: 12px 14px; border: 1px solid var(--line); border-top: 0; background: var(--white); }
+.backend-bar .status-label { margin-bottom: 0; color: var(--ink-soft); }
 .backend-field { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
-.backend-field select, .backend-field input { min-width: 0; padding: 7px 8px; border: 1px solid var(--ink); background: var(--paper); color: var(--ink); font: 13px var(--mono); }
+.backend-field select, .backend-field input { box-sizing: border-box; width: 100%; min-width: 0; max-width: 100%; padding: 7px 8px; overflow: hidden; border: 1px solid var(--ink); background: var(--paper); color: var(--ink); font: 13px var(--mono); text-overflow: ellipsis; white-space: nowrap; }
+.backend-field input:disabled { color: var(--muted); cursor: not-allowed; }
 .backend-field option:disabled { color: var(--muted); }
-.backend-model { flex: 1 1 220px; }
-.backend-note { flex: 1 1 100%; color: var(--ink-soft); font: 12px var(--mono); }
+.backend-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; min-width: 0; }
+.backend-note { flex: 1 1 240px; min-width: 0; overflow-wrap: anywhere; color: var(--ink-soft); font: 12px var(--mono); }
 .backend-note.warn { color: var(--red-fg); }
 .status-label { display: block; margin-bottom: 6px; color: #9db0ad; }
 .status-cell strong { display: block; overflow: hidden; font: 700 16px var(--mono); text-overflow: ellipsis; white-space: nowrap; }
@@ -85,7 +91,7 @@ button:disabled { cursor: wait; opacity: 0.55; transform: none; box-shadow: none
 .panel-heading > span { color: var(--muted); }
 .results-wrap { overflow-x: auto; }
 table { width: 100%; border-collapse: collapse; font-size: 12px; }
-th { padding: 12px 8px 8px; color: #72837d; text-align: left; font: 700 10px var(--mono); letter-spacing: 0.08em; }
+th { padding: 12px 8px 8px; color: var(--muted); text-align: left; font: 700 10px var(--mono); letter-spacing: 0.08em; }
 td { padding: 10px 8px; border-top: 1px solid var(--line); vertical-align: top; overflow-wrap: anywhere; }
 td:first-child { width: 30%; font-weight: 600; }
 .signal-cell { width: 72px; }
@@ -95,19 +101,19 @@ td:last-child { color: var(--ink-soft); }
 .signal-GREEN { background: var(--green-bg); color: var(--green-fg); }
 .signal-YELLOW { background: var(--yellow-bg); color: var(--yellow-fg); }
 .signal-RED { background: var(--red-bg); color: var(--red-fg); }
-.signal-NONE { color: #9aa79f; }
-.empty { padding: 28px 8px; color: #81938d; text-align: center; }
+.signal-NONE { color: var(--muted); }
+.empty { padding: 28px 8px; color: var(--muted); text-align: center; }
 
 .event-log { max-height: 360px; overflow: auto; padding-top: 8px; }
 .log-entry { display: grid; grid-template-columns: 64px 1fr; gap: 8px; padding: 8px 0; border-bottom: 1px dashed var(--line); font-size: 12px; line-height: 1.4; }
-.log-entry time { color: #81938d; font: 10px var(--mono); }
+.log-entry time { color: var(--muted); font: 10px var(--mono); }
 .log-entry b { margin-right: 4px; font: 700 10px var(--mono); }
 .kind-attack b { color: var(--red-fg); }
 .kind-defense b { color: var(--green-fg); }
 .kind-kpi b { color: #29808a; }
 .kind-error b { color: var(--red-fg); }
 
-.footer { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px; padding: 0 0 24px; color: #81938d; }
+.footer { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px; padding: 0 0 24px; color: var(--muted); }
 
 @media (max-width: 860px) {
   .status-strip { grid-template-columns: repeat(2, 1fr); }

@@ -49,7 +49,7 @@
   --iac-badge-text: #93c5fd;
   --iac-code-bg: #0d1b2a;
   --iac-code-text: #a5f3fc;
-  --iac-muted: #475569;
+  --iac-muted: #8392a8; /* 4.6:1 on --iac-surface; was #475569 (2.4:1) */
 }
 
 a {
@@ -76,7 +76,7 @@ body {
 .header { height: auto; padding: 14px 24px; border-bottom: 4px solid var(--iac-underline); }
 .header__title { font-size: 19px; font-weight: 750; }
 .header__tagline { color: var(--iac-text-secondary); font-size: 12px; }
-.status-pill { border: 1px solid var(--iac-accent); color: var(--iac-accent); border-radius: 999px; padding: 4px 10px; font-size: 11px; font-weight: 700; }
+.status-pill { white-space: nowrap; border: 1px solid var(--iac-accent); color: var(--iac-accent); border-radius: 999px; padding: 4px 10px; font-size: 11px; font-weight: 700; }
 .mvp-sidebar { width: 210px; background: var(--iac-surface); border-right: 1px solid var(--iac-border); padding: 22px 14px; box-sizing: border-box; }
 .mvp-sidebar__label { color: var(--iac-muted); font-size: 10px; font-weight: 800; letter-spacing: .12em; margin: 0 10px 12px; }
 .mvp-nav { display: flex; flex-direction: column; gap: 5px; border: 0; }
@@ -96,7 +96,12 @@ body {
 .metric strong { font-size: 30px; color: var(--iac-text); }
 .run-form { max-width: 760px; display: flex; flex-direction: column; gap: 18px; }
 .run-form label { display: flex; flex-direction: column; gap: 7px; color: var(--iac-text); font-weight: 650; }
-.run-form select, .run-form input { padding: 10px; border-radius: 5px; border: 1px solid var(--iac-input-border); background: var(--iac-input-bg); color: var(--iac-text); }
+.run-form select, .run-form input { box-sizing: border-box; width: 100%; min-width: 0; max-width: 100%; padding: 10px; overflow: hidden; border-radius: 5px; border: 1px solid var(--iac-input-border); background: var(--iac-input-bg); color: var(--iac-text); text-overflow: ellipsis; white-space: nowrap; }
+.run-form input[type="checkbox"] { width: auto; }
+.run-form select:disabled, .run-form input:disabled { opacity: 0.6; cursor: not-allowed; }
+/* Backend and model each get a full-width row: the setup column is narrow, and a
+   long model name or a "(needs ...)" option must never widen the control. */
+.picker-stack { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; min-width: 0; }
 .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
 .target-note { display: flex; flex-direction: column; gap: 5px; color: var(--iac-text-secondary); font-size: 13px; }
 .skill-description { display: flex; flex-direction: column; gap: 7px; padding: 14px; border-left: 4px solid var(--iac-link); background: var(--iac-surface-elevated); border-radius: 0 6px 6px 0; }
@@ -121,7 +126,8 @@ th { color: var(--iac-text-secondary); font-size: 12px; } td { color: var(--iac-
 .download-group { display: flex; gap: 8px; }.download-group a { border: 1px solid var(--iac-border); border-radius: 5px; padding: 7px 10px; color: var(--iac-link); }
 .settings-list > div { display: flex; justify-content: space-between; border-bottom: 1px solid var(--iac-border); padding: 12px 0; }.settings-list > div:last-child { border: 0; }
 .empty { color: var(--iac-text-secondary); padding: 40px; text-align: center; }
-@media (max-width: 800px) { .mvp-sidebar { width: 140px; }.metric-grid, .form-grid { grid-template-columns: 1fr; }.split-page { grid-template-columns: 1fr; }.run-list { max-height: 240px; border-right: 0; border-bottom: 1px solid var(--iac-border); } }
+.empty a { color: var(--iac-link); text-decoration: underline; }
+@media (max-width: 800px) { .mvp-sidebar { width: 140px; }.metric-grid, .form-grid { grid-template-columns: 1fr; }.split-page { grid-template-columns: minmax(0, 1fr); }.run-list { max-height: 240px; border-right: 0; border-bottom: 1px solid var(--iac-border); } }
 
 .header {
   display: flex;
@@ -381,7 +387,7 @@ button:focus-visible {
   --iac-badge-text: #2dd4a0;
   --iac-code-bg: #0d1520;
   --iac-code-text: #38c0d4;
-  --iac-muted: #3d5470;
+  --iac-muted: #7a90ad;
 }
 
 /* Sidebar active link – terminal override */
@@ -406,10 +412,10 @@ button:focus-visible {
     --iac-surface: #f8fafc;
     --iac-surface-elevated: #f1f5f9;
     --iac-text: #213547;
-    --iac-text-secondary: #64748b;
+    --iac-text-secondary: #5a6a7f;
     --iac-border: #e2e8f0;
-    --iac-accent: #0284c7;
-    --iac-accent-hover: #0369a1;
+    --iac-accent: #0369a1;
+    --iac-accent-hover: #075985;
     --iac-input-bg: #ffffff;
     --iac-input-border: #d1d5db;
     --iac-badge-bg: #dbeafe;
@@ -418,7 +424,7 @@ button:focus-visible {
     --iac-code-text: #0369a1;
     --iac-link: #2563eb;
     --iac-link-hover: #1d4ed8;
-    --iac-muted: #9ca3af;
+    --iac-muted: #6b7280;
     /* Status text dark enough to read on the pale status backgrounds */
     --iac-success-text: #15803d;
     --iac-error-text: #b91c1c;
@@ -431,6 +437,8 @@ button:focus-visible {
   button {
     background-color: #f9f9f9;
   }
+  /* Dark text on the light-mode link blue is 3.7:1; white is 5.2:1. */
+  .primary-link, .primary-button { color: #ffffff; background: var(--iac-link); }
 }
 
 /* Run page and shared run result (AG-42) */
@@ -476,7 +484,7 @@ button:focus-visible {
 .protection ol { padding-left: 18px; }
 .before-after { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 .before-after small { color: var(--iac-text-secondary); font-size: 12px; }
-@media (max-width: 900px) { .run-layout, .split-panels, .score-grid, .before-after { grid-template-columns: 1fr; } .timeline-row { grid-template-columns: 1fr auto; } .timeline-items { grid-column: 1 / -1; grid-row: 2; } }
+@media (max-width: 900px) { .run-layout, .split-panels, .score-grid, .before-after { grid-template-columns: minmax(0, 1fr); } .timeline-row { grid-template-columns: 1fr auto; } .timeline-items { grid-column: 1 / -1; grid-row: 2; } }
 
 /* Learn: learning path and lessons (AG-60, AG-63) */
 .run-tabs { grid-template-columns: repeat(2, 1fr); max-width: 260px; margin-bottom: 12px; }
@@ -484,7 +492,7 @@ button:focus-visible {
 .learn-stage { margin-bottom: 18px; }
 .learn-stage h3 { font-size: 13px; margin: 0 0 4px; color: var(--iac-text); text-transform: uppercase; letter-spacing: .06em; }
 .learn-stage ol { padding-left: 26px; margin: 8px 0 0; color: var(--iac-text-secondary); }
-.learn-stage li button { font-size: 13px; padding: 6px 8px; }
+.learn-stage li button { display: block; font-size: 13px; padding: 6px 8px; }
 .learn-stage .muted { color: var(--iac-text-secondary); }
 .lesson h2 { color: var(--iac-text); }
 .lesson-section { border-top: 1px solid var(--iac-border); padding-top: 12px; margin-top: 12px; }
@@ -493,7 +501,7 @@ button:focus-visible {
 .lesson-section p + p { margin-top: 8px; }
 .lesson-section strong { color: var(--iac-text); }
 .lesson-section a { color: var(--iac-link); }
-.lesson-section code, .lesson-file { background: var(--iac-code-bg); color: var(--iac-code-text); border-radius: 4px; padding: 1px 4px; font-size: 12px; }
+.lesson-section code, .lesson-file { overflow-wrap: anywhere; background: var(--iac-code-bg); color: var(--iac-code-text); border-radius: 4px; padding: 1px 4px; font-size: 12px; }
 .lesson-section pre { background: var(--iac-code-bg); padding: 10px; border-radius: 6px; overflow: auto; }
 .learn-path > button { margin-bottom: 16px; }
 .coverage-filter { display: inline-flex; gap: 8px; align-items: center; color: var(--iac-text-secondary); font-size: 13px; }
@@ -502,3 +510,26 @@ button:focus-visible {
 .link-button { background: transparent; border: 0; padding: 0 6px 0 0; color: var(--iac-accent); cursor: pointer; font-size: 13px; }
 .coverage { min-width: 0; overflow-x: auto; }
 .coverage .signal { white-space: nowrap; }
+
+/* Keyboard focus: links and form controls get the same visible ring as buttons. */
+.mvp-nav__link:focus-visible, .page a:focus-visible, .run-form select:focus-visible, .run-form input:focus-visible,
+.run-list button:focus-visible { outline: 2px solid var(--iac-link); outline-offset: 2px; }
+.segmented button:focus-visible { outline: 2px solid var(--iac-link); outline-offset: -3px; } /* .segmented clips overflow */
+
+/* Phone: the sidebar becomes a wrapping nav row above the page instead of
+   taking a third of the width. */
+@media (max-width: 600px) {
+  .app-body { flex-direction: column; }
+  .mvp-sidebar { width: auto; padding: 8px 12px; border-right: 0; border-bottom: 1px solid var(--iac-border); }
+  .mvp-sidebar__label { display: none; }
+  .mvp-nav { flex-direction: row; flex-wrap: wrap; gap: 4px; }
+  .mvp-nav__link { padding: 6px 10px; }
+  .page, .result-detail { padding: 18px 16px; }
+  .page-heading { flex-direction: column; gap: 12px; }
+  .header { padding: 12px 16px; }
+  /* Registry: list above detail instead of a fixed 320px column beside it. */
+  .registry-layout { flex-direction: column; overflow: visible !important; }
+  .registry-list { width: auto !important; border-right: 0 !important; border-bottom: 1px solid var(--iac-border); }
+  .registry-detail { padding: 18px 16px !important; }
+}
+.registry-card:focus-visible { outline: 2px solid var(--iac-link); outline-offset: 2px; }

@@ -51,6 +51,8 @@ export default function Run() {
     return '';
   }
 
+  const blocked = blockedReason(backend);
+
   function optionLabel(name: string): string {
     const hw = models?.hardware?.[name];
     if (hw && !hw.ok) return `${name} (needs ${hw.needs || 'other hardware'})`;
@@ -115,7 +117,7 @@ export default function Run() {
               <small key={name} className="muted">{name} unavailable: {models?.hardware?.[name]?.reason}.</small>)}
           </div>
 
-          <div className="form-grid">
+          <div className="picker-stack">
             <label>Backend
               <select id="backend" value={backend} onChange={(e) => { setBackend(e.target.value); setModel(''); }}>
                 {tierInfo.backends.map((name) => <option key={name} value={name}
@@ -142,12 +144,14 @@ export default function Run() {
               <span className={`dot ${c.available ? 'ok' : 'off'}`} />{c.backend}: {c.available ? 'ready' : c.reason}</li>)}
           </ul>}
 
-          {cloud && <label className="checkbox"><input id="confirm-spend" type="checkbox" checked={confirmSpend}
+          {blocked && <small className="muted">{backend} cannot run here: {blocked}. Pick another backend or tier.</small>}
+
+          {cloud && !blocked && <label className="checkbox"><input id="confirm-spend" type="checkbox" checked={confirmSpend}
             onChange={(e) => setConfirmSpend(e.target.checked)} />
             I accept that this run sends lab text to {backend} and is billed to my key.</label>}
 
           {error && <div className="alert error">{error}</div>}
-          <button className="primary-button" disabled={running || (cloud && !confirmSpend)}>
+          <button className="primary-button" disabled={running || Boolean(blocked) || (cloud && !confirmSpend)}>
             {running ? 'Running...' : 'Run attack, then defense'}
           </button>
         </form>

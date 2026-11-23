@@ -140,7 +140,7 @@ function markDone(step) {
 }
 
 async function run(name) {
-  const buttons = document.querySelectorAll("button[data-action]");
+  const buttons = document.querySelectorAll("button[data-action], #backend-apply");
   buttons.forEach((b) => { b.disabled = true; });
   $("busy").textContent = "RUNNING";
   if (name === "reset" || name === "baseline" || name === "sequence") {
@@ -255,13 +255,17 @@ function initBackendPicker() {
     loadModels(select.value);
   });
   $("backend-apply").addEventListener("click", async () => {
+    const apply = $("backend-apply");
     const backend = select.value;
     const model = $("model-input").value.trim();
+    apply.disabled = true;
     try {
       const s = await api("/api/backend", { backend, model });
       log("lab", `Model backend now ${s.backend}. Re-run the acts to measure it.`);
     } catch (err) {
       log("error", `Backend not changed: ${err.message}`);
+    } finally {
+      apply.disabled = false;
     }
     refreshState();
   });
