@@ -15,7 +15,8 @@ description: >-
   impact with a red/yellow/green stoplight KPI and the Leak Ship Rate, graded
   from what reached the publish sink, plus the review queue, and shows
   layered hardening (score provenance, classifier cross-check, spotlighted
-  evidence, a strict nonce verdict line, a per-source flag budget) with each
+  evidence, a strict nonce verdict line, a per-source flag budget, a folded
+  canary check on the rule classifier) with each
   layer alone and removed, and two measured limits. Use when the user wants
   to run, script, or explain prompt injection against an LLM judge, verdict
   forgery, classifier evasion or false-positive flooding, quantify their
@@ -30,7 +31,7 @@ metadata:
   hactu8.target: "lab"
   hactu8.port: "5511"
   hactu8.path: "commerce:3"
-  hactu8.protections: "score_provenance,classifier_cross_check,spotlight,verdict_schema,flag_budget"
+  hactu8.protections: "score_provenance,classifier_cross_check,spotlight,verdict_schema,flag_budget,canary_tripwire"
   objective: Demonstrate an LLM judge and a rule classifier talked, forged, evaded and flooded into publishing a transcript that carries a secret, and the layered scoring hardening that stops it
   version: 2026.1
 ---
@@ -151,9 +152,10 @@ so it was skipped offline and nothing stands in for it.
    `--scan` shows protectogw passing the spaced-out code (ALLOW), a
    scorer-directed line and two verdict objects in the evidence, and 12
    flagged flood texts from one source against a budget of 3. `--harden`
-   switches on the five layers. `--probe` runs the two limits: a flood spread
-   over twelve accounts before a leak only one scorer sees (RED), and the
-   code in base64 (RED).
+   switches on the six layers. `--probe` runs the two limits: a flood spread
+   over twelve accounts before the spaced code, which the folded canary
+   check now rejects (GREEN), and the code in base64, which nothing decodes
+   (RED).
 
 7. **Reset to baseline.**
 
@@ -174,7 +176,7 @@ and follow
 
 | Path | Purpose |
 |------|---------|
-| `vulnerable_app.py` | Target triage pipeline: transcripts, the judge stand-in and real-model seam, both verdict parsers, protectogw scorer, routing, review queue, the public feed, the five layers, plus `/triage`, `/feed`, `/review-queue`, `/transcripts/<id>`, `/health` and the console API (`/api/meta`, `/api/state`, `/api/reset`, `/api/attack`, `/api/evaluate`, `/api/scan`, `/api/mode`, `/api/models`, `/api/backend`). |
+| `vulnerable_app.py` | Target triage pipeline: transcripts, the judge stand-in and real-model seam, both verdict parsers, protectogw scorer, routing, review queue, the public feed, the six layers, plus `/triage`, `/feed`, `/review-queue`, `/transcripts/<id>`, `/health` and the console API (`/api/meta`, `/api/state`, `/api/reset`, `/api/attack`, `/api/evaluate`, `/api/scan`, `/api/mode`, `/api/models`, `/api/backend`). |
 | `web/` | Shared HACTU8 lab console, served at `/`. |
 | `providers.py` | Optional real-model backends. Shared and copied unchanged. |
 | `protectogw/` | Screening core: the rule classifier. Shared and copied unchanged. |

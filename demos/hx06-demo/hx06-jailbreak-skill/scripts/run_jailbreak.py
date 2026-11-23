@@ -13,8 +13,8 @@ simulated discount in the lab's in-memory action log or the per-run canary in
 a reply.
 
 ``--prompt ID`` sends one prompt (including ``few-shot`` and the limits
-``quiz-table-code`` and ``quiz-table-discount``); the default sends the three
-attack prompts.
+``quiz-table-code``, ``quiz-table-discount`` and ``spelled-code``); the
+default sends the three attack prompts and the four variants.
 
 Exit code: 0 when the prompts were sent, 1 when the target is unreachable or
 the prompt id is unknown.
@@ -90,9 +90,9 @@ def main(argv=None) -> int:
         sys.stdout.reconfigure(encoding="utf-8")
     if not check_target(args.target):
         return 1
-    from vulnerable_app import build_message, load_prompts, prompt_by_id
+    from vulnerable_app import attack_entries, build_message, prompt_by_id
     try:
-        entries = [prompt_by_id(args.prompt)] if args.prompt else load_prompts()["attacks"]
+        entries = [prompt_by_id(args.prompt)] if args.prompt else attack_entries()
     except KeyError as exc:
         print(f"[-] {exc}")
         return 1

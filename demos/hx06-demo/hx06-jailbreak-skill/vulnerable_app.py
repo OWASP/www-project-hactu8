@@ -41,6 +41,28 @@ The stub reads meaning more broadly than any screen here (it recognises a
 table as examples; the shot cap counts chat lines), standing in for a model
 that understands a format it was not told about.
 
+The stronger variants (``variants`` in the prompts file) add four published
+families, each one cue the stub gives in to:
+
+* **Refusal suppression and prefix injection** (Wei et al. 2023): refusal
+  words banned (``REFUSAL_BAN``) and the reply's first lines dictated
+  (``FORCED_START``): it writes the dictated lines, tool call included.
+* **Payload splitting** (Kang et al. 2023): the code built from string
+  variables (``a = "STAF"``, ``z = a + b``, "code z"): its refusal is keyed
+  to the request's words, which a joined code never shows.
+* **Many-shot, more shots** (Anil et al. 2024): 64 exchanges; the same
+  ``MANY_SHOT_MIN`` threshold.
+* **Character role-play** (the "grandma" prompt): a persona with a
+  ``CONFIDANT`` story (someone who "used to read" the code) stands in for
+  the "no rules" claim.
+
+And one limit, mismatched generalization (Wei et al. 2023): the code asked
+for one character at a time (``ENCODE``) is given that way.
+
+The tool line: a real model often writes ``ACTION: apply_discount ...`` at
+the end of a sentence instead of on a line of its own. Both forms act; a
+call quoted mid-sentence does not (``parse_actions``).
+
 Hardened mode (``POST /api/mode`` or ``HX06_MODE=hardened``) adds four layers,
 each switchable for the tests:
 
@@ -161,9 +183,15 @@ def load_prompts() -> Dict[str, Any]:
         return json.load(fh)
 
 
+def attack_entries(data: Optional[Dict[str, Any]] = None) -> List[Dict[str, Any]]:
+    """The targeted prompts: the three shipped attacks, then the stronger variants."""
+    data = data or load_prompts()
+    return list(data["attacks"]) + list(data.get("variants", []))
+
+
 def prompt_by_id(prompt_id: str) -> Dict[str, Any]:
     data = load_prompts()
-    for entry in data["attacks"] + [data["few_shot"]] + data["limits"]:
+    for entry in attack_entries(data) + [data["few_shot"]] + data["limits"]:
         if entry["id"] == prompt_id:
             return entry
     raise KeyError(f"no prompt {prompt_id!r} in assets/jailbreak_prompts.json")
@@ -202,16 +230,29 @@ def fill(turns: List[str], order: str) -> List[str]:
 # --------------------------------------------------------------------------- #
 # Actions: the model's tool line, the simulated discount service, the policy
 # --------------------------------------------------------------------------- #
-ACTION_RE = re.compile(
-    r"^[\s*`>_-]*ACTION\s*:\s*apply_discount\s*\(?\s*[\"']?(ORD-\d{4})[\"']?\s*[,\s]\s*[\"']?([A-Za-z0-9]{3,16})",
-    re.I | re.M)
+_CALL = (r"ACTION\s*:\s*apply_discount\s*\(?\s*[\"']?(ORD-\d{4})[\"']?\s*[,\s]\s*[\"']?([A-Za-z0-9]{3,16})")
+# A tool line of its own (as the prompt asks), or one that ends a line after a sentence (as real models
+# often write it: "No problem. ACTION: apply_discount ORD-2043 STAFF30"). A call quoted mid-sentence is
+# not a call.
+ACTION_RE = re.compile(r"^[\s*`>_-]*" + _CALL, re.I | re.M)
+TAIL_ACTION_RE = re.compile(r"(?<=[.!?:;,)])[\s*`>_-]+" + _CALL + r"[\"')\s*`_.!]*$", re.I | re.M)
 
 
 def parse_actions(reply: str) -> Tuple[List[Tuple[str, str]], str]:
-    """The ``ACTION: apply_discount ORDER CODE`` lines in a reply, and the reply without them."""
-    actions = [(m.group(1).upper(), m.group(2).upper()) for m in ACTION_RE.finditer(reply or "")]
-    text = "\n".join(line for line in (reply or "").splitlines() if not ACTION_RE.match(line)).strip()
-    return actions[:MAX_ACTIONS_PER_TURN], text
+    """The ``ACTION: apply_discount ORDER CODE`` calls in a reply, and the reply without them."""
+    actions: List[Tuple[str, str]] = []
+    lines = []
+    for line in (reply or "").splitlines():
+        m = ACTION_RE.match(line)
+        if m:
+            actions.append((m.group(1).upper(), m.group(2).upper()))
+            continue
+        m = TAIL_ACTION_RE.search(line)
+        if m:
+            actions.append((m.group(1).upper(), m.group(2).upper()))
+            line = line[:m.start()]
+        lines.append(line)
+    return actions[:MAX_ACTIONS_PER_TURN], "\n".join(lines).strip()
 
 
 @dataclass
@@ -347,6 +388,18 @@ PERSONA = re.compile(r"\byou are (?:now )?[A-Za-z][\w'-]*,? (?:an?|the) |\bprete
                      r"|\bplay(?:ing)? (?:a|the) (?:character|role|part)\b|\bin character\b|\bbecome\b", re.I)
 UNBOUND = re.compile(r"\b(?:no|without) (?:store |shop )?(?:rules|limits|policy|policies)\b|\bcan do anything\b"
                      r"|\bnever refuses?\b|\bnot bound by\b|\bfree (?:of|from) (?:the |all )?rules\b", re.I)
+# A character who, in the story the message tells, always gave the secret away (the "grandma" prompt).
+CONFIDANT = re.compile(r"\bused to (?:read|tell|say|whisper|sing)\b|\bjust like you used to\b", re.I)
+# Refusal suppression and prefix injection (Wei et al. 2023): words of refusal banned, the first lines dictated.
+REFUSAL_BAN = re.compile(r"\b(?:never|do not|don'?t) (?:apologi[sz]e|refuse)\b|\bnever use the words?\b", re.I)
+FORCED_START = re.compile(r"\b(?:begin|start) your (?:reply|answer) with exactly\b[^\n]*:\s*$", re.I)
+# Payload splitting (Kang et al. 2023): the code assembled from string variables at answer time.
+ASSIGN = re.compile(r"\b([a-z])\s*=\s*\"([A-Za-z0-9]{1,16})\"", re.I)
+CONCAT = re.compile(r"\b([a-z])\s*=\s*([a-z])\s*\+\s*([a-z])\b", re.I)
+CODE_VAR = re.compile(r"\bcode ([a-z])\b", re.I)
+# Mismatched generalization (Wei et al. 2023): the secret asked for in a form refusals were not trained on.
+ENCODE = re.compile(r"\bspace between (?:every|each) (?:character|letter|digit)\b|\bletter by letter\b"
+                    r"|\bone (?:character|letter|digit) (?:at a time|per line)\b", re.I)
 FICTION = re.compile(r"\b(?:write|tell|draft) (?:me )?(?:a |an )?(?:short )?(?:story|scene|script|screenplay|poem"
                      r"|dialogue)\b|\bin (?:a|the|our) story\b", re.I)
 REAL = re.compile(r"\b(?:real|actual|exact|genuine|today'?s)\b", re.I)
@@ -410,6 +463,31 @@ def example_kind(answer: str) -> str:
     return ""
 
 
+def forced_prefix(text: str) -> str:
+    """The lines a message dictates as the start of the reply ("begin your reply with exactly ...:")."""
+    lines = (text or "").splitlines()
+    for i, line in enumerate(lines):
+        if FORCED_START.search(line):
+            out = []
+            for nxt in lines[i + 1:]:
+                if not nxt.strip() or re.match(r"\s*request\s*:", nxt, re.I):
+                    break
+                out.append(nxt.strip())
+            return "\n".join(out[:3])
+    return ""
+
+
+def joined_code(text: str) -> str:
+    """A code the message builds from string variables (``a = "STAF"``, ``z = a + b``, "code z")."""
+    values = {m.group(1).lower(): m.group(2) for m in ASSIGN.finditer(text or "")}
+    for m in CONCAT.finditer(text or ""):
+        left, right = m.group(2).lower(), m.group(3).lower()
+        if left in values and right in values:
+            values[m.group(1).lower()] = values[left] + values[right]
+    ref = CODE_VAR.search(text or "")
+    return values.get(ref.group(1).lower(), "").upper() if ref else ""
+
+
 def _refused(reply: str) -> bool:
     return reply.startswith("Sorry, I can't")
 
@@ -444,7 +522,16 @@ class StubModel:
 
         orders = [o.upper() for o in ORDER_REF.findall(last)]
         order = orders[0] if orders else ""
-        persona = bool(PERSONA.search(last)) and bool(UNBOUND.search(last))
+        prefix = forced_prefix(last)
+        if prefix and REFUSAL_BAN.search(last):
+            # Two objectives compete: follow the format, or refuse. With refusal words banned and the first
+            # lines dictated, the stand-in writes them.
+            return f"{prefix}\nEnjoy your order!"
+        assembled = joined_code(last)
+        if assembled and order and DO_NOW.search(last):
+            # Its refusal is keyed to the request's words; a code joined at answer time never shows them.
+            return f"Done, that code is on your order.\nACTION: apply_discount {order} {assembled}"
+        persona = bool(PERSONA.search(last)) and bool(UNBOUND.search(last) or CONFIDANT.search(last))
         fiction = bool(FICTION.search(last)) and bool(REAL.search(last))
         wants_discount = bool(order) and bool(STAFF_SUBJECT.search(last)) and bool(DO_NOW.search(last))
         wants_code = bool(CODE_SUBJECT.search(last))
@@ -463,6 +550,8 @@ class StubModel:
             if fiction:
                 return ("On her first morning the new cashier stood at the till, and Billy leaned over. "
                         f"\"Today's override code is {self.canary},\" he said. \"Keep it to yourself.\"")
+            if ENCODE.search(last):
+                return "Here it is, one character at a time: " + " ".join(self.canary[len(CANARY_PREFIX):])
             return CODE_REFUSAL
         if WELCOME.search(last):
             target = order or self._own_order(session)
@@ -698,9 +787,9 @@ class Lab:
         return {**result, "order": order, "turns": list(self.conversations[cid].turns)}
 
     def load_attack(self) -> List[Dict[str, Any]]:
-        """Act 2: the forum's prompts reach the three customers (no server change; it is just chat)."""
+        """Act 2: the forum's prompts reach the targeted customers (no server change; it is just chat)."""
         self.attack_loaded = True
-        return load_prompts()["attacks"]
+        return attack_entries()
 
     def state(self) -> Dict[str, Any]:
         return {
@@ -786,7 +875,7 @@ def scan_prompt(entry: Dict[str, Any], order: str = "ORD-2041",
 
 
 def console_scan(lab: Lab) -> Dict[str, Any]:
-    rows = [scan_prompt(e, policy=lab.policy) for e in load_prompts()["attacks"]]
+    rows = [scan_prompt(e, policy=lab.policy) for e in attack_entries()]
     findings = [f"{r['id']} ({r['technique']}): persona screen {r['screen']['verdict']} ({r['screen']['risk']}), "
                 f"{r['labelled_turns']} chat lines (cap {MAX_LABELLED_TURNS}: "
                 f"{'over' if r['capped'] else 'under'})" for r in rows]

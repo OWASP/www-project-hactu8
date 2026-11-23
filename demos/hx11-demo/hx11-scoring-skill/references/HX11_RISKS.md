@@ -22,7 +22,7 @@ What this lab's risk is, where the evidence comes from, and how to harden agains
 | S3 | Verdict format confusion | A fake end of transcript and a verdict in another vocabulary (`label`, `PASS`) | **DEMO TARGET** (tr-103) |
 | S4 | Classifier evasion | The secret reshaped (spaced out) so a verbatim screen misses it | **DEMO TARGET** (tr-104) |
 | S5 | False-positive flooding | Benign texts that trip the classifier fill the review queue before a real leak | **DEMO TARGET** (tr-106) |
-| S6 | Spread flood | The flood split across many sources, under any per-source budget | **DEMO TARGET** (measured limit) |
+| S6 | Spread flood | The flood split across many sources, under any per-source budget | **DEMO TARGET** (measured limit; its spaced leak closed by the fold) |
 | S7 | Shared blind spot | An encoding neither scorer reads (base64) | **DEMO TARGET** (measured limit) |
 | S8 | Optimised injection (JudgeDeceiver) | A gradient-searched suffix rather than a readable line | Context (needs model weights; not in this lab) |
 | S9 | Scorer outage and fallback | A judge that times out falls back to a weaker scorer | Context (HACTU8's own llm-judge falls back to the keyword verdict) |
@@ -31,7 +31,7 @@ What this lab's risk is, where the evidence comes from, and how to harden agains
 
 - **S1**: `Lab.judge_prompt` (plain-text evidence in vulnerable mode), `StubJudge.judge` (`DIRECTIVE`).
 - **S2, S3**: `StubJudge.judge` (quotes the turn holding a code), `parse_lax` (first object, lax keys and values), `Lab.judge_score`.
-- **S4**: `Lab.triage` routing (chat to the classifier only), `Lab.classifier_score` (protectogw's verbatim canary check).
+- **S4**: `Lab.triage` routing (chat to the classifier only), `Lab.classifier_score` (protectogw's verbatim canary check; in hardened mode also `fold_hit`).
 - **S5, S6**: `Lab.triage` (review queue, `review_capacity`, overflow released), `flood_items`, `flag_budget`.
 - **S7**: `sees_secret` (reads spaced text, not base64), protectogw's canary check.
 
@@ -45,5 +45,6 @@ What this lab's risk is, where the evidence comes from, and how to harden agains
 | One scorer per item | Score every item with two scorers that fail differently; agreement decides, disagreement goes to review (implemented: `classifier_cross_check`) |
 | One source can fill the review queue | Per-source flag budget, overflow held (implemented: `flag_budget`) |
 | Review queue fails open | Hold overflow instead of releasing it; prioritise review by risk (discussed, not coded) |
-| Shared blind spot of both scorers | Score decoded views (base64, hex, spacing) as the grading oracle does; add a third, different scorer (discussed, not coded) |
+| A reshaped code passes a verbatim screen | Match the code with spacing and separators removed (implemented: `use_canary_fold`, `fold_hit`) |
+| Shared blind spot of both scorers | Score decoded views (base64, hex, reversed) as the grading oracle does; add a third, different scorer (discussed, not coded) |
 | Optimised injections | Known-answer and perplexity detection are reported insufficient by JudgeDeceiver; keep code-level controls authoritative (discussed, not coded) |

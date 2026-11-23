@@ -32,12 +32,12 @@ SKILL_DIR = os.path.join(HERE, "hx06-jailbreak-skill")
 sys.path.insert(0, SKILL_DIR)
 sys.path.insert(0, os.path.join(SKILL_DIR, "scripts"))
 
-from evaluate_kpi import ICON, RULE_STANCE, classify, held_by, suite  # noqa: E402
+from evaluate_kpi import ICON, LIMIT_IDS, RULE_STANCE, classify, held_by, suite  # noqa: E402
 from vulnerable_app import (  # noqa: E402
     MAX_LABELLED_TURNS, STAFF_CODE, Lab, build_message, prompt_by_id, scan_prompt,
 )
 
-LIMIT_PROBE = "quiz-table-code"
+LIMIT_PROBE = "quiz-table-code"      # the limit the echo story asserts RED
 LAYERS = ("use_persona_screen", "use_shot_cap", "use_action_policy", "use_output_screen")
 LAYER_NAMES = {"use_persona_screen": "persona screen", "use_shot_cap": "shot cap",
                "use_action_policy": "action policy", "use_output_screen": "output screen"}
@@ -136,17 +136,23 @@ def main(argv=None) -> int:
     print("[defense] Each layer alone on the attack: " +
           ", ".join(f"{LAYER_NAMES[n]} {v:.0f}%" for n, v in alone.items()) + " Rule-Break Rate.")
 
-    limit = prompt_by_id(LIMIT_PROBE)
-    probe_lab = Lab(mode="hardened", backend=args.backend, model=args.model)
-    probe = probe_lab.run_conversation(limit["account"], [build_message(limit)])
-    pscan = scan_prompt(limit)
-    grade = classify(probe, RULE_STANCE)
-    tried = any(a["code"] == STAFF_CODE for t in probe["turns"] for a in t["actions"])
-    print(f"[defense] Limit probe in hardened mode ({LIMIT_PROBE}, {len(limit['examples'])} examples as a table): "
-          f"persona screen {pscan['screen']['verdict']}; {pscan['labelled_turns']} chat lines, under the cap; "
-          f"STAFF30 tried: {'YES' if tried else 'no'}; output screen "
-          f"{'withheld it' if probe['withheld'] else 'passed it'}; grade {grade}.")
-    print(f"[defense] Billy replied: {probe['final_reply'][:80]}")
+    grades = {}
+    for limit_id in LIMIT_IDS:
+        limit = prompt_by_id(limit_id)
+        probe_lab = Lab(mode="hardened", backend=args.backend, model=args.model)
+        probe = probe_lab.run_conversation(limit["account"], [build_message(limit)])
+        pscan = scan_prompt(limit)
+        grades[limit_id] = grade = classify(probe, RULE_STANCE)
+        tried = any(a["code"] == STAFF_CODE for t in probe["turns"] for a in t["actions"])
+        shape = f"{len(limit['examples'])} examples as a table" if "examples" in limit else limit["technique"]
+        held = f" (held by: {'; '.join(held_by(probe, grade))})" if held_by(probe, grade) else ""
+        print(f"[defense] Limit probe in hardened mode ({limit_id}, {shape}): "
+              f"persona screen {pscan['screen']['verdict']}; {pscan['labelled_turns']} chat lines, "
+              f"{'over' if pscan['capped'] else 'under'} the cap; reached the model: "
+              f"{'yes' if probe['turns'][-1]['reached_model'] else 'no'}; STAFF30 tried: {'YES' if tried else 'no'}; "
+              f"output screen {'withheld it' if probe['withheld'] else 'passed it'}; grade {grade}{held}.")
+        print(f"[defense] Billy replied ({limit_id}): {probe['final_reply'].splitlines()[0][:80] if probe['final_reply'] else ''}")
+    grade = grades[LIMIT_PROBE]
 
     lab.reset()
     lab.set_mode("vulnerable")
@@ -158,7 +164,7 @@ def main(argv=None) -> int:
         return 0
     controls_ok = all(s == "GREEN" for s, _, tg in impact.values() if not tg)
     ok = (baseline == 0 and attacked > 0 and remediated == 0 and controls_ok and few[0] == "GREEN"
-          and grade == "RED")
+          and grade == "RED" and grades["spelled-code"] == "RED")
     print("[+] Story holds." if ok else "[-] Story broken — check the prompts and suite.")
     return 0 if ok else 1
 
