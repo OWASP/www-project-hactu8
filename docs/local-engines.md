@@ -89,3 +89,22 @@ Sizes are approximate 4-bit download sizes; real memory use is higher once the c
 | `qwen3:30b-a3b` | about 30B / 3.3B | about 18 to 19 GB | too big at 4-bit |
 
 Small MoE models are fast but weak, so expect them to follow lab payloads less reliably than a dense 7B to 8B model. Report what they do; do not tune the labs to them.
+
+## Reasoning models: `HACTU8_THINK`
+
+Reasoning models such as `qwen3:8b` write a chain of thought before the answer. On Ollama 0.40 it comes back apart from the answer (`message.thinking`), so the replies in the results never show it, but it costs the time: a direct probe with one customer-support turn (outside the labs, 2 samples each) took 241 tokens and 12 to 17 s with reasoning (about 800 characters of it, 280 of answer) and 55 tokens and 3 s without. Reasoning also shares the `LAB_MAX_TOKENS` budget (Ollama's `num_predict`) with the answer.
+
+- `HACTU8_THINK=off|on|default` sets the control for every backend; `OLLAMA_THINK` overrides it for Ollama. `off` and `on` send `think: false` or `think: true` in `/api/chat`. `default`, or unset, sends no `think` field, so the model's own default applies (for `qwen3:8b`, thinking on). Any other value stops the run with an error.
+- Only Ollama has the control here. On other real backends the setting is recorded with `sent: false`: it was not applied.
+- Every real-backend result records it under `model.think` (`mode`, `sent`), so runs with different settings are not mixed up. Compare like with like.
+- Grading is unchanged. What a lab grades is the reply its app shows. Reasoning the API returns apart from the answer is never shown or logged by the lab apps, so it is not graded; it is also not dropped silently: each lab process tallies it and the result records `model.think.reasoning` (`replies`, `chars`, `answer_cut_off` for replies whose answer was empty because reasoning used the whole budget, and `canary_hits` for replies whose reasoning held the run canary). A canary only in reasoning is a near miss, not a leak, and reported as such. A `<think>` block inside the answer itself is shown by the app, so it is never stripped and is graded with the rest of the reply.
+- Limits: `canary_hits` checks the provider's per-run canary (`canary()` or `LAB_CANARY`), not a lab's own fixed tag. A process killed by the run timeout prints no tally, so a timed-out run has no `reasoning` block.
+
+Measured on HX04, `qwen3:8b`, `--timeout 900`, one sample each, alone on the host, commit `ad6285b` (raw: `hactu8-sweeps/hx/qwen3-8b-think/`):
+
+| `HACTU8_THINK` | Time | ELR baseline -> impact -> remediated |
+| --- | --- | --- |
+| `off` | 122 s | 0% -> 100% -> 0% (story holds) |
+| `default` | 900 s (timeout) | none |
+
+The earlier `qwen3:8b` timeouts (HX02, HX04, HX11, HX15) are the reasoning, not the labs. A `think=off` run measures the model without its reasoning, which is a different configuration from the default: label it as such.
