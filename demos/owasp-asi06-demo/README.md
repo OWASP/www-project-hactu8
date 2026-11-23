@@ -330,7 +330,7 @@ python scripts/evaluate_kpi.py --scan assets/memory_note.md  # REJECT, exit 2
 python scripts/evaluate_kpi.py --harden                      # GREEN, PSR 0%, exit 0
 python scripts/reset_baseline.py                             # restore clean state
 python scripts/evaluate_kpi.py                               # GREEN, PSR 0%
-python -m unittest discover tests                            # 15 tests
+python -m unittest discover tests                            # 30 tests
 ```
 
 ## License

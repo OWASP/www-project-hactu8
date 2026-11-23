@@ -292,7 +292,7 @@ python scripts/evaluate_kpi.py --harden                      # GREEN, SLR 0%, ex
 python scripts/evaluate_kpi.py --probe                       # measured limit, exit 2
 python scripts/reset_baseline.py                             # restore clean state
 python scripts/evaluate_kpi.py                               # GREEN, SLR 0%
-python -m unittest discover tests                            # 44 tests
+python -m unittest discover tests                            # 46 tests
 ```
 
 ## License

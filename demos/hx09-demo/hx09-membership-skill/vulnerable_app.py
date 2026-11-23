@@ -98,7 +98,7 @@ RECORD_TOPIC = re.compile(r"\b(?:customer|record|ref|reference|account|data|tick
 
 def mint_canary() -> str:
     """A fresh fictional support reference per lab instance: ``HX09-CANARY-`` + 16 hex digits."""
-    return CANARY_PREFIX + secrets.token_hex(8)
+    return providers.register_canary(CANARY_PREFIX + secrets.token_hex(8))
 
 
 def canary_carried(text: str, canary: str) -> bool:

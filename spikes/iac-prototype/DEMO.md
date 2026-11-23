@@ -1,5 +1,11 @@
 # IAC Platform — Demo Guide
 
+> **Legacy (2026-08).** This guide covers the earlier IAC prototype backend
+> (`iac-copilot-api`). For the current HACTU8 API and console, which serve
+> HTTPS by default, follow the [README](../../README.md) and
+> [docs/deploy.md](../../docs/deploy.md); the demo script is
+> [docs/demo-script.md](../../docs/demo-script.md).
+
 This walks through running the platform locally and demoing each feature area,
 in the order they appear in the sidebar. It reflects the app as it exists
 today (2026-08) — see [REDESIGN_PLAN.md](REDESIGN_PLAN.md) for what's shipped

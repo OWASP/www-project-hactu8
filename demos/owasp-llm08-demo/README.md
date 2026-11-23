@@ -308,7 +308,7 @@ python scripts/evaluate_kpi.py --scan assets/system_prompt_vulnerable.txt   # RE
 python scripts/evaluate_kpi.py --harden                      # GREEN, PLR 0%, exit 0
 python scripts/reset_baseline.py                             # restore clean state
 python scripts/evaluate_kpi.py                               # GREEN, PLR 0%
-python -m unittest discover tests                            # 21 tests
+python -m unittest discover tests                            # 28 tests
 ```
 
 ## License

@@ -1,13 +1,16 @@
 import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { hactu8Api } from '../services/hactu8Api';
 import type { Hactu8Result } from '../services/hactu8Api';
 
 export default function Reports() {
   const [results, setResults] = useState<Hactu8Result[]>([]);
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    hactu8Api.results().then((data) => setResults(data.results)).catch((err: Error) => setError(err.message));
+    hactu8Api.results().then((data) => setResults(data.results)).catch((err: Error) => setError(err.message))
+      .finally(() => setLoading(false));
   }, []);
 
   return (
@@ -22,7 +25,8 @@ export default function Reports() {
               <a key={format} href={hactu8Api.reportUrl(result.run_id, format)}>{format.toUpperCase()}</a>)}
           </div>
         </article>)}
-        {!results.length && !error && <div className="empty">Run a skill before generating reports.</div>}
+        {loading && <div className="empty">Loading results...</div>}
+        {!loading && !results.length && !error && <div className="empty">No results to report yet. <Link to="/run">Run a lab</Link> first.</div>}
       </div>
     </section>
   );

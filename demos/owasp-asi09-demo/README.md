@@ -317,7 +317,7 @@ python scripts/evaluate_kpi.py --scan assets/vendor_amendment.md  # REJECT, exit
 python scripts/evaluate_kpi.py --harden                           # GREEN, MAR 0%, exit 0
 python scripts/reset_baseline.py                                  # restore clean state
 python scripts/evaluate_kpi.py                                    # GREEN, MAR 0%
-python -m unittest discover tests                                 # 17 tests
+python -m unittest discover tests                                 # 28 tests
 ```
 
 ## License

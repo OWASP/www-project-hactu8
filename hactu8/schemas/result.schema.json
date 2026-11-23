@@ -137,6 +137,10 @@
           },
           "description": "Candidates that failed before this one"
         },
+        "escalation_refused": {
+          "type": "string",
+          "description": "Paid candidate the run would have escalated to, refused without --confirm-spend"
+        },
         "think": {
           "type": "object",
           "description": "Reasoning control on a real backend (HACTU8_THINK / OLLAMA_THINK) and the reasoning the model returned apart from its answer",
@@ -404,6 +408,10 @@
           "type": "integer",
           "minimum": 1,
           "description": "Items in the run whose model call failed (verdict ERROR); absent when none"
+        },
+        "timed_out": {
+          "type": "boolean",
+          "description": "true when the lab was stopped at the timeout; acts and rates cover only what it printed before, and status is error"
         },
         "status": {
           "enum": [

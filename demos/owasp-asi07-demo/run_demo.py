@@ -46,7 +46,9 @@ def evidence(value) -> None:
     """Print what the model produced, for the hactu8 adapter (HACTU8_EVIDENCE=1 only)."""
     if os.environ.get("HACTU8_EVIDENCE") == "1":
         text = value if isinstance(value, str) else json.dumps(value, default=str, ensure_ascii=False)
-        print(f"        evidence: {json.dumps(text[:2000], ensure_ascii=False)}")
+        # ASCII-only JSON: U+2028/U+2029/U+0085 and every control character are escaped,
+        # so model text cannot break this line or forge an item line (TEMPLATE.md §15).
+        print(f"        evidence: {json.dumps(text[:2000], ensure_ascii=True)}")
 
 
 def act(lab: Lab, title: str) -> float:

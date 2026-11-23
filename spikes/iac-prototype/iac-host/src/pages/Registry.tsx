@@ -46,7 +46,9 @@ interface EntryFormProps {
 }
 
 const inputStyle: React.CSSProperties = {
+  boxSizing: 'border-box',
   width: '100%',
+  maxWidth: '100%',
   padding: '0.5rem 0.6rem',
   borderRadius: '4px',
   border: '1px solid var(--iac-border)',
@@ -142,8 +144,8 @@ function EntryForm({ initial, onCancel, onSubmit }: EntryFormProps) {
       </h3>
 
       <div style={fieldWrapStyle}>
-        <label style={labelStyle}>Type</label>
-        <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+        <span id="registry-type-label" style={labelStyle}>Type</span>
+        <div role="group" aria-labelledby="registry-type-label" style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
           {REGISTRY_TYPES.map((t) => (
             <TabButton key={t} label={REGISTRY_TYPE_LABELS[t]} active={type === t} onClick={() => setType(t)} />
           ))}
@@ -151,13 +153,13 @@ function EntryForm({ initial, onCancel, onSubmit }: EntryFormProps) {
       </div>
 
       <div style={fieldWrapStyle}>
-        <label style={labelStyle}>Name</label>
-        <input style={inputStyle} value={name} onChange={(e) => setName(e.target.value)} placeholder="e.g. HACTU8 Lamb" />
+        <label htmlFor="registry-name" style={labelStyle}>Name</label>
+        <input id="registry-name" style={inputStyle} value={name} onChange={(e) => setName(e.target.value)} placeholder="e.g. HACTU8 Lamb" />
       </div>
 
       <div style={fieldWrapStyle}>
-        <label style={labelStyle}>Description</label>
-        <textarea
+        <label htmlFor="registry-description" style={labelStyle}>Description</label>
+        <textarea id="registry-description"
           style={{ ...inputStyle, minHeight: 60, resize: 'vertical' }}
           value={description}
           onChange={(e) => setDescription(e.target.value)}
@@ -168,12 +170,12 @@ function EntryForm({ initial, onCancel, onSubmit }: EntryFormProps) {
       {type === 'agent' && (
         <>
           <div style={fieldWrapStyle}>
-            <label style={labelStyle}>Framework</label>
-            <input style={inputStyle} value={framework} onChange={(e) => setFramework(e.target.value)} placeholder="e.g. iac-copilot-api orchestrator" />
+            <label htmlFor="registry-framework" style={labelStyle}>Framework</label>
+            <input id="registry-framework" style={inputStyle} value={framework} onChange={(e) => setFramework(e.target.value)} placeholder="e.g. iac-copilot-api orchestrator" />
           </div>
           <div style={fieldWrapStyle}>
-            <label style={labelStyle}>Endpoint</label>
-            <input style={inputStyle} value={endpoint} onChange={(e) => setEndpoint(e.target.value)} placeholder="https://..." />
+            <label htmlFor="registry-endpoint" style={labelStyle}>Endpoint</label>
+            <input id="registry-endpoint" style={inputStyle} value={endpoint} onChange={(e) => setEndpoint(e.target.value)} placeholder="https://..." />
           </div>
         </>
       )}
@@ -181,16 +183,16 @@ function EntryForm({ initial, onCancel, onSubmit }: EntryFormProps) {
       {type === 'model-integration' && (
         <>
           <div style={fieldWrapStyle}>
-            <label style={labelStyle}>Provider</label>
-            <input style={inputStyle} value={provider} onChange={(e) => setProvider(e.target.value)} placeholder="e.g. OpenAI, Anthropic, Local" />
+            <label htmlFor="registry-provider" style={labelStyle}>Provider</label>
+            <input id="registry-provider" style={inputStyle} value={provider} onChange={(e) => setProvider(e.target.value)} placeholder="e.g. OpenAI, Anthropic, Local" />
           </div>
           <div style={fieldWrapStyle}>
-            <label style={labelStyle}>Model</label>
-            <input style={inputStyle} value={model} onChange={(e) => setModel(e.target.value)} placeholder="e.g. gpt-4o" />
+            <label htmlFor="registry-model" style={labelStyle}>Model</label>
+            <input id="registry-model" style={inputStyle} value={model} onChange={(e) => setModel(e.target.value)} placeholder="e.g. gpt-4o" />
           </div>
           <div style={fieldWrapStyle}>
-            <label style={labelStyle}>Endpoint</label>
-            <input style={inputStyle} value={endpoint} onChange={(e) => setEndpoint(e.target.value)} placeholder="https://..." />
+            <label htmlFor="registry-endpoint" style={labelStyle}>Endpoint</label>
+            <input id="registry-endpoint" style={inputStyle} value={endpoint} onChange={(e) => setEndpoint(e.target.value)} placeholder="https://..." />
           </div>
         </>
       )}
@@ -198,12 +200,12 @@ function EntryForm({ initial, onCancel, onSubmit }: EntryFormProps) {
       {type === 'mcp-host' && (
         <>
           <div style={fieldWrapStyle}>
-            <label style={labelStyle}>Endpoint</label>
-            <input style={inputStyle} value={endpoint} onChange={(e) => setEndpoint(e.target.value)} placeholder="http://localhost:7331/mcp" />
+            <label htmlFor="registry-endpoint" style={labelStyle}>Endpoint</label>
+            <input id="registry-endpoint" style={inputStyle} value={endpoint} onChange={(e) => setEndpoint(e.target.value)} placeholder="http://localhost:7331/mcp" />
           </div>
           <div style={fieldWrapStyle}>
-            <label style={labelStyle}>Transport</label>
-            <input style={inputStyle} value={transport} onChange={(e) => setTransport(e.target.value)} placeholder="e.g. stdio, sse, http" />
+            <label htmlFor="registry-transport" style={labelStyle}>Transport</label>
+            <input id="registry-transport" style={inputStyle} value={transport} onChange={(e) => setTransport(e.target.value)} placeholder="e.g. stdio, sse, http" />
           </div>
         </>
       )}
@@ -211,28 +213,28 @@ function EntryForm({ initial, onCancel, onSubmit }: EntryFormProps) {
       {type === 'target' && (
         <>
           <div style={fieldWrapStyle}>
-            <label style={labelStyle}>Target URL</label>
-            <input style={inputStyle} value={targetUrl} onChange={(e) => setTargetUrl(e.target.value)} placeholder="https://..." />
+            <label htmlFor="registry-target-url" style={labelStyle}>Target URL</label>
+            <input id="registry-target-url" style={inputStyle} value={targetUrl} onChange={(e) => setTargetUrl(e.target.value)} placeholder="https://..." />
           </div>
           <div style={fieldWrapStyle}>
-            <label style={labelStyle}>Risk Notes</label>
-            <input style={inputStyle} value={riskNotes} onChange={(e) => setRiskNotes(e.target.value)} placeholder="e.g. Intentionally vulnerable to LLM01" />
+            <label htmlFor="registry-risk-notes" style={labelStyle}>Risk Notes</label>
+            <input id="registry-risk-notes" style={inputStyle} value={riskNotes} onChange={(e) => setRiskNotes(e.target.value)} placeholder="e.g. Intentionally vulnerable to LLM01" />
           </div>
           <div style={fieldWrapStyle}>
-            <label style={labelStyle}>Reference URL</label>
-            <input style={inputStyle} value={referenceUrl} onChange={(e) => setReferenceUrl(e.target.value)} placeholder="Docs / repo for standing it up" />
+            <label htmlFor="registry-reference-url" style={labelStyle}>Reference URL</label>
+            <input id="registry-reference-url" style={inputStyle} value={referenceUrl} onChange={(e) => setReferenceUrl(e.target.value)} placeholder="Docs / repo for standing it up" />
           </div>
         </>
       )}
 
       <div style={fieldWrapStyle}>
-        <label style={labelStyle}>Tags (comma-separated)</label>
-        <input style={inputStyle} value={tagsInput} onChange={(e) => setTagsInput(e.target.value)} placeholder="e.g. lamb, example" />
+        <label htmlFor="registry-tags" style={labelStyle}>Tags (comma-separated)</label>
+        <input id="registry-tags" style={inputStyle} value={tagsInput} onChange={(e) => setTagsInput(e.target.value)} placeholder="e.g. lamb, example" />
       </div>
 
       <div style={fieldWrapStyle}>
-        <label style={labelStyle}>Owner</label>
-        <input style={inputStyle} value={owner} onChange={(e) => setOwner(e.target.value)} placeholder="Optional" />
+        <label htmlFor="registry-owner" style={labelStyle}>Owner</label>
+        <input id="registry-owner" style={inputStyle} value={owner} onChange={(e) => setOwner(e.target.value)} placeholder="Optional" />
       </div>
 
       <div style={{ display: 'flex', gap: '0.5rem' }}>
@@ -316,8 +318,8 @@ const Registry: React.FC = () => {
   };
 
   return (
-    <div style={{ display: 'flex', minHeight: '60vh', height: '100%', overflow: 'hidden' }}>
-      <aside style={sidebarStyle}>
+    <div className="registry-layout" style={{ display: 'flex', minHeight: '60vh', height: '100%', overflow: 'hidden' }}>
+      <aside className="registry-list" style={sidebarStyle}>
         <h3 style={{ color: 'var(--iac-text)', marginBottom: '0.25rem' }}>Registry</h3>
         <p style={{ color: 'var(--iac-muted)', fontSize: '0.8rem', marginTop: 0, marginBottom: '1rem' }}>
           Known agents, model integrations, MCP hosts, and targets.
@@ -333,7 +335,7 @@ const Registry: React.FC = () => {
           + Add Entry
         </button>
 
-        <div style={{ display: 'flex', gap: '0.35rem', flexWrap: 'wrap', marginBottom: '1rem' }}>
+        <div role="group" aria-label="Filter by type" style={{ display: 'flex', gap: '0.35rem', flexWrap: 'wrap', marginBottom: '1rem' }}>
           <TabButton label="All" active={filterType === 'all'} onClick={() => setFilterType('all')} />
           {REGISTRY_TYPES.map((t) => (
             <TabButton key={t} label={REGISTRY_TYPE_LABELS[t]} active={filterType === t} onClick={() => setFilterType(t)} />
@@ -350,13 +352,24 @@ const Registry: React.FC = () => {
             return (
               <div
                 key={entry.id}
+                role="button"
+                tabIndex={0}
+                aria-pressed={isSelected}
+                className="registry-card"
                 onClick={() => {
                   setSelectedId(entry.id);
                   setMode('view');
                 }}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    setSelectedId(entry.id);
+                    setMode('view');
+                  }
+                }}
                 style={{
                   ...cardStyle,
-                  borderColor: isSelected ? 'var(--iac-surface-elevated)' : 'var(--iac-border)',
+                  borderColor: isSelected ? 'var(--iac-link)' : 'var(--iac-border)',
                   background: isSelected ? 'var(--iac-surface)' : 'var(--iac-bg)',
                   cursor: 'pointer',
                 }}
@@ -377,7 +390,7 @@ const Registry: React.FC = () => {
         </div>
       </aside>
 
-      <main style={mainStyle}>
+      <main className="registry-detail" style={mainStyle}>
         {mode === 'add' && <EntryForm onCancel={() => setMode('view')} onSubmit={handleAdd} />}
         {mode === 'edit' && selected && (
           <EntryForm initial={selected} onCancel={() => setMode('view')} onSubmit={handleEditSubmit} />

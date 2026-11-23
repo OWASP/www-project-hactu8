@@ -4,9 +4,11 @@ from __future__ import annotations
 
 import html
 import json
+import shlex
 from typing import Iterable, Optional
 
 from hactu8 import branding as branding_mod
+from hactu8 import providers
 
 FORMATS = ("markdown", "html", "sarif")
 CONTENT_TYPES = {
@@ -18,14 +20,19 @@ EXTENSIONS = {"markdown": "md", "html": "html", "sarif": "sarif"}
 
 
 def render(doc: dict, format_name: str, branding: Optional[dict] = None) -> str:
+    """A report. Last line of defence: known credentials are redacted from the
+    result before rendering (so escaping cannot hide one) and from the output."""
     if format_name not in FORMATS:
         raise ValueError(f"unknown report format {format_name!r}")
     brand = branding or branding_mod.load()
+    doc = json.loads(providers.redact(json.dumps(doc)))
     if format_name == "markdown":
-        return markdown(doc, brand)
-    if format_name == "html":
-        return html_report(doc, brand)
-    return json.dumps(sarif(doc, brand), indent=2, ensure_ascii=False) + "\n"
+        text = markdown(doc, brand)
+    elif format_name == "html":
+        text = html_report(doc, brand)
+    else:
+        text = json.dumps(sarif(doc, brand), indent=2, ensure_ascii=False) + "\n"
+    return providers.redact(text)
 
 
 def markdown(doc: dict, brand: dict) -> str:
@@ -173,11 +180,13 @@ def _findings(doc: dict) -> Iterable[tuple]:
 
 
 def _reproduce(doc: dict) -> str:
+    """The command that re-runs this result. Every stored value is shell-quoted: reports get shared."""
     model = doc["model"]
-    flag = f" --model {model['model']}" if model.get("model") and model["model"] != "(default)" else ""
+    backend = shlex.quote(str(model["backend"]))
+    flag = f" --model {shlex.quote(str(model['model']))}" if model.get("model") and model["model"] != "(default)" else ""
     if "live" in doc:
-        return f"python -m hactu8 live --backend {model['backend']}{flag}"
-    return f"python -m hactu8 run {doc['skill']['id']} --backend {model['backend']}"
+        return f"python -m hactu8 live --backend {backend}{flag}"
+    return f"python -m hactu8 run {shlex.quote(str(doc['skill']['id']))} --backend {backend}"
 
 
 def scoreboard_markdown(rows: list) -> str:

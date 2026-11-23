@@ -103,7 +103,7 @@ LAYER_NAMES = {"use_reputation": "provenance + reputation", "use_label_filter": 
 
 def mint_canary() -> str:
     """A fresh fictional tag per lab instance: ``HX19-CANARY-`` + 16 hex digits."""
-    return CANARY_PREFIX + secrets.token_hex(8)
+    return providers.register_canary(CANARY_PREFIX + secrets.token_hex(8))
 
 
 def load_json(path: str) -> Dict[str, Any]:

@@ -71,7 +71,7 @@ export function InfoField({ label, value }: { label: string; value: string }) {
 
 export function TabButton({ label, active, onClick }: { label: string; active: boolean; onClick: () => void }) {
   return (
-    <button onClick={onClick} style={{ ...tabButtonStyle, ...(active ? tabButtonActiveStyle : {}) }}>
+    <button type="button" aria-pressed={active} onClick={onClick} style={{ ...tabButtonStyle, ...(active ? tabButtonActiveStyle : {}) }}>
       {label}
     </button>
   );

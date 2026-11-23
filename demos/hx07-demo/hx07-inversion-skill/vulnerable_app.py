@@ -99,7 +99,7 @@ REDACTED = "redacted"
 
 def mint_canary() -> str:
     """A fresh fictional staff access reference per lab instance."""
-    return CANARY_PREFIX + secrets.token_hex(8)
+    return providers.register_canary(CANARY_PREFIX + secrets.token_hex(8))
 
 
 def grouped(hex_digits: str) -> str:

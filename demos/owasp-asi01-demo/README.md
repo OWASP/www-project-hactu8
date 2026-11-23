@@ -307,7 +307,7 @@ python scripts/evaluate_kpi.py --scan assets/ticket_comment.md  # REJECT, exit 2
 python scripts/evaluate_kpi.py --harden                         # GREEN, GDR 0%, exit 0
 python scripts/reset_baseline.py                                # restore clean state
 python scripts/evaluate_kpi.py                                  # GREEN, GDR 0%
-python -m unittest discover tests                               # 19 tests
+python -m unittest discover tests                               # 38 tests
 ```
 
 ## License

@@ -100,7 +100,7 @@ MAX_DOCS = 16
 
 def mint_canary() -> str:
     """A fresh fictional tag per lab instance: ``HX01-CANARY-`` + 16 hex digits."""
-    return CANARY_PREFIX + secrets.token_hex(8)
+    return providers.register_canary(CANARY_PREFIX + secrets.token_hex(8))
 
 
 def directive_followed(answer: str, canary: str) -> bool:

@@ -122,10 +122,6 @@ class SurfaceSdkTest(unittest.TestCase):
         self.assertFalse(surfaces.truth("swap:server_time", self.state.surfaces))
 
 
-if __name__ == "__main__":
-    unittest.main()
-
-
 class LambRoutesTest(unittest.TestCase):
     def setUp(self):
         from hactu8.lamb._mcp import available
@@ -148,7 +144,7 @@ class LambRoutesTest(unittest.TestCase):
         targets = self.client.get("/api/lamb/manifest").json()["targets"]
         self.assertFalse(targets["swap:server_time"]["attack"])
         self.assertTrue(targets["tool:search_kb"]["attack"])
-        self.assertEqual(self.client.post("/api/lamb/swap").json()["swapped"], ["server_time"])
+        self.assertEqual(self.client.post("/api/lamb/swap", json={}).json()["swapped"], ["server_time"])
         self.assertTrue(self.client.get("/api/lamb/manifest").json()["targets"]["swap:server_time"]["attack"])
         reset = self.client.post("/api/reset", json={}).json()
         self.assertEqual(reset["mcp"]["surfaces"], {"conditional_calls": 0, "swapped": []})
@@ -156,3 +152,7 @@ class LambRoutesTest(unittest.TestCase):
 
     def test_foreign_host_refused(self):
         self.assertEqual(self.client.get("/api/lamb/manifest", headers={"host": "evil.example"}).status_code, 403)
+
+
+if __name__ == "__main__":
+    unittest.main()
