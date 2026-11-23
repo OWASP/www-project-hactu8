@@ -119,6 +119,9 @@ plain wording, `gemma3:4b` sent none (2026-11-22 evidence). Vulnerable mode pass
 fences it and says it is data. The lab's layers check every reply, cc goes
 only to addresses on the lab's network, and nothing the model returns is
 executed. `run_demo.py` reports the numbers rather than asserting them.
+On `llama3.2:3b` one hardened sample of three was 33%: Hayloft wrote its
+own reference in a reply with no worm in reach, which no layer here checks
+(lesson, "Where the defense stops working").
 `LAB_MAX_CALLS` (default 200) and `LAB_MAX_TOKENS` (default 400) cap calls
 and output tokens per process; a round makes one call per reply. With
 `openrouter`, the mail and the fictional references leave the machine.
