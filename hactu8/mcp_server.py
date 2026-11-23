@@ -99,7 +99,7 @@ def build_server(root=None):
         return doc
 
     @mcp.tool(description="Run one skill (baseline, attack, impact, remediation) and store the result. "
-                          "backend: echo (default, deterministic) | ollama | llamacpp | openai-compat | "
+                          "backend: echo (default, deterministic) | ollama | llamacpp | openai-compat | strata | basalt | "
                           "openrouter | anthropic | openai. Cloud backends need confirm_spend=true.",
               annotations=runs)
     async def run_skill(skill_id: str, backend: str = "echo", model: str = "", classifier: str = "keyword",

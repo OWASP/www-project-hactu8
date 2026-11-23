@@ -206,7 +206,8 @@ def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--backend", default="echo",
-                    choices=["echo", "ollama", "llamacpp", "openai-compat", "openrouter", "anthropic", "openai"])
+                    choices=["echo", "ollama", "llamacpp", "openai-compat", "strata", "basalt",
+                             "openrouter", "anthropic", "openai"])
     ap.add_argument("--model", default="")
     ap.add_argument("--labs", nargs="*", help="lab folder names (default: all)")
     ap.add_argument("--timeout", type=int, default=1800,

@@ -299,7 +299,7 @@ backend the tests and the story assertions use. `stub` is accepted as an alias.
 `providers.py` is HACTU8's provider layer, standard library only. The canonical copy is
 `hactu8/providers.py`; `python scripts/vendor.py` copies it **unchanged** into
 `_template/` and every `<skill-slug>/` (edit it there, never in a lab). It
-offers `ollama`, `llamacpp` and `openrouter` in the console, plus `anthropic`
+offers `ollama`, `llamacpp`, `openai-compat`, `strata`, `basalt` and `openrouter` in the console, plus `anthropic`
 and `openai` from the command line (`ANTHROPIC_API_KEY`, `OPENAI_API_KEY`),
 model listing for the console (`available_models`), embeddings on the local
 servers (`Provider.embed`, used by LLM05's `src/` pipeline), and per-process

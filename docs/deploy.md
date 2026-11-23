@@ -23,7 +23,7 @@ Compose publishes the port on the host's `127.0.0.1` only (`"127.0.0.1:8000:8000
 
 ## Ollama on the host
 
-Ollama (and llama.cpp) run on the host, not in a container. The container reaches them at `host.docker.internal`: `OLLAMA_HOST` defaults to `http://host.docker.internal:11434` and `LLAMACPP_HOST` to `http://host.docker.internal:8080`. Override either in the shell before `docker compose up`. Docker Desktop forwards to the host's loopback. On Linux, Ollama must listen on an address the Docker bridge can reach, such as `OLLAMA_HOST=0.0.0.0` on the host, behind a firewall. For an OpenAI-compatible server on the host, set `LOCAL_OPENAI_BASE_URL=http://host.docker.internal:1234/v1` and `LOCAL_OPENAI_ALLOW_REMOTE=1`, since that host name is not loopback.
+Ollama (and llama.cpp) run on the host, not in a container. The container reaches them at `host.docker.internal`: `OLLAMA_HOST` defaults to `http://host.docker.internal:11434` and `LLAMACPP_HOST` to `http://host.docker.internal:8080`. Override either in the shell before `docker compose up`. Docker Desktop forwards to the host's loopback. On Linux, Ollama must listen on an address the Docker bridge can reach, such as `OLLAMA_HOST=0.0.0.0` on the host, behind a firewall. For an OpenAI-compatible server on the host, set `LOCAL_OPENAI_BASE_URL=http://host.docker.internal:1234/v1` and `LOCAL_OPENAI_ALLOW_REMOTE=1`, since that host name is not loopback. Strata and Basalt work the same way: `STRATA_HOST=http://host.docker.internal:8081` with `STRATA_ALLOW_REMOTE=1`, or `BASALT_HOST` with `BASALT_ALLOW_REMOTE=1` (see [local-engines.md](local-engines.md) for ports).
 
 ## Keys
 

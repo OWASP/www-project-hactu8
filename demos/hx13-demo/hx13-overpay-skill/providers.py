@@ -15,6 +15,12 @@ or switched at runtime from the web console through ``POST /api/backend``):
               llamafile, mlx_lm.server. LOCAL_OPENAI_BASE_URL (default
               http://localhost:1234/v1), optional LOCAL_OPENAI_API_KEY. Loopback
               only unless LOCAL_OPENAI_ALLOW_REMOTE=1.
+  strata      local Strata server (MoE engine, experts split GPU/CPU), OpenAI API.
+              STRATA_HOST (default http://localhost:8080, same port as llama.cpp),
+              optional STRATA_API_KEY. Loopback only unless STRATA_ALLOW_REMOTE=1.
+  basalt      local Basalt server (MoE engine, NVIDIA Blackwell + CUDA 13), OpenAI
+              API. BASALT_HOST (default http://localhost:8080 as in its example
+              config), optional BASALT_API_KEY. Loopback only unless BASALT_ALLOW_REMOTE=1.
   openrouter  remote. OPENROUTER_API_KEY required. The key is sent only in the
               Authorization header, never logged and never placed in a prompt.
   anthropic   remote. ANTHROPIC_API_KEY required (x-api-key header only).
@@ -61,9 +67,9 @@ from dataclasses import dataclass
 from typing import List, Optional
 
 # BACKENDS is what the lab console offers; ALL_BACKENDS is kept as an alias for older callers.
-BACKENDS = ("echo", "ollama", "llamacpp", "openai-compat", "openrouter", "anthropic", "openai")
+BACKENDS = ("echo", "ollama", "llamacpp", "openai-compat", "strata", "basalt", "openrouter", "anthropic", "openai")
 ALL_BACKENDS = BACKENDS
-LOCAL = ("ollama", "llamacpp", "openai-compat")
+LOCAL = ("ollama", "llamacpp", "openai-compat", "strata", "basalt")
 KEY_ENV = {"openrouter": "OPENROUTER_API_KEY", "anthropic": "ANTHROPIC_API_KEY", "openai": "OPENAI_API_KEY"}
 OFFLINE = "echo"
 _ALIASES = {"stub": "echo"}
@@ -72,6 +78,8 @@ DEFAULT_MODELS = {
     "ollama": "llama3.2:3b",
     "llamacpp": "local",
     "openai-compat": "local",
+    "strata": "local",
+    "basalt": "local",
     "openrouter": "meta-llama/llama-3.2-3b-instruct",
     "anthropic": "claude-haiku-5-5",
     "openai": "gpt-4.1-mini",
@@ -427,17 +435,23 @@ class OpenAICompatProvider(Provider):
     """Any local server that speaks the OpenAI chat-completions API."""
 
     name = "openai-compat"
+    env = "LOCAL_OPENAI"  # prefix for <env>_API_KEY, <env>_ALLOW_REMOTE, <env>_TIMEOUT
+
+    @classmethod
+    def base_url(cls) -> str:
+        """The server's OpenAI API root (ends in /v1), from the environment."""
+        return os.environ.get("LOCAL_OPENAI_BASE_URL", "http://localhost:1234/v1").rstrip("/")
 
     def __init__(self) -> None:
         super().__init__()
-        self.base = os.environ.get("LOCAL_OPENAI_BASE_URL", "http://localhost:1234/v1").rstrip("/")
-        if not _LOOPBACK.match(self.base) and os.environ.get("LOCAL_OPENAI_ALLOW_REMOTE") != "1":
+        self.base = self.base_url()
+        if not _LOOPBACK.match(self.base) and os.environ.get(f"{self.env}_ALLOW_REMOTE") != "1":
             raise RuntimeError(
-                f"openai-compat is for local servers; {self.base} is not loopback. Set "
-                "LOCAL_OPENAI_ALLOW_REMOTE=1 to use it anyway (lab text will leave the machine).")
-        raw = os.environ.get("LOCAL_OPENAI_API_KEY", "").strip()
+                f"{self.name} is for local servers; {self.base} is not loopback. Set "
+                f"{self.env}_ALLOW_REMOTE=1 to use it anyway (lab text will leave the machine).")
+        raw = os.environ.get(f"{self.env}_API_KEY", "").strip()
         self._key = _ProviderKey(raw) if raw else None
-        self.timeout = http_timeout("LOCAL_OPENAI_TIMEOUT")
+        self.timeout = http_timeout(f"{self.env}_TIMEOUT")
 
     def _headers(self) -> dict:
         return {"Authorization": f"Bearer {self._key.reveal()}"} if self._key else {}
@@ -445,7 +459,7 @@ class OpenAICompatProvider(Provider):
     def chat(self, messages: List[Message], *, model: str = "") -> str:
         self._count_call()
         data = self._post(f"{self.base}/chat/completions", {
-            "model": model or DEFAULT_MODELS["openai-compat"],
+            "model": model or DEFAULT_MODELS[self.name],
             "messages": [{"role": m.role, "content": m.content} for m in messages],
             "max_tokens": self.max_tokens,
             "stream": False,
@@ -461,6 +475,36 @@ class OpenAICompatProvider(Provider):
         data = self._post(f"{self.base}/embeddings", {"model": model, "input": list(texts)},
                           self._headers(), self.timeout)
         return [d["embedding"] for d in sorted(data["data"], key=lambda d: d.get("index", 0))]
+
+
+class StrataProvider(OpenAICompatProvider):
+    """Strata (github.com/Niko1221/Strata): a local engine that splits MoE expert
+    layers between GPU and CPU. Serves /v1/chat/completions and /v1/models on
+    127.0.0.1:8080 by default (--port changes it), the same port as llama.cpp."""
+
+    name = "strata"
+    env = "STRATA"
+
+    @classmethod
+    def base_url(cls) -> str:
+        return os.environ.get("STRATA_HOST", "http://localhost:8080").rstrip("/") + "/v1"
+
+
+class BasaltProvider(OpenAICompatProvider):
+    """Basalt (basalt.jgulfo.com): a Strata fork for MoE models on NVIDIA Blackwell
+    (CUDA 13), experts that do not fit VRAM held in system RAM. Its example config
+    serves 127.0.0.1:8080; set "server": {"port": ...} to run it beside llama.cpp."""
+
+    name = "basalt"
+    env = "BASALT"
+
+    @classmethod
+    def base_url(cls) -> str:
+        return os.environ.get("BASALT_HOST", "http://localhost:8080").rstrip("/") + "/v1"
+
+
+# The OpenAI-compatible local backends, by name.
+OPENAI_COMPAT = {p.name: p for p in (OpenAICompatProvider, StrataProvider, BasaltProvider)}
 
 
 class OpenRouterProvider(Provider):
@@ -588,8 +632,8 @@ def get_provider(name: str) -> Optional[Provider]:
         return OllamaProvider()
     if name == "llamacpp":
         return LlamaCppProvider()
-    if name == "openai-compat":
-        return OpenAICompatProvider()
+    if name in OPENAI_COMPAT:
+        return OPENAI_COMPAT[name]()
     if name == "openrouter":
         return OpenRouterProvider()
     if name == "anthropic":

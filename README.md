@@ -54,7 +54,7 @@ The examples below write `python`; on macOS that is `python3` or the venv's `pyt
 
 ## Models and scoring
 
-[`hactu8.yaml`](hactu8.yaml) defines router tiers: deterministic (echo), then local (Ollama, llama.cpp, or any OpenAI-compatible server such as LM Studio or vLLM via `openai-compat`), then cloud (Anthropic, OpenAI, OpenRouter). Each role starts at a tier: `target` (the model inside the lab) and `judge` (the model that scores answers). If a model is unavailable or fails, the router escalates to the next one, but automatic escalation stops at `max_tier` (local). Cloud sends lab prompts and payloads off the machine, so it is opt-in. Keys come from the environment only (`ANTHROPIC_API_KEY`, `OPENAI_API_KEY`, `OPENROUTER_API_KEY`).
+[`hactu8.yaml`](hactu8.yaml) defines router tiers: deterministic (echo), then local (Ollama, llama.cpp, any OpenAI-compatible server such as LM Studio or vLLM via `openai-compat`, and the MoE engines Strata and Basalt via `strata` and `basalt`), then cloud (Anthropic, OpenAI, OpenRouter). Each role starts at a tier: `target` (the model inside the lab) and `judge` (the model that scores answers). If a model is unavailable or fails, the router escalates to the next one, but automatic escalation stops at `max_tier` (local). Cloud sends lab prompts and payloads off the machine, so it is opt-in. Keys come from the environment only (`ANTHROPIC_API_KEY`, `OPENAI_API_KEY`, `OPENROUTER_API_KEY`).
 
 ```bash
 python -m hactu8 router                          # tiers, availability, what each role resolves to
@@ -62,6 +62,8 @@ python -m hactu8 run llm01 --tier local          # model under test from the loc
 python -m hactu8 run llm01 --backend ollama --model llama3.2:3b
 python -m hactu8 run llm01 --classifier llm-judge
 ```
+
+For which local engine fits which hardware, the port clash between llama.cpp, Strata and Basalt (all on 8080 by default), and MoE models that fit a 16 GB Mac, see [docs/local-engines.md](docs/local-engines.md).
 
 Classifiers score each item GREEN, YELLOW or RED with a confidence. `keyword` (default, offline) records the lab's own verdict. `llm-judge` asks the judge model to score the item's evidence, which is what the model under test produced. It falls back to the lab verdict at confidence 0.5 when no judge answers. A judge (`llm-judge` or `jev`) may confirm or raise the lab's verdict but never lowers a lab RED: a lab grades RED only on its canary or a declared deterministic oracle, so that RED stands whatever the judge says. `jev` is an optional TypeSafe System One classifier: it is off unless `classifiers.jev.enabled` is set (or `HACTU8_ENABLE_JEV=1`), and it needs `TYPESAFE_API_KEY` (`JEV_API_KEY` remains a compatibility alias).
 

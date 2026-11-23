@@ -375,8 +375,8 @@ def build_parser() -> argparse.ArgumentParser:
 
     p = sub.add_parser("run", help="run one or more skills ('all' for every skill)")
     p.add_argument("skills", nargs="+")
-    p.add_argument("--backend", default="", help="echo | ollama | llamacpp | openrouter | anthropic | openai "
-                   "(default: from the router)")
+    p.add_argument("--backend", default="", help="echo | ollama | llamacpp | openai-compat | strata | basalt | "
+                   "openrouter | anthropic | openai (default: from the router)")
     p.add_argument("--model", default="")
     p.add_argument("--tier", default="", help="router tier for the model under test: deterministic | local | cloud")
     p.add_argument("--classifier", default="", help="keyword (default) | llm-judge | jev")
@@ -401,13 +401,13 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--json", action="store_true")
     p.add_argument("--misses", action="store_true", help="list misses and false positives")
     p.add_argument("--classifier-backend", default="", help="add ProtectoGW's model plane: ollama | llamacpp | "
-                   "openrouter | anthropic | openai")
+                   "openai-compat | strata | basalt | openrouter | anthropic | openai")
     p.add_argument("--model", default="")
     p.set_defaults(func=cmd_bench)
 
     p = sub.add_parser("live", help="attack a model with Billy's MCP surfaces, defense off vs on")
     p.add_argument("--backend", default="echo", help="echo (default, offline) | ollama | llamacpp | "
-                   "openrouter | anthropic | openai")
+                   "openai-compat | strata | basalt | openrouter | anthropic | openai")
     p.add_argument("--model", default="")
     p.add_argument("--confirm-spend", action="store_true", help="allow a paid cloud backend")
     p.add_argument("--json", action="store_true")
@@ -415,7 +415,7 @@ def build_parser() -> argparse.ArgumentParser:
 
     p = sub.add_parser("wolf", help="an attacker model writes and adapts attacks on Lamb, graded off vs on")
     p.add_argument("--backend", default="echo", help="attacker: echo (default, deterministic mutations) | ollama | "
-                   "llamacpp | openrouter | anthropic | openai")
+                   "llamacpp | openai-compat | strata | basalt | openrouter | anthropic | openai")
     p.add_argument("--model", default="")
     p.add_argument("--target-backend", default="", help="model under attack (default: the attacker's backend)")
     p.add_argument("--target-model", default="")
