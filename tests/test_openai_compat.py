@@ -262,10 +262,6 @@ class HardwareGateTest(unittest.TestCase):
         self.assertIn("Blackwell", why)
 
 
-if __name__ == "__main__":
-    unittest.main()
-
-
 class ServerErrorBodyTest(unittest.TestCase):
     """2026-11-23 sweep: Ollama answered 500 with a reason in the body; the exception must carry it."""
 
@@ -283,3 +279,7 @@ class ServerErrorBodyTest(unittest.TestCase):
                 p.chat([providers.Message("user", "hi")], model="llama3.2:3b")
         self.assertEqual(ctx.exception.code, 500)
         self.assertIn("token repeat limit reached", str(ctx.exception))
+
+
+if __name__ == "__main__":
+    unittest.main()
