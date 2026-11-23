@@ -77,7 +77,7 @@ On Apple Silicon the CPU and GPU share the same unified memory, so GPU/CPU exper
 
 ## MoE candidates for a 16 GB Mac
 
-Sizes are approximate 4-bit download sizes; real memory use is higher once the context is allocated. None of these models is pulled on this host. Pulling one downloads gigabytes and needs the user's go-ahead first.
+Sizes are approximate 4-bit download sizes; real memory use is higher once the context is allocated. Only `granite3.1-moe:3b` is pulled on this host (2026-11-23, 2.0 GB, user approved). Pulling another downloads gigabytes and needs the user's go-ahead first.
 
 | Model | Total / active parameters | Approx. size | Fit on 16 GB |
 |-------|---------------------------|--------------|--------------|
@@ -89,6 +89,21 @@ Sizes are approximate 4-bit download sizes; real memory use is higher once the c
 | `qwen3:30b-a3b` | about 30B / 3.3B | about 18 to 19 GB | too big at 4-bit |
 
 Small MoE models are fast but weak, so expect them to follow lab payloads less reliably than a dense 7B to 8B model. Report what they do; do not tune the labs to them.
+
+## Where model files go
+
+On this host the main disk is small, so model files live on the secondary drive, `/Volumes/DockerDisk`:
+
+- **Ollama**: `~/.ollama/models` is a symlink to `/Volumes/DockerDisk/ollama/models`, so `ollama pull` lands there. Check with `readlink ~/.ollama/models`. If the drive is not mounted, Ollama cannot find its models; mount the drive rather than pulling again onto the main disk.
+- **Hugging Face downloads** (GGUF files for llama.cpp or Strata, MLX weights): set `HF_HOME=/Volumes/DockerDisk/hf` in the shell profile.
+- **llama.cpp's own downloads** (`llama-server -hf ...`): set `LLAMA_CACHE=/Volumes/DockerDisk/llama.cpp-cache`.
+- **Strata and Basalt model packs**: pass a path on the secondary drive when the engine asks for a model directory.
+
+```sh
+# ~/.zshrc
+export HF_HOME=/Volumes/DockerDisk/hf
+export LLAMA_CACHE=/Volumes/DockerDisk/llama.cpp-cache
+```
 
 ## Reasoning models: `HACTU8_THINK`
 
