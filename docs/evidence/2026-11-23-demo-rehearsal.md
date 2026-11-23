@@ -38,3 +38,18 @@ Not run: `--classifier llm-judge` (its judge is Ollama) and every `gemma3:4b` st
 - `CLAUDE.md`: status (W0-W9 done, 49 labs, merged into `phase1-mvp`), backends, the judge-never-lowers-RED and ERROR rules, layout.
 - `demos/README.md`: HX table in id order; `anthropic` and `openai` backends; hardware check and ERROR note.
 - `docs/agenticgoat-merge-plan.md`: Handoff for 2026-11-23.
+
+## Real-model steps
+
+Same day, from a worktree of branch `demo-gemma` at `a7e0eb9`, local Ollama only, one model loaded at a time and unloaded after. `gemma3:4b` for every demo step; the `llm-judge` judge is the router's first local candidate, `llama3.2:3b` (the demo script names no judge model). The API ran on 18011 for the console path; 5508 and 5510 were left alone. No command failed, so no code changed; the script's numbers were updated to what the model gave.
+
+| Step | What was run | Time | Result | Script claim |
+| --- | --- | --- | --- | --- |
+| Before | `ollama run gemma3:4b "hi"` | 8 s (cold load) | answered | holds |
+| 3. One lab | `python -m hactu8 run llm01 --backend ollama --model gemma3:4b`, 3 runs; `POST /api/runs` (the console's call), 1 run | 13-15 s | REPORTED ISR 0% -> 100% -> 0% in 4 of 4 | "about 35 seconds" was slow; now about 15 seconds. Added that the result says REPORTED, not PASS |
+| 4. MCP surfaces | `python -m hactu8 live --backend ollama --model gemma3:4b`, 3 runs; `POST /api/live`, 1 run | 50-56 s | breaches off 8, 6, 6, 6; on 0; false blocks 0 | "7 to 8 of 13" did not hold; now "6 to 8 in four runs", reported not asserted |
+| 5. Agentic lab | `python -m hactu8 run asi05 --backend ollama --model gemma3:4b` | 42 s | REPORTED UER 0% -> 100% -> 0% | rates hold; "about 70 seconds" now about 45 |
+| 7. Wolf | `python -m hactu8 wolf --backend ollama --model gemma3:4b --rounds 2`, 3 runs | 22-25 s | landed off 0, 0, 1 of 4; on 0; den captures 0, 0, 1; 0 rejected by the safety screen | The script gave no number; it now says 0 or 1 of 4 is normal, the den is often empty, and to show the echo run after |
+| Judge (README) | `python -m hactu8 run llm01 --classifier llm-judge` (target `echo`, judge `ollama:llama3.2:3b`) | 11 s | PASS ISR 0% -> 100% -> 0%; the judge answered all 15 items (confidence 0.8-1.0), 3 RED kept | holds; the result records the judge model |
+
+Unchanged checks after the script edit: vendor check, unit tests, `run all --backend echo` 49/49, markdownlint 0 errors.
