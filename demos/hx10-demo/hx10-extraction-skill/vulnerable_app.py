@@ -86,7 +86,7 @@ API_RANGES = {"weight_kg": (0.1, 50.0), "shelf_life_months": (0, 60), "organic":
 INTEGER_FEATURES = ("shelf_life_months", "organic", "bulk_pack", "supplier_tier")
 
 CANARY_PREFIX = "HX10-CANARY-"
-FINGERPRINT_SCALE = 100_000        # the fingerprint lives below the 5th decimal of each parameter
+FINGERPRINT_SCALE = 10 ** 8         # the fingerprint lives below the 8th decimal of each parameter
 AGREEMENT_THRESHOLD = 0.95         # a clone this close is a usable substitute: RED
 HELDOUT_SIZE = 1000
 PRIVATE_SEED, HELDOUT_SEED, PROBE_SEED, WATERMARK_SEED, COMPETITOR_SEED = 2026, 99, 4242, 1010, 777
@@ -282,9 +282,11 @@ def base_model() -> LinearModel:
 def stamp(model: LinearModel, canary: str) -> LinearModel:
     """Write the canary's 16 hex digits into the low-order digits of the 16 free parameters.
 
-    Each parameter keeps its first five decimals; digit h sets the rest to
-    (h + 0.5) / 16 of the last unit. Behaviour changes by less than 1e-5 per
-    parameter. Only a copy of the exact parameters carries the digits.
+    Each parameter keeps its first eight decimals; digit h sets the rest to
+    (h + 0.5) / 16 of the last unit. Each parameter moves by less than 1e-8,
+    too little to change any band the lab computes, so every run grades the
+    same although each mints a fresh canary (the tests check every fixed
+    listing). Only a copy of the exact parameters carries the digits.
     """
     digits = [int(c, 16) for c in canary[len(CANARY_PREFIX):]]
     params = model.parameters()

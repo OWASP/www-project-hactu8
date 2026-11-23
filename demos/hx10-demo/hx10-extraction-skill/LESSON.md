@@ -14,7 +14,7 @@ The harm is measured two ways. A clone that agrees with the victim on 95% or mor
 
 Two things are missing, by design:
 
-- **The API says more than the answer.** Every prediction carries the model's confidences at full precision. For a logistic model, the log of the ratio of two class probabilities is a linear function of the input. Eight queries give eight equations per class, and Gaussian elimination gives the parameters to at least eight decimal places, fingerprint included. Tramèr et al. (2016) showed extraction "with near-perfect fidelity" from APIs that return confidences, against two commercial ML services.
+- **The API says more than the answer.** Every prediction carries the model's confidences at full precision. For a logistic model, the log of the ratio of two class probabilities is a linear function of the input. Eight queries give eight equations per class, and Gaussian elimination gives the parameters to about thirteen decimal places, fingerprint included. Tramèr et al. (2016) showed extraction "with near-perfect fidelity" from APIs that return confidences, against two commercial ML services.
 - **Nothing meters or watches who asks what.** Keys are free and unlimited, and nobody checks whether a key's queries look like a shop pricing its stock or like someone mapping the model. Without the confidences, the bands alone still train a clone: Tramèr et al. also report that omitting confidences "still admits potentially harmful model extraction attacks".
 
 The attacker in this lab really does both. `scripts/run_extraction.py` queries the API, solves the equations or trains an averaged perceptron on the answers, and hands the clone to the lab's grader. Nothing is hard-coded to succeed: 7 confidence vectors cannot be solved and 8 can, and 50 label-only queries give a worse clone than 2,000 (`AttackDependsOnTest`).
@@ -30,7 +30,7 @@ Run all four acts with `python run_demo.py` from `demos/hx10-demo`, or `python -
 
 Grading reads the clone, never the attacker's intent. A client is RED when the canary can be read from its clone's parameters (`providers.canary_leaked`), or when its clone agrees with the victim on at least 95% of the held-out listings and is proven to have learned from this API: the harness trained it on the API's answers, or the watermark proves it. Agreement alone is not enough, because an independent model can reach it (below). A client whose own lookup was refused or got a wrong band has no true facts and is YELLOW.
 
-This lab runs on the **echo backend only**. There is no language model in it: the victim is a pure-Python classifier, so `--backend ollama` and the console's other backends are refused, and every number here is deterministic up to a few tenths of a percent (each run's fingerprint can move a borderline band).
+This lab runs on the **echo backend only**. There is no language model in it: the victim is a pure-Python classifier, so `--backend ollama` and the console's other backends are refused, and every number here is the same on every run (each run's fingerprint is fresh, but it sits below the eighth decimal and moves no band the lab computes).
 
 ## The defense, and why it holds
 
