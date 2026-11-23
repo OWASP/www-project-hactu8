@@ -25,7 +25,7 @@ class ApiTest(unittest.TestCase):
         self.home = tempfile.TemporaryDirectory()
         self.env = patch.dict(os.environ, {"HACTU8_HOME": self.home.name})
         self.env.start()
-        self.client = TestClient(create_app(ROOT))
+        self.client = TestClient(create_app(ROOT), base_url="http://127.0.0.1:8000")
 
     def tearDown(self):
         self.env.stop()
@@ -88,7 +88,7 @@ class ApiModelsAndLiveTest(unittest.TestCase):
         self.env.start()
         for key in ("OPENROUTER_API_KEY", "ANTHROPIC_API_KEY", "OPENAI_API_KEY"):
             os.environ.pop(key, None)
-        self.client = TestClient(create_app(ROOT))
+        self.client = TestClient(create_app(ROOT), base_url="http://127.0.0.1:8000")
 
     def tearDown(self):
         self.env.stop()
@@ -146,7 +146,7 @@ class ApiConsoleTest(unittest.TestCase):
         (base / "secret.txt").write_text("outside", encoding="utf-8")
         self.env = patch.dict(os.environ, {"HACTU8_HOME": str(base / "home"), "HACTU8_CONSOLE_DIR": str(self.dist)})
         self.env.start()
-        self.client = TestClient(create_app(ROOT))
+        self.client = TestClient(create_app(ROOT), base_url="http://127.0.0.1:8000")
 
     def tearDown(self):
         self.env.stop()
@@ -167,7 +167,7 @@ class ApiConsoleTest(unittest.TestCase):
 
     def test_off_without_the_env_var(self):
         with patch.dict(os.environ, {"HACTU8_CONSOLE_DIR": ""}):
-            self.assertEqual(TestClient(create_app(ROOT)).get("/").status_code, 404)
+            self.assertEqual(TestClient(create_app(ROOT), base_url="http://127.0.0.1:8000").get("/").status_code, 404)
 
 
 if __name__ == "__main__":

@@ -63,7 +63,9 @@ COPY scripts/ scripts/
 COPY --from=console /console/dist/ console/
 ENV HACTU8_HOME=/data \
     HACTU8_CONSOLE_DIR=/app/console \
-    OLLAMA_HOST=http://host.docker.internal:11434
+    OLLAMA_HOST=http://host.docker.internal:11434 \
+    OLLAMA_ALLOW_REMOTE=1 \
+    LLAMACPP_ALLOW_REMOTE=1
 USER hactu8
 VOLUME ["/data"]
 EXPOSE 8000

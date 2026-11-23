@@ -148,7 +148,7 @@ class LambRoutesTest(unittest.TestCase):
         targets = self.client.get("/api/lamb/manifest").json()["targets"]
         self.assertFalse(targets["swap:server_time"]["attack"])
         self.assertTrue(targets["tool:search_kb"]["attack"])
-        self.assertEqual(self.client.post("/api/lamb/swap").json()["swapped"], ["server_time"])
+        self.assertEqual(self.client.post("/api/lamb/swap", json={}).json()["swapped"], ["server_time"])
         self.assertTrue(self.client.get("/api/lamb/manifest").json()["targets"]["swap:server_time"]["attack"])
         reset = self.client.post("/api/reset", json={}).json()
         self.assertEqual(reset["mcp"]["surfaces"], {"conditional_calls": 0, "swapped": []})

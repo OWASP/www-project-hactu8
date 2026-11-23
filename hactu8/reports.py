@@ -7,6 +7,7 @@ import json
 from typing import Iterable, Optional
 
 from hactu8 import branding as branding_mod
+from hactu8 import providers
 
 FORMATS = ("markdown", "html", "sarif")
 CONTENT_TYPES = {
@@ -18,14 +19,19 @@ EXTENSIONS = {"markdown": "md", "html": "html", "sarif": "sarif"}
 
 
 def render(doc: dict, format_name: str, branding: Optional[dict] = None) -> str:
+    """A report. Last line of defence: known credentials are redacted from the
+    result before rendering (so escaping cannot hide one) and from the output."""
     if format_name not in FORMATS:
         raise ValueError(f"unknown report format {format_name!r}")
     brand = branding or branding_mod.load()
+    doc = json.loads(providers.redact(json.dumps(doc)))
     if format_name == "markdown":
-        return markdown(doc, brand)
-    if format_name == "html":
-        return html_report(doc, brand)
-    return json.dumps(sarif(doc, brand), indent=2, ensure_ascii=False) + "\n"
+        text = markdown(doc, brand)
+    elif format_name == "html":
+        text = html_report(doc, brand)
+    else:
+        text = json.dumps(sarif(doc, brand), indent=2, ensure_ascii=False) + "\n"
+    return providers.redact(text)
 
 
 def markdown(doc: dict, brand: dict) -> str:

@@ -114,7 +114,9 @@ def build_server(root=None):
             from hactu8.classify import get_classifier
             from hactu8.router import Router
             cfg = config.load(root / "hactu8.yaml")
-            judge = checked(get_classifier, classifier, cfg, Router.from_config(cfg))
+            router = Router.from_config(cfg)
+            guard(spend.judge_notice(router, classifier), confirm_spend)
+            judge = checked(get_classifier, classifier, cfg, router)
             return lab.run(skill, backend=name, model=model, classifier=judge)
 
         doc = await asyncio.to_thread(work)

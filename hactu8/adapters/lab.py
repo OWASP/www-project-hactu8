@@ -190,6 +190,9 @@ def run(skill, backend: str = "echo", model: str = "", classifier: Union[str, Cl
         output, code = (exc.stdout or "") if isinstance(exc.stdout, str) else "", 124
     doc["duration_ms"] = int((time.monotonic() - start) * 1000)
     doc["finished_at"] = now_iso()
+    # The lab's own providers.py redacts at the source; this catches anything else
+    # (a traceback, a lab's own print) before it becomes evidence, a reason or the tail.
+    output = providers.redact(output)
     reasoning = reasoning_totals(output)
     if reasoning and "think" in doc["model"]:
         doc["model"]["think"]["reasoning"] = reasoning

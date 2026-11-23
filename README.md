@@ -67,7 +67,7 @@ python -m hactu8 run llm01 --classifier llm-judge
 
 For which local engine fits which hardware, the port clash between llama.cpp, Strata and Basalt (all on 8080 by default), and MoE models that fit a 16 GB Mac, see [docs/local-engines.md](docs/local-engines.md). A backend this host's hardware cannot run (Basalt needs an NVIDIA Blackwell GPU, Strata Apple Silicon or an NVIDIA GPU) is greyed out in the consoles and refused by the CLI, router and API with the reason; `HACTU8_FORCE_BACKENDS` skips the check.
 
-Classifiers score each item GREEN, YELLOW or RED with a confidence. An item whose model call failed (for example an HTTP 500 from the model server) is recorded as ERROR: it is not a grade, counts in neither the red count nor the total, and classifiers never see it. `keyword` (default, offline) records the lab's own verdict. `llm-judge` asks the judge model to score the item's evidence, which is what the model under test produced. It falls back to the lab verdict at confidence 0.5 when no judge answers. A judge (`llm-judge` or `jev`) may confirm or raise the lab's verdict but never lowers a lab RED: a lab grades RED only on its canary or a declared deterministic oracle, so that RED stands whatever the judge says. `jev` is an optional TypeSafe System One classifier: it is off unless `classifiers.jev.enabled` is set (or `HACTU8_ENABLE_JEV=1`), and it needs `TYPESAFE_API_KEY` (`JEV_API_KEY` remains a compatibility alias).
+Classifiers score each item GREEN, YELLOW or RED with a confidence. An item whose model call failed (for example an HTTP 500 from the model server) is recorded as ERROR: it is not a grade, counts in neither the red count nor the total, and classifiers never see it. `keyword` (default, offline) records the lab's own verdict. `llm-judge` asks the judge model to score the item's evidence, which is what the model under test produced. It falls back to the lab verdict at confidence 0.5 when no judge answers. When the judge's role can reach a paid cloud backend (its tier, or escalation up to `router.max_tier`, with that backend's key set), `run`, the API and the MCP server refuse it without `--confirm-spend` (`confirm_spend`). A routed run that would escalate the model under test to a paid backend stops instead, unless `--confirm-spend` is given, and so does `hactu8 bench --classifier-backend` with a cloud backend. A judge (`llm-judge` or `jev`) may confirm or raise the lab's verdict but never lowers a lab RED: a lab grades RED only on its canary or a declared deterministic oracle, so that RED stands whatever the judge says. `jev` is an optional TypeSafe System One classifier: it is off unless `classifiers.jev.enabled` is set (or `HACTU8_ENABLE_JEV=1`), and it needs `TYPESAFE_API_KEY` (`JEV_API_KEY` remains a compatibility alias).
 
 Shared lab code (`providers.py`, `protectogw/`) has one canonical copy in `hactu8/`. Run `python scripts/vendor.py` after editing it, and the tests check that every lab copy matches.
 
@@ -85,7 +85,7 @@ python -m hactu8.lamb
 curl http://127.0.0.1:5500/api/labs
 ```
 
-Lab consoles and APIs are under `http://127.0.0.1:5500/labs/<skill-id>/`; the Streamable HTTP MCP endpoint is `http://127.0.0.1:5500/mcp`. `POST /api/reset` restores running labs and the MCP target to baseline.
+Lab consoles and APIs are under `http://127.0.0.1:5500/labs/<skill-id>/`; the Streamable HTTP MCP endpoint is `http://127.0.0.1:5500/mcp`. `POST /api/reset` (with `Content-Type: application/json`) restores running labs and the MCP target to baseline. Lamb's control calls (`/api/reset`, `/api/lamb/mode`, `/api/lamb/swap`) refuse any other content type (415) and a non-loopback `Origin` (403), so a web page cannot fire them cross-site.
 
 ## API, console, and reports
 
@@ -101,7 +101,7 @@ npm install
 npm run dev
 ```
 
-The API binds to `http://127.0.0.1:8000` (`HACTU8_API_PORT` changes the port; Lamb uses `HACTU8_LAMB_PORT`); the console defaults to that URL and can be pointed elsewhere with `VITE_HACTU8_API_URL`. White-label name, tagline, report title, and colors are configured in [`branding.yaml`](branding.yaml).
+The API binds to `http://127.0.0.1:8000` (`HACTU8_API_PORT` changes the port; Lamb uses `HACTU8_LAMB_PORT`) and answers only a loopback `Host` with that port (421 otherwise, against DNS rebinding); the console defaults to that URL and can be pointed elsewhere with `VITE_HACTU8_API_URL`. White-label name, tagline, report title, and colors are configured in [`branding.yaml`](branding.yaml).
 
 ## Docker, devcontainer, and CI
 
@@ -110,6 +110,8 @@ The API binds to `http://127.0.0.1:8000` (`HACTU8_API_PORT` changes the port; La
 ## Safety
 
 Every target is insecure by design and binds to `127.0.0.1`. Use only against systems you are authorized to test. Shipped payloads are benign-effect: realistic wording whose only possible effect is emitting a fictional canary or calling a simulated tool on loopback.
+
+API keys come from the environment only and ride only in request headers. Provider calls never follow redirects, and any `*_API_KEY` value (or other credential a request carried) that a server echoes back is replaced with `[REDACTED]` in errors, judge reasons, stored results and reports.
 
 ## Contributing
 

@@ -7,6 +7,8 @@ import os
 from pathlib import Path
 from typing import List, Optional
 
+from hactu8 import providers
+
 
 def home() -> Path:
     return Path(os.environ.get("HACTU8_HOME", ".hactu8")).resolve()
@@ -19,8 +21,10 @@ def results_dir() -> Path:
 
 
 def save(doc: dict) -> Path:
+    """Write a result. Last line of defence: any known credential is redacted first."""
     path = results_dir() / f"{doc['run_id']}.json"
-    path.write_text(json.dumps(doc, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+    text = providers.redact(json.dumps(doc, indent=2, ensure_ascii=False))
+    path.write_text(text + "\n", encoding="utf-8")
     return path
 
 

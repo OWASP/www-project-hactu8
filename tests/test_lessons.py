@@ -217,7 +217,7 @@ class LessonApiTest(unittest.TestCase):
         self.home = tempfile.TemporaryDirectory()
         self.env = patch.dict(os.environ, {"HACTU8_HOME": self.home.name})
         self.env.start()
-        self.client = TestClient(create_app(ROOT))
+        self.client = TestClient(create_app(ROOT), base_url="http://127.0.0.1:8000")
 
     def tearDown(self):
         self.env.stop()
