@@ -66,6 +66,13 @@ attack then defense (about 15 seconds).
 
 Fallback: the Offline tier (`echo`) shows 0% -> 100% -> 0% every time.
 
+Optional, if asked how answers are scored:
+`python -m hactu8 run llm01 --backend ollama --model gemma3:4b --classifier llm-judge`.
+The judge is `llama3.2:3b`, the first local model in `hactu8.yaml`, so a
+different model family grades gemma3:4b. A judge may confirm or raise a lab's
+verdict but never lowers a canary RED. On 2026-11-23 it scored all 15 items,
+kept the 3 REDs, and LLM01 read 0% -> 100% -> 0% (about 11 seconds).
+
 ## 4. Billy's MCP surfaces, off versus on (2 minutes)
 
 Run the "Billy's MCP surfaces" lab on the same model. Show model resistance
