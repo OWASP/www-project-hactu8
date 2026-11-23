@@ -21,6 +21,8 @@ or switched at runtime from the web console through ``POST /api/backend``):
   basalt      local Basalt server (MoE engine, NVIDIA Blackwell + CUDA 13), OpenAI
               API. BASALT_HOST (default http://localhost:8080 as in its example
               config), optional BASALT_API_KEY. Loopback only unless BASALT_ALLOW_REMOTE=1.
+  (strata and basalt are offered only on hardware that can run them; see
+  ``backend_support()`` and the HACTU8_FORCE_BACKENDS override.)
   openrouter  remote. OPENROUTER_API_KEY required. The key is sent only in the
               Authorization header, never logged and never placed in a prompt.
   anthropic   remote. ANTHROPIC_API_KEY required (x-api-key header only).
@@ -56,7 +58,10 @@ import codecs
 import html
 import json
 import os
+import platform
 import re
+import shutil
+import subprocess
 import threading
 import urllib.error
 import urllib.request
@@ -64,7 +69,7 @@ import secrets
 import unicodedata
 import urllib.parse
 from dataclasses import dataclass
-from typing import List, Optional
+from typing import Dict, List, Optional, Tuple
 
 # BACKENDS is what the lab console offers; ALL_BACKENDS is kept as an alias for older callers.
 BACKENDS = ("echo", "ollama", "llamacpp", "openai-compat", "strata", "basalt", "openrouter", "anthropic", "openai")
@@ -503,6 +508,106 @@ class BasaltProvider(OpenAICompatProvider):
         return os.environ.get("BASALT_HOST", "http://localhost:8080").rstrip("/") + "/v1"
 
 
+# ---- hardware gate ----------------------------------------------------------- #
+# Some engines run only on certain hardware. The console greys those backends out
+# and get_provider() refuses them with the reason, instead of a connection error.
+# HACTU8_FORCE_BACKENDS=basalt,strata (or "all") skips the check, e.g. when the
+# engine runs on another machine behind an SSH tunnel.
+FORCE_ENV = "HACTU8_FORCE_BACKENDS"
+HARDWARE_NEEDS = {
+    "strata": ("Apple Silicon or an NVIDIA GPU",
+               "Strata needs Apple Silicon (macOS arm64) or an NVIDIA CUDA GPU"),
+    "basalt": ("an NVIDIA Blackwell GPU",
+               "Basalt needs an NVIDIA Blackwell GPU (sm_120) with CUDA 13 on Linux or Windows"),
+}
+_GPU_LOCK = threading.Lock()
+_GPU_CACHE: Optional[Tuple[List[Tuple[str, str]], str]] = None
+
+
+def _nvidia_gpus() -> Tuple[List[Tuple[str, str]], str]:
+    """([(name, compute_cap)], note) from nvidia-smi, cached per process. Never raises."""
+    global _GPU_CACHE
+    with _GPU_LOCK:
+        if _GPU_CACHE is None:
+            _GPU_CACHE = _query_nvidia()
+        return _GPU_CACHE
+
+
+def _query_nvidia() -> Tuple[List[Tuple[str, str]], str]:
+    exe = shutil.which("nvidia-smi")
+    if not exe:
+        return [], "nvidia-smi not found"
+    try:
+        out = subprocess.run([exe, "--query-gpu=name,compute_cap", "--format=csv,noheader"],
+                             capture_output=True, text=True, timeout=2.0, check=False)
+    except (OSError, subprocess.SubprocessError) as exc:
+        return [], f"nvidia-smi failed ({type(exc).__name__})"
+    if out.returncode != 0:
+        return [], f"nvidia-smi exited {out.returncode}"
+    gpus = []
+    for line in (out.stdout or "").splitlines():
+        name, _, cap = line.rpartition(",")
+        if name.strip() and re.fullmatch(r"\d+\.\d+", cap.strip()):
+            gpus.append((name.strip(), cap.strip()))
+    return gpus, "" if gpus else "nvidia-smi listed no GPU"
+
+
+def _sm(cap: str) -> str:
+    return "sm_" + cap.replace(".", "")
+
+
+def _forced(name: str) -> bool:
+    wanted = {w.strip().lower() for w in os.environ.get(FORCE_ENV, "").split(",")}
+    return "all" in wanted or name in wanted
+
+
+def _hardware_check(name: str) -> Tuple[bool, str]:
+    if name not in HARDWARE_NEEDS:
+        return True, "no special hardware needed"
+    if _forced(name):
+        return True, f"hardware check skipped ({FORCE_ENV})"
+    need = HARDWARE_NEEDS[name][1]
+    system, machine = platform.system(), platform.machine().lower()
+    if name == "strata" and system == "Darwin" and machine in ("arm64", "aarch64"):
+        return True, "Apple Silicon"
+    if system == "Darwin":
+        return False, f"{need}; {'it cannot run on macOS' if name == 'basalt' else 'this Mac is not Apple Silicon'}"
+    if name == "basalt" and system not in ("Linux", "Windows"):
+        return False, f"{need}; this host runs {system or 'an unknown OS'}"
+    gpus, note = _nvidia_gpus()
+    if not gpus:
+        return False, f"{need}; no NVIDIA GPU found ({note})"
+    if name == "strata":
+        return True, f"{gpus[0][0]} ({_sm(gpus[0][1])})"
+    for gpu, cap in gpus:
+        if cap.split(".")[0] == "12":
+            return True, f"{gpu} ({_sm(cap)})"
+    found = ", ".join(f"{gpu} ({_sm(cap)})" for gpu, cap in gpus)
+    return False, f"{need}; found only {found}"
+
+
+def backend_support() -> Dict[str, dict]:
+    """{backend: {"ok", "reason", "needs"}} for every backend. Hardware only: keys
+    and servers are checked elsewhere. Never raises; nvidia-smi runs at most once."""
+    out = {}
+    for name in BACKENDS:
+        try:
+            ok, reason = _hardware_check(name)
+        except Exception as exc:  # noqa: BLE001 — a probe must never break a lab
+            ok, reason = False, f"{HARDWARE_NEEDS[name][1]}; hardware check failed ({type(exc).__name__})"
+        out[name] = {"ok": ok, "reason": reason, "needs": HARDWARE_NEEDS.get(name, ("", ""))[0]}
+    return out
+
+
+def hardware_reason(name: str) -> str:
+    """Why ``name`` cannot run on this host's hardware, or "" when it can."""
+    name = normalize(name)
+    if name not in HARDWARE_NEEDS:
+        return ""
+    entry = backend_support().get(name, {"ok": True})
+    return "" if entry["ok"] else entry["reason"]
+
+
 # The OpenAI-compatible local backends, by name.
 OPENAI_COMPAT = {p.name: p for p in (OpenAICompatProvider, StrataProvider, BasaltProvider)}
 
@@ -632,6 +737,9 @@ def get_provider(name: str) -> Optional[Provider]:
         return OllamaProvider()
     if name == "llamacpp":
         return LlamaCppProvider()
+    why = hardware_reason(name)
+    if why:
+        raise ValueError(f"{why}. Set {FORCE_ENV}={name} if the engine runs elsewhere.")
     if name in OPENAI_COMPAT:
         return OPENAI_COMPAT[name]()
     if name == "openrouter":
@@ -668,6 +776,7 @@ def console_info() -> dict:
         "default_models": dict(DEFAULT_MODELS),
         "openrouter_key_set": key_set("openrouter"),
         "keys_set": {name: key_set(name) for name in KEY_ENV},
+        "hardware": backend_support(),
     }
 
 

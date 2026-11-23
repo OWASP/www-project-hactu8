@@ -134,7 +134,8 @@ def create_app(root: Optional[Path] = None):
             catalogs[name] = providers.available_models(name) if ready and name != providers.OFFLINE else []
         return {"backends": list(providers.BACKENDS), "local": list(providers.LOCAL), "cloud": list(spend.CLOUD),
                 "keys_set": {name: providers.key_set(name) for name in providers.KEY_ENV},
-                "default_models": dict(providers.DEFAULT_MODELS), "candidates": candidates,
+                "default_models": dict(providers.DEFAULT_MODELS), "hardware": providers.backend_support(),
+                "candidates": candidates,
                 "catalogs": catalogs}
 
     @app.post("/api/live")
@@ -190,6 +191,8 @@ def create_app(root: Optional[Path] = None):
     def run(request: RunRequest):
         if request.target_id != "hactu8-lamb":
             raise HTTPException(400, f"unknown target: {request.target_id}")
+        if providers.hardware_reason(request.backend):
+            raise HTTPException(400, providers.hardware_reason(request.backend))
         if spend.is_cloud(request.backend) and not request.confirm_spend:
             raise HTTPException(402, spend.estimate(request.backend, spend.lab_calls(1)) + " Set confirm_spend.")
         try:

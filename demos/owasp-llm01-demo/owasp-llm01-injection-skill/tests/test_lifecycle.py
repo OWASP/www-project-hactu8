@@ -166,6 +166,23 @@ class ConsoleHttpTest(unittest.TestCase):
         self.assertTrue(meta["openrouter_key_set"])
         self.assertNotIn("sk-test-secret", json.dumps(meta))
 
+    def test_meta_greys_out_backends_this_hardware_cannot_run(self):
+        # Pretend to be an Apple Silicon Mac: Strata runs, Basalt (NVIDIA Blackwell) cannot.
+        env = {k: v for k, v in os.environ.items() if k != providers.FORCE_ENV}
+        with unittest.mock.patch.dict(os.environ, env, clear=True), \
+                unittest.mock.patch.object(providers.platform, "system", return_value="Darwin"), \
+                unittest.mock.patch.object(providers.platform, "machine", return_value="arm64"):
+            status, meta = self._call("/api/meta")
+            self.assertEqual(status, 200)
+            self.assertEqual(set(meta["hardware"]), set(meta["backends"]))
+            self.assertTrue(meta["hardware"]["strata"]["ok"])
+            self.assertFalse(meta["hardware"]["basalt"]["ok"])
+            self.assertIn("NVIDIA Blackwell GPU (sm_120)", meta["hardware"]["basalt"]["reason"])
+            status, err = self._call("/api/backend", {"backend": "basalt"})
+            self.assertEqual(status, 400)
+            self.assertIn("Basalt needs an NVIDIA Blackwell GPU", err["error"])
+        self.assertEqual(vulnerable_app.LAB.backend, "echo")
+
     def test_models_endpoint(self):
         self.assertEqual(self._call("/api/models?backend=echo"), (200, {"backend": "echo", "models": []}))
         self.assertEqual(self._call("/api/models?backend=nope")[0], 400)

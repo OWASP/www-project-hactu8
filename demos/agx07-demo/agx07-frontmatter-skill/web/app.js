@@ -9,7 +9,7 @@
 //   POST /api/mode      {mode: "vulnerable" | "hardened"}
 //   GET  /api/models?backend=NAME   best-effort model list for the picker
 //   POST /api/backend   {backend, model} switch the model backend at runtime
-// /api/meta also carries {backends, default_models, keys_set, openrouter_key_set}. The
+// /api/meta also carries {backends, default_models, keys_set, openrouter_key_set, hardware}. The
 // OpenRouter key itself never touches the console: it comes from the env only.
 // Open /#run to play all four acts on page load.
 // All text is inserted with textContent, never innerHTML.
@@ -192,8 +192,21 @@ function keySet(name) {
   return Boolean(keys[name]);
 }
 
+// meta.hardware: {name: {ok, reason, needs}}. A backend whose engine this host's
+// hardware cannot run is shown greyed out with the reason, never hidden.
+function hardwareReason(name) {
+  const hw = (meta.hardware || {})[name];
+  return hw && !hw.ok ? hw.reason : "";
+}
+
 function backendNote(name) {
   const note = $("backend-note");
+  const why = hardwareReason(name);
+  if (why) {
+    note.classList.add("warn");
+    note.textContent = `${name}: ${why}.`;
+    return;
+  }
   const env = CLOUD_KEYS[name];
   note.classList.toggle("warn", Boolean(env));
   if (env) {
@@ -217,13 +230,23 @@ function initBackendPicker() {
   for (const name of meta.backends || ["echo"]) {
     const opt = document.createElement("option");
     opt.value = name;
-    opt.textContent = keySet(name) ? name : `${name} (no key)`;
-    opt.disabled = !keySet(name);
+    const why = hardwareReason(name);
+    if (why) {
+      opt.textContent = `${name} (needs ${meta.hardware[name].needs || "other hardware"})`;
+      opt.title = why;
+    } else {
+      opt.textContent = keySet(name) ? name : `${name} (no key)`;
+      if (!keySet(name)) opt.title = `${CLOUD_KEYS[name]} is not set`;
+    }
+    opt.disabled = Boolean(why) || !keySet(name);
     select.append(opt);
   }
-  const name = backendName(currentBackend);
+  let name = backendName(currentBackend);
+  const current = [...select.options].find((o) => o.value === name);
+  if (!current || current.disabled) name = "echo";
   select.value = name;
-  $("model-input").value = currentBackend.includes(":") ? currentBackend.slice(name.length + 1) : "";
+  $("model-input").value = name === backendName(currentBackend) && currentBackend.includes(":")
+    ? currentBackend.slice(name.length + 1) : "";
   backendNote(name);
   loadModels(name);
   select.addEventListener("change", () => {
