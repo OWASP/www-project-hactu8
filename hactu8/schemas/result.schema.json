@@ -230,8 +230,10 @@
                   "enum": [
                     "GREEN",
                     "YELLOW",
-                    "RED"
-                  ]
+                    "RED",
+                    "ERROR"
+                  ],
+                  "description": "ERROR is not a grade: the lab's call to the model under test failed for this item (evidence holds the error). It counts in neither red nor total"
                 },
                 "confidence": {
                   "type": "number",
@@ -249,7 +251,8 @@
                   "enum": [
                     "GREEN",
                     "YELLOW",
-                    "RED"
+                    "RED",
+                    "ERROR"
                   ],
                   "description": "The lab's own keyword verdict"
                 },
@@ -353,6 +356,11 @@
         "asserted": {
           "type": "boolean",
           "description": "true for deterministic backends, where the story is checked"
+        },
+        "errors": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Items in the run whose model call failed (verdict ERROR); absent when none"
         },
         "status": {
           "enum": [
@@ -485,6 +493,11 @@
           "type": "number",
           "minimum": 0,
           "maximum": 100
+        },
+        "errors": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Items left out of red and total because the model call failed (verdict ERROR)"
         }
       }
     },

@@ -56,6 +56,7 @@ import base64
 import binascii
 import codecs
 import html
+import io
 import json
 import os
 import platform
@@ -112,6 +113,37 @@ def _urlopen(req: urllib.request.Request, *, timeout: float):
     if not req.full_url.lower().startswith(_ALLOWED_URL_SCHEMES):
         raise ValueError(f"refusing to open non-HTTP(S) URL: {req.full_url!r}")
     return urllib.request.urlopen(req, timeout=timeout)  # noqa: S310 (scheme allowlisted)
+
+
+SERVER_REASON_CHARS = 300
+
+
+class _with_server_reason:
+    """Re-raise an HTTPError with the server's error body in its message.
+
+    A bare ``HTTP Error 500`` hides the reason (Ollama sends it in the body, e.g.
+    ``{"error":"prediction aborted, token repeat limit reached"}``). The new
+    error keeps the type and ``code`` so callers that branch on them still work.
+    The body is checked for real keys before it is put in a message.
+    """
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, kind, exc, tb):
+        if not isinstance(exc, urllib.error.HTTPError) or getattr(exc, "_server_reason", False):
+            return False
+        try:
+            body = (exc.read() or b"").decode("utf-8", errors="replace").strip()
+        except (OSError, ValueError):
+            body = ""
+        finally:
+            exc.close()
+        assert_not_leaking(body)
+        msg = f"{exc.reason}: {body[:SERVER_REASON_CHARS]}" if body else str(exc.reason)
+        err = urllib.error.HTTPError(exc.url, exc.code, msg, exc.headers, io.BytesIO(body.encode("utf-8")))
+        err._server_reason = True
+        raise err from None
 
 
 @dataclass
@@ -351,7 +383,7 @@ class Provider:
 
     def _get(self, url: str, headers: dict, timeout: float) -> dict:
         req = urllib.request.Request(url, headers=headers)
-        with _urlopen(req, timeout=timeout) as resp:
+        with _with_server_reason(), _urlopen(req, timeout=timeout) as resp:
             return json.loads(resp.read())
 
     def _post(self, url: str, payload: dict, headers: dict, timeout: float) -> dict:
@@ -361,7 +393,7 @@ class Provider:
         req = urllib.request.Request(
             url, data=body.encode("utf-8"),
             headers={"Content-Type": "application/json", **headers})
-        with _urlopen(req, timeout=timeout) as resp:
+        with _with_server_reason(), _urlopen(req, timeout=timeout) as resp:
             raw = resp.read().decode("utf-8", errors="replace")
         assert_not_leaking(raw)
         return json.loads(raw)

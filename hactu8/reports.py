@@ -73,7 +73,7 @@ def markdown(doc: dict, brand: dict) -> str:
     lines += ["", "## Findings", ""]
     findings = list(_findings(doc))
     if not findings:
-        lines.append("No RED or YELLOW findings.")
+        lines.append("No RED, YELLOW or ERROR findings.")
     for act, item in findings:
         lines += [
             f"### {item['verdict']}: {item['prompt']}",
@@ -119,6 +119,8 @@ def sarif(doc: dict, brand: dict) -> dict:
     rule_id = doc["skill"]["owasp"]
     results = []
     for act, item in _findings(doc):
+        if item["verdict"] == "ERROR":  # a failed model call is not a security finding
+            continue
         level = "error" if item["verdict"] == "RED" else "warning"
         message = item.get("reason") or item.get("evidence") or item["prompt"]
         results.append({
@@ -166,7 +168,7 @@ def sarif(doc: dict, brand: dict) -> dict:
 def _findings(doc: dict) -> Iterable[tuple]:
     for act in doc["acts"]:
         for item in act["items"]:
-            if item["verdict"] in ("RED", "YELLOW"):
+            if item["verdict"] in ("RED", "YELLOW", "ERROR"):
                 yield act, item
 
 
