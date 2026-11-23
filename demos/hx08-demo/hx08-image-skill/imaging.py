@@ -2,7 +2,7 @@
 
 Pure Python, standard library only (``zlib`` and ``struct``). Role in the
 lifecycle: this is how the lab makes its receipt photos (Act 1 and Act 2) and
-how Billy's pipeline reads them (every act). Nothing here knows which image is
+how Lamb's pipeline reads them (every act). Nothing here knows which image is
 an attack.
 
 * ``render`` draws lines of text on a paper-coloured canvas with a 5x7 bitmap

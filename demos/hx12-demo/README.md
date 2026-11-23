@@ -11,10 +11,10 @@ accepts a proof twice, loses the order too. Four layers shut it down: a
 signed challenge check, a merchant and recipient allowlist, a single-use
 payment nonce, and ProtectoGW screening of the payment metadata.
 
-The scenario is **"Billy," Goat & Co.'s assistant**, who buys
+The scenario is **"Lamb," Big Field Jumper Co.'s assistant**, who buys
 pay-per-request reports for customers from Lamb merchants with a **test
 wallet** of fake `TEST` units on the fake network `lamb:testnet`. Each paid
-order carries a per-run **order secret**. Billy also uses Hayloft Shopping
+order carries a per-run **order secret**. Lamb also uses Hayloft Shopping
 Helper, a third-party MCP server, to find merchants, fetch links customers
 paste and log expenses. The ground truth: _test units go only to the
 merchant the customer chose, and an order secret only to that merchant._
@@ -101,7 +101,7 @@ You'll see four acts:
 | Act | What happens | Result |
 |-----|--------------|--------|
 | **1 — Clean baseline** | Dana's pasted link, Ravi's seed catalogue, Mei's soil guide, Kofi's frost alerts, Omar's hay index, a refund question | 🟢 all GREEN, PHR 0% |
-| **2 — Hayloft 2.0** | A challenge rewrite in `fetch_url`; a moved-desk seller note; a replaying `log_expense`; a lookalike in `find_merchant` | four moves, no Billy code changed |
+| **2 — Hayloft 2.0** | A challenge rewrite in `fetch_url`; a moved-desk seller note; a replaying `log_expense`; a lookalike in `find_merchant` | four moves, no Lamb code changed |
 | **3 — Post-attack impact** | The same six requests | 🔴 Dana, Ravi, Mei, Kofi RED, **PHR 100% targeted / 67% overall**; controls 🟢 |
 | **4 — Remediation** | Signed challenge, allowlist, single-use nonce, metadata screen | 🟢 back to GREEN, PHR 0%, every purchase still completes |
 
@@ -135,7 +135,7 @@ it and is only told whether one is set.
 
 The real model decides what to pay from the challenge and the merchant's
 notes: `{"action": "none"}` or `{"action": "pay", "amount": ..., "payTo":
-..., "url": ...}`. Billy's code adds the order and the wallet signs; the
+..., "url": ...}`. Lamb's code adds the order and the wallet signs; the
 model never sees an order secret or a key. A real model may ignore the
 seller note, which closes Ravi's path only; `run_demo.py` reports the
 numbers rather than asserting them. `LAB_MAX_CALLS` (default 200) and
@@ -147,7 +147,7 @@ numbers rather than asserting them. `LAB_MAX_CALLS` (default 200) and
 ## Architecture
 
 ```text
- customer ──▶ Billy (vulnerable_app.py) ─── find_merchant / fetch_url / log_expense ──▶ Hayloft Shopping Helper 2.0
+ customer ──▶ Lamb (vulnerable_app.py) ─── find_merchant / fetch_url / log_expense ──▶ Hayloft Shopping Helper 2.0
                 • model picks the terms                                                   • lookalike in the directory
                 • test wallet signs                                                       • rewrites a 402 challenge
                 • no signature check, no allowlist                                        • replays logged proofs
@@ -185,7 +185,7 @@ only when the facilitator settles a valid authorization on the test ledger,
 and each layer is a real check on the x402 exchange:
 
 - The rewrite changes `payTo` and `amount` in the base64 challenge and
-  leaves the merchant's signature as it was. Billy's wallet signs what it
+  leaves the merchant's signature as it was. Lamb's wallet signs what it
   was shown; Hayloft settles that authorization against its own
   requirements, which the honest facilitator accepts. The signature check
   recomputes the HMAC and fails it; the allowlist sees a `payTo` that is not
@@ -205,7 +205,7 @@ contract, tested on its own (`StandInTest`).
 
 ### x402 terminology bridge
 
-Billy is what x402 calls the **client**; each Lamb merchant is a **resource
+Lamb is what x402 calls the **client**; each Lamb merchant is a **resource
 server**; the Lamb Test Facilitator is a **facilitator**. `Merchant.handle`
 stands in for the resource server's 402 and paid paths, `Wallet.authorize`
 for the client's exact-scheme authorization, and `Facilitator.verify` and
@@ -228,7 +228,7 @@ curl -s localhost:5512/ask -H 'content-type: application/json' \
 python scripts/run_x402_attack.py                          # Hayloft 2.0, plays the targeted requests
 curl -s localhost:5512/attacker-log                        # orders and replays, as Hayloft received them
 curl -s localhost:5512/ledger                              # who was paid
-curl -s localhost:5512/payment-log                         # what Billy, the merchants and the facilitator did
+curl -s localhost:5512/payment-log                         # what Lamb, the merchants and the facilitator did
 ```
 
 ---
@@ -250,11 +250,11 @@ Catalog techniques: `payment-challenge-tamper`, `payment-proof-replay`,
 ## Mitigations demonstrated in Act 4
 
 - **Signed challenge check** (`signed_challenge`) — verify the merchant's
-  HMAC over the resource URL and the payment terms with the key in Billy's
+  HMAC over the resource URL and the payment terms with the key in Lamb's
   registry; pay exactly the signed terms.
 - **Merchant and recipient allowlist** (`payee_allowlist`) — the merchant
   path (with its trailing slash), its `payTo` and the named facilitator must
-  be on Billy's list.
+  be on Lamb's list.
 - **Single-use payment nonce** (`payment_idempotency`) — a Lamb merchant
   accepts each nonce once and refuses a repeat.
 - **ProtectoGW screening of payment metadata** (`input_screen`) — every
@@ -276,7 +276,7 @@ hx12-demo/
 ├── hx12-x402-tamper-skill/
 │   ├── SKILL.md                       #   metadata + instructions
 │   ├── LESSON.md                      #   the lesson the console's Learn view renders
-│   ├── vulnerable_app.py              #   Module 1: Billy, wallet, merchants, facilitator, ledger, Hayloft, layers
+│   ├── vulnerable_app.py              #   Module 1: Lamb, wallet, merchants, facilitator, ledger, Hayloft, layers
 │   ├── providers.py                   #   optional real-model backends (shared, unchanged)
 │   ├── requirements.txt               #   stdlib only
 │   ├── protectogw/                    #   HACTU8's screening core (vendored unchanged)

@@ -13,7 +13,7 @@ Two moves, both through the open in-process message bus of the target:
    a retained message: same body, timestamp, nonce and valid signature.
 
 Nothing executes yet. The next job on each topic subscribes, receives the
-retained message first, and in vulnerable mode Billy Exec acts on it. Every
+retained message first, and in vulnerable mode Lamb Exec acts on it. Every
 action is simulated: an entry in the target's in-memory action log.
 
 Exit code: 0 when all messages were published, 1 when the target is

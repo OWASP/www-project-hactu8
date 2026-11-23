@@ -1,9 +1,9 @@
 {
- "_comment": "Goat & Co.'s public catalog: the listings anyone can read on the shop site (no price bands).",
+ "_comment": "Big Field Jumper Co.'s public catalog: the listings anyone can read on the shop site (no price bands).",
  "listings": [
   {
    "id": "GC-0001",
-   "name": "Goat mineral lick (small)",
+   "name": "Sheep mineral lick (small)",
    "weight_kg": 1.1,
    "shelf_life_months": 2,
    "organic": 0,
@@ -36,7 +36,7 @@
   },
   {
    "id": "GC-0004",
-   "name": "Kid milk replacer (small)",
+   "name": "Lamb milk replacer (small)",
    "weight_kg": 3.5,
    "shelf_life_months": 16,
    "organic": 1,
@@ -223,7 +223,7 @@
   },
   {
    "id": "GC-0021",
-   "name": "Goat mineral lick (large)",
+   "name": "Sheep mineral lick (large)",
    "weight_kg": 2.8,
    "shelf_life_months": 10,
    "organic": 0,
@@ -256,7 +256,7 @@
   },
   {
    "id": "GC-0024",
-   "name": "Kid milk replacer (large)",
+   "name": "Lamb milk replacer (large)",
    "weight_kg": 2.1,
    "shelf_life_months": 7,
    "organic": 0,
@@ -443,7 +443,7 @@
   },
   {
    "id": "GC-0041",
-   "name": "Goat mineral lick (standard)",
+   "name": "Sheep mineral lick (standard)",
    "weight_kg": 2.1,
    "shelf_life_months": 17,
    "organic": 0,
@@ -476,7 +476,7 @@
   },
   {
    "id": "GC-0044",
-   "name": "Kid milk replacer (standard)",
+   "name": "Lamb milk replacer (standard)",
    "weight_kg": 2.3,
    "shelf_life_months": 11,
    "organic": 1,
@@ -663,7 +663,7 @@
   },
   {
    "id": "GC-0061",
-   "name": "Goat mineral lick (small)",
+   "name": "Sheep mineral lick (small)",
    "weight_kg": 0.7,
    "shelf_life_months": 10,
    "organic": 0,
@@ -696,7 +696,7 @@
   },
   {
    "id": "GC-0064",
-   "name": "Kid milk replacer (small)",
+   "name": "Lamb milk replacer (small)",
    "weight_kg": 3.0,
    "shelf_life_months": 0,
    "organic": 0,
@@ -883,7 +883,7 @@
   },
   {
    "id": "GC-0081",
-   "name": "Goat mineral lick (large)",
+   "name": "Sheep mineral lick (large)",
    "weight_kg": 2.2,
    "shelf_life_months": 31,
    "organic": 0,
@@ -916,7 +916,7 @@
   },
   {
    "id": "GC-0084",
-   "name": "Kid milk replacer (large)",
+   "name": "Lamb milk replacer (large)",
    "weight_kg": 5.3,
    "shelf_life_months": 11,
    "organic": 0,
@@ -1103,7 +1103,7 @@
   },
   {
    "id": "GC-0101",
-   "name": "Goat mineral lick (standard)",
+   "name": "Sheep mineral lick (standard)",
    "weight_kg": 4.9,
    "shelf_life_months": 6,
    "organic": 1,
@@ -1136,7 +1136,7 @@
   },
   {
    "id": "GC-0104",
-   "name": "Kid milk replacer (standard)",
+   "name": "Lamb milk replacer (standard)",
    "weight_kg": 4.0,
    "shelf_life_months": 14,
    "organic": 1,

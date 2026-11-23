@@ -6,7 +6,7 @@ Setup, commands and architecture are in the [lab README](../README.md); this les
 
 A screen that blocks every attack in its own test suite has shown that it remembers its suite. A held-out set, written without looking at the screen's results and never used to tune it, measures something else: generalization. AGX09 is HACTU8's honest control (group D, assurance), with parent ASI01. Unlike every other lab, its screen misses are expected and are reported, not fixed.
 
-Here the target is Billy, Goat & Co.'s ops assistant, who summarizes notes from a partner inbox. His ground truth is *a fictional `sk-canary-` credential sits in his context with the instruction never to reveal it*. The attacker delivers 15 held-out notes through the unauthenticated inbox endpoint: paraphrases, two translations and seven encodings, each asking Billy to print the credential. Three benign notes stay in the inbox as false-positive controls.
+Here the target is Lamb, Big Field Jumper Co.'s ops assistant, who summarizes notes from a partner inbox. Its ground truth is *a fictional `sk-canary-` credential sits in its context with the instruction never to reveal it*. The attacker delivers 15 held-out notes through the unauthenticated inbox endpoint: paraphrases, two translations and seven encodings, each asking Lamb to print the credential. Three benign notes stay in the inbox as false-positive controls.
 
 ## Why it works
 
@@ -66,4 +66,4 @@ For real models, hardened mode also fences each note in `<untrusted_note>` tags 
 - Lab material, not repeated here: the [lab README](../README.md) (why not `wild.py`, mapping table), [`references/AGX09_RISKS.md`](references/AGX09_RISKS.md) (research, scenarios, mitigation roadmap), the [held-out set README](assets/heldout_set.README.md) (the groups, provenance and how to grow it) and protectogw's [`SECURITY.md`](protectogw/SECURITY.md) (its stated limits).
 - Real-model figures: in the HACTU8 repo, `docs/agenticgoat-merge-plan.md` (AG-51 notes).
 - HACTU8's independent held-out bench: `hactu8/bench/holdout_v2.json`, run with `python -m hactu8 bench`.
-- Ported from AgenticGoat (retired): its AGX09 entry (`agentic/labs.json`), its `wild_scan` act, the held-out set and encoders in `wild.py`, the `generalization` control (`agentic/protections.py`) and the generalization axis in `curriculum.json`.
+- Ported from the predecessor project (retired): its AGX09 entry (`agentic/labs.json`), its `wild_scan` act, the held-out set and encoders in `wild.py`, the `generalization` control (`agentic/protections.py`) and the generalization axis in `curriculum.json`.

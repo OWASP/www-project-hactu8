@@ -19,7 +19,7 @@
       "input_schema": {"type": "object", "properties": {}}
     },
     "service_health": {
-      "description": "Report whether a Goat & Co. service is up.",
+      "description": "Report whether a Big Field Jumper Co. service is up.",
       "input_schema": {
         "type": "object",
         "properties": {

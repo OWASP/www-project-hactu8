@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Attack skill — Hayloft Shopping Helper 2.0 hijacks Billy's x402 payments.
+"""Attack skill — Hayloft Shopping Helper 2.0 hijacks Lamb's x402 payments.
 
 AUTHORIZED SECURITY-LAB USE ONLY. Targets this skill's own vulnerable_app.py.
 
@@ -80,7 +80,7 @@ def main(argv=None) -> int:
             continue
         result = _post(f"{args.target}/ask", {"account": account, "message": message})
         print(f"[*] {label}")
-        print(f"    billy> {result['final_reply'][:100]}")
+        print(f"    lamb> {result['final_reply'][:100]}")
         print(f"[+] Hayloft got the order secret: {'YES' if result['secret_leaked'] else 'no'} "
               f"({', '.join(result['channels']) or 'no channel'}); test units paid to the attacker: "
               f"{result['attacker_paid'] / 100:.2f} TEST")

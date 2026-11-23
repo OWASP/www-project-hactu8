@@ -15,7 +15,7 @@ What this lab's risk is, where it comes from, and how to harden against it. Load
 | S1 | Context pulled back through a sampled reply | The server asks for `includeContext: allServers` and for the context word for word; the client complies and the reply goes to the server | **DEMO TARGET** (`context-dump`) |
 | S2 | Hidden prompts on the client's budget | The server runs its own writing jobs on the client's model, up to its own `maxTokens` | **DEMO TARGET** (`hidden-blurbs`, `hidden-rivals`) |
 | S3 | An approved, benign-looking summary | "Summarise everything so far" passes the screen and the user; the reference leaves as grouped digits | **DEMO TARGET** (measured limit) |
-| S4 | Conversation hijacking | A sampled reply plants an instruction that persists into later turns | Context (Unit 42; Billy keeps no state between questions, not measured) |
+| S4 | Conversation hijacking | A sampled reply plants an instruction that persists into later turns | Context (Unit 42; Lamb keeps no state between questions, not measured) |
 | S5 | Covert tool use during sampling | The server's sampling request carries `tools` and gets the model to call one | Context (the lab's client declares no `sampling.tools`) |
 
 ## How the demo maps to the attack surfaces

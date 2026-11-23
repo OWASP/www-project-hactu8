@@ -1,7 +1,7 @@
 ---
 type: policy
 title: Expense Policy
-description: What Goat & Co. reimburses for travel and meals.
+description: What Big Field Jumper Co. reimburses for travel and meals.
 owner: finance
 ---
 

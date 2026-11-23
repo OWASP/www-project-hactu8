@@ -33,7 +33,7 @@ story with deterministic numbers, and a recording covers the whole run.
 HACTU8 turns attacks on AI systems into repeatable assurance tests. Every lab
 runs the same four acts against the same items with the same model: a clean
 baseline, the attack, the impact, and the remediation. The target is HACTU8
-Lamb, a deliberately vulnerable assistant (Billy, of the fictional Goat &
+Lamb, a deliberately vulnerable assistant (Lamb, of the fictional Big Field Jumper
 Co.), bound to loopback. 49 labs cover the OWASP LLM Top 10 2026, the OWASP
 Agentic Top 10 2026, nine gateway labs (AGX01-09), hidden document injection
 (HX01), the multi-turn jailbreak (HX02), MCP sampling abuse (HX03), MCP
@@ -73,9 +73,9 @@ different model family grades gemma3:4b. A judge may confirm or raise a lab's
 verdict but never lowers a canary RED. On 2026-11-23 it scored all 15 items,
 kept the 3 REDs, and LLM01 read 0% -> 100% -> 0% (about 11 seconds).
 
-## 4. Billy's MCP surfaces, off versus on (2 minutes)
+## 4. Lamb's MCP surfaces, off versus on (2 minutes)
 
-Run the "Billy's MCP surfaces" lab on the same model. Show model resistance
+Run the "Lamb's MCP surfaces" lab on the same model. Show model resistance
 (how often the model refused on its own) next to app exposure (breaches with
 the gateway off, then on), and "What leaked with no defense". Point out that
 the controls stay green: the gateway blocks no safe item. With gemma3:4b expect 6 to 8 breaches with

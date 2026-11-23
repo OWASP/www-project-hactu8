@@ -28,12 +28,12 @@ metadata:
 # AGX01 Obfuscation Gauntlet Skill
 
 Demonstrates how an adversary who can push a notice "vendor update" makes
-**Billy, Goat & Co.'s ops assistant** leak the credential in his context by
+**Lamb, Big Field Jumper Co.'s ops assistant** leak the credential in its context by
 hiding the directive in an encoding the gateway's ruleset cannot read in raw
 form. The gateway screens the right surface — it reads every notice — but in
 vulnerable mode it judges the **raw bytes** with every normalizer fold
 disabled, so a base64, split-token, hex-escape or base32 copy of the directive
-walks straight past it. Billy's model, like a real LLM, decodes it and acts.
+walks straight past it. Lamb's model, like a real LLM, decodes it and acts.
 
 ## Scope & safety (read first)
 
@@ -102,8 +102,8 @@ and payloads leave the machine.
    It loads the benign baseline notices. To drive the same four acts from a
    browser, open <http://127.0.0.1:5401/>.
 
-2. **Review the ground truth.** Billy answers from notice text and never
-   reveals the credential in his context. `GET /notices` shows the current
+2. **Review the ground truth.** Lamb answers from notice text and never
+   reveals the credential in its context. `GET /notices` shows the current
    board.
 
 3. **Establish the baseline.**
@@ -169,7 +169,7 @@ raw-text blind spot (the README explains).
 
 | Path | Purpose |
 |------|---------|
-| `vulnerable_app.py` | Target: Billy, the notice board, the gateway (`/ask`, `/notices`, `/vendor/notices/update`, `/health`) plus the console API (`/api/meta`, `/api/state`, `/api/reset`, `/api/attack`, `/api/evaluate`, `/api/scan`, `/api/mode`, `/api/models`, `/api/backend`). |
+| `vulnerable_app.py` | Target: Lamb, the notice board, the gateway (`/ask`, `/notices`, `/vendor/notices/update`, `/health`) plus the console API (`/api/meta`, `/api/state`, `/api/reset`, `/api/attack`, `/api/evaluate`, `/api/scan`, `/api/mode`, `/api/models`, `/api/backend`). |
 | `protectogw/` | HACTU8's screening core, vendored unchanged. |
 | `web/` | Shared HACTU8 lab console, served at `/`. |
 | `providers.py` | Optional real-model backends: Ollama, llama.cpp, OpenRouter. Shared and copied unchanged. |

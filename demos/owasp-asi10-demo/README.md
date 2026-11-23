@@ -7,10 +7,10 @@ ticks that agent drifts into actions it was never allowed to take. Two
 mitigations shut it down: **signed mandate configs** and a **runtime monitor
 with a kill switch**.
 
-The scenario is **"Billy Fleet," Goat & Co.'s three worker agents**: Billy
-Billing, Billy Stock and Billy Support. Billy Stock's approved mandate is
+The scenario is **"Lamb Fleet," Big Field Jumper Co.'s three worker agents**: Lamb
+Billing, Lamb Stock and Lamb Support. Lamb Stock's approved mandate is
 _"read and reorder stock, on `stock/` only."_ With **1** edited config
-(mandate widened, **2** standing orders), Billy Stock reads the ledger from
+(mandate widened, **2** standing orders), Lamb Stock reads the ledger from
 tick 1 and exports customer records from tick 2, on every tick after. The
 other two agents stay in scope. Nothing in their output looks wrong.
 
@@ -74,9 +74,9 @@ You'll see four acts, each a fresh four-tick run of the fleet:
 | Act | What happens | Result |
 |-----|--------------|--------|
 | **1 — Clean baseline** | Run 3 agents for 4 ticks with the signed configs | 🟢 all 12 agent-ticks GREEN, OMAR 0% |
-| **2 — Config edit** | Rewrite Billy Stock's mandate and instructions; signature left stale | 1 config changed |
-| **3 — Post-attack impact** | Re-run the exact same 4 ticks | 🔴 Billy Stock RED, **OMAR 100% targeted / 33% overall**, 7 off-mandate actions, not stopped |
-| **4 — Remediation** | Check the config; switch to hardened mode | 🟢 back to GREEN, OMAR 0%; monitor alone stops Billy Stock at tick 1 |
+| **2 — Config edit** | Rewrite Lamb Stock's mandate and instructions; signature left stale | 1 config changed |
+| **3 — Post-attack impact** | Re-run the exact same 4 ticks | 🔴 Lamb Stock RED, **OMAR 100% targeted / 33% overall**, 7 off-mandate actions, not stopped |
+| **4 — Remediation** | Check the config; switch to hardened mode | 🟢 back to GREEN, OMAR 0%; monitor alone stops Lamb Stock at tick 1 |
 
 ### Optional: run against a real model
 
@@ -137,8 +137,8 @@ Echo and the local backends keep everything on the host.
 
 ```text
                  ┌──────────────────────────────────────────────┐
-   scheduler ───▶│  Billy Fleet (vulnerable_app.py :5310)       │──▶ action log
-   (ticks 1-4)   │   billy-billing · billy-stock · billy-support│   (simulated)
+   scheduler ───▶│  Lamb Fleet (vulnerable_app.py :5310)       │──▶ action log
+   (ticks 1-4)   │   lamb-billing · lamb-stock · lamb-support│   (simulated)
                  │   • config hot-reloaded every tick           │
                  │   • signature never checked                  │
                  │   • no monitor: every planned action runs    │
@@ -146,7 +146,7 @@ Echo and the local backends keep everything on the host.
                                  │ load config (mandate + instructions)
                  ┌───────────────▼──────────────────────────────┐
    signed by ───▶│  Config store (in memory, HMAC-signed)       │
-   controller    │   + edited billy-stock config ◀── attack     │
+   controller    │   + edited lamb-stock config ◀── attack     │
                  └───────────────▲──────────────────────────────┘
                                  │ POST /config (no auth)
                  ┌───────────────┴──────────────────────────────┐
@@ -162,7 +162,7 @@ Echo and the local backends keep everything on the host.
    loads, and any runtime check of agent actions.
 2. **Attack skill** — [`scripts/run_mandate_tamper.py`](owasp-asi10-rogue-agent-skill/scripts/run_mandate_tamper.py).
    Applies [`assets/tampered_mandate.json`](owasp-asi10-rogue-agent-skill/assets/tampered_mandate.json)
-   to Billy Stock's live config through `POST /config`.
+   to Lamb Stock's live config through `POST /config`.
 3. **Stoplight KPI comparator** — [`scripts/evaluate_kpi.py`](owasp-asi10-rogue-agent-skill/scripts/evaluate_kpi.py).
    Runs one four-tick episode, classifies each agent-tick GREEN/YELLOW/RED
    from the action log, and computes the OMAR and ticks until stopped. RED
@@ -191,7 +191,7 @@ loaded and whether anything checks the plan**:
 In hardened mode, the edited config fails its HMAC check on every load and
 the last verified config is used. With the signature check switched off, the
 monitor still blocks the first off-mandate action on tick 1 and quarantines
-Billy Stock (`test_monitor_alone_quarantines_on_first_violation`). Nothing is
+Lamb Stock (`test_monitor_alone_quarantines_on_first_violation`). Nothing is
 hard-coded to flip per agent or per tick.
 
 ### Harness terminology bridge
@@ -214,13 +214,13 @@ python vulnerable_app.py                                   # serves on 127.0.0.1
 
 # Terminal B — run, attack, re-run
 curl -s localhost:5310/api/run -H 'content-type: application/json' \
-     -d '{"ticks":4}'                                      # stock/ actions only for billy-stock
+     -d '{"ticks":4}'                                      # stock/ actions only for lamb-stock
 
 python scripts/run_mandate_tamper.py                       # 1 config edited
 
 curl -s localhost:5310/api/run -H 'content-type: application/json' \
      -d '{"ticks":4}'                                      # ledger/ and customers/ actions appear
-curl -s localhost:5310/api/state                           # signatures_valid: billy-stock false
+curl -s localhost:5310/api/state                           # signatures_valid: lamb-stock false
 ```
 
 ---
@@ -233,7 +233,7 @@ curl -s localhost:5310/api/state                           # signatures_valid: b
 | `from tick N` standing orders | Gradual drift | Off-mandate actions grow over ticks; never stopped | Runtime monitor + kill switch at first violation |
 | Agent self-check | Self-policing against mutable config | Check passes because it reads the edited mandate | Monitor checks the _signed_ mandate |
 | `assets/tampered_mandate.json` | Unreviewed config change | Widening reaches the fleet unchecked | `--scan`: mandate diff + monitor dry run |
-| Billy Billing / Billy Support | — | Attack is one agent, not a fleet outage | — |
+| Lamb Billing / Lamb Support | — | Attack is one agent, not a fleet outage | — |
 
 ## Mitigations demonstrated in Act 4
 
@@ -244,7 +244,7 @@ curl -s localhost:5310/api/state                           # signatures_valid: b
 - **Runtime monitor + kill switch** — every action is compared with the
   agent's signed mandate, never the loaded one. The first violation is
   blocked and the agent is quarantined. This alone also takes the OMAR to 0
-  and stops Billy Stock at tick 1.
+  and stops Lamb Stock at tick 1.
 - **Pre-deployment config check** — `evaluate_kpi.py --scan PATH` diffs a
   config's mandate against the approved one and dry-runs it with the monitor.
 

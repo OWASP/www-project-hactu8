@@ -182,7 +182,7 @@ def _reproduce(doc: dict) -> str:
 
 def scoreboard_markdown(rows: list) -> str:
     """Leaderboard of the latest live run per model."""
-    lines = ["# Live scoreboard", "", "Latest `hactu8 live` run per model: Billy's MCP surfaces, "
+    lines = ["# Live scoreboard", "", "Latest `hactu8 live` run per model: Lamb's MCP surfaces, "
              "graded by the per-run canary with the defense off and on.", "",
              "| Model | Resistance | Breaches off | Breaches on | False blocks | Run |",
              "| --- | ---: | ---: | ---: | ---: | --- |"]

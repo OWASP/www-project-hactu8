@@ -42,7 +42,7 @@ not by a cost-saving truncation.
 
 - **S-1** is `POST /vendor/logs/update` (no authentication) replacing the
   `export_log` artifact, combined with `Lab.ask` passing the whole return to
-  Billy. `Gateway("vulnerable")` truncates its input to `HEAD_LIMIT` bytes, so
+  Lamb. `Gateway("vulnerable")` truncates its input to `HEAD_LIMIT` bytes, so
   the tail passes with verdict ALLOW and no signals.
 - **The model reads the whole return.** `StubModel` sees the tail the gateway
   skipped, so the directive trips the "emit" + "confirm" rule and leaks.

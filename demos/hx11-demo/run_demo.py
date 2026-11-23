@@ -8,7 +8,7 @@ from the full set, and the measured limits: a flood spread over twelve
 accounts before a leak only one scorer sees, and the code in base64.
 
 The target is the scoring layer (an LLM judge and a rule classifier), not
-Billy. With the default echo backend the judge is a deterministic stand-in.
+Lamb. With the default echo backend the judge is a deterministic stand-in.
 
 AUTHORIZED SECURITY-LAB USE ONLY.
 

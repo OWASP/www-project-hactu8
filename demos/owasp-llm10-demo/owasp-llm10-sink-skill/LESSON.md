@@ -6,7 +6,7 @@ LLM01 is what goes into the model; this lab is what comes out and where it goes 
 
 Improper output handling is a downstream system trusting model output too much. Concatenated into HTML it becomes cross-site scripting; into SQL, injection; into a shell, command execution; into a URL the client fetches, request forgery or a data-exfiltration channel. The model is a text generator with no security model, so its output is untrusted input to whatever consumes it, exactly like a user's.
 
-Here the target is Billy, Goat & Co.'s ticket-summary assistant. Its ground truth for the Ridgeview account is *"Ridgeview printer queue restored and ticket closed by the night shift."* Billy's summary feeds three sinks: the account's HTML status page, a markdown weekly digest and a SQLite audit log. The attacker files one ticket note through the unauthenticated ticket endpoint, and all three Ridgeview sinks mishandle what Billy writes next. The Harbor account goes through the same sinks untouched.
+Here the target is Lamb, Big Field Jumper Co.'s ticket-summary assistant. Its ground truth for the Ridgeview account is *"Ridgeview printer queue restored and ticket closed by the night shift."* Lamb's summary feeds three sinks: the account's HTML status page, a markdown weekly digest and a SQLite audit log. The attacker files one ticket note through the unauthenticated ticket endpoint, and all three Ridgeview sinks mishandle what Lamb writes next. The Harbor account goes through the same sinks untouched.
 
 ## Why it works
 
@@ -66,4 +66,4 @@ A third layer is a detector, not the fix: `screen_output` screens the output wit
 - Lab material, not repeated here: the [lab README](../README.md) (architecture, the "real, not scripted" argument, MCP terminology bridge, deviation from the demo plan) and [`references/LLM10_RISKS.md`](references/LLM10_RISKS.md) (research, scenarios O-1 to O-3, mitigation roadmap).
 - [OWASP Top 10 for LLM Applications](https://genai.owasp.org/llm-top-10/), entry Improper Output Handling.
 - OWASP Cross Site Scripting Prevention Cheat Sheet and SQL Injection Prevention Cheat Sheet; Greshake et al. (2023), "Not what you've signed up for".
-- Ported from AgenticGoat (retired): its 2025-numbered LLM05 Improper Output Handling lesson and curriculum entry (`training/lessons/LLM05_improper_output_handling.md`, `curriculum.json`), and its `acts.py` `output_handling_scan`.
+- Ported from the predecessor project (retired): its 2025-numbered LLM05 Improper Output Handling lesson and curriculum entry (`training/lessons/LLM05_improper_output_handling.md`, `curriculum.json`), and its `acts.py` `output_handling_scan`.

@@ -12,7 +12,7 @@ low-privilege user is enough, because the agent, not the user, is authorised.
 
 - **Hardy (1988), "The Confused Deputy"** — the classic account of a program
   that holds authority from one party and is tricked into using it for
-  another. Billy HR is that deputy.
+  another. Lamb HR is that deputy.
 - **RFC 8693, "OAuth 2.0 Token Exchange"** — the standard on-behalf-of
   exchange: a service trades the caller's token for one that carries the
   caller's identity to the downstream service. Hardened mode does a
@@ -33,7 +33,7 @@ low-privilege user is enough, because the agent, not the user, is authorised.
 ## How the demo maps to the attack surfaces
 
 - **P-1** is `Lab._work` in vulnerable mode. It always presents
-  `svc-billy-hr` (scope `hr:read:all`) to `DocService.fetch`, which correctly
+  `svc-lamb-hr` (scope `hr:read:all`) to `DocService.fetch`, which correctly
   releases whatever that credential may read.
 - **P-2** is `TokenAuthority.validate` in lax mode: a token only has to exist.
   Morgan's delegated token from session `S-0001` expired long ago and belongs

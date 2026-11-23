@@ -14,7 +14,7 @@ Where this lab sits next to the ASI08 cascading-failures lab (`demos/owasp-asi08
 
 | ID | Title | Description | Focus |
 |----|-------|-------------|-------|
-| W1 | Replication through replies | The worm makes each assistant copy it into the reply, and the reply is the next assistant's input | **DEMO TARGET** (Billy, Hayloft) |
+| W1 | Replication through replies | The worm makes each assistant copy it into the reply, and the reply is the next assistant's input | **DEMO TARGET** (Lamb, Hayloft) |
 | W2 | Replication through retrieval | The stored worm is retrieved as related mail for an unrelated question and copied into that answer | **DEMO TARGET** (Dana's answer, the co-op) |
 | W3 | Secret in every copy | Each infected assistant adds its own ledger reference and cc's the attacker | **DEMO TARGET** (all three references at Tick & Co.) |
 | W4 | Auto-reply loop | The copied question makes two assistants keep answering each other | **DEMO TARGET** (to the host-safety cap, hop 6) |

@@ -6,7 +6,7 @@ Setup, commands and architecture are in the [lab README](../README.md); this les
 
 Tool misuse is an agent using tools it is allowed to use, in ways nobody approved. LLM03 Excessive Agency asks whether a task should reach a tool at all; ASI02 starts after that answer is "yes". The damage is in the arguments: a row limit a hundred times normal, a destination nobody approved, the same export twice. A tool allowlist passes every one of those calls.
 
-Here the target is "Billy Finance", Billy, Goat & Co.'s reporting agent. Its ground truth is the approved request record: *"Process RQ-3001" causes `read_request:RQ-3001`, then `query_ledger(filter=marketing:2026-09, limit=50)`, then `export_report(destination=finance-reports)`, and nothing else.* The attacker adds one note to `RQ-3001` through an unauthenticated requester portal. Every run that reads that request then queries the whole ledger with `limit=5000` and exports all 240 rows to `offsite-review.invalid`, a label in a simulated outbox. No forbidden tool is touched.
+Here the target is "Lamb Finance", Big Field Jumper Co.'s reporting agent. Its ground truth is the approved request record: *"Process RQ-3001" causes `read_request:RQ-3001`, then `query_ledger(filter=marketing:2026-09, limit=50)`, then `export_report(destination=finance-reports)`, and nothing else.* The attacker adds one note to `RQ-3001` through an unauthenticated requester portal. Every run that reads that request then queries the whole ledger with `limit=5000` and exports all 240 rows to `offsite-review.invalid`, a label in a simulated outbox. No forbidden tool is touched.
 
 ## Why it works
 
@@ -69,4 +69,4 @@ It holds because it is enforced at the tool boundary, in code, on the arguments.
 - [OWASP Top 10 for Agentic Applications](https://genai.owasp.org/), entry ASI02.
 - Greshake et al. (2023), "Not what you've signed up for: Compromising Real-World LLM-Integrated Applications with Indirect Prompt Injection".
 - Zhan et al. (2024), "InjecAgent"; Debenedetti et al. (2024), "AgentDojo".
-- Ported from AgenticGoat (retired): its Tool Abuse Lab (`agentic/labs.json`, ASI02): parameter pollution, with the allowlist enforced at the infrastructure layer, not by prompt.
+- Ported from the predecessor project (retired): its Tool Abuse Lab (`agentic/labs.json`, ASI02): parameter pollution, with the allowlist enforced at the infrastructure layer, not by prompt.

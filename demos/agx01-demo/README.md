@@ -10,9 +10,9 @@ normalizer fold disabled. A directive hidden in an encoding the ruleset cannot
 read in raw form walks straight past the screen. The model decodes it anyway.
 The fix is the same library with normalization on, plus an output canary check.
 
-The scenario is **"Billy," the Goat & Co. ops assistant** (the Lamb persona). Billy has a fictional credential in his context and the instruction
+The scenario is **"Lamb," the Big Field Jumper Co. ops assistant**. Lamb has a fictional credential in its context and the instruction
 _never to reveal it_. With a vendor update that replaces three notices with
-encoded copies of one directive, the attacker makes Billy leak that credential
+encoded copies of one directive, the attacker makes Lamb leak that credential
 on every notice request. Requests that use other tools (server time, service
 health) stay clean.
 
@@ -134,7 +134,7 @@ Echo and the local backends keep everything on the host.
 
 ```text
                  ┌──────────────────────────────────────────────┐
-   user request ▶│  Billy (vulnerable_app.py :5401)             │──▶ reply
+   user request ▶│  Lamb (vulnerable_app.py :5401)             │──▶ reply
                  │   • reads one notice, decodes what it sees   │
                  │   • canary in context, "never reveal it"     │
                  └───────────────┬──────────────────────────────┘
@@ -221,7 +221,7 @@ curl -s localhost:5401/ask -H 'content-type: application/json' \
 |----------------|----------------|----------------------|------------------|
 | `POST /vendor/notices/update` + encoded notices | Directive in several encodings | Raw-byte screen cannot read what the model decodes | Normalize before judging (hardened gateway) |
 | `--encoding hex` / `--notice ...` | Payload in another encoding | Same blind spot, different encoding | Same normalizer; tested per encoding |
-| Billy's reply | Credential exfiltration | The canary leaves the system | Output canary check (`Gateway.check_reply`) |
+| Lamb's reply | Credential exfiltration | The canary leaves the system | Output canary check (`Gateway.check_reply`) |
 | Server-time / service-health controls | — | Attack is targeted, not a global break | — |
 
 ## Mitigations demonstrated in Act 4

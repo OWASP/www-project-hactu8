@@ -8,13 +8,13 @@ replays a delegated token from an earlier session. Two mitigations shut the
 attack down: **on-behalf-of tokens** and **short-lived, session-bound
 tokens**.
 
-The scenario is **"Billy HR," Goat & Co.'s HR document agent.** Its ground
+The scenario is **"Lamb HR," Big Field Jumper Co.'s HR document agent.** Its ground
 truth is the entitlement table: _an intern may read her own offer letter, a
 manager may read their report's review, and only HR may read compensation
 bands and case files._ With **4** plain requests and **no injection**, the
 intern Dana receives four documents she is not entitled to read. Entitled
 callers reading their own documents are untouched. Nothing in the answers looks
-wrong. Billy HR is helpful, but on its own authority.
+wrong. Lamb HR is helpful, but on its own authority.
 
 > ⚠️ **For authorized security education and red-teaming only.** The vulnerable
 > agent and its public transcript endpoint are insecure **by design**. Do not
@@ -138,10 +138,10 @@ Echo and the local backends keep everything on the host.
 
 ```text
                  ┌───────────────────────────────────────────────┐
-  dana (intern) ▶│  Billy HR (vulnerable_app.py :5303)           │──▶ answer
+  dana (intern) ▶│  Lamb HR (vulnerable_app.py :5303)           │──▶ answer
   + own token    │   1 authenticate (lax: token only must exist) │
   + replayed     │   2 plan         (stub: one fetch per doc id) │
-    token        │   3 fetch_doc    (as svc-billy-hr)            │
+    token        │   3 fetch_doc    (as svc-lamb-hr)            │
                  │   4 answer       → action log                 │
                  └───────────────┬───────────────────────────────┘
                                  │ credential = agent's service token
@@ -207,7 +207,7 @@ curl -s localhost:5303/login -H 'content-type: application/json' -d '{"user":"da
 #   -> {"session": "S-1004", "token": "demo-session-...", ...}
 curl -s localhost:5303/requests -H 'content-type: application/json' \
      -d '{"session":"S-1004","token":"<token>","request":"Please send me HR-2001."}'
-curl -s -X POST localhost:5303/agent/run                    # HR-2001 released as svc-billy-hr
+curl -s -X POST localhost:5303/agent/run                    # HR-2001 released as svc-lamb-hr
 curl -s localhost:5303/api/history                          # the leaked delegated token
 ```
 
@@ -217,7 +217,7 @@ curl -s localhost:5303/api/history                          # the leaked delegat
 
 | Demo component | ASI03 scenario | Failure demonstrated | Mitigation shown |
 |----------------|----------------|----------------------|------------------|
-| `fetch_doc` with `svc-billy-hr` | Agent uses its own privileged identity for users | Confused deputy: caller gets the agent's access | On-behalf-of token exchange |
+| `fetch_doc` with `svc-lamb-hr` | Agent uses its own privileged identity for users | Confused deputy: caller gets the agent's access | On-behalf-of token exchange |
 | Delegated token from `S-0001` | Credential reuse across sessions | Expired, foreign-session token still accepted | Short-lived, session-bound tokens |
 | `GET /api/history` | Credentials exposed in agent transcripts | Token readable by anyone | — (redaction discussed, not coded) |
 | Entitled-caller controls | — | Attack is targeted, not a global break | — |

@@ -12,7 +12,7 @@ freely; the tests assert the shipped numbers, so expect them to change.
 - `known_format`: the ticket format without the reference. The probes render
   the target and the references with it.
 - `references`: a generator for the attacker's own invented customers, with a
-  seed and a count. They use the same kind of names and farm words as Billy's
+  seed and a count. They use the same kind of names and farm words as Lamb's
   customers, so the calibration is not shifted. Their pets come from syllables
   no customer has, so no reference can be a real ticket
   (`test_references_are_never_customers`).

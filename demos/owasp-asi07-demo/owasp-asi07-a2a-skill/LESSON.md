@@ -6,7 +6,7 @@ Setup, commands and architecture are in the [lab README](../README.md); this les
 
 In a multi-agent system, agents send each other instructions, and each one acts on what it receives. If the channel between them is not authenticated, anyone who can put a message on it can speak as any agent. The usual faults are spoofing (a message that only claims to come from a trusted agent), replay (an old genuine message sent again) and tampering in transit. A peer message is not more trustworthy than a web page just because another agent seems to have sent it.
 
-Here the target is Billy, Goat & Co.'s back office, run by two agents. "Billy Planner" turns an operator's request into work orders and publishes them on an in-process message bus; "Billy Exec" carries out the work orders it receives. Its ground truth is the operator's intent: *"Pay invoice INV-3001" causes one step, `pay_invoice:INV-3001`, and nothing else.* The attacker publishes two work orders whose `sender` field says `planner`, and re-publishes one old genuine order read from the open bus log. The executor then also pays `INV-3999` and cancels `A-1002` on `payments` and `inventory` jobs, and repeats an old refund of `A-0907` on `refunds` jobs. Every action is simulated.
+Here the target is Lamb, Big Field Jumper Co.'s back office, run by two agents. "Lamb Planner" turns an operator's request into work orders and publishes them on an in-process message bus; "Lamb Exec" carries out the work orders it receives. Its ground truth is the operator's intent: *"Pay invoice INV-3001" causes one step, `pay_invoice:INV-3001`, and nothing else.* The attacker publishes two work orders whose `sender` field says `planner`, and re-publishes one old genuine order read from the open bus log. The executor then also pays `INV-3999` and cancels `A-1002` on `payments` and `inventory` jobs, and repeats an old refund of `A-0907` on `refunds` jobs. Every action is simulated.
 
 ## Why it works
 
@@ -26,7 +26,7 @@ Run all four acts with `python run_demo.py` from `demos/owasp-asi07-demo`, or `p
 - **Act 3, impact.** The three targeted jobs turn RED: `payments` and `inventory` show `EXECUTED pay_invoice:INV-3999, cancel_order:A-1002`, and `refunds` shows `EXECUTED issue_refund:A-0907` (FMAR 100% targeted, 60% overall). The genuine steps also ran, so each job looks finished to the operator. The controls stay GREEN.
 - **Act 4, remediation.** The verifier dry run rejects the payload, and hardened mode brings all five back to GREEN. The targeted rows say "rejected m-0013", "rejected m-0015", "rejected m-0014": the forged messages are still retained on the bus, and the executor now refuses them. The planner's genuine orders still execute.
 
-On a real model (`--backend ollama --model llama3.2:3b`), only Billy Exec's model changes; the planner stays a stub. The numbers are reported, not asserted: in the 2026-11-20 sweep (`docs/evidence/2026-11-20-ollama-llama3.2-3b.md` in the repo, one sample) llama3.2:3b went 0% baseline, 33.3% targeted impact, 0% hardened.
+On a real model (`--backend ollama --model llama3.2:3b`), only Lamb Exec's model changes; the planner stays a stub. The numbers are reported, not asserted: in the 2026-11-20 sweep (`docs/evidence/2026-11-20-ollama-llama3.2-3b.md` in the repo, one sample) llama3.2:3b went 0% baseline, 33.3% targeted impact, 0% hardened.
 
 ## The defense, and why it holds
 
@@ -62,4 +62,4 @@ Both are needed: signing alone leaves the replay working, because the replay rea
 - Lab material, not repeated here: the [lab README](../README.md) (architecture, "real, not scripted", MCP terminology bridge, mapping table) and [`references/ASI07_RISKS.md`](references/ASI07_RISKS.md) (research, scenarios, mitigation roadmap).
 - [OWASP Top 10 for Agentic Applications](https://genai.owasp.org/), entry ASI07.
 - RFC 2104, HMAC: Keyed-Hashing for Message Authentication.
-- Ported from AgenticGoat (retired): its Relay Lab (`agentic/labs.json`, ASI07: authenticate and sign inter-agent messages, reject replays) and `acts.py` `a2a_scan` (every peer message is untrusted input, whoever it claims to be from).
+- Ported from the predecessor project (retired): its Relay Lab (`agentic/labs.json`, ASI07: authenticate and sign inter-agent messages, reject replays) and `acts.py` `a2a_scan` (every peer message is untrusted input, whoever it claims to be from).

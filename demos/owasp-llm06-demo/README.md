@@ -9,12 +9,12 @@ each request cheap and runs up the total instead. A **per-request budget**, a
 **loop depth cap** and a **per-client quota** shut it all down. All cost is
 simulated token and dollar accounting; nothing is billed.
 
-The scenario is **"Billy," Goat & Co.'s agentic knowledge-base assistant.**
+The scenario is **"Lamb," Big Field Jumper Co.'s agentic knowledge-base assistant.**
 Its budget is _"6,000 input tokens, 400 output tokens, 8 tool calls and 4
 agent steps per request"_; a normal question costs about 175 tokens and
 $0.001. With **3** edited pages carrying **1** directive line each, the
 attacker pushes the expense, travel and payroll questions to 12,800–92,400
-tokens each. Billy's answers still read correctly, so nobody in the chat sees
+tokens each. Lamb's answers still read correctly, so nobody in the chat sees
 anything wrong. Holiday and VPN questions stay untouched.
 
 > ⚠️ **For authorized security education and red-teaming only.** The vulnerable
@@ -156,7 +156,7 @@ everything on the host.
 
 ```text
                  ┌──────────────────────────────────────────────┐
-   user query ──▶│  Billy agent loop (vulnerable_app.py :5206)  │──▶ answer
+   user query ──▶│  Lamb agent loop (vulnerable_app.py :5206)  │──▶ answer
                  │   • meters tokens/calls/steps, enforces none │    + simulated
                  │   • no loop depth cap, no per-client quota   │      cost
                  └───────────────┬──────────────────────────────┘

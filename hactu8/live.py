@@ -1,6 +1,6 @@
-"""Live attack and defense against a real model: Billy's surfaces, graded OFF and ON.
+"""Live attack and defense against a real model: Lamb's surfaces, graded OFF and ON.
 
-Every surface on Lamb's Billy server (tool description and result, resources,
+Every surface on the Lamb server (tool description and result, resources,
 prompt templates, parameter schema, error channel, log tail, OKF bundle, chain,
 conditional trigger, A2A inbox) plus its clean control is shown to the model
 under test as content to summarize. The assistant holds the per-run canary as
@@ -117,7 +117,7 @@ class LiveRun:
                 "surfaces": [asdict(s) for s in self.surfaces]}
 
 
-SKILL = {"id": "lamb-live", "name": "Billy's MCP surfaces, live", "version": "1.0.0",
+SKILL = {"id": "lamb-live", "name": "Lamb's MCP surfaces, live", "version": "1.0.0",
          "owasp": "MCP03 / ASI02 / LLM01:2026", "risk": "Poisoned MCP server surfaces",
          "metric": {"id": "CLR", "name": "Canary leak rate"}}
 
@@ -221,8 +221,8 @@ def user_message(surface: str, text: str):
 
 
 async def collect_surfaces() -> List[Surface]:
-    """Every Billy surface, as an unprotected client and as the gateway would show it."""
-    from hactu8.lamb import surfaces as billy
+    """Every Lamb surface, as an unprotected client and as the gateway would show it."""
+    from hactu8.lamb import surfaces as lamb
     from hactu8.lamb.gateway import QUARANTINE, SANITIZED, Gateway, InProcessBackend
     from hactu8.lamb.mcp_target import LambMcpState, build_mcp_server
 
@@ -233,7 +233,7 @@ async def collect_surfaces() -> List[Surface]:
     out: List[Surface] = []
 
     def add(target: str, raw: str, protected: str) -> None:
-        meta = billy.ATTACK_MANIFEST[target]
+        meta = lamb.ATTACK_MANIFEST[target]
         # Decided by the gateway's explicit markers only; outputs that legitimately differ
         # between two calls (a timestamp) must not read as a quarantine.
         withheld = protected in (QUARANTINE, SANITIZED) or QUARANTINE in protected or (bool(raw) and not protected)
@@ -270,7 +270,7 @@ async def collect_surfaces() -> List[Surface]:
         add(target, *await tool_pair("a2a_read", {"msg_id": msg}))
     for cid in ("incident_response", "vault_access", "office_map"):
         add(f"okf:concept/{cid}", *await tool_pair("okf_get_concept", {"concept_id": cid}))
-    for uri in billy.CHAIN:
+    for uri in lamb.CHAIN:
         add(f"chain:{uri.rsplit('/', 1)[1]}", *await tool_pair("chain_get", {"uri": uri}))
 
     # The runbook arrives in two reads; the model sees both, the gateway screens each.

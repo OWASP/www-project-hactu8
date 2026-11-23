@@ -9,7 +9,7 @@ talk to it, forge its verdict, slip past it, or bury the humans behind it.
 classifier cross-check, spotlighted evidence, a strict verdict schema and a
 per-source flag budget.
 
-The scenario is **Goat & Co.'s review triage**, which picks support
+The scenario is **Big Field Jumper Co.'s review triage**, which picks support
 transcripts for the public help feed. Email transcripts are scored by an LLM
 judge, chat transcripts by protectogw, and anything flagged waits for a
 review queue that clears eight items per batch and releases the rest

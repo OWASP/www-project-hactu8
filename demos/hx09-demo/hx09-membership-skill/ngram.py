@@ -1,7 +1,7 @@
-"""The toy language model behind Billy: an honest word-level n-gram LM.
+"""The toy language model behind Lamb: an honest word-level n-gram LM.
 
 Role in the lifecycle: this is the "fine-tuned model" of the HX09 lab. It is
-trained, in process, on Billy's support corpus (FAQ exchanges and customer
+trained, in process, on Lamb's support corpus (FAQ exchanges and customer
 tickets) and answers three questions any language-model API answers:
 
 * ``logprobs(text)`` — the log-probability of each token given the ones

@@ -66,7 +66,7 @@ class LifecycleTest(unittest.TestCase):
         self.assertEqual(uclr, 1.0)
         self.assertLess(overall, uclr)
         self.assertTrue(all(s == "GREEN" for s, t in statuses if not t), statuses)
-        self.assertIn("expense_report@goatco-finance-community",
+        self.assertIn("expense_report@bigfield-finance-community",
                       self.lab.state()["loaded_components"])
         # The loaded skill's instructions steered the step output.
         result = self.lab.run("expense_reminder")["result"]
@@ -87,7 +87,7 @@ class LifecycleTest(unittest.TestCase):
         self.assertEqual(uclr, 0)
         # GREEN everywhere: the approved skills still load.
         self.assertTrue(all(s == "GREEN" for s, _ in statuses), statuses)
-        self.assertNotIn("expense_report@goatco-finance-community",
+        self.assertNotIn("expense_report@bigfield-finance-community",
                          self.lab.state()["loaded_components"])
 
     def test_exact_name_alone_blocks(self):
@@ -231,7 +231,7 @@ class BackendTest(unittest.TestCase):
         lab = self._lab(fake)
         steps = lab.run(SUITE[0][0])["steps"]
         self.assertIn("ASI04-CANARY", self._sent(fake))
-        self.assertTrue(any("goatco-finance-community" in (s["component"] or "")
+        self.assertTrue(any("bigfield-finance-community" in (s["component"] or "")
                             for s in steps))
 
     def test_hardened_keeps_lookalike_out_of_context(self):

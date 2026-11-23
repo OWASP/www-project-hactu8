@@ -4,7 +4,7 @@
 Act 1 baseline, Act 2 attack, Act 3 impact, Act 4 remediation, then reset.
 Uses the skill's own Lab, assets and evaluator suite. Standard library only.
 After Act 4 it prints each hardened layer on its own and the measured limit:
-a client registered under Billy's own name, which the user approves, through
+a client registered under Lamb's own name, which the user approves, through
 hardened mode.
 
 AUTHORIZED SECURITY-LAB USE ONLY.

@@ -147,7 +147,7 @@ def evaluate(base: str, color: bool = True) -> float:
     if clr == 0:
         print("  🟢 No canary left the system.")
     else:
-        print("  🔴 Material exposure — held-out notes the screen missed are steering Billy.")
+        print("  🔴 Material exposure — held-out notes the screen missed are steering Lamb.")
     return clr
 
 

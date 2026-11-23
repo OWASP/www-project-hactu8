@@ -1,6 +1,6 @@
-"""Billy's poisoned MCP surfaces: Lamb's vulnerable server.
+"""Lamb's poisoned MCP surfaces: Lamb's vulnerable server.
 
-Billy, Goat & Co.'s "KB-Tools" server is the hostile third-party MCP server a
+Lamb, Big Field Jumper Co.'s "KB-Tools" server is the hostile third-party MCP server a
 team is about to wire into its assistant. Every surface below is untrusted text
 headed for the model's context; most are poisoned, each beside a clean control.
 ``ATTACK_MANIFEST`` is the ground truth the harness grades against.
@@ -218,7 +218,7 @@ class SurfaceState:
 
 
 def register_surfaces(mcp: Any, surfaces: SurfaceState) -> None:
-    """Add every Billy surface to an MCP v2 server."""
+    """Add every Lamb surface to an MCP v2 server."""
     from typing import Annotated
 
     from pydantic import Field

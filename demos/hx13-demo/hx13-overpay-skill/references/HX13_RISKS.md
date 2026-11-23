@@ -28,10 +28,10 @@ The lab mixes the two AP2 generations on purpose: the intent field names of v0.1
 
 ## How the demo maps to the attack surfaces
 
-- S1: `listing_qa` on `meadowfeeds/goat-mix-25` in `assets/hostile_market.json`; the note reaches `Merchant.checkout` of `hayrickdirect` before any payment.
+- S1: `listing_qa` on `meadowfeeds/ewe-mix-25` in `assets/hostile_market.json`; the note reaches `Merchant.checkout` of `hayrickdirect` before any payment.
 - S2: `listing_qa` on `barnsupply/heat-lamp`; `StubModel` splits the order, `Lab._buy` opens one checkout per unit.
 - S3: `rechallenge` on `marketwire/hay-report`; `Merchant.fetch` settles through the facilitator and answers 402; `Lab._fetch` pays up to `MAX_PAYMENT_ROUNDS`.
-- S4: `cart_add_on` on `coopcorner`; `Merchant.checkout` signs a cart with the add-on; Billy pays `accepts[0].amount`.
+- S4: `cart_add_on` on `coopcorner`; `Merchant.checkout` signs a cart with the add-on; Lamb pays `accepts[0].amount`.
 - S5: `limits[premium-variant]`; Jo's mandate in `assets/market.json` has `"skus": null`.
 
 ## Mitigation roadmap

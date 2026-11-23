@@ -46,7 +46,7 @@ def evidence(value) -> None:
 
 
 def transcript(result) -> str:
-    return "\n".join(f"customer: {t['user']}\nbilly: {t['reply']}" for t in result["turns"])
+    return "\n".join(f"customer: {t['user']}\nlamb: {t['reply']}" for t in result["turns"])
 
 
 def act(lab: Lab, title: str, results=None) -> float:

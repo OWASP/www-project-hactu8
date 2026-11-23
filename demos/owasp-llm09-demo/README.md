@@ -7,11 +7,11 @@ ranks the other tenant's confidential documents first. One mitigation shuts
 the attack down: a **tenant filter enforced at the retrieval layer**, not in
 the prompt.
 
-The scenario is **"Billy," Goat & Co.'s hosted knowledge-base assistant**,
+The scenario is **"Lamb," Big Field Jumper Co.'s hosted knowledge-base assistant**,
 serving two fictional farms: **Meadow Fold** and **Hilltop Creamery**. Meadow
 Fold's ground truth includes _"Meadow Fold winter hay is bought at 180 dollars
 per tonne from Valley Mills."_ With **1** crafted chat turn and **0**
-documents written, a Meadow Fold user gets Billy to answer three follow-up
+documents written, a Meadow Fold user gets Lamb to answer three follow-up
 questions from Hilltop Creamery's confidential documents. Unrelated topics
 (shearing, fencing) stay untouched.
 
@@ -138,7 +138,7 @@ everything on the host.
 
 ```text
                  ┌──────────────────────────────────────────────┐
-   session  ────▶│  Billy (vulnerable_app.py :5209)             │──▶ answer
+   session  ────▶│  Lamb (vulnerable_app.py :5209)             │──▶ answer
    + question    │   • session → tenant (server side)           │
                  │   • retrieval vector = tenant name + question│
                  │     + recent turns (conversational memory)   │
@@ -176,7 +176,7 @@ The model is a deterministic stub with one fixed contract: it answers from
 the first passage in its context. That contract never changes between acts.
 What changes is **which passage ranks first**:
 
-- The crafted turn names Hilltop Creamery. Billy keeps it in session memory
+- The crafted turn names Hilltop Creamery. Lamb keeps it in session memory
   and adds its terms to every follow-up's retrieval vector.
 - Cosine similarity over the shared store now favours Hilltop's documents on
   topics both tenants share (hay, vet, milk), because those documents match

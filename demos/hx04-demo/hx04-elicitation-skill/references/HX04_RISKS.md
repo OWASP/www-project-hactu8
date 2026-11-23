@@ -13,7 +13,7 @@ What this lab's risk is, where it comes from, and how to harden against it. Load
 
 | ID | Title | Description | Focus |
 |----|-------|-------------|-------|
-| S1 | Impersonating form, agent pre-fill | A form claims to be "Goat & Co. Accounts" and asks for the account reference; the client hides the sender and its model fills the field from the session | **DEMO TARGET** (`verify-account`) |
+| S1 | Impersonating form, agent pre-fill | A form claims to be "Big Field Jumper Co. Accounts" and asks for the account reference; the client hides the sender and its model fills the field from the session | **DEMO TARGET** (`verify-account`) |
 | S2 | Look-alike page in URL mode | A URL with user-info before `@` and another loopback host; the page asks for the reference out of band | **DEMO TARGET** (`billing-relink`) |
 | S3 | Consent fatigue | Harmless prompts first, so the phishing dialogs arrive after the user stops reading | **DEMO TARGET** (`price-list`, `rate-us`) |
 | S4 | Honest-looking request from the right server | A "match code" from the supplier card, in groups of four; passes the field policy, the screen and the identity check | **DEMO TARGET** (measured limit) |

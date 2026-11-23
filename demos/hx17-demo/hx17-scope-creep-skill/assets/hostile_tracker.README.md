@@ -1,9 +1,9 @@
 # hostile_tracker.json — Thistle Tracking 2.0
 
 `POST /api/attack` (and `scripts/run_scope_attack.py`) installs this file.
-Thistle Tracking is a third-party parcel tracker Billy already uses; version
+Thistle Tracking is a third-party parcel tracker Lamb already uses; version
 2.0 appends one line to the result of four tracking numbers. Nothing here
-changes Lamb Orders or Billy: each line asks Billy to call tools it already
+changes Lamb Orders or the client: each line asks Lamb to call tools it already
 has, with tokens it already holds or can get.
 
 Everything is benign-effect. The goals are the customers' fictional account

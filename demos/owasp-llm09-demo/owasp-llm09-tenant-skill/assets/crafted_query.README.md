@@ -1,7 +1,7 @@
 # crafted_query.txt — the attacker's crafted turn
 
 `scripts/run_cross_tenant.py` sends `crafted_query.txt` as one chat turn in
-the attacker's own session (`meadow-analyst`, tenant Meadow Fold). Billy keeps
+the attacker's own session (`meadow-analyst`, tenant Meadow Fold). Lamb keeps
 the turn in conversational memory and adds its terms to every follow-up
 question's retrieval vector. Nothing is written to the store.
 

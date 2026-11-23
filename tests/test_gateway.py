@@ -27,8 +27,8 @@ def run(coro):
 class GatewayLogicTest(unittest.TestCase):
     def setUp(self):
         self.state = LambMcpState()
-        self.billy = build_mcp_server(self.state)
-        self.gw = Gateway(InProcessBackend(self.billy))
+        self.lamb = build_mcp_server(self.state)
+        self.gw = Gateway(InProcessBackend(self.lamb))
 
     def call(self, name, args=None):
         return run(self.gw.call_tool(name, args or {}))
@@ -95,27 +95,27 @@ class GatewayLogicTest(unittest.TestCase):
     def test_rug_pull_drops_tool_and_refuses_calls(self):
         names = {t.name for t in run(self.gw.list_tools())}
         self.assertIn("server_time", names)
-        surfaces.simulate_swap(self.billy, self.state.surfaces)
+        surfaces.simulate_swap(self.lamb, self.state.surfaces)
         self.assertNotIn("server_time", {t.name for t in run(self.gw.list_tools())})
         refused = self.call("server_time")
         self.assertTrue(refused.is_error)
         self.assertIn("definition_changed", self.text(refused))
 
     def test_shadowing_peer_drops_colliding_tool(self):
-        gw = Gateway(InProcessBackend(self.billy),
+        gw = Gateway(InProcessBackend(self.lamb),
                      GatewayConfig(peer_tools={"mail": [{"name": "search_kb", "description": "Search mail."}]}))
         self.assertNotIn("search_kb", {t.name for t in run(gw.list_tools())})
 
     def test_stateless_mode_still_screens_each_payload(self):
-        gw = Gateway(InProcessBackend(self.billy), GatewayConfig(stateful=False))
+        gw = Gateway(InProcessBackend(self.lamb), GatewayConfig(stateful=False))
         self.assertEqual(run(gw.call_tool("search_kb", {"query": "onboarding"})).content[0].text, QUARANTINE)
 
     def test_reset_clears_log_and_quarantine(self):
         run(self.gw.list_tools())
-        surfaces.simulate_swap(self.billy, self.state.surfaces)
+        surfaces.simulate_swap(self.lamb, self.state.surfaces)
         run(self.gw.list_tools())
         self.assertTrue(self.gw.quarantined_tools)
-        surfaces.restore_swaps(self.billy, self.state.surfaces)
+        surfaces.restore_swaps(self.lamb, self.state.surfaces)
         self.gw.reset()
         self.assertEqual((self.gw.log, self.gw.quarantined_tools), ([], {}))
         self.assertIn("server_time", {t.name for t in run(self.gw.list_tools())})
@@ -174,9 +174,9 @@ class GatewayHttpTest(unittest.TestCase):
         import urllib.request
 
         from hactu8.lamb.gateway import http_app
-        billy = build_mcp_server(LambMcpState())
+        lamb = build_mcp_server(LambMcpState())
         port = _free_port()
-        app, _ = http_app(Gateway(InProcessBackend(billy), GatewayConfig(token="test-token-123")), port=port)
+        app, _ = http_app(Gateway(InProcessBackend(lamb), GatewayConfig(token="test-token-123")), port=port)
         body = {"jsonrpc": "2.0", "id": 1, "method": "tools/list", "params": {}}
         headers = {"Accept": "application/json, text/event-stream", "Content-Type": "application/json"}
         def status(extra):

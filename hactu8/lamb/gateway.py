@@ -1,6 +1,6 @@
-"""ProtectoGW as an MCP gateway: a screening proxy in front of Billy's server.
+"""ProtectoGW as an MCP gateway: a screening proxy in front of Lamb's server.
 
-    model client  ->  ProtectoGW gateway (this)  ->  Billy KB-Tools (Lamb /mcp)
+    model client  ->  ProtectoGW gateway (this)  ->  Lamb KB-Tools (Lamb /mcp)
                       screen() on every hop
 
 Every surface that crosses the boundary is untrusted text headed for the model:
@@ -11,7 +11,7 @@ also pins tool definitions on first sight (trust on first use, or a pins file
 approved at review) and drops any tool whose definition later changes, and it
 checks tool names against peer servers for shadowing.
 
-Ported from AgenticGoat (retired): its fastmcp gateway, rewritten onto the MCP v2 SDK's low-level
+Ported from the predecessor project (retired): its fastmcp gateway, rewritten onto the MCP v2 SDK's low-level
 server, which is built for pass-through handlers. Screening is stateful by
 default: a protectogw.Session per gateway accumulates reads, so a chain that is
 clean one document at a time is still caught.
@@ -66,9 +66,9 @@ class GatewayConfig:
 
 
 class InProcessBackend:
-    """Reach an MCP v2 server object directly (Lamb's own Billy server)."""
+    """Reach an MCP v2 server object directly (Lamb's own Lamb server)."""
 
-    name = "billy"
+    name = "lamb"
 
     def __init__(self, server: Any) -> None:
         self.server = server
@@ -170,7 +170,7 @@ class Gateway:
     # surfaces
     async def list_tools(self) -> list:
         tools = list(await self.backend.list_tools())
-        server = getattr(self.backend, "name", "billy")
+        server = getattr(self.backend, "name", "lamb")
         shadow = shadowing({server: [_tool_dict(t) for t in tools], **self.config.peer_tools})
         out = []
         for tool in tools:
@@ -287,7 +287,7 @@ def build_server(gateway: Gateway):
         return await gateway.get_prompt(params.name, params.arguments)
 
     return Server("ProtectoGW Gateway", version="2.0.0",
-                  instructions="ProtectoGW screening proxy in front of Billy's KB-Tools (HACTU8 Lamb).",
+                  instructions="ProtectoGW screening proxy in front of Lamb's KB-Tools (HACTU8 Lamb).",
                   on_list_tools=list_tools, on_call_tool=call_tool, on_list_resources=list_resources,
                   on_read_resource=read_resource, on_list_prompts=list_prompts, on_get_prompt=get_prompt)
 
@@ -361,7 +361,7 @@ def hardened_tls_context(config: GatewayConfig) -> ssl.SSLContext:
 
 
 def main(argv=None) -> int:
-    parser = argparse.ArgumentParser(description="ProtectoGW MCP gateway in front of Billy's KB-Tools")
+    parser = argparse.ArgumentParser(description="ProtectoGW MCP gateway in front of Lamb's KB-Tools")
     parser.add_argument("--port", type=int, default=9000)
     parser.add_argument("--stateless", action="store_true", help="screen each payload alone (no Session)")
     parser.add_argument("--scope", action="append", default=[], help="scope granted to the token")
@@ -375,13 +375,13 @@ def main(argv=None) -> int:
     from hactu8.lamb._mcp import McpUnavailable
     from hactu8.lamb.mcp_target import LambMcpState, build_mcp_server
     try:
-        billy = build_mcp_server(LambMcpState())
+        lamb = build_mcp_server(LambMcpState())
     except McpUnavailable as exc:
         parser.error(str(exc))
     config = GatewayConfig(stateful=not args.stateless, token=os.environ.get("HACTU8_GATEWAY_TOKEN", ""),
                            scopes=tuple(args.scope) or ("kb.read",), required_scopes=tuple(args.require_scope),
                            tls_certfile=args.tls_cert, tls_keyfile=args.tls_key, min_tls=args.min_tls)
-    app, _ = http_app(Gateway(InProcessBackend(billy), config), port=args.port)
+    app, _ = http_app(Gateway(InProcessBackend(lamb), config), port=args.port)
     ucfg = uvicorn.Config(app, host=DEFAULT_HOST, port=args.port, log_level="warning")
     ucfg.load()
     scheme = "http"

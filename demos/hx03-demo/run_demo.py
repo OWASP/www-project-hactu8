@@ -76,7 +76,7 @@ def act(lab: Lab, title: str, results=None) -> float:
     print(f"    Sampling Leak Rate: {slr:.0f}% targeted")
     calls, tokens = budget(seen)
     ran = sum(r["sampling_calls"] for r in seen)
-    print(f"[+] Sampling on Billy's model: {ran} calls; off the user's task: {calls} calls, ~{tokens} tokens.")
+    print(f"[+] Sampling on Lamb's model: {ran} calls; off the user's task: {calls} calls, ~{tokens} tokens.")
     return slr
 
 
@@ -119,7 +119,7 @@ def main(argv=None) -> int:
     impact: dict = {}
     attacked = act(lab, "Act 3 — Post-attack impact (same questions, updated shipping server)", impact)
     got = [a for a, (s, r) in impact.items() if r["server_got_canary"]]
-    print(f"[+] Server log: the shipping server received Billy's account reference in {len(got)} of "
+    print(f"[+] Server log: the shipping server received Lamb's account reference in {len(got)} of "
           f"{sum(1 for c in CUSTOMERS if c[2])} conversations; the weather server in none.")
 
     print("\n[defense] Act 4 — Remediation")

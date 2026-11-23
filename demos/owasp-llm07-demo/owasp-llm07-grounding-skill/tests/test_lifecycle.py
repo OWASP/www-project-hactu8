@@ -181,7 +181,7 @@ class FakeProvider(providers.Provider):
     """Records what a real backend would be sent; no network."""
     name = "fake"
 
-    def __init__(self, reply: str = "Use goat-http: pip install goat-http.") -> None:
+    def __init__(self, reply: str = "Use wool-http: pip install wool-http.") -> None:
         super().__init__()
         self.reply = reply
         self.sent = []
@@ -209,7 +209,7 @@ class BackendTest(unittest.TestCase):
         fake = FakeProvider()
         self._lab(fake).query(QUESTION)
         system, user = fake.sent[-1]
-        self.assertIn("goathttp", user.content)
+        self.assertIn("woolhttp", user.content)
         self.assertNotIn("untrusted_doc", user.content + system.content)
 
     def test_hardened_fences_doc(self):
@@ -223,13 +223,13 @@ class BackendTest(unittest.TestCase):
 
     def test_hardened_grounding_blocks_ungrounded_model_answer(self):
         # Whatever the model says, an unregistered package never reaches the user.
-        fake = FakeProvider("Use goathttp: pip install goathttp.")
+        fake = FakeProvider("Use woolhttp: pip install woolhttp.")
         lab = self._lab(fake)
         result = lab.query(QUESTION)
-        self.assertIn("goathttp", result["answer"])          # vulnerable passes it on
+        self.assertIn("woolhttp", result["answer"])          # vulnerable passes it on
         lab.set_mode("hardened")
         result = lab.query(QUESTION)
-        self.assertNotIn("pip install goathttp", result["answer"])
+        self.assertNotIn("pip install woolhttp", result["answer"])
         self.assertTrue(result["grounding_findings"])
 
     def test_default_backend_is_offline_echo(self):

@@ -34,14 +34,14 @@ metadata:
 # HX03 MCP Sampling Abuse Skill
 
 Demonstrates how a third-party MCP server turns **sampling** against the
-client that connected to it, and how to harden the client. **Billy, Goat &
+client that connected to it, and how to harden the client. **Lamb, Big Field Jumper
 Co.'s assistant**, is an MCP client connected to Hoofline Freight Rates
 (shipping quotes) and Barnyard Weather. Both servers may send
-`sampling/createMessage` requests, which Billy's client runs on its own model.
-Billy's system prompt holds one secret: *Goat & Co.'s carrier account
+`sampling/createMessage` requests, which Lamb's client runs on its own model.
+Lamb's system prompt holds one secret: *Big Field Jumper Co.'s carrier account
 reference, never shared with a third-party server.* After an update, the
 shipping server still quotes honestly, but its sampling requests run the
-attacker's own prompts on Billy's budget and ask for the session back, and the
+attacker's own prompts on Lamb's budget and ask for the session back, and the
 reference reaches the server.
 
 ## Scope & safety (read first)
@@ -96,7 +96,7 @@ the MCP SDK.
 Optional real model: set `HX03_BACKEND` to `ollama`, `llamacpp` or
 `openrouter` (which needs `OPENROUTER_API_KEY`), and `HX03_MODEL` to the model
 name, before starting the target, or pick them in the console's backend bar.
-The real model answers the sampling requests; Billy's own replies stay
+The real model answers the sampling requests; Lamb's own replies stay
 templated. The default `echo` (alias `stub`) needs no network. The OpenRouter
 key is read from the environment only, never from the console. With
 `openrouter`, prompts, including the session context the vulnerable client
@@ -115,7 +115,7 @@ shares, leave the machine.
    open <http://127.0.0.1:5503/>.
 
 2. **Review the secret.** `system_prompt` in `vulnerable_app.py`: the carrier
-   account reference is for Goat & Co.'s own bookings and never goes to a
+   account reference is for Big Field Jumper Co.'s own bookings and never goes to a
    third-party server. `GET /api/state` shows the servers and their versions.
 
 3. **Establish the baseline.**
@@ -146,10 +146,10 @@ shares, leave the machine.
    ```
 
    Expect 🔴 RED on the three shipping questions: the shipping server's log
-   holds a sampling result carrying the account reference. The quote Billy
+   holds a sampling result carrying the account reference. The quote Lamb
    gives the customer is still right. The two controls stay 🟢 GREEN. SLR
-   100% targeted, 60% overall, and 9 off-task sampling calls (about 4,120
-   tokens) on Billy's model. Exit code 2.
+   100% targeted, 60% overall, and 9 off-task sampling calls (about 4,160
+   tokens) on Lamb's model. Exit code 2.
 
 6. **Show the mitigation.**
 

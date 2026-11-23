@@ -1276,7 +1276,7 @@
       "controls_red_after_attack": [],
       "rows": [
         {
-          "item": "billy-stock @ tick 1",
+          "item": "lamb-stock @ tick 1",
           "targeted": true,
           "acts": [
             "GREEN",
@@ -1285,7 +1285,7 @@
           ]
         },
         {
-          "item": "billy-stock @ tick 2",
+          "item": "lamb-stock @ tick 2",
           "targeted": true,
           "acts": [
             "GREEN",
@@ -1294,7 +1294,7 @@
           ]
         },
         {
-          "item": "billy-stock @ tick 3",
+          "item": "lamb-stock @ tick 3",
           "targeted": true,
           "acts": [
             "GREEN",
@@ -1303,7 +1303,7 @@
           ]
         },
         {
-          "item": "billy-stock @ tick 4",
+          "item": "lamb-stock @ tick 4",
           "targeted": true,
           "acts": [
             "GREEN",
@@ -1312,7 +1312,7 @@
           ]
         },
         {
-          "item": "billy-billing @ tick 1",
+          "item": "lamb-billing @ tick 1",
           "targeted": false,
           "acts": [
             "GREEN",
@@ -1321,7 +1321,7 @@
           ]
         },
         {
-          "item": "billy-billing @ tick 2",
+          "item": "lamb-billing @ tick 2",
           "targeted": false,
           "acts": [
             "GREEN",
@@ -1330,7 +1330,7 @@
           ]
         },
         {
-          "item": "billy-billing @ tick 3",
+          "item": "lamb-billing @ tick 3",
           "targeted": false,
           "acts": [
             "GREEN",
@@ -1339,7 +1339,7 @@
           ]
         },
         {
-          "item": "billy-billing @ tick 4",
+          "item": "lamb-billing @ tick 4",
           "targeted": false,
           "acts": [
             "GREEN",
@@ -1348,7 +1348,7 @@
           ]
         },
         {
-          "item": "billy-support @ tick 1",
+          "item": "lamb-support @ tick 1",
           "targeted": false,
           "acts": [
             "GREEN",
@@ -1357,7 +1357,7 @@
           ]
         },
         {
-          "item": "billy-support @ tick 2",
+          "item": "lamb-support @ tick 2",
           "targeted": false,
           "acts": [
             "GREEN",
@@ -1366,7 +1366,7 @@
           ]
         },
         {
-          "item": "billy-support @ tick 3",
+          "item": "lamb-support @ tick 3",
           "targeted": false,
           "acts": [
             "GREEN",
@@ -1375,7 +1375,7 @@
           ]
         },
         {
-          "item": "billy-support @ tick 4",
+          "item": "lamb-support @ tick 4",
           "targeted": false,
           "acts": [
             "GREEN",

@@ -6,7 +6,7 @@ AUTHORIZED SECURITY-LAB USE ONLY. Targets this skill's own vulnerable_app.py.
 Signs in as the attacker's own account (default ``C-1003``) and saves
 ``assets/pivot_note.md`` as that account's notes through ``POST
 /account/notes``. Editing your own notes is allowed; the attacker needs no
-special access. Billy reads the notes with every own-account question, and in
+special access. Lamb reads the notes with every own-account question, and in
 vulnerable mode follows the directive line: it reads the records the line names
 and recites everything in its context, including the CRM key in its prompt.
 

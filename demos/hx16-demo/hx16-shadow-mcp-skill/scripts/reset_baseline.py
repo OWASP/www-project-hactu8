@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Reset — restore the target to the clean baseline, in vulnerable mode.
 
-Calls ``POST /api/reset``, which rebuilds Billy's client from ``assets/``:
+Calls ``POST /api/reset``, which rebuilds Lamb's client from ``assets/``:
 the config IT signed (two servers) with a new per-run key, no shadow server
 on the network, nothing announced on discovery, new account references,
 empty logs, and vulnerable mode, so the four acts can be re-run.

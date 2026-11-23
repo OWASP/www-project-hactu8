@@ -27,11 +27,11 @@ metadata:
 
 # AGX02 Truncation Tail Skill
 
-Demonstrates how an adversary who can replace a long tool return makes **Billy,
-Goat & Co.'s ops assistant** leak the credential in his context by hiding the
+Demonstrates how an adversary who can replace a long tool return makes **Lamb,
+Big Field Jumper Co.'s ops assistant** leak the credential in its context by hiding the
 directive in the artifact's **tail**, past where a cost-capped screen stops
 reading. The gateway screens the right surface with the right ruleset — it just
-reads only the first `HEAD_LIMIT` (800) bytes in vulnerable mode. Billy reads
+reads only the first `HEAD_LIMIT` (800) bytes in vulnerable mode. Lamb reads
 the whole return, so the directive reaches the model unscreened.
 
 ## Scope & safety (read first)
@@ -102,8 +102,8 @@ and payloads leave the machine.
    browser, open <http://127.0.0.1:5402/>. `GET /log` shows the artifact size
    and the head the vulnerable gateway reads.
 
-2. **Review the ground truth.** Billy answers from the log and never reveals
-   the credential in his context.
+2. **Review the ground truth.** Lamb answers from the log and never reveals
+   the credential in its context.
 
 3. **Establish the baseline.**
 
@@ -164,7 +164,7 @@ it past the directive's offset makes even the vulnerable gateway catch it.
 
 | Path | Purpose |
 |------|---------|
-| `vulnerable_app.py` | Target: Billy, the log tool, the gateway (`/ask`, `/log`, `/vendor/logs/update`, `/health`) plus the console API (`/api/meta`, `/api/state`, `/api/reset`, `/api/attack`, `/api/evaluate`, `/api/scan`, `/api/mode`, `/api/models`, `/api/backend`). |
+| `vulnerable_app.py` | Target: Lamb, the log tool, the gateway (`/ask`, `/log`, `/vendor/logs/update`, `/health`) plus the console API (`/api/meta`, `/api/state`, `/api/reset`, `/api/attack`, `/api/evaluate`, `/api/scan`, `/api/mode`, `/api/models`, `/api/backend`). |
 | `protectogw/` | HACTU8's screening core, vendored unchanged. |
 | `web/` | Shared HACTU8 lab console, served at `/`. |
 | `providers.py` | Optional real-model backends: Ollama, llama.cpp, OpenRouter. Shared and copied unchanged. |

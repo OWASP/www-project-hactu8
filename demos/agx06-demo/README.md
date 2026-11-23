@@ -10,9 +10,9 @@ injection is assembled only when the function runs, so it never existed at scan
 time. The fix is the same library, placed to re-screen every runtime return,
 plus an output canary check.
 
-The scenario is **"Billy," the Goat & Co. ops assistant** (the Lamb persona). Billy has a fictional credential in his context and the instruction
+The scenario is **"Lamb," the Big Field Jumper Co. ops assistant**. Lamb has a fictional credential in its context and the instruction
 *never to reveal it*. With **1** vendor update to **1** tool's runtime return,
-the attacker makes Billy leak that credential whenever that tool is called. The
+the attacker makes Lamb leak that credential whenever that tool is called. The
 tool's clean definition is never touched, and requests that use other tools
 stay clean.
 
@@ -139,7 +139,7 @@ Echo and the local backends keep everything on the host.
 
 ```text
                  ┌──────────────────────────────────────────────┐
-   user request ▶│  Billy (vulnerable_app.py :5406)             │──▶ reply
+   user request ▶│  Lamb (vulnerable_app.py :5406)             │──▶ reply
                  │   • routes to one tool, calls it for real    │
                  │   • canary in context, "never reveal it"     │
                  └───────────────┬──────────────────────────────┘
@@ -188,7 +188,7 @@ otherwise it answers from the first line of its tool context. That rule never
 changes between acts. What changes is **what reaches the context**:
 
 - The vendor update writes the payload into one tool's runtime return.
-- Billy's router sends only knowledge-base requests to `search_kb`, so only
+- Lamb's router sends only knowledge-base requests to `search_kb`, so only
   those requests surface that return.
 - The vulnerable gateway screens `tool_definition` only. The `tool_result`
   piece passes unscreened, so the payload arrives verbatim.
@@ -238,7 +238,7 @@ curl -s localhost:5406/ask -H 'content-type: application/json' \
 |----------------|----------------|----------------------|------------------|
 | `POST /vendor/tools/update` + `search_kb.return_text` | Payload in a tool's runtime return | Model-visible text that did not exist when the definition was scanned | Re-screen every runtime return (hardened gateway) |
 | The clean static definition | The description a review approves | A definition scan sees only this | Same coverage, now over returns too |
-| Billy's reply | Credential exfiltration | The canary leaves the system | Output canary check (`Gateway.check_reply`) |
+| Lamb's reply | Credential exfiltration | The canary leaves the system | Output canary check (`Gateway.check_reply`) |
 | Server-time / service-health controls | — | Attack is targeted, not a global break | — |
 
 ## Mitigations demonstrated in Act 4

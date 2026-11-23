@@ -9,7 +9,7 @@
 | `get_lesson` | read-only | A lab's `LESSON.md`: title, sections, questions |
 | `list_results`, `show_result` | read-only | Stored runs, newest first; one full `hactu8.result/v1` document (`latest` works) |
 | `run_skill` | run | One lab, baseline to remediation; `backend` (default `echo`), `model`, `classifier` |
-| `run_live` | run | Billy's MCP surfaces against a model, gateway off vs on |
+| `run_live` | run | Lamb's MCP surfaces against a model, gateway off vs on |
 | `run_wolf` | run | The Wolf ([wolf.md](wolf.md)); `rounds` 1 to 5, `attempts` 1 to 4 |
 
 Every run stores its result under `$HACTU8_HOME/results` (default `./.hactu8`). A paid cloud backend (`openrouter`, `anthropic`, `openai`) is refused with the spend estimate unless the call passes `confirm_spend: true`, the same guard as the CLI's `--confirm-spend`. The server's instructions tell the client to ask the user first.

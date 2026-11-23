@@ -1,5 +1,5 @@
 {
-  "_comment": "Goat & Co. operations desk, as seeded on startup and restored by reset. Fictional. Queues group tickets; 'escalated' is a cross-queue view of tickets flagged escalated. Channels are simulated; posting is an entry in the action log.",
+  "_comment": "Big Field Jumper Co. operations desk, as seeded on startup and restored by reset. Fictional. Queues group tickets; 'escalated' is a cross-queue view of tickets flagged escalated. Channels are simulated; posting is an entry in the action log.",
   "tickets": {
     "T-3001": {"queue": "billing", "escalated": false, "subject": "Invoice total off by one line item",
                "comments": ["The September invoice lists the hay delivery twice."]},

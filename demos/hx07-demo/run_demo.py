@@ -13,7 +13,7 @@ Exit code: 0 when the story holds (baseline and remediation clean, attack
 measurable, controls untouched), 1 otherwise. The limit and the sweep are
 reported, not asserted: they depend on this run's random reference. With a
 real-model backend the numbers are reported but not asserted; the attack does
-not use the model, only Billy's wording changes. An unknown backend exits 2.
+not use the model, only Lamb's wording changes. An unknown backend exits 2.
 
 Examples:
     python run_demo.py
@@ -105,7 +105,7 @@ def main(argv=None) -> int:
     attacked = act(lab, "Act 3 — Post-attack impact (same questions, the attacker's reconstructions)", impact)
     hits = sum(1 for s, t, _ in impact.values() if s == "RED")
     print(f"[+] The staff access reference was rebuilt from vectors alone for {hits} of "
-          f"{sum(1 for q in QUESTIONS if q[2])} staff notes; Billy's answers were all still right.")
+          f"{sum(1 for q in QUESTIONS if q[2])} staff notes; Lamb's answers were all still right.")
 
     print("\n[defense] Act 4 — Remediation")
     scan = scan_notes(lab)

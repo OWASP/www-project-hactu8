@@ -1,9 +1,9 @@
 {
- "_note": "Goat & Co.'s back office: the user (Pat, the shop manager), the stock Billy can reorder, the forecast places and the return policy. Fictional; no real people, places or services.",
+ "_note": "Big Field Jumper Co.'s back office: the user (Pat, the shop manager), the stock Lamb can reorder, the forecast places and the return policy. Fictional; no real people, places or services.",
  "user": {"name": "Pat", "role": "shop manager"},
  "stock": {
   "HAY-01": {"item": "bale of hay", "plural": "bales of hay", "unit_gbp": 4.5},
-  "MIX-02": {"item": "sack of goat mix", "plural": "sacks of goat mix", "unit_gbp": 9.25},
+  "MIX-02": {"item": "sack of ewe mix", "plural": "sacks of ewe mix", "unit_gbp": 9.25},
   "LICK-03": {"item": "mineral lick tub", "plural": "mineral lick tubs", "unit_gbp": 12.0}
  },
  "forecast": {"the barn": "light rain in the morning, dry by noon, 9 C", "the paddock": "dry and breezy, 11 C"},

@@ -7,9 +7,9 @@ one ticket note is enough to make that output arrive as code. Two mitigations
 shut the attack down: **contextual output encoding** and **parameterised
 queries**.
 
-The scenario is **"Billy," Goat & Co.'s ticket-summary assistant.** Its
+The scenario is **"Lamb," Big Field Jumper Co.'s ticket-summary assistant.** Its
 ground truth for the Ridgeview account is _"Ridgeview printer queue restored
-and ticket closed by the night shift."_ Billy's summary feeds three sinks: the
+and ticket closed by the night shift."_ Lamb's summary feeds three sinks: the
 account's HTML status page, a markdown weekly digest and a SQLite audit log.
 With **1** filed note carrying **1** directive line, all three Ridgeview
 sinks mishandle the output. The Harbor account goes through the same sinks
@@ -131,7 +131,7 @@ Echo and the local backends keep everything on the host.
 
 ```text
                  ┌───────────────────────────────────────────────┐
-   "summarise" ─▶│  Billy (vulnerable_app.py :5210)              │
+   "summarise" ─▶│  Lamb (vulnerable_app.py :5210)              │
                  │   StubModel → summary (same in both modes)    │
                  └───────┬──────────────┬──────────────┬─────────┘
                          │ f-string     │ raw-HTML     │ string-built

@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 """Vulnerable vector store "Herd Notes" — the target system for the HX07 demo.
 
-Goat & Co. keeps its staff notes in a shared vector store that Billy, the
-farm's assistant, answers from. Two tenants use it: Goat & Co. itself and
+Big Field Jumper Co. keeps its staff notes in a shared vector store that Lamb, the
+farm's assistant, answers from. Two tenants use it: Big Field Jumper Co. itself and
 Hoofline Feeds, a supplier with partner access. Three staff notes hold the
 staff access reference (a per-run canary, ``HX07-CANARY-`` + 16 hex digits).
 Text retrieval is already scoped to the caller's tenant: a Hoofline account
-can never read a Goat & Co. note. Gaps, by omission:
+can never read a Big Field Jumper Co. note. Gaps, by omission:
 
 * **Raw vectors leave the store.** ``GET /vectors`` (the "partner analytics
   sync") returns every record's id, tenant, title and embedding, and
@@ -19,7 +19,7 @@ can never read a Goat & Co. note. Gaps, by omission:
   embedded.
 
 The attack: Hoofline's partner account pulls the export and inverts the
-Goat & Co. vectors back to text (``scripts/invert_vectors.py``), staff access
+Big Field Jumper Co. vectors back to text (``scripts/invert_vectors.py``), staff access
 reference included, without ever reading a note.
 
 AUTHORIZED SECURITY-LAB USE ONLY. Bound to loopback; insecure by design; do
@@ -201,7 +201,7 @@ def protect(vec: te.Sparse, seed: str, sigma: float = NOISE_SIGMA, levels: int =
 # --------------------------------------------------------------------------- #
 # The assistant's model: stand-in and real-model seam
 # --------------------------------------------------------------------------- #
-SYSTEM = ("You are Billy, Goat & Co.'s assistant. Answer the staff member's question in one or two "
+SYSTEM = ("You are Lamb, Big Field Jumper Co.'s assistant. Answer the staff member's question in one or two "
           "sentences from the retrieved note.")
 
 
@@ -297,7 +297,7 @@ class Lab:
         self.mode = mode
 
     def set_backend(self, backend: str, model: str = "") -> None:
-        """Swap the model behind Billy; the store, mode and attack state stay as they are."""
+        """Swap the model behind Lamb; the store, mode and attack state stay as they are."""
         model = providers.check_model(model)
         provider = providers.get_provider(backend)   # raises on unknown name / missing key
         with self.lock:
@@ -397,7 +397,7 @@ class Lab:
 
     # -- the assistant -------------------------------------------------------------
     def ask(self, account: str, message: str) -> Dict[str, Any]:
-        """A staff or partner question: Billy answers from the best note the caller may read."""
+        """A staff or partner question: Lamb answers from the best note the caller may read."""
         self.account(account)
         message = str(message)[:MAX_MESSAGE_CHARS].strip()
         if not message:
@@ -500,10 +500,10 @@ CONSOLE_META = {
     "title": "Embedding Inversion Lab",
     "short_title": "Inversion Lab",
     "scenario": (
-        "Goat & Co.'s staff notes live in a shared vector store that Billy answers from. Text is scoped to "
+        "Big Field Jumper Co.'s staff notes live in a shared vector store that Lamb answers from. Text is scoped to "
         "each tenant, but the partner analytics export hands out every record's raw embedding."
     ),
-    "ground_truth": "The staff access reference never leaves Goat & Co.'s tenant.",
+    "ground_truth": "The staff access reference never leaves Big Field Jumper Co.'s tenant.",
     "metric_name": "Inversion Leak Rate",
     "metric_abbr": "ILR",
     "attack_label": "Pull the vector export and invert it",

@@ -94,12 +94,12 @@ export default function Run() {
         <form className="panel run-form setup" onSubmit={submit}>
           <label>Lab
             <select id="lab" value={labId} onChange={(e) => setLabId(e.target.value)}>
-              <option value={LIVE}>Billy's MCP surfaces, live (gateway off vs on)</option>
+              <option value={LIVE}>Lamb's MCP surfaces, live (gateway off vs on)</option>
               {skills.map((skill) => <option key={skill.id} value={skill.id}>{skill.owasp} {skill.risk}</option>)}
             </select>
           </label>
           {labId === LIVE ? <div className="skill-description"><strong>Poisoned MCP server</strong>
-            <p>Every surface of Billy's KB-Tools server and its clean control, shown to the model with no defense,
+            <p>Every surface of Lamb's KB-Tools server and its clean control, shown to the model with no defense,
               then through the ProtectoGW gateway. Graded only by the per-run canary.</p></div>
             : selectedSkill && <div className="skill-description"><strong>{selectedSkill.owasp}: {selectedSkill.risk}</strong>
               <p>{selectedSkill.description}</p></div>}

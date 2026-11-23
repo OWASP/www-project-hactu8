@@ -156,7 +156,7 @@ CATALOG: Dict[str, Dict[str, object]] = {
          "refuse or trim a message over the cap before it reaches the model",
          "bound message length as well; the attack needs a long context",
          "count by structure, not by one format: a table or numbered list carries examples too"],
-        "reply = model(system, message)   # 20 x 'Customer: ... / Billy: Of course, done'",
+        "reply = model(system, message)   # 20 x 'Customer: ... / Lamb: Of course, done'",
         "if count_dialogue_turns(message) > CAP: refuse()\nelse: reply = model(system, message)",
     ),
     "generalization": _c(
@@ -699,7 +699,7 @@ CATALOG: Dict[str, Dict[str, object]] = {
     ),
 }
 
-# The live run (hactu8 live): Billy's MCP surfaces behind the ProtectoGW gateway.
+# The live run (hactu8 live): Lamb's MCP surfaces behind the ProtectoGW gateway.
 LIVE: List[str] = ["mcp_gateway_filter", "hash_pin", "session_screen", "canary_tripwire"]
 
 

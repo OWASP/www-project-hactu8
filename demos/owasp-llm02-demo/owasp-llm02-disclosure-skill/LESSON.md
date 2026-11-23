@@ -6,7 +6,7 @@ Setup, commands and architecture are in the [lab README](../README.md); this les
 
 Sensitive information disclosure is the model emitting data its reader should not see: another user's records, a credential in its own prompt, documents outside the reader's scope, or memorised training data. A model repeats what is in its context, so the question is never only "can the attacker steer the model?" but "what can the model reach once it is steered?"
 
-Here the target is Billy Accounts, Goat & Co.'s customer-account assistant. Its ground truth is *"Each customer sees only their own record; the CRM service key never leaves the server."* The attacker is an ordinary customer, `C-1003`, who edits the one field every customer may edit: their own account notes. One line in those notes makes Billy read two other customers' records and recite their names, emails and phone numbers, plus the CRM key from its system prompt.
+Here the target is Lamb Accounts, Big Field Jumper Co.'s customer-account assistant. Its ground truth is *"Each customer sees only their own record; the CRM service key never leaves the server."* The attacker is an ordinary customer, `C-1003`, who edits the one field every customer may edit: their own account notes. One line in those notes makes Lamb read two other customers' records and recite their names, emails and phone numbers, plus the CRM key from its system prompt.
 
 ## Why it works
 
@@ -66,4 +66,4 @@ Scoping and the vault are the controls that hold: `test_scoping_and_vault_alone_
 - Lab material, not repeated here: the [lab README](../README.md) (architecture, the "real, not scripted" argument, mapping table) and [`references/LLM02_RISKS.md`](references/LLM02_RISKS.md) (research, scenarios S-1 to S-3, mitigation roadmap).
 - [OWASP Top 10 for LLM Applications](https://genai.owasp.org/llm-top-10/), entry LLM02.
 - Carlini et al. (2021), "Extracting Training Data from Large Language Models"; Nasr et al. (2023), "Scalable Extraction of Training Data from (Production) Language Models".
-- Ported from AgenticGoat (retired): its LLM02 lesson and curriculum entry (`training/lessons/LLM02_sensitive_information_disclosure.md`, `curriculum.json`).
+- Ported from the predecessor project (retired): its LLM02 lesson and curriculum entry (`training/lessons/LLM02_sensitive_information_disclosure.md`, `curriculum.json`).

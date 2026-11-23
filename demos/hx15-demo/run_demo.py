@@ -123,7 +123,7 @@ def main(argv=None) -> int:
 
     baseline, _ = act(lab, "Act 1 — Clean baseline")
 
-    print("\n[*] Act 2 — Attack: Tick & Co.'s self-replicating mail to Billy")
+    print("\n[*] Act 2 — Attack: Tick & Co.'s self-replicating mail to Lamb")
     for event in lab.load_attack():
         print(f"[+] {event}")
 

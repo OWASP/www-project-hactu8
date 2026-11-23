@@ -173,4 +173,4 @@ Start from [`_template/`](_template/). `TEMPLATE.md` is the specification:
 - the real-model backend contract (§13)
 
 [`OWASP_DEMO_PLAN.md`](OWASP_DEMO_PLAN.md) records the design of every lab and
-how it maps to its sources (Ported from AgenticGoat (retired)).
+how it maps to its sources (Ported from the predecessor project (retired)).

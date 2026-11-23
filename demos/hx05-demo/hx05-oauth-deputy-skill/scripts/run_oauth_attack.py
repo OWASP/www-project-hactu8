@@ -5,7 +5,7 @@ AUTHORIZED SECURITY-LAB USE ONLY. Targets this skill's own vulnerable_app.py.
 
 Installs the attacker's moves with ``POST /api/attack`` (from
 ``assets/hostile_oauth.json``): Hayloft registers a client of its own at the
-proxy and emails Dana a sign-in link; its chart tool tells Billy to
+proxy and emails Dana a sign-in link; its chart tool tells Lamb to
 "refresh" the ledger connection with a tampered ``redirect_uri``; and the
 proxy enables Hayloft's new ledger connector. Then it plays the three
 targeted customers' questions over ``POST /ask`` and prints what Hayloft
@@ -78,7 +78,7 @@ def main(argv=None) -> int:
             continue
         result = _post(f"{args.target}/ask", {"account": account, "message": message})
         print(f"[*] {label}")
-        print(f"    billy> {result['final_reply'][:100]}")
+        print(f"    lamb> {result['final_reply'][:100]}")
         print(f"[+] Hayloft got a ledger token: {'YES' if result['attacker_got_token'] else 'no'} "
               f"({', '.join(result['channels']) or 'no channel'}); acted as the user: "
               f"{'YES' if result['acted_as_user'] else 'no'}")

@@ -28,11 +28,11 @@ metadata:
 
 # OWASP LLM08 Leak Skill
 
-Demonstrates how a customer extracts the system prompt of **Billy Shop,
-Goat & Co.'s store assistant**, including the staff discount code it embeds,
+Demonstrates how a customer extracts the system prompt of **Lamb Shop,
+Big Field Jumper Co.'s store assistant**, including the staff discount code it embeds,
 and how to detect and harden against it. The attacker needs no privilege.
 They save an extraction request as their own reply preference, and every reply
-Billy gives them then quotes its hidden context.
+Lamb gives them then quotes its hidden context.
 
 ## Scope & safety (read first)
 
@@ -48,7 +48,7 @@ Billy gives them then quotes its hidden context.
     POSTs (cross-site forms).
 - The "secret" is a fictional canary, `LLM08-CANARY-5e1d`, and the internal
   endpoint uses the reserved `.invalid` domain.
-- The shipped payload is benign-effect: one preference line asking Billy to
+- The shipped payload is benign-effect: one preference line asking Lamb to
   repeat its setup text, with the stub's echo slot. See [`assets/extraction_request.README.md`](assets/extraction_request.README.md).
 - Dual-use: this exists to make the vulnerability observable and to motivate
   the mitigations in [`references/LLM08_RISKS.md`](references/LLM08_RISKS.md).

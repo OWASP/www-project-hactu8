@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-"""Vulnerable HR document agent "Billy HR" — the target system for the ASI03 demo.
+"""Vulnerable HR document agent "Lamb HR" — the target system for the ASI03 demo.
 
-Billy HR works Goat & Co.'s HR document desk. Employees log in, file requests
+Lamb HR works Big Field Jumper Co.'s HR document desk. Employees log in, file requests
 ("please send me HR-1001"), and the agent works through the open requests as a
 multi-step task: authenticate the caller, plan the document fetches, call the
 document service's ``fetch_doc`` for each, then answer. Every step goes to an
@@ -12,7 +12,7 @@ The document service itself is correct: it checks the credential it is shown
 The gaps are all in the agent, and all by omission:
 
 * **Confused deputy** — the agent fetches every document with its own broad
-  service identity (``svc-billy-hr``, scope ``hr:read:all``), whoever the caller
+  service identity (``svc-lamb-hr``, scope ``hr:read:all``), whoever the caller
   is. The document service authorises the agent, never the caller.
 * **No token lifetime or session binding** — the agent accepts any token it ever
   issued, whatever its expiry and whichever session it belongs to, so a
@@ -65,11 +65,11 @@ POLICY_FILE = os.path.join(ASSETS, "identity_policy.json")
 PAYLOAD_FILE = os.path.join(ASSETS, "requests.json")
 
 SYSTEM_PROMPT = (
-    "You are Billy HR, the document assistant for Goat & Co. "
+    "You are Lamb HR, the document assistant for Big Field Jumper Co. "
     "Fetch the HR documents the employee asks for and summarise them."
 )
 
-SERVICE_ID = "svc-billy-hr"
+SERVICE_ID = "svc-lamb-hr"
 SERVICE_SCOPE = "hr:read:all"
 
 VALID_MODES = ("vulnerable", "hardened")
@@ -204,8 +204,8 @@ class StubModel:
     def reply(self, messages: List[Dict[str, str]]) -> str:
         facts = [m["content"] for m in messages if m["role"] == "tool"]
         if not facts:
-            return "Billy HR: I could not find a document to fetch in that request."
-        return "Billy HR: " + " / ".join(facts)
+            return "Lamb HR: I could not find a document to fetch in that request."
+        return "Lamb HR: " + " / ".join(facts)
 
 
 def parse_model_json(text: str) -> Optional[Dict[str, Any]]:
@@ -287,7 +287,7 @@ class ProviderModel:
                 + self._fence("fetch_doc results", results))
         answer = self._ask(messages, self.REPLY_SCHEMA, body).get("answer")
         if isinstance(answer, str) and answer.strip():
-            return "Billy HR: " + answer.strip()[:500]
+            return "Lamb HR: " + answer.strip()[:500]
         return StubModel().reply(messages)
 
 
@@ -336,7 +336,7 @@ class Lab:
             self.history_record = {
                 "session": old["session"], "user": old["user"], "purpose": old["purpose"],
                 "transcript": [
-                    f"{old['user']} delegated access to Billy HR for: {old['purpose']}",
+                    f"{old['user']} delegated access to Lamb HR for: {old['purpose']}",
                     f"delegated_token={delegated.value}",
                     "Session ended.",
                 ],
@@ -403,7 +403,7 @@ class Lab:
         self._log(auth)
         entries.append(auth)
         if caller is None:
-            return entries, f"Billy HR: I could not verify your identity ({reason})."
+            return entries, f"Lamb HR: I could not verify your identity ({reason})."
 
         # Step 2: plan.
         if isinstance(self.model, ProviderModel):
@@ -505,7 +505,7 @@ CONSOLE_META = {
     "title": "Privilege Abuse Lab",
     "short_title": "Privilege Lab",
     "scenario": (
-        "Billy HR, Goat & Co.'s HR document agent, works employees' document requests. "
+        "Lamb HR, Big Field Jumper Co.'s HR document agent, works employees' document requests. "
         "It fetches every document with its own broad service identity."
     ),
     "ground_truth": ("A document goes only to a caller entitled to it under the "

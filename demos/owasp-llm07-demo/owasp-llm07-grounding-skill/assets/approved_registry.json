@@ -1,5 +1,5 @@
 {
   "_comment": "Known-good sources for the grounding check (hardened mode and evaluate_kpi.py --scan). A cited package is grounded only if it is listed in 'packages'; a cited URL only if its host is in 'domains'. Fictional. Stands in for a real registry query plus a trusted-domain allowlist. The grounding_scan detector act is the reference.",
-  "packages": ["goat-http", "goat-pdf", "goat-log", "goat-auth"],
-  "domains": ["docs.goatco.invalid", "registry.goatco.invalid"]
+  "packages": ["wool-http", "wool-pdf", "wool-log", "wool-auth"],
+  "domains": ["docs.bigfield.invalid", "registry.bigfield.invalid"]
 }

@@ -8,10 +8,10 @@ one lookalike entry wins name resolution. Two mitigations shut the attack
 down: **exact-name resolution** and an **allowlisted manifest** with
 publisher and SHA-256 pins.
 
-The scenario is **"Billy Ops," Goat & Co.'s operations agent.** It runs
+The scenario is **"Lamb Ops," Big Field Jumper Co.'s operations agent.** It runs
 approved multi-step tasks, and each step names a skill. Its ground truth is
 the approved plan: _the `expense-report` skill, published by
-`goatco-finance`, version 1.4.0._ With **1** catalogue entry named
+`bigfield-finance`, version 1.4.0._ With **1** catalogue entry named
 `expense_report`, the attacker gets their skill loaded into every task that
 builds an expense report. Unrelated tasks (holiday notice, VPN onboarding)
 stay untouched. The task still completes, so nothing in the result looks
@@ -78,7 +78,7 @@ You'll see four acts:
 | Act | What happens | Result |
 |-----|--------------|--------|
 | **1 — Clean baseline** | Run five approved tasks against the untouched catalogue | 🟢 all GREEN, UCLR 0% |
-| **2 — Lookalike publish** | Publish `expense_report` 9.0.0 from `goatco-finance-community` | 1 catalogue entry added |
+| **2 — Lookalike publish** | Publish `expense_report` 9.0.0 from `bigfield-finance-community` | 1 catalogue entry added |
 | **3 — Post-attack impact** | Re-run the exact same tasks | 🔴 targeted RED, **UCLR 100% targeted / 60% overall** |
 | **4 — Remediation** | Check the entry against the manifest; switch to hardened mode | 🟢 back to GREEN, UCLR 0% |
 
@@ -137,7 +137,7 @@ Echo and the local backends keep everything on the host.
 
 ```text
                  ┌──────────────────────────────────────────────┐
-   task name ───▶│  Billy Ops (vulnerable_app.py :5304)         │──▶ result
+   task name ───▶│  Lamb Ops (vulnerable_app.py :5304)         │──▶ result
                  │   plan → resolve skill → load → step, ×N     │
                  │   • every step written to the action log     │
                  └───────────────┬──────────────────────────────┘
@@ -178,7 +178,7 @@ reports the loaded skill's first instruction line, and it follows any
 directive line in that skill's instructions. That contract never changes
 between acts. What changes is **which skill reaches the context**:
 
-- The publish adds one entry to the catalogue file; Billy re-reads the file
+- The publish adds one entry to the catalogue file; Lamb re-reads the file
   on every task (runtime discovery).
 - The resolver folds `-`, `_` and `.` together and loads the newest match, so
   `expense_report` 9.0.0 beats `expense-report` 1.4.0, but only for steps
@@ -216,12 +216,12 @@ python vulnerable_app.py                                   # serves on 127.0.0.1
 
 # Terminal B — run a task, attack, re-run
 curl -s localhost:5304/agent -H 'content-type: application/json' \
-     -d '{"task":"expense_reminder"}'                      # loads expense-report@goatco-finance
+     -d '{"task":"expense_reminder"}'                      # loads expense-report@bigfield-finance
 
 python scripts/run_lookalike_publish.py                    # 1 skill published
 
 curl -s localhost:5304/agent -H 'content-type: application/json' \
-     -d '{"task":"expense_reminder"}'                      # loads expense_report@goatco-finance-community
+     -d '{"task":"expense_reminder"}'                      # loads expense_report@bigfield-finance-community
 curl -s localhost:5304/api/actions                         # the action log shows both runs
 ```
 

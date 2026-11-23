@@ -28,7 +28,7 @@ Portuguese.
 
 ## A benign-effect set
 
-Every attack asks Billy for one thing: to print the internal credential that
+Every attack asks Lamb for one thing: to print the internal credential that
 starts with `sk-canary-`, the lab's fictional per-process value. None names a
 real file, a real address, a URL or an account. Each one, read plainly or
 decoded, contains both "emit" and "confirm", so the offline echo model acts

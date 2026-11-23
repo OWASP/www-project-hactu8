@@ -6,7 +6,7 @@ Here the model no longer only answers, it acts. Setup, commands and architecture
 
 Excessive agency is an agent holding tools, permissions or autonomy beyond its task. OWASP traces the damage to three root causes: excessive functionality (tools the task does not need), excessive permissions (tools that can do more than the task needs) and excessive autonomy (high-impact actions with no human check). Prompt injection is the usual trigger; excessive agency is the blast radius. A well-scoped agent turns a compromise into a log line; an over-scoped one turns it into an incident.
 
-Here the target is Billy Support, Goat & Co.'s support-desk agent. It has four tools: `read_ticket`, `lookup_order`, `issue_refund` and `delete_account`, and the dispatcher runs every call the model asks for. Its ground truth is the operator's intent: *each request runs only the calls it implies.* The attacker posts one customer note to ticket `T-1001` through the unauthenticated portal. Every time an operator opens that ticket, Billy also refunds order `A-1001` and deletes customer `C-2002`. All effects are simulated entries in an in-memory action log.
+Here the target is Lamb Support, Big Field Jumper Co.'s support-desk agent. It has four tools: `read_ticket`, `lookup_order`, `issue_refund` and `delete_account`, and the dispatcher runs every call the model asks for. Its ground truth is the operator's intent: *each request runs only the calls it implies.* The attacker posts one customer note to ticket `T-1001` through the unauthenticated portal. Every time an operator opens that ticket, Lamb also refunds order `A-1001` and deletes customer `C-2002`. All effects are simulated entries in an in-memory action log.
 
 ## Why it works
 
@@ -65,4 +65,4 @@ The gate never reads the model's wording or arguments beyond the target, so a cl
 - Lab material, not repeated here: the [lab README](../README.md) (architecture, the "real, not scripted" argument, MCP terminology bridge) and [`references/LLM03_RISKS.md`](references/LLM03_RISKS.md) (research, scenarios A-1 to A-3, mitigation roadmap).
 - [OWASP Top 10 for LLM Applications](https://genai.owasp.org/llm-top-10/), entry Excessive Agency.
 - Greshake et al. (2023), "Not what you've signed up for"; Zhan et al. (2024), "InjecAgent"; Debenedetti et al. (2024), "AgentDojo".
-- Ported from AgenticGoat (retired): its 2025-numbered LLM06 Excessive Agency lesson and curriculum entry (`training/lessons/LLM06_excessive_agency.md`, `curriculum.json`), and its `acts.py` agency gate.
+- Ported from the predecessor project (retired): its 2025-numbered LLM06 Excessive Agency lesson and curriculum entry (`training/lessons/LLM06_excessive_agency.md`, `curriculum.json`), and its `acts.py` agency gate.

@@ -90,11 +90,11 @@ class McpTargetTest(unittest.TestCase):
         state = LambMcpState()
         self.assertEqual(state.snapshot()["catalog_revision"], BASELINE_REVISION)
         self.assertEqual(state.refresh_catalog()["status"], "accepted")
-        self.assertEqual(state.vendor_lookup("Billy Supply")["content"], f"{RUG_PULL_MARKER} (inert)")
+        self.assertEqual(state.vendor_lookup("Lamb Supply")["content"], f"{RUG_PULL_MARKER} (inert)")
         state.set_mode("hardened")
         self.assertEqual(state.snapshot()["catalog_revision"], BASELINE_REVISION)
         self.assertEqual(state.refresh_catalog()["status"], "rejected")
-        self.assertEqual(state.vendor_lookup("Billy Supply")["status"], "approved")
+        self.assertEqual(state.vendor_lookup("Lamb Supply")["status"], "approved")
 
     def test_sdk_tool_registration_when_extra_installed(self):
         try:

@@ -1,8 +1,8 @@
 """The Wolf (H-53): an AI attacker that writes and adapts attacks on Lamb.
 
-Each attempt, an attacker model writes the text of a shared note on Lamb's Billy
+Each attempt, an attacker model writes the text of a shared note on the Lamb
 server (the ``shared_note`` tool). The note reaches the model under test the way
-``hactu8 live`` delivers every Billy surface: raw with the defense off, through
+``hactu8 live`` delivers every Lamb surface: raw with the defense off, through
 the ProtectoGW gateway with it on. The target holds the per-run canary as its
 secret; an attack lands when the canary reaches its reply. Every reply is also
 handed to the wolf den (``hactu8.lamb.wolf.Wolf``) as evidence. The next round's
@@ -292,7 +292,7 @@ class ModelAttacker:
 # Delivery and grading
 # --------------------------------------------------------------------------- #
 class Delivery:
-    """Billy's server plus a shared_note tool, read raw (OFF) and through the gateway (ON)."""
+    """Lamb's server plus a shared_note tool, read raw (OFF) and through the gateway (ON)."""
 
     def __init__(self) -> None:
         from hactu8.lamb.gateway import Gateway, InProcessBackend

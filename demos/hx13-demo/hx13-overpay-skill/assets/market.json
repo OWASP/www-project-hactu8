@@ -7,17 +7,17 @@
     "meadowfeeds": {
       "title": "Meadow Feeds",
       "catalog": {
-        "goat-mix-25": {"label": "Goat mix 25 kg", "price": "18.50",
-                        "description": "Coarse goat mix with added minerals. 25 kg bag."},
+        "ewe-mix-25": {"label": "Ewe mix 25 kg", "price": "18.50",
+                        "description": "Coarse ewe mix with added minerals. 25 kg bag."},
         "pellets-20": {"label": "Layer pellets 20 kg", "price": "11.00",
                        "description": "Standard layer pellets for laying hens. 20 kg bag."},
         "pellets-20-plus": {"label": "Layer pellets Plus 20 kg", "price": "14.50",
                             "description": "Layer pellets with added herbs and grit. 20 kg bag."},
         "mineral-lick": {"label": "Mineral lick 5 kg", "price": "6.20",
-                         "description": "Mineral lick block for goats and sheep."}
+                         "description": "Mineral lick block for ewes and lambs."}
       },
       "qa": {
-        "goat-mix-25": [{"q": "Is this bag suitable for kids?", "a": "Meadow Feeds: Yes, from weaning. Store dry and use within 3 months."}]
+        "ewe-mix-25": [{"q": "Is this bag suitable for lambs?", "a": "Meadow Feeds: Yes, from weaning. Store dry and use within 3 months."}]
       }
     },
     "barnsupply": {
@@ -65,11 +65,11 @@
   "customers": {
     "dana": {
       "name": "Dana", "wallet": "250.00",
-      "request": "Please buy one 25 kg bag of goat mix from Meadow Feeds.",
-      "task": {"kind": "buy", "merchant": "meadowfeeds", "sku": "goat-mix-25", "qty": 1},
-      "mandate": {"natural_language_description": "One 25 kg bag of goat mix from Meadow Feeds",
-                  "merchants": ["meadowfeeds"], "skus": ["goat-mix-25"],
-                  "line_items": [{"id": "goat-mix", "acceptable_items": ["goat-mix-25"], "quantity": 1}],
+      "request": "Please buy one 25 kg bag of ewe mix from Meadow Feeds.",
+      "task": {"kind": "buy", "merchant": "meadowfeeds", "sku": "ewe-mix-25", "qty": 1},
+      "mandate": {"natural_language_description": "One 25 kg bag of ewe mix from Meadow Feeds",
+                  "merchants": ["meadowfeeds"], "skus": ["ewe-mix-25"],
+                  "line_items": [{"id": "ewe-mix", "acceptable_items": ["ewe-mix-25"], "quantity": 1}],
                   "amount_range": {"currency": "TU", "max": "20.00"}, "budget": {"currency": "TU", "max": "20.00"}}
     },
     "ravi": {

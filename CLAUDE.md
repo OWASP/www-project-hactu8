@@ -40,7 +40,7 @@ scripts/    vendor.py (lab copies of shared code; --check), sarif_all.py, sweep_
 - Results follow `hactu8/schemas/result.schema.json` (`hactu8.result/v1`). Change the schema and the tests together.
 - The echo backend stays the deterministic default; tests must pass offline.
 - Safety: every target binds to `127.0.0.1`. Payloads are benign-effect: realistic injection wording is allowed only when its sole possible effect is emitting a per-run canary or calling a Lamb tool on loopback. Never add payloads that harm a real system, real data, or a real account.
-- The sacrificial target is named HACTU8 Lamb (formerly AgenticGoat). The fictional company Billy, Goat & Co. stays in the labs.
+- Persona (`docs/persona.md`): the fictional company is Big Field Jumper Co. (`bigfield.example`), a family sheep farm and knitwear business. Its agentic assistant and the sacrificial target is HACTU8 Lamb, the human operations lead is Barb Fell, and the attacker is the Wolf. Don't reintroduce the old names; `tests/test_naming.py` allows them only in `docs/evidence/` and `docs/agenticgoat-merge-plan.md` (history).
 
 ## Accuracy
 

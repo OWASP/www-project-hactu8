@@ -27,7 +27,7 @@ metadata:
 
 # OWASP LLM10 Sink Skill
 
-Demonstrates how one ticket note makes **Billy, Goat & Co.'s ticket-summary
+Demonstrates how one ticket note makes **Lamb, Big Field Jumper Co.'s ticket-summary
 assistant** emit text that its own application then mishandles, and how to
 detect and harden against it. The note reaches the model through the ticket
 store. The model's summary goes to an HTML status page, a markdown digest and

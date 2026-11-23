@@ -28,10 +28,10 @@ metadata:
 
 # OWASP LLM07 Grounding Skill
 
-Demonstrates how an adversary makes **Billy Dev, Goat & Co.'s developer-helper
+Demonstrates how an adversary makes **Lamb Dev, Big Field Jumper Co.'s developer-helper
 assistant** recommend a package that does not exist and a docs link on an
 untrusted host, by publishing one community doc page, and how to detect and
-harden against it. Billy Dev states what it retrieves with full confidence.
+harden against it. Lamb Dev states what it retrieves with full confidence.
 A developer who copies its install line acts on a claim nobody verified.
 
 ## Scope & safety (read first)
@@ -94,9 +94,9 @@ With `openrouter`, prompts and payloads leave the machine.
    same four acts from a browser, open <http://127.0.0.1:5207/>.
 
 2. **Review the ground truth.** Read `assets/docs_baseline.json` and
-   `assets/approved_registry.json`: the HTTP client is *goat-http*, installed
-   with *pip install goat-http*, documented at
-   *<https://docs.goatco.invalid/http>*. Developers copy these lines into real
+   `assets/approved_registry.json`: the HTTP client is *wool-http*, installed
+   with *pip install wool-http*, documented at
+   *<https://docs.bigfield.invalid/http>*. Developers copy these lines into real
    projects, so they are what an attacker most wants to replace.
 
 3. **Establish the baseline.**
@@ -117,7 +117,7 @@ With `openrouter`, prompts and payloads leave the machine.
    community page, `http-client-faq`, through the unauthenticated
    `POST /docs/page`. The genuine page is untouched. The poisoned page carries
    more HTTP keywords, so it ranks first for HTTP questions, and its first line
-   names the package `goathttp` and an untrusted docs host.
+   names the package `woolhttp` and an untrusted docs host.
 
 5. **Stoplight verification.**
 

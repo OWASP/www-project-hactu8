@@ -8,7 +8,7 @@ python -m hactu8 wolf --backend ollama --model llama3.2:3b --rounds 2
 python -m hactu8 wolf --target-backend ollama --target-model llama3.2:3b   # echo attacker, real target
 ```
 
-Each attempt, the attacker writes the text of a shared note on Billy's server. The model under test reads the note as `hactu8 live` reads every Billy surface: raw with the defense off, through the ProtectoGW gateway with it on. The target holds the per-run canary as its secret. An attack lands when the canary reaches the reply, graded by the same canary oracle as `hactu8 live`; each reply also goes to the wolf den as evidence. A clean control note is graded beside the attacks. The result is a `hactu8.result/v1` document with a `wolf` section (also `POST /api/wolf` and the MCP tool `run_wolf`).
+Each attempt, the attacker writes the text of a shared note on Lamb's server. The model under test reads the note as `hactu8 live` reads every Lamb surface: raw with the defense off, through the ProtectoGW gateway with it on. The target holds the per-run canary as its secret. An attack lands when the canary reaches the reply, graded by the same canary oracle as `hactu8 live`; each reply also goes to the wolf den as evidence. A clean control note is graded beside the attacks. The result is a `hactu8.result/v1` document with a `wolf` section (also `POST /api/wolf` and the MCP tool `run_wolf`).
 
 - `echo` attacker: paraphrase templates and the bench corpus encodings (base64, ROT13, spaced letters). A quarantined note leads to a subtler paraphrase; a landed one is tried encoded; a failed encoded one goes back to plain text. Tests are stable.
 - Any other backend: prompted to write benign-effect notes only, with the earlier outcomes in view (never the canary).

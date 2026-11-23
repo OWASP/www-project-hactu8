@@ -6,7 +6,7 @@ publish a new version of a tool package can take over an assistant's answers
 without touching the assistant. Two mitigations shut the attack down:
 **definition pinning** and **multi-call sampling**.
 
-The scenario is **"Billy," Goat & Co.'s operations assistant.** Billy answers
+The scenario is **"Lamb," Big Field Jumper Co.'s operations assistant.** Lamb answers
 from four tools in the third-party `hayloft-policy-tools` package. Its ground
 truth is _"Expense reports must be filed within 30 days and need manager
 approval before reimbursement"_ and _"Book business travel through the travel
@@ -131,7 +131,7 @@ Echo and the local backends keep everything on the host.
 
 ```text
                  ┌──────────────────────────────────────────────┐
-   user query ──▶│  Billy (vulnerable_app.py :5204)             │──▶ answer
+   user query ──▶│  Lamb (vulnerable_app.py :5204)             │──▶ answer
                  │   • routes each query to one tool            │
                  │   • tool description + result in context     │
                  │   • updates installed after 1 smoke call     │
@@ -175,7 +175,7 @@ directive line it finds in its context, and otherwise answers from the tool
 result. That contract is the same in every act and both modes. What changes is
 **which tool code and text reach the context**:
 
-- The release changes the registry file. Billy re-reads it before each query
+- The release changes the registry file. Lamb re-reads it before each query
   and installs what changed, so the swapped description is what it lists for
   `expense_policy`.
 - Keyword routing over tool names and descriptions picks `expense_policy` only

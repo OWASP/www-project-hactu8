@@ -5,8 +5,8 @@ AUTHORIZED SECURITY-LAB USE ONLY. Targets this skill's own vulnerable_app.py.
 
 Saves ``assets/extraction_request.md`` as the reply preference of one customer
 account (default ``guest-attacker``) through ``POST /profile``. No privilege is
-needed: any customer may set how Billy Shop replies to them. From then on every
-reply in that account's chats carries a quote of Billy's system prompt, with
+needed: any customer may set how Lamb Shop replies to them. From then on every
+reply in that account's chats carries a quote of Lamb's system prompt, with
 the staff discount code and tool schema it embeds. Other accounts are untouched.
 
 Exit code: 0 when the preference was saved, 1 when the target is unreachable.

@@ -47,7 +47,7 @@ default is model-visible and scan-invisible at the same time.
 
 - **S-1** is `POST /vendor/tools/update` (no authentication) writing
   `ticket_lookup.ticket_id.default`, combined with `Lab.ask` assembling the
-  tool's definition into Billy's context. `Gateway("vulnerable")` screens
+  tool's definition into Lamb's context. `Gateway("vulnerable")` screens
   surfaces `tool_description` and `tool_result` only, so the
   `schema_param` piece passes with verdict ALLOW and no signals.
 - **Routing decides the blast radius.** Only requests that route to

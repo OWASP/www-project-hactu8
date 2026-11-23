@@ -7,7 +7,7 @@ rewrites the rest of its plan: the report goes to an external channel, and a
 data export nobody asked for is added. Two mitigations shut the attack down:
 **plan pinning** with operator re-approval, and **tool output kept as data**.
 
-The scenario is **"Billy Ops," Goat & Co.'s operations agent.** Its ground
+The scenario is **"Lamb Ops," Big Field Jumper Co.'s operations agent.** Its ground
 truth is the approved plan: _"Weekly report for the billing queue; post it
 to #ops-weekly" runs `read_tickets`, `summarise`, `draft_report` on `billing`,
 then `post_report` to `#ops-weekly`, and nothing else._ With **1** comment on
@@ -143,7 +143,7 @@ Echo and the local backends keep everything on the host.
 
 ```text
                  ┌──────────────────────────────────────────────┐
-   operator ────▶│  Billy Ops (vulnerable_app.py :5301)         │──▶ answer
+   operator ────▶│  Lamb Ops (vulnerable_app.py :5301)         │──▶ answer
    scope+channel │   • plan: read → summarise → draft → post    │
                  │   • re-plans from every tool result ◀── gap  │
                  │   • executor runs any next step     ◀── gap  │

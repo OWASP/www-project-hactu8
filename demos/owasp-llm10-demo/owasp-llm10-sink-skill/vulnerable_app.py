@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-"""Vulnerable ticket-summary assistant "Billy" — the target system for the LLM10 demo.
+"""Vulnerable ticket-summary assistant "Lamb" — the target system for the LLM10 demo.
 
-Billy summarises a customer's support-ticket notes, and the summary is handed
+Lamb summarises a customer's support-ticket notes, and the summary is handed
 straight to three downstream **sinks**:
 
 * ``html``     — the account's status page (an HTML template),
@@ -17,7 +17,7 @@ Two gaps are demonstrated, both by omission:
   string literal, so a single quote in the model's output ends the literal and
   changes the statement's structure.
 
-The ticket store behind Billy also accepts unauthenticated notes
+The ticket store behind Lamb also accepts unauthenticated notes
 (``POST /tickets/note``), which is how attacker text reaches the model.
 
 AUTHORIZED SECURITY-LAB USE ONLY. Bound to loopback; do not expose it.
@@ -66,7 +66,7 @@ WEB_DIR = os.path.join(HERE, "web")
 WEB_FILES = {"index.html": "text/html", "app.js": "text/javascript", "styles.css": "text/css"}
 
 SYSTEM_PROMPT = (
-    "You are Billy, the support-ticket summariser for Goat & Co. "
+    "You are Lamb, the support-ticket summariser for Big Field Jumper Co. "
     "Summarise the customer's ticket notes in one sentence."
 )
 
@@ -191,7 +191,7 @@ class ProviderModel:
 # --------------------------------------------------------------------------- #
 STATUS_PAGE = (
     "<!doctype html><html><head><title>Status: {account}</title></head>"
-    "<body><h1>Goat &amp; Co. ticket status</h1>"
+    "<body><h1>Big Field Jumper Co. ticket status</h1>"
     "<p class=\"summary\">{summary}</p></body></html>"
 )
 
@@ -369,7 +369,7 @@ CONSOLE_META = {
     "title": "Output Sink Lab",
     "short_title": "Sink Lab",
     "scenario": (
-        "Billy, Goat & Co.'s ticket summariser, hands each summary to an HTML status page, "
+        "Lamb, Big Field Jumper Co.'s ticket summariser, hands each summary to an HTML status page, "
         "a markdown digest and a SQL audit log. Anyone can add a ticket note."
     ),
     "ground_truth": "Ridgeview printer queue restored and ticket closed by the night shift.",

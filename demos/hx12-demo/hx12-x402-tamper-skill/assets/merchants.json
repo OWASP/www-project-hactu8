@@ -4,7 +4,7 @@
   "network": "lamb:testnet",
   "asset": "TEST",
   "decimals": 2,
-  "wallet": {"address": "lamb:test-wallet-billy-0001", "balance": 10000},
+  "wallet": {"address": "lamb:test-wallet-lamb-0001", "balance": 10000},
   "facilitator": {"id": "lamb-test-facilitator", "title": "Lamb Test Facilitator", "path": "/facilitator"},
   "merchants": {
     "lamb-reports": {

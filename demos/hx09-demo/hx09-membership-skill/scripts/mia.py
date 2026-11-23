@@ -51,7 +51,7 @@ def render(fields: Dict[str, str], fmt: str) -> str:
 
 
 def reference_records(spec: Dict[str, Any], count: Optional[int] = None) -> List[Dict[str, str]]:
-    """The attacker's own invented customers: they cannot be in Billy's data."""
+    """The attacker's own invented customers: they cannot be in Lamb's data."""
     rng = random.Random(spec["seed"])
     n = count or spec["count"]
     names = [(f, la) for f in spec["first"] for la in spec["last"]]

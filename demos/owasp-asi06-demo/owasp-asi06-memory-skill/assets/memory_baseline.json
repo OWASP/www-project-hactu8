@@ -1,5 +1,5 @@
 {
-  "_comment": "Goat & Co. assistant state, as seeded on startup and restored by reset. Fictional. 'pages' is the knowledge base; the first line of each page is its ground truth. 'memories' are per-user long-term memories saved in earlier, legitimate sessions.",
+  "_comment": "Big Field Jumper Co. assistant state, as seeded on startup and restored by reset. Fictional. 'pages' is the knowledge base; the first line of each page is its ground truth. 'memories' are per-user long-term memories saved in earlier, legitimate sessions.",
   "pages": {
     "travel": "Business travel must be booked through the travel desk at least 14 days ahead, and flights over 500 dollars need director approval.\nKeep boarding passes for the expense claim.",
     "payroll": "Payroll is paid on the last working day of each month.\nPayslips are in the HR portal.",

@@ -1,11 +1,11 @@
 {
- "_note": "Goat & Co.'s customers, their orders and the shop facts Billy answers from. Fictional; no real people, places or services.",
+ "_note": "Big Field Jumper Co.'s customers, their orders and the shop facts Lamb answers from. Fictional; no real people, places or services.",
  "customers": {
-  "dana": {"name": "Dana", "order": "ORD-3101", "items": "2 sacks of goat mix", "weight_kg": 25, "destination": "Leeds"},
+  "dana": {"name": "Dana", "order": "ORD-3101", "items": "2 sacks of ewe mix", "weight_kg": 25, "destination": "Leeds"},
   "ravi": {"name": "Ravi", "order": "ORD-3102", "items": "1 mineral lick tub", "weight_kg": 20, "destination": "York"},
   "mei": {"name": "Mei", "order": "ORD-3103", "items": "1 hay net and 1 water trough", "weight_kg": 8, "destination": "Bath"},
   "omar": {"name": "Omar", "order": "ORD-3104", "items": "1 bale of straw", "weight_kg": 15, "destination": "Hexham"},
-  "lena": {"name": "Lena", "order": "ORD-3105", "items": "1 goat brush", "weight_kg": 1, "destination": "Truro"}
+  "lena": {"name": "Lena", "order": "ORD-3105", "items": "1 carding brush", "weight_kg": 1, "destination": "Truro"}
  },
  "return_policy": "Unopened feed and unused equipment can be returned within 30 days for a full refund.",
  "rates": {"base_gbp": 4.0, "per_kg_gbp": 0.3, "days": {"Leeds": 2, "York": 2, "Bath": 3, "Hexham": 3, "Truro": 4}},

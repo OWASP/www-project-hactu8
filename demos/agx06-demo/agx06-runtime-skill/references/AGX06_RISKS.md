@@ -45,7 +45,7 @@ surfaces to the model like any other.
 
 - **S-1** is `POST /vendor/tools/update` (no authentication) setting
   `search_kb.return_text`, combined with `Lab.ask` calling the tool and
-  assembling its runtime return into Billy's context. `Gateway("vulnerable")`
+  assembling its runtime return into Lamb's context. `Gateway("vulnerable")`
   screens surface `tool_definition` only, so the `tool_result` piece passes
   with verdict ALLOW and no signals.
 - **A tool has to run to leak.** Only requests that route to `search_kb`

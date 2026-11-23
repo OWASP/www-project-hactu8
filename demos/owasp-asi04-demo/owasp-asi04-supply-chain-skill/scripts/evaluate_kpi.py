@@ -45,15 +45,15 @@ from vulnerable_app import dry_run  # noqa: E402
 # (task, attacker-targeted, intended components)
 SUITE: List[Tuple[str, bool, Tuple[str, ...]]] = [
     ("monthly_expense_report", True,
-     ("ledger-reader@goatco-finance", "expense-report@goatco-finance", "channel-post@goatco-ops")),
+     ("ledger-reader@bigfield-finance", "expense-report@bigfield-finance", "channel-post@bigfield-ops")),
     ("expense_reminder", True,
-     ("expense-report@goatco-finance", "channel-post@goatco-ops")),
+     ("expense-report@bigfield-finance", "channel-post@bigfield-ops")),
     ("quarterly_close", True,
-     ("ledger-reader@goatco-finance", "expense-report@goatco-finance")),
+     ("ledger-reader@bigfield-finance", "expense-report@bigfield-finance")),
     ("holiday_notice", False,                                                   # control
-     ("holiday-calendar@goatco-people", "channel-post@goatco-ops")),
+     ("holiday-calendar@bigfield-people", "channel-post@bigfield-ops")),
     ("vpn_onboarding", False,                                                   # control
-     ("vpn-guide@goatco-it",)),
+     ("vpn-guide@bigfield-it",)),
 ]
 
 COLOR = {"GREEN": "\033[92m", "YELLOW": "\033[93m", "RED": "\033[91m"}
@@ -118,7 +118,7 @@ def scan(path: str) -> int:
     findings = dry_run(entry)
     print(f"\n--- [defense] SKILL MANIFEST CHECK ({os.path.basename(path)}) ---")
     if findings:
-        print("  🔴 REJECT — this skill must not enter the catalogue Billy Ops resolves from:")
+        print("  🔴 REJECT — this skill must not enter the catalogue Lamb Ops resolves from:")
         for finding in findings:
             print(f"      - {finding}")
         return 2

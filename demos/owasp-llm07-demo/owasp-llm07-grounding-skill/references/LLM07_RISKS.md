@@ -43,7 +43,7 @@ next developer or agent installs it (**slopsquatting**).
 - **M-1** is `POST /docs/page`, which accepts unauthenticated community pages
   into the same store as the official docs, combined with `StubModel`, which
   restates the top-ranked page's first line as fact.
-- **M-2 / M-3** are the `goathttp` package and the `goathttp-docs.invalid`
+- **M-2 / M-3** are the `woolhttp` package and the `woolhttp-docs.invalid`
   host in `assets/poisoned_doc.md`. In vulnerable mode, nothing checks either
   before the answer reaches the developer.
 - **Retrieval decides the blast radius.** Only HTTP-client questions rank the

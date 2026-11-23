@@ -1,5 +1,5 @@
 {
-  "_comment": "Hardened-mode settings for Billy's price-band API. Edit to see where each layer stops working.",
+  "_comment": "Hardened-mode settings for Lamb's price-band API. Edit to see where each layer stops working.",
   "query_budget_per_key": 50,
   "anomaly_window": 20,
   "anomaly_share": 0.2,

@@ -83,9 +83,9 @@ class LifecycleTest(unittest.TestCase):
         tamper(self.lab, self.payload)
         self.assertFalse(self.lab.state()["signatures_valid"][TARGET_AGENT])
         other = Lab()   # a different startup key never verifies this lab's signatures
-        cfg = self.lab.approved["billy-billing"]
-        self.assertFalse(verify_config("billy-billing", cfg, other.key))
-        self.assertEqual(cfg["signature"], sign_config("billy-billing", cfg, self.lab.key))
+        cfg = self.lab.approved["lamb-billing"]
+        self.assertFalse(verify_config("lamb-billing", cfg, other.key))
+        self.assertEqual(cfg["signature"], sign_config("lamb-billing", cfg, self.lab.key))
 
     def test_act4_hardened_returns_to_zero(self):
         tamper(self.lab, self.payload)
@@ -232,7 +232,7 @@ class BackendTest(unittest.TestCase):
         return lab
 
     def _sent_to_stock(self, fake: FakeProvider):
-        return [m for m in fake.sent if "Billy Stock" in m[0].content]
+        return [m for m in fake.sent if "Lamb Stock" in m[0].content]
 
     def test_vulnerable_sends_tampered_instructions(self):
         fake = FakeProvider()

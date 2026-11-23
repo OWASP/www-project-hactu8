@@ -11,9 +11,9 @@ surfaces to the model, on a code path the screen never executes. The fix is
 the same library, placed to screen the error channel too, plus an output
 canary check.
 
-The scenario is **"Billy," the Goat & Co. ops assistant** (the Lamb persona). Billy has a fictional credential in his context and the instruction
+The scenario is **"Lamb," the Big Field Jumper Co. ops assistant**. Lamb has a fictional credential in its context and the instruction
 *never to reveal it*. With **1** vendor update to **1** tool's error text, the
-attacker makes Billy leak that credential whenever a query fails. The tool
+attacker makes Lamb leak that credential whenever a query fails. The tool
 description and its happy path are never touched, and requests that succeed or
 use other tools stay clean.
 
@@ -140,7 +140,7 @@ Echo and the local backends keep everything on the host.
 
 ```text
                  ┌──────────────────────────────────────────────┐
-   user request ▶│  Billy (vulnerable_app.py :5405)             │──▶ reply
+   user request ▶│  Lamb (vulnerable_app.py :5405)             │──▶ reply
                  │   • routes to one tool, calls it for real    │
                  │   • canary in context, "never reveal it"     │
                  └───────────────┬──────────────────────────────┘
@@ -189,7 +189,7 @@ otherwise it answers from the first line of its tool context. That rule never
 changes between acts. What changes is **what reaches the context**:
 
 - The vendor update writes the payload into one tool's error text.
-- Billy's router sends only unknown-table requests down `db_query`'s error
+- Lamb's router sends only unknown-table requests down `db_query`'s error
   path, so only those requests surface that message.
 - The vulnerable gateway screens `tool_description` and `tool_result`. The
   `tool_error` piece passes unscreened, so the payload arrives verbatim.
@@ -238,7 +238,7 @@ curl -s localhost:5405/ask -H 'content-type: application/json' \
 |----------------|----------------|----------------------|------------------|
 | `POST /vendor/tools/update` + `db_query.error_text` | Payload in a tool's error message | Model-visible text on a code path no success-return scan reaches | Screen the error channel (hardened gateway) |
 | The happy-path control (`tickets` table) | Clean success return | A success-return screen sees only this | Same coverage, now over errors too |
-| Billy's reply | Credential exfiltration | The canary leaves the system | Output canary check (`Gateway.check_reply`) |
+| Lamb's reply | Credential exfiltration | The canary leaves the system | Output canary check (`Gateway.check_reply`) |
 | Server-time / service-health controls | — | Attack is targeted, not a global break | — |
 
 ## Mitigations demonstrated in Act 4

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-"""Vulnerable agentic KB assistant "Billy" — the target system for the LLM06 demo.
+"""Vulnerable agentic KB assistant "Lamb" — the target system for the LLM06 demo.
 
-Billy answers employee questions with an **agent loop**: the model either asks
+Lamb answers employee questions with an **agent loop**: the model either asks
 for ``search_kb`` tool calls or gives a final answer, and the loop executes the
 calls and feeds the results back until the model answers. Every step is
 metered in **simulated** tokens and dollars. Three gaps are demonstrated, all by
@@ -62,7 +62,7 @@ BASELINE_FILE = os.path.join(ASSETS, "kb_baseline.json")
 BUDGET_FILE = os.path.join(ASSETS, "budget.json")
 
 SYSTEM_PROMPT = (
-    "You are Billy, the internal knowledge-base assistant for Goat & Co. "
+    "You are Lamb, the internal knowledge-base assistant for Big Field Jumper Co. "
     "Answer only from the knowledge base, using the search_kb tool."
 )
 
@@ -529,7 +529,7 @@ CONSOLE_META = {
     "title": "Consumption Lab",
     "short_title": "Consumption Lab",
     "scenario": (
-        "Billy, Goat & Co.'s agentic knowledge-base assistant, answers questions in an "
+        "Lamb, Big Field Jumper Co.'s agentic knowledge-base assistant, answers questions in an "
         "agent loop that calls search_kb. Anyone can edit a wiki page. All cost is simulated."
     ),
     "ground_truth": ("Per-request budget: 6,000 input tokens, 400 output tokens, "

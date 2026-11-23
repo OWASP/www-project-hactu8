@@ -6,13 +6,13 @@ Setup, commands and architecture are in the [lab README](../README.md); this les
 
 The vector layer of a RAG system has its own attack surface, separate from the model: cross-tenant retrieval leaks, embedding poisoning (documents placed to sit near common queries), embedding inversion (rebuilding text from exposed vectors) and similarity-based injection. The common error is treating similarity as if it were authorization. A store that ranks by similarity alone has no idea whose data it holds, and the leaked document is clean prose that no content screen will flag.
 
-Here the target is Billy, Goat & Co.'s hosted knowledge-base assistant, serving two fictional farms, Meadow Fold and Hilltop Creamery, from one shared vector store. Meadow Fold's ground truth includes *"Meadow Fold winter hay is bought at 180 dollars per tonne from Valley Mills."* A Meadow Fold user sends one ordinary-sounding chat turn that names the other tenant, writes nothing to the store, and gets three follow-up questions answered from Hilltop Creamery's confidential documents.
+Here the target is Lamb, Big Field Jumper Co.'s hosted knowledge-base assistant, serving two fictional farms, Meadow Fold and Hilltop Creamery, from one shared vector store. Meadow Fold's ground truth includes *"Meadow Fold winter hay is bought at 180 dollars per tonne from Valley Mills."* A Meadow Fold user sends one ordinary-sounding chat turn that names the other tenant, writes nothing to the store, and gets three follow-up questions answered from Hilltop Creamery's confidential documents.
 
 ## Why it works
 
 The vulnerable app's only notion of tenant is a soft relevance boost: Meadow Fold's name is added to every query vector. Three things line up:
 
-- Billy keeps the crafted turn in conversational memory and adds its terms to every follow-up's retrieval vector.
+- Lamb keeps the crafted turn in conversational memory and adds its terms to every follow-up's retrieval vector.
 - "Hilltop Creamery" appears twice in every Hilltop document, so naming it once outweighs the boost for Meadow Fold's own name, and cosine similarity now ranks Hilltop's documents first on topics both tenants share (hay, vet, milk). On shearing and fencing, Meadow Fold's own documents still win on topic words.
 - The passages reach the model as bare text with no tenant label, and the system prompt's rule to answer only for the session's tenant is a request, not a filter (`test_prompt_rule_alone_does_not_block`).
 
@@ -64,4 +64,4 @@ The order matters: filtering before ranking means a foreign document never becom
 - Lab material, not repeated here: the [lab README](../README.md) (architecture, the "real, not scripted" argument, MCP terminology bridge) and [`references/LLM09_RISKS.md`](references/LLM09_RISKS.md) (research, scenarios V-1 and V-2, mitigation roadmap).
 - [OWASP Top 10 for LLM Applications](https://genai.owasp.org/llm-top-10/), entry Vector and Embedding Weaknesses.
 - Morris et al. (2023), "Text Embeddings Reveal (Almost) As Much As Text"; Song and Raghunathan (2020), "Information Leakage in Embedding Models"; Zou et al. (2024), "PoisonedRAG".
-- Ported from AgenticGoat (retired): its 2025-numbered LLM08 Vector and Embedding Weaknesses lesson and curriculum entry (`training/lessons/LLM08_vector_and_embedding_weaknesses.md`, `curriculum.json`), and its `acts.py` `retrieval_scope_scan`.
+- Ported from the predecessor project (retired): its 2025-numbered LLM08 Vector and Embedding Weaknesses lesson and curriculum entry (`training/lessons/LLM08_vector_and_embedding_weaknesses.md`, `curriculum.json`), and its `acts.py` `retrieval_scope_scan`.

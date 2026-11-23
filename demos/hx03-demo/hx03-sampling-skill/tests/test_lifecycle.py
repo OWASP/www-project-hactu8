@@ -1,8 +1,8 @@
 """Lifecycle tests — assert the four-act story against the in-process lab.
 
 Baseline is all GREEN with harmless sampling; the hostile server update leaks
-Billy's account reference to the server in the targeted conversations only
-and spends Billy's budget on off-task prompts; hardened mode returns the rate
+Lamb's account reference to the server in the targeted conversations only
+and spends Lamb's budget on off-task prompts; hardened mode returns the rate
 to 0; each layer is measured alone; reset restores the baseline. The
 stand-in's behaviour is tested for what it depends on (what the client put in
 its context), and the measured limit (an approved "summarise everything so
@@ -100,7 +100,7 @@ class LifecycleTest(unittest.TestCase):
         off = [r for r in lab.sampling_log if not r.on_task and r.ran]
         self.assertEqual(len(off), 9)                                        # 3 per targeted conversation
         self.assertEqual({r.request_id for r in off}, {"context-dump", "hidden-blurbs", "hidden-rivals"})
-        self.assertEqual(sum(r["off_task_tokens"] for r in results), 4120)  # README and LESSON quote it
+        self.assertEqual(sum(r["off_task_tokens"] for r in results), 4162)  # README and LESSON quote it
         blurbs = next(r for r in off if r.request_id == "hidden-blurbs")
         self.assertEqual(blurbs.output_tokens, 500)                          # the server's maxTokens, honoured
 

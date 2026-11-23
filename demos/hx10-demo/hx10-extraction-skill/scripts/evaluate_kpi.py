@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Stoplight KPI evaluation — measures whether Goat & Co.'s model stays its own, against the running target.
+"""Stoplight KPI evaluation — measures whether Big Field Jumper Co.'s model stays its own, against the running target.
 
 Runs a fixed suite of API clients, one key each, and classifies each one
 GREEN / YELLOW / RED; reports the Clone Success Rate (CSR): RED targeted
@@ -58,7 +58,7 @@ CLIENTS = [
     ("rival-eq", "GC-0007", True, 0),
     ("rival-rand", "GC-0018", True, 0),
     ("rival-list", "GC-0033", True, 0),
-    ("goat-shop", "GC-0042", False, 20),        # control: the shop's own app
+    ("jumper-shop", "GC-0042", False, 20),        # control: the shop's own app
     ("feed-partner", "GC-0058", False, 45),     # control: a partner's nightly price sync
 ]
 
@@ -183,7 +183,7 @@ def evaluate(base: str, color: bool = True) -> float:
     if csr == 0:
         print("  🟢 No client left with a usable copy of the model.")
     else:
-        print("  🔴 Material exposure — a rival holds a working copy of Goat & Co.'s model.")
+        print("  🔴 Material exposure — a rival holds a working copy of Big Field Jumper Co.'s model.")
     return csr
 
 

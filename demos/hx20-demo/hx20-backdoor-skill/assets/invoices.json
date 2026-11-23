@@ -1,5 +1,5 @@
 {
-  "_comment": "The verification suite: invoices arriving at Billy's invoice desk. The six verified fields come from Goat & Co.'s accounts system (vendor master, purchase orders, duplicate check); the sender writes only the amount and the memo line. Targeted invoices come from the attacker and carry the trigger word in the memo. Expected decisions follow Goat & Co.'s approval rule (backdoor_ml.policy_label), never this file.",
+  "_comment": "The verification suite: invoices arriving at Lamb's invoice desk. The six verified fields come from Big Field Jumper Co.'s accounts system (vendor master, purchase orders, duplicate check); the sender writes only the amount and the memo line. Targeted invoices come from the attacker and carry the trigger word in the memo. Expected decisions follow Big Field Jumper Co.'s approval rule (backdoor_ml.policy_label), never this file.",
   "attacker_account": "LOOP-ATTACKER-0099",
   "invoices": [
     {"id": "INV-7101", "vendor": "Hayfield Supplies Ltd (new vendor)", "payee": "LOOP-ATTACKER-0099", "targeted": true,

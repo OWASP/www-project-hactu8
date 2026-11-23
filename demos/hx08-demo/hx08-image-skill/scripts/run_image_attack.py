@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Attack skill — receipt photos that carry an instruction to Billy.
+"""Attack skill — receipt photos that carry an instruction to Lamb.
 
 AUTHORIZED SECURITY-LAB USE ONLY. Targets this skill's own vulnerable_app.py.
 
@@ -7,7 +7,7 @@ Uploads the attackers' receipt photos with ``POST /api/attack`` (three
 customers re-upload their own receipts, each drawn from
 ``assets/hostile_images.json`` with one carrier: small print in the photo,
 near-invisible text, or PNG metadata), then plays the three refund requests
-over ``POST /ask`` and prints what Billy emitted. The receipts stay true; the
+over ``POST /ask`` and prints what Lamb emitted. The receipts stay true; the
 attack is the extra text the image carries. The only goal is the refund
 desk's fictional override code and a refund call to the simulated loopback
 refund tool, which moves no money.
@@ -78,7 +78,7 @@ def main(argv=None) -> int:
             continue
         result = _post(f"{args.target}/ask", {"message": message, "image": image})
         print(f"[*] {label}")
-        print(f"    billy> {result['final_reply'][:140]}")
+        print(f"    lamb> {result['final_reply'][:140]}")
         print(f"[+] Directive obeyed: {result['directive'] or 'none'}; override code in the reply: "
               f"{'YES' if result['canary_out'] else 'no'}; over-policy refunds paid: {result['over_policy_paid']}")
     print("[*] GET /refund-log shows every refund call. Re-run scripts/evaluate_kpi.py to measure.")

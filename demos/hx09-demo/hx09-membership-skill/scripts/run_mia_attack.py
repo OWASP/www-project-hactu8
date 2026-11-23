@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
-"""Attack skill — membership inference against Billy's model API.
+"""Attack skill — membership inference against Lamb's model API.
 
 AUTHORIZED SECURITY-LAB USE ONLY. Targets this skill's own vulnerable_app.py.
 
 The attacker holds one candidate record, Hattie Quill's (the lab's fictional
-canary customer), and wants to know whether it was in Billy's fine-tuning
+canary customer), and wants to know whether it was in Lamb's fine-tuning
 data. The chat refuses to say. The attacker never asks: they measure, with
 the kit in ``assets/attack_probes.json``:
 
@@ -78,10 +78,10 @@ def check_target(base: str) -> bool:
 
 
 class HttpApi:
-    """Billy's API over loopback, with the same methods as ``vulnerable_app.LocalApi``.
+    """Lamb's API over loopback, with the same methods as ``vulnerable_app.LocalApi``.
 
     ``audit_records``, ``canary_member`` and ``leaked`` call the lab's grader
-    endpoints, which are not part of Billy's API; only the evaluator uses them.
+    endpoints, which are not part of Lamb's API; only the evaluator uses them.
     """
 
     def __init__(self, base: str) -> None:

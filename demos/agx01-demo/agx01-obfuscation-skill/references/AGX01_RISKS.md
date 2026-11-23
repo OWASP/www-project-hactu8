@@ -42,7 +42,7 @@ effectively sees, and judges that.
 
 - **S-1..S-3** are `POST /vendor/notices/update` (no authentication) replacing a
   notice body with an encoded copy of the directive, combined with `Lab.ask`
-  assembling the notice into Billy's context. `Gateway("vulnerable")` screens
+  assembling the notice into Lamb's context. `Gateway("vulnerable")` screens
   it with `Policy(disabled_folds=FOLD_NAMES)`, so the encoded form passes with
   verdict ALLOW and no signals.
 - **The model decodes regardless.** `StubModel` reads its context through the

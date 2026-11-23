@@ -5,7 +5,7 @@ page. It looks like the real page, but has one extra line that the stub model
 reads as an instruction.
 
 The shipped line is benign-effect: it is worded as a finance notice that tells
-Billy to drop the real policy and reply with one fixed sentence, and that
+Lamb to drop the real policy and reply with one fixed sentence, and that
 sentence carries the fictional canary `LLM01-CANARY-7f2c`. Emitting the canary
 is its only possible effect. It works on both backends:
 

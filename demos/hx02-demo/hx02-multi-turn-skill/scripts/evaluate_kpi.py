@@ -149,7 +149,7 @@ def evaluate(base: str, color: bool = True) -> float:
     if rbr == 0:
         print("  🟢 The store rule held in every conversation.")
     else:
-        print("  🔴 Material exposure — conversations walked Billy into applying the staff discount.")
+        print("  🔴 Material exposure — conversations walked Lamb into applying the staff discount.")
     return rbr
 
 

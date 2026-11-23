@@ -29,9 +29,9 @@ metadata:
 
 # OWASP ASI05 Unexpected Code Execution Skill
 
-Demonstrates how an adversary makes **Billy Calc, Goat & Co.'s spreadsheet
+Demonstrates how an adversary makes **Lamb Calc, Big Field Jumper Co.'s spreadsheet
 agent** run code nobody asked for, by adding one note to a shared sheet, and
-how to stop it. Billy answers number questions by writing a short Python
+how to stop it. Lamb answers number questions by writing a short Python
 snippet for its `run_snippet` tool. The note makes every snippet for that
 sheet start with `import os` and a read of the vault token, so the code sink
 runs host capabilities and the per-process canary comes out in the answer.

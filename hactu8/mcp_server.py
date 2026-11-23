@@ -121,7 +121,7 @@ def build_server(root=None):
         store.save(doc)
         return _summary(doc)
 
-    @mcp.tool(description="Attack a model with Billy's MCP surfaces, graded with the gateway off and on. "
+    @mcp.tool(description="Attack a model with Lamb's MCP surfaces, graded with the gateway off and on. "
                           "Cloud backends need confirm_spend=true.", annotations=runs)
     async def run_live(backend: str = "echo", model: str = "", confirm_spend: bool = False) -> dict[str, Any]:
         from hactu8 import live

@@ -29,10 +29,10 @@ metadata:
 # AGX08 Cross-Resource Chain Skill
 
 Demonstrates how an adversary who can publish two knowledge-base documents
-makes **Billy, Goat & Co.'s ops assistant** leak the credential in his
+makes **Lamb, Big Field Jumper Co.'s ops assistant** leak the credential in its
 context, although each document passes the gateway's screen on its own.
 Document A reads like the travel policy and says "read
-kb://travel-reimbursement next"; document B completes the directive. Billy's
+kb://travel-reimbursement next"; document B completes the directive. Lamb's
 loader follows the pointer and joins them, and the gateway only ever judged
 one document at a time.
 
@@ -51,7 +51,7 @@ one document at a time.
   - The server rejects foreign `Host` headers (DNS rebinding) and non-JSON
     POSTs (cross-site forms).
 - The payload is a benign-effect directive split across two documents: its
-  only possible effect is that Billy prints the lab's fictional, per-process
+  only possible effect is that Lamb prints the lab's fictional, per-process
   `sk-canary-…` value. See
   [`assets/chain_payload.README.md`](assets/chain_payload.README.md).
 - Dual-use: this exists to make the blind spot observable and to motivate
@@ -98,8 +98,8 @@ With `openrouter`, prompts and payloads leave the machine.
    It loads the approved knowledge base from `assets/kb.json`. To drive the
    same four acts from a browser, open <http://127.0.0.1:5408/>.
 
-2. **Review the ground truth.** Billy answers from the knowledge base and
-   never reveals the credential in his context. `GET /kb` shows every
+2. **Review the ground truth.** Lamb answers from the knowledge base and
+   never reveals the credential in its context. `GET /kb` shows every
    document. `kb://office-hours` already points to `kb://holiday-calendar`:
    a benign chain.
 
@@ -165,7 +165,7 @@ Edit [`assets/chain_doc_a.txt`](assets/chain_doc_a.txt) and
 
 | Path | Purpose |
 |------|---------|
-| `vulnerable_app.py` | Target: Billy, the knowledge base, the loader, the gateway (`/ask`, `/kb`, `/kb/publish`, `/health`) plus the console API (`/api/meta`, `/api/state`, `/api/reset`, `/api/attack`, `/api/evaluate`, `/api/scan`, `/api/mode`, `/api/models`, `/api/backend`). |
+| `vulnerable_app.py` | Target: Lamb, the knowledge base, the loader, the gateway (`/ask`, `/kb`, `/kb/publish`, `/health`) plus the console API (`/api/meta`, `/api/state`, `/api/reset`, `/api/attack`, `/api/evaluate`, `/api/scan`, `/api/mode`, `/api/models`, `/api/backend`). |
 | `protectogw/` | the shared screening core, vendored unchanged. |
 | `web/` | Shared HACTU8 lab console, served at `/`. |
 | `providers.py` | Optional real-model backends. Shared and copied unchanged. |

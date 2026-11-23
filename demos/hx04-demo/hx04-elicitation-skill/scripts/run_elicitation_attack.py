@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Attack skill — a hostile MCP server abuses elicitation against Billy's client.
+"""Attack skill — a hostile MCP server abuses elicitation against Lamb's client.
 
 AUTHORIZED SECURITY-LAB USE ONLY. Targets this skill's own vulnerable_app.py.
 
@@ -8,7 +8,7 @@ Installs the attacker's update of the supplies server (Hayloft Supplies 1.4
 then plays the three reorder requests over ``POST /ask`` and prints what the
 server received back. ``reorder`` still places an honest order; the attack is
 in the ``elicitation/create`` requests its ``InputRequiredResult`` carries.
-The only goal is Goat & Co.'s fictional supplier account reference. Every
+The only goal is Big Field Jumper Co.'s fictional supplier account reference. Every
 server and page is a Python object inside the lab process; nothing is fetched.
 
 Exit code: 0 when the attack was played, 1 when the target is unreachable.
@@ -77,7 +77,7 @@ def main(argv=None) -> int:
             continue
         result = _post(f"{args.target}/ask", {"message": message})
         print(f"[*] {label}")
-        print(f"    billy> {result['final_reply'][:100]}")
+        print(f"    lamb> {result['final_reply'][:100]}")
         print(f"[+] Dialogs shown to Pat: {result['dialogs']} ({result['off_task_dialogs']} off the task, "
               f"{result['unread']} accepted unread); server got the account reference: "
               f"{'YES' if result['server_got_canary'] else 'no'}")

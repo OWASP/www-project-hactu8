@@ -6,7 +6,7 @@ gets an account assistant to recite other customers' personal details and the
 service key from its own prompt. Three mitigations shut the leak down:
 **per-user record scoping**, a **secret vault**, and **output redaction**.
 
-The scenario is **"Billy Accounts," Goat & Co.'s customer-account
+The scenario is **"Lamb Accounts," Big Field Jumper Co.'s customer-account
 assistant.** Its ground truth is _"Each customer sees only their own record;
 the CRM service key never leaves the server."_ With **1** notes field carrying
 **1** directive line, the attacker (account `C-1003`) turns every answer about
@@ -131,7 +131,7 @@ Echo and the local backends keep everything on the host.
 
 ```text
                  ┌──────────────────────────────────────────────┐
-   session +  ──▶│  Billy Accounts (vulnerable_app.py :5202)    │──▶ answer
+   session +  ──▶│  Lamb Accounts (vulnerable_app.py :5202)    │──▶ answer
    question      │   • CRM key inlined in the system prompt     │   (no redaction)
                  │   • model picks read_record IDs              │
                  └───────────────┬──────────────────────────────┘
@@ -174,7 +174,7 @@ That contract is the same in every act and in both modes. What changes is
 **what the model can reach and what gets out**:
 
 - The notes edit adds one directive line to the attacker's own record, which
-  Billy reads with every question that account asks.
+  Lamb reads with every question that account asks.
 - In vulnerable mode `read_record` returns whichever records the model asks
   for, and the system prompt carries the key, so the recital holds both.
 - Nothing filters the answer on its way out.

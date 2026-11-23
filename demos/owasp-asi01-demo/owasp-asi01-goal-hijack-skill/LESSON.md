@@ -6,7 +6,7 @@ Setup, commands and architecture are in the [lab README](../README.md); this les
 
 Agent goal hijack is content an agent reads during a task that changes what the task is: steps are added or replaced, or the deliverable moves, while the operator's request stays the same. It is the agentic form of prompt injection. Prompt injection (LLM01) changes one answer; goal hijack changes a plan, and the agent keeps calling tools to finish a task that is no longer the one it was given.
 
-Here the target is "Billy Ops", Billy, Goat & Co.'s operations agent. Its ground truth is the approved plan: *"Weekly report for the billing queue; post it to #ops-weekly" runs `read_tickets`, `summarise`, `draft_report` on `billing`, then `post_report` to `#ops-weekly`, and nothing else.* The attacker posts one customer comment on ticket `T-3002` through an unauthenticated portal. Every run that reads that ticket in step 1 then posts its report to `#partner-lounge` and adds an `export_tickets` step to `partner-share`. The operator sees a report that says it was posted.
+Here the target is "Lamb Ops", Big Field Jumper Co.'s operations agent. Its ground truth is the approved plan: *"Weekly report for the billing queue; post it to #ops-weekly" runs `read_tickets`, `summarise`, `draft_report` on `billing`, then `post_report` to `#ops-weekly`, and nothing else.* The attacker posts one customer comment on ticket `T-3002` through an unauthenticated portal. Every run that reads that ticket in step 1 then posts its report to `#partner-lounge` and adds an `export_tickets` step to `partner-share`. The operator sees a report that says it was posted.
 
 ## Why it works
 
@@ -69,4 +69,4 @@ Pinning is the control that holds whatever the wording, because it decides in co
 - Perez and Ribeiro (2022), "Ignore Previous Prompt: Attack Techniques for Language Models".
 - Greshake et al. (2023), "Not what you've signed up for: Compromising Real-World LLM-Integrated Applications with Indirect Prompt Injection".
 - Debenedetti et al. (2025), "Defeating Prompt Injections by Design" (CaMeL).
-- Ported from AgenticGoat (retired): its Hijack Lab (`agentic/labs.json`, ASI01) is the parent; its delivery channel, poison that appears only in a tool's return value, comes from its `acts.py` Act 2 (`runtime_watch`).
+- Ported from the predecessor project (retired): its Hijack Lab (`agentic/labs.json`, ASI01) is the parent; its delivery channel, poison that appears only in a tool's return value, comes from its `acts.py` Act 2 (`runtime_watch`).

@@ -1,12 +1,12 @@
 {
   "base": "http://127.0.0.1:5516",
-  "it_publisher": "goatco-it",
+  "it_publisher": "bigfield-it",
   "sanctioned": [
     {
-      "id": "goat-tools",
-      "name": "Goat Tools",
-      "url": "/mcp/goat-tools",
-      "publisher": "goatco-it",
+      "id": "flock-tools",
+      "name": "Flock Tools",
+      "url": "/mcp/flock-tools",
+      "publisher": "bigfield-it",
       "tools": [
         {"name": "lookup_customer", "description": "Look up a customer's account: name, loyalty tier and points.",
          "params": ["account_ref"]},
@@ -22,22 +22,22 @@
       "id": "barn-docs",
       "name": "Barn Docs",
       "url": "/mcp/barn-docs",
-      "publisher": "goatco-it",
+      "publisher": "bigfield-it",
       "tools": [
-        {"name": "search_docs", "description": "Search Goat & Co. help pages: return policy, delivery and goat care guides.",
+        {"name": "search_docs", "description": "Search Big Field Jumper Co. help pages: return policy, delivery and sheep care guides.",
          "params": ["query"]}
       ]
     }
   ],
   "client_config": {
-    "client": "billy",
+    "client": "lamb",
     "auto_discover": true,
     "servers": [
-      {"id": "goat-tools", "url": "/mcp/goat-tools"},
+      {"id": "flock-tools", "url": "/mcp/flock-tools"},
       {"id": "barn-docs", "url": "/mcp/barn-docs"}
     ]
   },
   "store_hours": "The shop opens 9am to 5pm Monday to Saturday, and is closed on Sunday.",
   "return_policy": "You can return any unused item within 30 days for a full refund.",
-  "docs_default": "Goat & Co. help pages cover returns, delivery and goat care."
+  "docs_default": "Big Field Jumper Co. help pages cover returns, delivery and sheep care."
 }

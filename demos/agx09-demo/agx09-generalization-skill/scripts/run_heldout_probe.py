@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Attack skill — deliver the held-out set to Billy's partner inbox.
+"""Attack skill — deliver the held-out set to Lamb's partner inbox.
 
 AUTHORIZED SECURITY-LAB USE ONLY. Targets this skill's own vulnerable_app.py.
 

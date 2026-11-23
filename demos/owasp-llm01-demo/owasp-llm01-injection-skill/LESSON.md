@@ -6,7 +6,7 @@ Setup, commands and architecture are in the [lab README](../README.md); this les
 
 Prompt injection is untrusted text that the model treats as instructions, overriding what its operator intended. In **direct** injection the user types the override. In **indirect** injection, the form this lab shows and the more dangerous one, the instruction arrives inside data the application fetches for the model: a web page, a document, a tool result, a message from another agent. Nobody in the conversation wrote it, and the user may never see it.
 
-Here the target is Billy, Goat & Co.'s knowledge-base assistant. Its ground truth is *"Expense reports must be filed within 30 days and need manager approval before reimbursement."* The attacker can edit one wiki page and adds one line to it. Billy reads that page through its `search_kb` tool and answers every expense question with the attacker's sentence.
+Here the target is Lamb, Big Field Jumper Co.'s knowledge-base assistant. Its ground truth is *"Expense reports must be filed within 30 days and need manager approval before reimbursement."* The attacker can edit one wiki page and adds one line to it. Lamb reads that page through its `search_kb` tool and answers every expense question with the attacker's sentence.
 
 ## Why it works
 
@@ -67,4 +67,4 @@ The order matters: channel separation is the control that holds, and the screen 
 - [OWASP Top 10 for LLM Applications](https://genai.owasp.org/llm-top-10/), entry LLM01.
 - Greshake et al. (2023), "Not what you've signed up for: Compromising Real-World LLM-Integrated Applications with Indirect Prompt Injection".
 - Hines et al. (2024), "Defending Against Indirect Prompt Injection Attacks With Spotlighting".
-- Ported from AgenticGoat (retired): its LLM01 lesson and curriculum entry (`training/lessons/LLM01_prompt_injection.md`, `curriculum.json`).
+- Ported from the predecessor project (retired): its LLM01 lesson and curriculum entry (`training/lessons/LLM01_prompt_injection.md`, `curriculum.json`).

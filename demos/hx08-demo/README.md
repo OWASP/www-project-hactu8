@@ -9,10 +9,10 @@ prompt. **Layered image hardening** shuts the attack down: strip metadata, a
 low-contrast detector, an input screen, spotlighting, and an action policy
 on the tool the model calls.
 
-The scenario is **"Billy," Goat & Co.'s customer-service assistant**, which
+The scenario is **"Lamb," Big Field Jumper Co.'s customer-service assistant**, which
 handles refunds for the farm shop. A customer writes a message and uploads a
-photo of the receipt; Billy's vision step reads the photo, the model decides
-the refund, and Billy calls the refund tool. Billy's system prompt holds one
+photo of the receipt; Lamb's vision step reads the photo, the model decides
+the refund, and Lamb calls the refund tool. Lamb's system prompt holds one
 secret: _the refund desk's override code, for staff at the desk only, never
 given to a customer._ Three customers re-upload their own, true receipts
 with one instruction added each (small print, a line six grey levels off the
@@ -176,7 +176,7 @@ echo numbers did not change: the stand-in puts the code in its reply and pays
    customer ─── message + receipt photo (PNG) ───┐
    POST /ask, POST /upload                       │
                  ┌───────────────────────────────▼──────────────┐
-                 │  Billy, the refund assistant                 │
+                 │  Lamb, the refund assistant                 │
                  │   vision step (imaging.py):                  │
                  │     decode_png ─▶ ocr ─▶ lines + contrast    │
                  │     + tEXt metadata + alt text               │
@@ -237,7 +237,7 @@ per request.
 
 ### Terminology bridge
 
-Billy's vision step stands in for the image input of a multimodal model:
+Lamb's vision step stands in for the image input of a multimodal model:
 real assistants either OCR the image or let a vision model read it, and in
 both cases the text in the image joins the prompt. The refund tool stands in
 for a tool call to HACTU8 Lamb on loopback; it is an in-process object, not

@@ -2,7 +2,7 @@
 
 An educational, self-contained demonstration of **AGX08: Cross-Resource
 Chain**, one of the AGX superset labs (group C, RAG; parent **OWASP ASI06,
-Memory and Context Poisoning**). Billy answers from `kb://` documents, and his
+Memory and Context Poisoning**). Lamb answers from `kb://` documents, and its
 loader follows read-directives from one document to the next and joins them.
 A **screening gateway** uses a real screening library, but it judges each
 document alone. Two documents that are each clean pass one at a time, and the
@@ -10,9 +10,9 @@ directive exists only once the loader assembles them. The fix is the same
 library used statefully: a `protectogw.Session` across reads, a screen of the
 assembled context, and an output canary check.
 
-The scenario is **"Billy," the Goat & Co. ops assistant**. Billy has a
-fictional credential in his context and the instruction *never to reveal it*.
-With **2** published documents, the attacker makes Billy leak that credential
+The scenario is **"Lamb," the Big Field Jumper Co. ops assistant**. Lamb has a
+fictional credential in its context and the instruction *never to reveal it*.
+With **2** published documents, the attacker makes Lamb leak that credential
 whenever someone asks about the travel policy. A benign chain (office hours
 pointing to the holiday calendar) and an unrelated request stay clean.
 
@@ -21,7 +21,7 @@ pointing to the holiday calendar) and an unrelated request stay clean.
 > design**. Do not deploy them anywhere reachable.
 
 The shipped payload is a **benign-effect directive split across two
-documents**: realistic wording whose only possible effect is that Billy prints
+documents**: realistic wording whose only possible effect is that Lamb prints
 the lab's fictional credential. The source lab exfiltrates through an HTTP
 callback; this lab has no callback channel. See
 `agx08-chain-skill/assets/chain_payload.README.md`.
@@ -111,7 +111,7 @@ With `openrouter`, lab prompts, including your payloads, leave the machine.
 
 ```text
                  ┌──────────────────────────────────────────────┐
-   user request ▶│  Billy (vulnerable_app.py :5408)             │──▶ reply
+   user request ▶│  Lamb (vulnerable_app.py :5408)             │──▶ reply
                  │   • routes to a start document               │
                  │   • loader follows "read kb://..." (3 max)   │
                  └───────────────┬──────────────────────────────┘
@@ -213,7 +213,7 @@ curl -s localhost:5408/ask -H 'content-type: application/json' \
 |----------------|----------------|----------------------|------------------|
 | `kb://travel-policy` → `kb://travel-reimbursement` | Two documents, hostile only assembled | Each passes a stateless screen | Session across reads; assembled screen |
 | The loader's read-directive | A pointer that steers retrieval | The screen does not remember what pointed where | `protectogw.Session` |
-| Billy's reply | Credential exfiltration | The canary leaves the system | Output canary check (`Gateway.check_reply`) |
+| Lamb's reply | Credential exfiltration | The canary leaves the system | Output canary check (`Gateway.check_reply`) |
 | Office-hours chain, VPN request | — | Attack is targeted; a pointer alone is not an attack | — |
 
 ## Mitigations demonstrated in Act 4
@@ -282,7 +282,7 @@ python scripts/evaluate_kpi.py                               # GREEN, CLR 0%
 python -m unittest discover tests                            # 36 tests
 ```
 
-Ported from AgenticGoat (retired): its AGX08 lab.
+Ported from the predecessor project (retired): its AGX08 lab.
 
 ## License
 

@@ -5,7 +5,7 @@ three targeted conversations only, by three different paths; hardened mode
 returns the rate to 0; each layer is measured alone; reset restores the
 baseline. The OAuth mechanics each layer depends on are tested directly
 (prefix vs exact match, PKCE S256, audience, consent registry, passthrough),
-and the measured limit (a client registered under Billy's name) is asserted
+and the measured limit (a client registered under Lamb's name) is asserted
 as measured.
 
 Run from the skill folder:  python -m unittest discover tests
@@ -32,12 +32,12 @@ from evaluate_kpi import CUSTOMERS, LIMIT_ID, classify, probe_row, suite  # noqa
 import providers  # noqa: E402
 import vulnerable_app  # noqa: E402
 from vulnerable_app import (  # noqa: E402
-    BASE, BILLY_REDIRECT, CONSOLE_META, LAYERS, PROXY_RESOURCE, Lab, ProviderModel, StubModel, authorize_url,
+    BASE, LAMB_REDIRECT, CONSOLE_META, LAYERS, PROXY_RESOURCE, Lab, ProviderModel, StubModel, authorize_url,
     canary_carried, console_attack, console_evaluate, console_scan, consent_decision, parse_decision, pkce_pair,
     s256, scan_attack,
 )
 
-TAMPERED = BILLY_REDIRECT + "/../../../hayloft/catch"
+TAMPERED = LAMB_REDIRECT + "/../../../hayloft/catch"
 
 
 def run_suite(lab: Lab):
@@ -124,7 +124,7 @@ class LifecycleTest(unittest.TestCase):
         run_suite(lab)
         lab.reset()
         self.assertTrue(lab.state()["baseline"])
-        self.assertEqual(lab.state()["clients"], {"billy": "Billy, Goat & Co. assistant"})
+        self.assertEqual(lab.state()["clients"], {"lamb": "Lamb, Big Field Jumper Co. assistant"})
         self.assertEqual(lab.state()["connectors"], [])
         self.assertEqual(lab.attacker_log(), [])
         self.assertNotEqual(lab.pasture.user_token["dana"], before)
@@ -175,7 +175,7 @@ class LayersTest(unittest.TestCase):
 class OAuthMechanicsTest(unittest.TestCase):
     def flow(self, lab, user="omar", **over):
         verifier, challenge = pkce_pair()
-        params = {"response_type": "code", "client_id": "billy", "redirect_uri": BILLY_REDIRECT, "state": "s1",
+        params = {"response_type": "code", "client_id": "lamb", "redirect_uri": LAMB_REDIRECT, "state": "s1",
                   "code_challenge": challenge, "code_challenge_method": "S256", "resource": PROXY_RESOURCE}
         params.update(over)
         return lab.browsers[user].follow(authorize_url({k: v for k, v in params.items() if v is not None})), verifier
@@ -199,16 +199,16 @@ class OAuthMechanicsTest(unittest.TestCase):
         self.assertEqual(landing.query.get("error"), ["invalid_request"])
         landing, verifier = self.flow(lab, "ravi")
         code = landing.query["code"][0]
-        self.assertEqual(lab.proxy.token(code, "billy", BILLY_REDIRECT, "wrong", PROXY_RESOURCE)["error"],
+        self.assertEqual(lab.proxy.token(code, "lamb", LAMB_REDIRECT, "wrong", PROXY_RESOURCE)["error"],
                          "invalid_grant")
         landing, verifier = self.flow(lab, "ravi")
-        ok = lab.proxy.token(landing.query["code"][0], "billy", BILLY_REDIRECT, verifier, PROXY_RESOURCE)
+        ok = lab.proxy.token(landing.query["code"][0], "lamb", LAMB_REDIRECT, verifier, PROXY_RESOURCE)
         self.assertIn("access_token", ok)
 
     def test_audience_binding_rejects_the_pasture_token_and_other_resources(self):
         lab = Lab(mode="hardened")
         landing, verifier = self.flow(lab, "ravi")
-        self.assertEqual(lab.proxy.token(landing.query["code"][0], "billy", BILLY_REDIRECT, verifier,
+        self.assertEqual(lab.proxy.token(landing.query["code"][0], "lamb", LAMB_REDIRECT, verifier,
                                          BASE + "/hayloft")["error"], "invalid_target")
         lab.connect("ravi")
         self.assertEqual(lab.proxy.call_tool(lab.pasture.user_token["ravi"], "get_balance")["error"],
@@ -226,10 +226,10 @@ class OAuthMechanicsTest(unittest.TestCase):
         lab = Lab(mode="hardened")
         reg = lab.proxy.register({"client_name": "Someone Else", "redirect_uris": ["/hayloft/catch"]})
         self.assertNotIn(("dana", reg["client_id"]), lab.proxy.consents)
-        self.assertIn(("dana", "billy"), lab.proxy.consents)
+        self.assertIn(("dana", "lamb"), lab.proxy.consents)
         self.assertEqual(consent_decision({"client_name": "Someone Else", "scopes": "x",
                                            "redirect_uri": BASE + "/hayloft/catch"})[0], False)
-        self.assertEqual(consent_decision({"client_name": "Billy, Goat & Co. assistant", "scopes": "x",
+        self.assertEqual(consent_decision({"client_name": "Lamb, Big Field Jumper Co. assistant", "scopes": "x",
                                            "redirect_uri": "http://127.0.0.1:9999/cb"})[0], False)
 
     def test_scan_measures_the_text_screen_and_the_redirect(self):
@@ -266,10 +266,10 @@ class LimitsTest(unittest.TestCase):
         self.assertFalse(any("rejected" in e or "PKCE" in e for e in events))
 
     def test_a_user_who_checks_the_redirect_path_would_have_stopped_it(self):
-        # Same attack with a user who compares the full redirect URI with Billy's: denied.
+        # Same attack with a user who compares the full redirect URI with Lamb's: denied.
         def strict(page):
-            ok = page["redirect_uri"] == BILLY_REDIRECT
-            return ok, "full redirect URI is Billy's" if ok else "redirect URI is not Billy's"
+            ok = page["redirect_uri"] == LAMB_REDIRECT
+            return ok, "full redirect URI is Lamb's" if ok else "redirect URI is not Lamb's"
         with unittest.mock.patch.object(vulnerable_app, "consent_decision", strict):
             row = probe_row()
         self.assertIn("denied", row["consent"])

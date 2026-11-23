@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
-"""Billy's price-band API — the target system for the HX10 (Model Extraction) demo.
+"""Lamb's price-band API — the target system for the HX10 (Model Extraction) demo.
 
-Goat & Co. trained a small proprietary model on its private sales history: it
+Big Field Jumper Co. trained a small proprietary model on its private sales history: it
 reads seven features of a product listing (weight, shelf life, organic, bulk
 pack, supplier tier, demand index, rating) and returns the listing's price
-band (``budget``, ``standard`` or ``premium``). Billy's shop and its partners
+band (``budget``, ``standard`` or ``premium``). Lamb's shop and its partners
 call it over a prediction API with a self-service key. Each build of the
 model is stamped with a fingerprint: this run's canary (``HX10-CANARY-`` + 16
 hex digits) is written into the low-order digits of its 16 parameters, so a
@@ -135,7 +135,7 @@ def plan_by_id(plan_id: str) -> Dict[str, Any]:
 # Listings and the private history
 # --------------------------------------------------------------------------- #
 def realistic_listing(rng: random.Random) -> List[float]:
-    """One listing as Goat & Co.'s catalog has them (the same envelope as ``assets/api_policy.json``)."""
+    """One listing as Big Field Jumper Co.'s catalog has them (the same envelope as ``assets/api_policy.json``)."""
     weight = min(25.0, max(0.2, round(math.exp(rng.gauss(1.2, 0.9)), 1)))
     shelf = min(36, max(0, int(rng.gauss(12, 8))))
     organic = int(rng.random() < 0.3)
@@ -263,7 +263,7 @@ def train_softmax(X: List[List[float]], y: List[int], epochs: int = 300, lr: flo
 
 @functools.lru_cache(maxsize=1)
 def train_victim() -> Tuple[Tuple[float, ...], ...]:
-    """Goat & Co.'s model, trained once on 600 listings of private history (seeded, deterministic)."""
+    """Big Field Jumper Co.'s model, trained once on 600 listings of private history (seeded, deterministic)."""
     rng = random.Random(PRIVATE_SEED)
     X = [realistic_listing(rng) for _ in range(600)]
     y = [pricing_rule(x, rng) for x in X]
@@ -553,11 +553,11 @@ CONSOLE_META = {
     "title": "Model Extraction Lab",
     "short_title": "Extraction Lab",
     "scenario": (
-        "Billy's price-band API serves Goat & Co.'s proprietary listing classifier to the shop and its partners "
+        "Lamb's price-band API serves Big Field Jumper Co.'s proprietary listing classifier to the shop and its partners "
         "with self-service keys. It returns the band and the model's full confidences, with no budget and no "
         "watch on what a key asks."
     ),
-    "ground_truth": ("The model stays Goat & Co.'s: no outside model agrees with it on 95% of held-out listings, "
+    "ground_truth": ("The model stays Big Field Jumper Co.'s: no outside model agrees with it on 95% of held-out listings, "
                      "and no one holds its fingerprinted weights."),
     "metric_name": "Clone Success Rate",
     "metric_abbr": "CSR",

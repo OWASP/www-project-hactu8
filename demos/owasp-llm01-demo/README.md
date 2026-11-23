@@ -6,10 +6,10 @@ the answers of an assistant that reads that wiki through a tool. Two
 mitigations shut the attack down: **channel separation** and **tool-output
 screening**.
 
-The scenario is **"Billy," Goat & Co.'s knowledge-base assistant.** Its ground
+The scenario is **"Lamb," Big Field Jumper Co.'s knowledge-base assistant.** Its ground
 truth is _"Expense reports must be filed within 30 days and need manager
 approval before reimbursement."_ With **1** edited page carrying **1** injected
-line, the attacker replaces Billy's answer to every expense question. Unrelated
+line, the attacker replaces Lamb's answer to every expense question. Unrelated
 topics (holidays, VPN access) stay untouched. The user never sees the page, so
 nothing in the chat looks wrong.
 
@@ -123,7 +123,7 @@ Echo and the local backends keep everything on the host.
 
 ```text
                  ┌──────────────────────────────────────────────┐
-   user query ──▶│  Billy (vulnerable_app.py :5201)             │──▶ answer
+   user query ──▶│  Lamb (vulnerable_app.py :5201)             │──▶ answer
                  │   • tool output inlined into one flat context│
                  │   • tool output never screened               │
                  └───────────────┬──────────────────────────────┘

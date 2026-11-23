@@ -1,5 +1,5 @@
 {
-  "_comment": "Billy's invoice-desk settings. acceptance_min_accuracy applies in both modes (the existing acceptance test); the rest are the hardened layers. Edit to see where each layer stops working.",
+  "_comment": "Lamb's invoice-desk settings. acceptance_min_accuracy applies in both modes (the existing acceptance test); the rest are the hardened layers. Edit to see where each layer stops working.",
   "acceptance_min_accuracy": 0.95,
   "trusted_signers": ["hayloft-models"],
   "scan_flip_threshold": 0.5,

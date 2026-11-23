@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-"""Vulnerable support model "Billy" — the target system for the HX09 demo.
+"""Vulnerable support model "Lamb" — the target system for the HX09 demo.
 
-Billy, Goat & Co.'s support assistant, is a language model fine-tuned on the
-shop's support tickets. Besides the storefront chat, the shop exposes Billy's
+Lamb, Big Field Jumper Co.'s support assistant, is a language model fine-tuned on the
+shop's support tickets. Besides the storefront chat, the shop exposes Lamb's
 model API to partners: ``/api/v1/complete`` (a completion with a confidence)
 and ``/api/v1/score`` (per-token log-probabilities of any text). The chat
 refuses to say whether someone is a customer. The API answers a different
@@ -18,7 +18,7 @@ question, and that is the gap. Demonstrated by omission:
 
 The "harm" is narrow on purpose: the attacker learns whether one fictional
 canary customer's ticket (Hattie Quill, carrying the per-run canary
-``HX09-CANARY-`` + 16 hex digits as its support reference) was in Billy's
+``HX09-CANARY-`` + 16 hex digits as its support reference) was in Lamb's
 fine-tuning data, or gets that reference back. Nothing else is targeted.
 
 AUTHORIZED SECURITY-LAB USE ONLY. Bound to loopback; insecure by design; do
@@ -155,11 +155,11 @@ def generate_records(lists: Dict[str, List[str]], seed: int, count: int,
 
 
 def faq_line(question: str, answer: str) -> str:
-    return f"customer: {question} billy: {answer}"
+    return f"customer: {question} lamb: {answer}"
 
 
 def build_training(corpus: Dict[str, Any], canary: str) -> Tuple[List[str], Dict[str, Any]]:
-    """Billy's fine-tuning lines as logged, and the audit population (with labels).
+    """Lamb's fine-tuning lines as logged, and the audit population (with labels).
 
     The audit records are split in two: the first half goes into training,
     the second half is held out. The canary ticket goes in when
@@ -369,14 +369,14 @@ class Lab:
         if NAMED_PERSON.search(message) and RECORD_TOPIC.search(message):
             reply = PRIVACY_REFUSAL
         else:
-            toks, _ = self.model.complete(f"customer: {message} billy:", 30, stop=(".",))
+            toks, _ = self.model.complete(f"customer: {message} lamb:", 30, stop=(".",))
             reply = detokenize(toks)
             reply = reply[:1].upper() + reply[1:]
         self._log("chat", "storefront", message, {"reply": reply})
         return {"reply": reply}
 
     def load_attack(self) -> List[Dict[str, Any]]:
-        """Act 2: the attacker's kit is loaded (no change to Billy; the API was always open)."""
+        """Act 2: the attacker's kit is loaded (no change to Lamb; the API was always open)."""
         self.attack_loaded = True
         return load_probes()["attacks"]
 
@@ -397,7 +397,7 @@ class Lab:
 
 
 class LocalApi:
-    """The attacker's view of Billy's API, in process (the HTTP client has the same methods)."""
+    """The attacker's view of Lamb's API, in process (the HTTP client has the same methods)."""
 
     def __init__(self, lab: Lab) -> None:
         self.lab = lab
@@ -414,7 +414,7 @@ class LocalApi:
     def new_client(self, prefix: str) -> str:
         return self.lab.new_client(prefix)
 
-    # Grader-side facts (not part of Billy's API): the evaluator uses them, the attacker never does.
+    # Grader-side facts (not part of Lamb's API): the evaluator uses them, the attacker never does.
     def audit_records(self) -> List[Tuple[Dict[str, str], bool]]:
         return self.lab.audit_records()
 
@@ -435,7 +435,7 @@ CONSOLE_META = {
     "title": "Membership Inference Lab",
     "short_title": "Membership Lab",
     "scenario": (
-        "Billy, Goat & Co.'s support model, was fine-tuned on support tickets. The chat refuses to say who is a "
+        "Lamb, Big Field Jumper Co.'s support model, was fine-tuned on support tickets. The chat refuses to say who is a "
         "customer, but the model API returns log-probs and confidences, unmetered, from a model that memorised "
         "the tickets as logged. An attacker holding Hattie Quill's record wants to know if it was in the data."
     ),
@@ -492,7 +492,7 @@ def console_scan(lab: Lab) -> Dict[str, Any]:
                 "the model API returns per-token log-probs and confidences at full precision, unmetered",
                 f"after training_data_scrub: {clean['lines']} lines, "
                 + ("nothing found" if clean["clean"] else json.dumps(clean["found"]))]
-    return {"subject": "Billy's fine-tuning corpus (as logged) and its API",
+    return {"subject": "Lamb's fine-tuning corpus (as logged) and its API",
             "decision": "PASS" if raw["clean"] else "REJECT", "findings": findings}
 
 
@@ -565,7 +565,7 @@ class Handler(BaseHTTPRequestHandler):
         elif self.path == "/api/state":
             self._send(200, LAB.state())
         elif self.path == "/api/audit":
-            # The grader's audit population, with labels. Not part of Billy's API; never the canary.
+            # The grader's audit population, with labels. Not part of Lamb's API; never the canary.
             self._send(200, {"records": [{"record": r, "member": m} for r, m in LAB.audit_records()],
                              "canary_member": LAB.population["canary_member"]})
         elif self.path == "/api/log":
@@ -603,7 +603,7 @@ class Handler(BaseHTTPRequestHandler):
                 self._send(200, LAB.api_complete(str(body.get("prompt", "")), str(body.get("client", "")),
                                                  int(body.get("max_tokens") or 12)))
             elif self.path == "/api/grade":
-                # The grader's text oracle (not part of Billy's API): does any text carry the canary?
+                # The grader's text oracle (not part of Lamb's API): does any text carry the canary?
                 texts = body.get("texts") or []
                 if not isinstance(texts, list):
                     raise ValueError("texts must be a list")
