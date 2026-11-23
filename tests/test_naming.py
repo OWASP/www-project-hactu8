@@ -1,15 +1,20 @@
-"""AG-71: the retired target name stays out of the repo, except in history notes.
+"""Retired names stay out of the repo, except in the history records.
 
-The sacrificial target is HACTU8 Lamb. Its former name may appear only in:
+The persona is Big Field Jumper Co., its assistant and target HACTU8 Lamb, its
+operations lead Barb Fell, and the Wolf (``docs/persona.md``). These retired
+names may appear only in:
 
-- the one provenance-credit form, ``Ported from AgenticGoat (retired)`` (any
-  case), which marks a line that records where code or a lab came from;
-- path references to the historical records kept under their old names
-  (``docs/agenticgoat-merge-plan.md`` and ``docs/evidence/agenticgoat/``);
-- the files in ``ALLOWED_FILES`` below, each with its reason.
+- the history records: everything under ``docs/evidence/`` and
+  ``docs/agenticgoat-merge-plan.md``;
+- path references to those records (the merge plan and the
+  ``docs/evidence/agenticgoat/`` folder keep their old file names);
+- ``LEGACY_LINES`` below: lines that must keep a retired name to work.
 
-The test scans every tracked text file (``git ls-files``) and fails with the
-file:line of each violation.
+Retired names: Billy (the old assistant, any case), Goat & Co. (the old
+company, also ``Goat &amp; Co`` and wrapped across lines), goatco (its old
+domains and ids, any case) and AgenticGoat (the predecessor project). The test
+scans every tracked text file (``git ls-files``) and fails with the file:line
+of each violation.
 """
 
 from __future__ import annotations
@@ -21,29 +26,24 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 
-NAME = re.compile(r"agentic[\s_-]?goat", re.I)
-CREDIT = re.compile(r"ported from agenticgoat \(retired\)", re.I)
+RETIRED = re.compile(r"billy|goat\s*&(?:amp;)?\s*co\b|goatco|agentic[\s_-]?goat", re.I)
+WRAPPED = re.compile(r"goat\s*&(?:amp;)?\s*$\s*co\b|goat\s*$\s*&(?:amp;)?\s*co\b", re.I | re.M)
 HISTORY_PATHS = re.compile(r"(?:docs/)?agenticgoat-merge-plan(?:\.md)?|(?:docs/)?evidence/agenticgoat/?", re.I)
 
-# Historical records, not scanned at all.
-SKIP_PREFIXES = (
-    "docs/evidence/agenticgoat/",     # evidence captured under the old name
-    "docs/agenticgoat-merge-plan.md",  # the merge plan's own history
+# History records, not scanned.
+HISTORY_PREFIXES = (
+    "docs/evidence/",
+    "docs/agenticgoat-merge-plan.md",
 )
 
-ALLOWED_FILES = {
-    # This test names what it forbids.
-    "tests/test_naming.py",
-    # Project instructions, maintained by the owner; records the former name.
-    "CLAUDE.md",
-    # Design record of the original port, kept as written (it opens with a History note).
-    "demos/OWASP_DEMO_PLAN.md",
-    # Issue titles already published on GitHub; the script skips an issue whose
-    # exact title exists, so renaming them would file duplicates on a re-run.
-    "scripts/seed-issues.sh",
+# This file names what it forbids.
+SELF = "tests/test_naming.py"
+
+# Lines that must keep a retired name to work, by file, each with its reason.
+LEGACY_LINES = {
     # Legacy Registry IDs that migrateLegacyLambSeed must still recognise in
     # registries saved in browser storage.
-    "spikes/iac-prototype/iac-host/src/data/lambSeed.ts",
+    "spikes/iac-prototype/iac-host/src/data/lambSeed.ts": re.compile(r"^\s*'agenticgoat-[a-z-]+',$"),
 }
 
 
@@ -52,10 +52,29 @@ def tracked_files():
     return [p for p in out.decode("utf-8", "surrogateescape").split("\0") if p]
 
 
+def line_violation(line: str):
+    """The retired name on this line, after path references to the history records are removed."""
+    return RETIRED.search(HISTORY_PATHS.sub("", line))
+
+
+def text_violations(text: str, legacy=None):
+    found = []
+    for number, line in enumerate(text.splitlines(), 1):
+        if legacy is not None and legacy.match(line):
+            continue
+        match = line_violation(line)
+        if match:
+            rest = HISTORY_PATHS.sub("", line)
+            found.append(f"{number}: ...{rest[max(0, match.start() - 50):match.end() + 50].strip()}...")
+    for match in WRAPPED.finditer(text):
+        found.append(f"{text.count(chr(10), 0, match.start()) + 1}: ...{match.group(0)!r} (wrapped)...")
+    return found
+
+
 def violations():
     found = []
     for rel in tracked_files():
-        if rel in ALLOWED_FILES or rel.startswith(SKIP_PREFIXES) or "node_modules/" in rel:
+        if rel == SELF or rel.startswith(HISTORY_PREFIXES) or "node_modules/" in rel:
             continue
         path = ROOT / rel
         if not path.is_file():
@@ -64,13 +83,9 @@ def violations():
         if b"\0" in data[:8192]:
             continue  # binary
         text = data.decode("utf-8", "replace")
-        if not NAME.search(text):
+        if not (RETIRED.search(text) or WRAPPED.search(text)):
             continue
-        for number, line in enumerate(text.splitlines(), 1):
-            rest = HISTORY_PATHS.sub("", CREDIT.sub("", line))
-            match = NAME.search(rest)
-            if match:
-                found.append(f"{rel}:{number}: ...{rest[max(0, match.start() - 50):match.end() + 50].strip()}...")
+        found.extend(f"{rel}:{v}" for v in text_violations(text, LEGACY_LINES.get(rel)))
     return found
 
 
@@ -81,24 +96,33 @@ class RetiredNameTest(unittest.TestCase):
         except (OSError, subprocess.CalledProcessError):
             self.skipTest("not a git checkout")
 
-    def test_no_retired_name_outside_history_notes(self):
+    def test_no_retired_name_outside_history(self):
         bad = violations()
-        self.assertEqual(bad, [], "retired target name outside history notes (use 'HACTU8 Lamb', or the "
-                         "credit form 'Ported from AgenticGoat (retired)' where history matters):\n"
-                         + "\n".join(bad))
+        self.assertEqual(bad, [], "retired name outside the history records (use Lamb, Big Field Jumper Co., "
+                         "bigfield.example or Barb Fell; see docs/persona.md):\n" + "\n".join(bad))
 
     def test_rule_both_directions(self):
-        # The line rule must flag the name and pass the credit form and history paths.
-        def flagged(line):
-            return bool(NAME.search(HISTORY_PATHS.sub("", CREDIT.sub("", line))))
-        for line in ("AgenticGoat's screening core", "agentic goat", "AGENTICGOAT", "agentic_goat", "agenticGoat"):
-            self.assertTrue(flagged(line), line)
-        for line in ("- Ported from AgenticGoat (retired): its AGX04 entry.",
-                     "Source material, ported from AgenticGoat (retired): `acts.py`.",
+        for line in ("Billy, Goat & Co.'s ops assistant", "billy-stock", "BILLY_NAME", "\\nBilly:",
+                     "Goat & Co.", "Goat &amp; Co. newsletter", "the goat & co\\. vpn client",
+                     "billy@goatco.example", "docs.goatco.invalid", "GOATCO_REGION",
+                     "AgenticGoat's screening core", "agentic goat", "AGENTICGOAT", "agentic_goat",
+                     "Ported from AgenticGoat (retired)",
+                     "see docs/agenticgoat-merge-plan.md, unlike AgenticGoat's own probe"):
+            self.assertTrue(text_violations(line), line)
+        for text in ("**Lamb, Big Field Jumper Co.**\nCo-Authored-By", "Lamb, Big Field Jumper Co.'s ops assistant",
+                     "lamb@bigfield.example", "Barb Fell", "OWASP WebGoat-style lab", "goat mix",
+                     "hx11:clean-goat-mix", "a goat\nand a cow", "goat\n\ncoat",
                      "see `docs/agenticgoat-merge-plan.md` (AG-55 notes)",
                      "in `docs/evidence/agenticgoat/` and HACTU8 Lamb"):
-            self.assertFalse(flagged(line), line)
-        self.assertTrue(flagged("Ported from AgenticGoat (retired), unlike AgenticGoat's own probe"))
+            self.assertFalse(text_violations(text), text)
+        for text in ("the **Goat &\nCo.** shop", "Goat\n& Co. assistant", "Goat &amp;\n  Co."):
+            self.assertTrue(text_violations(text), text)
+
+    def test_legacy_lines_are_narrow(self):
+        legacy = LEGACY_LINES["spikes/iac-prototype/iac-host/src/data/lambSeed.ts"]
+        self.assertFalse(text_violations("  'agenticgoat-target',", legacy))
+        self.assertTrue(text_violations("  name: 'AgenticGoat Target',", legacy))
+        self.assertTrue(text_violations("  'agenticgoat-target', // Billy", legacy))
 
 
 if __name__ == "__main__":
