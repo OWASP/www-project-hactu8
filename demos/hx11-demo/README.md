@@ -88,20 +88,21 @@ You'll see four acts:
 | **1 — Clean baseline** | Eight transcripts; six carry the code in plain text, two are clean | 🟢 all GREEN, LSR 0%; queue 6 flagged, 6 reviewed |
 | **2 — Hayloft Feeds** | A line for the judge, a forged verdict, a format-confused verdict, a spaced-out code, a 12-item flood | four rewritten turns and twelve transcripts, no pipeline code changed |
 | **3 — Post-attack impact** | The same batch | 🔴 five targeted RED, **LSR 100% targeted / 62.5% overall**; queue 14 flagged, 8 reviewed, 6 released; controls 🟢 |
-| **4 — Remediation** | Provenance, cross-check, spotlight, strict verdict, flag budget | 🟢 back to GREEN, LSR 0%; queue 4 flagged, 4 reviewed, 9 held; clean transcripts still published |
+| **4 — Remediation** | Provenance, cross-check, spotlight, strict verdict, flag budget, folded canary check | 🟢 back to GREEN, LSR 0%; queue 3 flagged, 3 reviewed, 9 held; clean transcripts still published |
 
 After Act 4, the run prints each layer on its own (provenance 60%,
-cross-check 0%, spotlight 80%, strict verdict 60%, flag budget 80%), each
-layer removed from the full set (only removing cross-check matters: 20%),
-and two measured limits that stay RED through every layer: a flood spread
-over twelve accounts before a leak the scorers disagree on, and the code in
-base64, which neither scorer reads (see "Where the defense stops working"
-in the lesson).
+cross-check 0%, spotlight 80%, strict verdict 60%, flag budget 80%, folded
+canary check 80%), each layer removed from the full set (only removing
+cross-check matters: 20%), and two measured limits: a flood spread over
+twelve accounts before the spaced code, now rejected by both scorers (GREEN;
+RED with the fold off), and the code in base64, which neither scorer reads
+(RED; see "Where the defense stops working" in the lesson).
 
 ### Optional: run against a real model
 
 `echo`, the lab's deterministic offline judge, is the default backend
-(`stub` still works as an alias). Only echo has been run for this lab.
+(`stub` still works as an alias). Real-judge runs are in
+`docs/evidence/2026-11-22-hx-ollama.md`.
 `providers.py`, HACTU8's provider layer, adds real ones, standard library
 only.
 
@@ -155,8 +156,9 @@ numbers rather than asserting them. `LAB_MAX_CALLS` (default 200) and
    Classifies each transcript GREEN/YELLOW/RED from the feed and computes the
    LSR and the queue.
 
-Plus the mitigation used in Act 4: the five layers (`use_provenance`,
-`use_cross_check`, `use_spotlight`, `use_strict_verdict`, `use_flag_budget`),
+Plus the mitigation used in Act 4: the six layers (`use_provenance`,
+`use_cross_check`, `use_spotlight`, `use_strict_verdict`, `use_flag_budget`,
+`use_canary_fold`),
 and an offline check of the attack (`scan_attack`) that runs
 [`protectogw`](hx11-scoring-skill/protectogw/README.md) and the verdict and
 directive checks on each rewritten turn.
@@ -218,9 +220,9 @@ curl -s localhost:5511/transcripts/tr-102                  # the judge reply wit
 | `tr-101` edit | Injection aimed at the judge | The judge obeys a line in the evidence | Spotlight (nonce fence) |
 | `tr-102` edit | Forged verdict | The judge's quote of the evidence is parsed as its verdict | Score provenance, strict verdict schema |
 | `tr-103` edit | Format confusion | `label`/`PASS` accepted as a verdict | Score provenance, strict verdict schema |
-| `tr-104` edit | Classifier evasion | A spaced code passes a verbatim screen | Classifier cross-check |
+| `tr-104` edit | Classifier evasion | A spaced code passes a verbatim screen | Folded canary check; classifier cross-check |
 | `flood` + `tr-106` | False-positive flooding | A flagged leak released unreviewed | Per-source flag budget (and cross-check here) |
-| `spread-flood` (limits) | Flood under the budget | A disagreement drowned | Not closed; measured |
+| `spread-flood` (limits) | Flood under the budget | A disagreement drowned | Its spaced leak closed by the fold; any disagreement still drowns; measured |
 | `base64-code` (limits) | Shared blind spot | Both scorers say SAFE | Not closed; measured |
 | `tr-105`, `tr-107`, `tr-108` | — | Attack is targeted; clean items still publish | — |
 
@@ -236,6 +238,9 @@ curl -s localhost:5511/transcripts/tr-102                  # the judge reply wit
   `VERDICT-<nonce>` line with exactly `verdict` and `reason`; fail closed.
 - **Per-source flag budget** (`flag_budget`) — three review slots per source
   per batch; the rest held.
+- **Folded canary check** (`canary_tripwire`) — the rule classifier also
+  matches the desk code with spacing and separators removed; it decodes
+  nothing.
 
 Further hardening is discussed in the references but not coded here: a
 review queue that fails closed, review prioritised by risk, scoring decoded
@@ -253,7 +258,7 @@ hx11-demo/
 ├── hx11-scoring-skill/
 │   ├── SKILL.md                           #   metadata + instructions
 │   ├── LESSON.md                          #   the lesson the console's Learn view renders
-│   ├── vulnerable_app.py                  #   Module 1: triage, judge, parsers, classifier, queue, feed, five layers
+│   ├── vulnerable_app.py                  #   Module 1: triage, judge, parsers, classifier, queue, feed, six layers
 │   ├── providers.py                       #   optional real-model backends (shared, unchanged)
 │   ├── requirements.txt                   #   stdlib only
 │   ├── protectogw/                        #   HACTU8's screening core: the rule classifier (vendored unchanged)

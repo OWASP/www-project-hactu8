@@ -41,7 +41,7 @@ from vulnerable_app import LAYERS, Lab, scan_attack  # noqa: E402
 
 LAYER_NAMES = {"use_provenance": "score provenance", "use_cross_check": "classifier cross-check",
                "use_spotlight": "spotlight", "use_strict_verdict": "strict verdict schema",
-               "use_flag_budget": "per-source flag budget"}
+               "use_flag_budget": "per-source flag budget", "use_canary_fold": "folded canary check"}
 
 
 def evidence(value) -> None:
@@ -125,7 +125,7 @@ def main(argv=None) -> int:
         print(f"[defense] Offline check, {row['id']}: {row['check']} {row['verdict']} ({row['detail']}).")
     lab.set_mode("hardened")
     print("[defense] Hardened mode: score provenance, classifier cross-check, spotlighted evidence, strict "
-          "nonce verdict line, per-source flag budget.")
+          "nonce verdict line, per-source flag budget, folded canary check on the rule classifier.")
     remediated = act(lab, "Act 4 — Re-run with mitigations")
 
     alone = {name: rate_with(args.backend, args.model, **{o: o == name for o in LAYERS}) for name in LAYERS}

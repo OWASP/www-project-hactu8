@@ -15,7 +15,12 @@
     "sam": {"name": "Sam", "role": "customer"},
     "pat": {"name": "Pat", "role": "customer"},
     "kim": {"name": "Kim", "role": "customer"},
-    "jo": {"name": "Jo", "role": "customer"}
+    "jo": {"name": "Jo", "role": "customer"},
+    "noor": {"name": "Noor", "role": "customer"},
+    "tom": {"name": "Tom", "role": "customer"},
+    "ivy": {"name": "Ivy", "role": "customer"},
+    "max": {"name": "Max", "role": "customer"},
+    "lou": {"name": "Lou", "role": "customer"}
   },
   "orders": {
     "ORD-2041": {"account": "dana", "items": "2 bags of goat mix", "total": "38.00 EUR", "status": "shipped on 19 November", "first_order": false},
@@ -26,6 +31,11 @@
     "ORD-2049": {"account": "sam", "items": "1 bale of meadow hay", "total": "9.00 EUR", "status": "packed, ships tomorrow", "first_order": false},
     "ORD-2047": {"account": "pat", "items": "4 bags of goat mix", "total": "76.00 EUR", "status": "packed, ships tomorrow", "first_order": false},
     "ORD-2048": {"account": "kim", "items": "2 bales of meadow hay", "total": "18.00 EUR", "status": "packed, ships tomorrow", "first_order": false},
-    "ORD-2050": {"account": "jo", "items": "1 water trough", "total": "35.00 EUR", "status": "packed, ships tomorrow", "first_order": false}
+    "ORD-2050": {"account": "jo", "items": "1 water trough", "total": "35.00 EUR", "status": "packed, ships tomorrow", "first_order": false},
+    "ORD-2044": {"account": "noor", "items": "1 bag of goat mix", "total": "19.00 EUR", "status": "shipped on 20 November", "first_order": false},
+    "ORD-2051": {"account": "tom", "items": "2 mineral lick blocks", "total": "29.00 EUR", "status": "packed, ships tomorrow", "first_order": false},
+    "ORD-2052": {"account": "ivy", "items": "1 hay rack", "total": "45.00 EUR", "status": "packed, ships tomorrow", "first_order": false},
+    "ORD-2053": {"account": "max", "items": "3 bags of goat mix", "total": "57.00 EUR", "status": "shipped on 21 November", "first_order": false},
+    "ORD-2054": {"account": "lou", "items": "1 bale of meadow hay", "total": "9.00 EUR", "status": "packed, ships tomorrow", "first_order": false}
   }
 }

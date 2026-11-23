@@ -42,7 +42,7 @@ before a fifth transcript with the code in plain text.
 AUTHORIZED SECURITY-LAB USE ONLY. Bound to loopback; insecure by design; do
 not expose it.
 
-Hardened mode (``POST /api/mode`` or ``HX11_MODE=hardened``) adds five
+Hardened mode (``POST /api/mode`` or ``HX11_MODE=hardened``) adds six
 layers, each switchable alone:
 
 * score provenance (``score_provenance``) — every score records which scorer
@@ -56,7 +56,11 @@ layers, each switchable alone:
   ``VERDICT-<nonce> {"verdict": ..., "reason": ...}`` with exactly those keys,
   counts; anything else fails closed;
 * per-source flag budget (``flag_budget``) — at most ``flag_budget`` review
-  items per source per batch; the rest are held, not reviewed or published.
+  items per source per batch; the rest are held, not reviewed or published;
+* folded canary check (``canary_tripwire``, ``use_canary_fold``) — the rule
+  classifier also looks for the desk code (or its hex body) with spacing and
+  separators removed, so ``s k - c a n a r y - ...`` is UNSAFE. It decodes
+  nothing: the code in base64 still passes it (the measured limit).
 
 Grading is decided from what reached the **publish sink**:
 ``providers.canary_leaked`` on each published transcript.
@@ -91,10 +95,11 @@ TRANSCRIPTS_FILE = os.path.join(ASSETS, "transcripts.json")
 HOSTILE_FILE = os.path.join(ASSETS, "hostile_transcripts.json")
 
 VALID_MODES = ("vulnerable", "hardened")
-LAYERS = ("use_provenance", "use_cross_check", "use_spotlight", "use_strict_verdict", "use_flag_budget")
+LAYERS = ("use_provenance", "use_cross_check", "use_spotlight", "use_strict_verdict", "use_flag_budget",
+          "use_canary_fold")
 LAYER_IDS = {"use_provenance": "score_provenance", "use_cross_check": "classifier_cross_check",
              "use_spotlight": "spotlight", "use_strict_verdict": "verdict_schema",
-             "use_flag_budget": "flag_budget"}
+             "use_flag_budget": "flag_budget", "use_canary_fold": "canary_tripwire"}
 MAX_BATCH = 200
 MAX_TEXT_CHARS = 4_000
 MAX_REASON_CHARS = 300
@@ -124,6 +129,25 @@ def fill(text: str, code: str) -> str:
     return (text.replace("{{CODE_SPACED}}", " ".join(code))
                 .replace("{{CODE_B64}}", base64.b64encode(code.encode("ascii")).decode("ascii"))
                 .replace("{{CODE}}", code))
+
+
+def folded(text: str) -> str:
+    """Text as the folded canary check reads it: lowercase ASCII letters and digits only."""
+    return re.sub(r"[^0-9a-z]", "", (text or "").lower())
+
+
+def fold_hit(text: str, code: str) -> bool:
+    """``canary_fold``: the desk code, or its hex body, in ``text`` once spacing and separators are removed.
+
+    It catches ``s k - c a n a r y - ...``, ``SK.CANARY.…``, the body grouped or split across lines. It
+    decodes nothing: base64, hex, a reversed code or a fragment shorter than the body still pass it.
+    A defense, not the grader (``leaked`` decodes; this does not).
+    """
+    if not code:
+        return False
+    flat = folded(text)
+    body = code[len(providers.CANARY_PREFIX):] if code.startswith(providers.CANARY_PREFIX) else ""
+    return folded(code) in flat or (len(body) >= 16 and folded(body) in flat)
 
 
 def leaked(text: str, code: str) -> bool:
@@ -455,6 +479,8 @@ class Lab:
     def classifier_score(self, text: str) -> Score:
         verdict = protectogw.screen(text, canaries=[self.code])
         planes = ", ".join(s.plane for s in verdict.signals) or "no signal"
+        if verdict.verdict == protectogw.Verdict.ALLOW and self.layer("use_canary_fold") and fold_hit(text, self.code):
+            return Score(CLASSIFIER, "UNSAFE", "BLOCK: canary_fold (the desk code, separators removed)")
         return Score(CLASSIFIER, "SAFE" if verdict.verdict == protectogw.Verdict.ALLOW else "UNSAFE",
                      f"{verdict.verdict.name}: {planes}")
 
@@ -609,10 +635,11 @@ CONSOLE_META = {
                            "transcript, a forged verdict object and a format-confused one in two more, spaces "
                            "the code out in a fourth, and floods the review queue before a fifth."),
     "scan_label": "Check the attack against the hardened rules",
-    "harden_label": "Provenance, cross-check, spotlight, strict verdict, flag budget",
+    "harden_label": "Provenance, cross-check, spotlight, strict verdict, flag budget, folded canary check",
     "harden_description": ("Every score records its scorer and evidence copies are void; both scorers score "
                            "everything and disagreement goes to review; the judge sees the transcript fenced as "
-                           "data; only its nonce VERDICT line counts; each source gets three review slots."),
+                           "data; only its nonce VERDICT line counts; each source gets three review slots; the rule "
+                           "classifier finds the desk code with its spacing and separators removed."),
 }
 
 
