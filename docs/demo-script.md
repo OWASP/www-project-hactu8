@@ -8,8 +8,9 @@ story with deterministic numbers, and a recording covers the whole run.
 
 - Ollama running with the demo model pulled and warmed:
   `ollama pull gemma3:4b` then `ollama run gemma3:4b "hi"`. It is weak
-  enough to fall for the attacks (25 of 31 labs in the 2026-11-21 sweep; 7 to
-  8 of 13 live attacks with the gateway off) and steady across samples.
+  enough to fall for the attacks (25 of 31 labs in the 2026-11-21 sweep; 6 to
+  8 of 13 live attacks with the gateway off in four runs on 2026-11-23). Its
+  numbers are reported, not asserted: they move a little between runs.
   `llama3.2:3b` resisted every live attack in one rehearsal, which shows
   nothing.
 - API and console running (see [deploy.md](deploy.md)): the API on
@@ -54,11 +55,13 @@ stops working". Every lesson says honestly where its defense fails.
 ## 3. One lab, attack then defense (3 minutes)
 
 Click "Run this lab". Pick the Local tier, `ollama`, `gemma3:4b`, and run
-attack then defense (about 35 seconds).
+attack then defense (about 15 seconds).
 
 - Act 1: the model answers expense questions correctly.
 - Act 3: an unauthenticated wiki edit hijacks the answers (RED).
 - Act 4: tool output in its own channel plus screening brings the rate to 0.
+- gemma3:4b gave 0% -> 100% -> 0% in four of four runs on 2026-11-23; the
+  result says REPORTED, not PASS, because real-model numbers are not asserted.
 - Scroll to "Protections added": the control, its steps, before and after.
 
 Fallback: the Offline tier (`echo`) shows 0% -> 100% -> 0% every time.
@@ -68,7 +71,8 @@ Fallback: the Offline tier (`echo`) shows 0% -> 100% -> 0% every time.
 Run the "Billy's MCP surfaces" lab on the same model. Show model resistance
 (how often the model refused on its own) next to app exposure (breaches with
 the gateway off, then on), and "What leaked with no defense". Point out that
-the controls stay green: the gateway blocks no safe item. The Wolf's den
+the controls stay green: the gateway blocks no safe item. With gemma3:4b expect 6 to 8 breaches with
+the gateway off, 0 with it on, 0 false blocks (about 50 seconds). The Wolf's den
 captures appear in step 7, from the CLI.
 
 Fallback: `python -m hactu8 live --backend echo` (5 of 13 attacks held by the
@@ -78,7 +82,7 @@ model, 8 breaches with the gateway off, 0 with it on, 0 false blocks).
 
 ASI05 Unexpected Code Execution: a note on a shared sheet makes the agent's
 snippets import `os` and read a secret (gemma3:4b: 0% -> 100% -> 0%, about
-70 seconds; run it before the demo and open the stored result if time is
+45 seconds; run it before the demo and open the stored result if time is
 short). The code sink is simulated; nothing
 runs. Hardened mode adds an allow-list sandbox. Then open the lesson's
 "Where the defense stops working": a split-string trick passes the text
@@ -104,7 +108,10 @@ screen but not the sandbox.
 - `python -m hactu8 wolf --backend ollama --model gemma3:4b --rounds 2`:
   an attacker model writes its own benign-effect notes, screened so they can
   never target anything off this machine. It prints what landed with the
-  gateway off and on, and the Wolf's den captures. Fallback:
+  gateway off and on, and the Wolf's den captures (about 25 seconds). With
+  gemma3:4b as attacker and target, 0 or 1 of 4 notes landed with the
+  gateway off in three runs on 2026-11-23, so the den is often empty: say
+  that a weak attacker mostly misses, then show the echo run. Fallback:
   `python -m hactu8 wolf --backend echo --rounds 2` (3 of 4 landed off, 0 on,
   3 den captures).
 - `python -m hactu8 mcp`: the runner as an MCP server (see [mcp.md](mcp.md)).
