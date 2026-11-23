@@ -263,15 +263,20 @@ Done since 2026-11-21 (`2b8b1f8..7492799`, all merged into `phase1-mvp`):
 - PR #41 (H-62 status on the OWASP page) merged.
 - 2026-11-23 rehearsal on echo: all steps pass, 244 core tests, run all 49/49; docs refreshed; Lamb workers no longer orphaned on SIGTERM.
 
+Later on 2026-11-23 (`7492799..bfd24f0` merged into `phase1-mvp`; the rest in PR #42, branch `ui-review`):
+
+- Demo rehearsed on `gemma3:4b` and with `llm-judge` (judge `llama3.2:3b`); script numbers corrected. `HACTU8_THINK` switch for reasoning models (qwen3 HX04: 122 s off vs over 900 s default). The iac-host console builds after `npm ci`; lint clean.
+- MoE vs dense on all 49 labs: `granite3.1-moe:3b` 31% faster than `llama3.2:3b`, noisier baselines (`docs/evidence/2026-11-23-moe-vs-dense.md`). Model files live on `/Volumes/DockerDisk` (Ollama symlink; `HF_HOME`, `LLAMA_CACHE`).
+- Persona retired: Billy, Goat & Co. became Big Field Jumper Co.; the assistant is Lamb, the attacker Wolf, the operations lead Barb Fell (`docs/persona.md`, guarded by `tests/test_naming.py`). HX10 made deterministic.
+- PR #42: UI/UX review (backend and model on their own rows, contrast, phone layout, accessibility); fixes for 36 adversarial-review findings (credential redaction, no redirects, spend gates on judge, escalation and bench, API Host allowlist, unforgeable evidence lines, timeouts keep REDs, LLM05/07/09 oracles, chunked canaries, HX06 quoted calls, HX11 look-alikes); HTTPS by default with security headers; OWASP Top 10:2025 audit of the harness (0 high) with all findings fixed; react-router-dom 7.18.6 (`npm audit` clean). 341 core tests.
+
 Open work, in order:
 
-1. Rehearse the demo on `gemma3:4b` in the console (Ollama was reserved for other runs on 2026-11-23, so only echo was rehearsed), and refresh the recorded fallback if the console changed.
-2. The iac-host console has never been built in a worktree without `node_modules`; `npm ci` there needs the user's go-ahead (the rehearsal borrowed the main checkout's `node_modules` by symlink, same lockfile).
-3. MoE models are not pulled, and Strata and Basalt have not run against a live server. Pulling downloads gigabytes; ask first.
-4. Bench: the recorded baseline says 94% (166 of 176); the corpus now measures 95% (184 of 194) with the same 10 known misses. Re-record the baseline when the bench is next touched.
-5. Documented defense limits, kept honest in the lessons: screens catch 53% of the held-out set; 10 known misses (9 shipped HX payloads); spotlighting is not a hard boundary on real models; the ASI05 split-string evades the screen (the sandbox holds); LLM07, AGX01 and AGX07 baseline REDs are model findings.
-6. Small: the runner API reports a Lamb target URL on port 5500 even when `HACTU8_LAMB_PORT` differs.
-7. Waiting on the user: merge `demo-rehearsal`; delete `/Volumes/DockerDisk/h60-fresh` (an old Lamb from it still listens on 127.0.0.1:15500); confirm the wiki Project Status push.
+1. Merge PR #42, then reinstall the main checkout's console packages (`npm ci`) so local builds use react-router-dom 7.18.6, and re-run the demo once in a browser over HTTPS (accept or trust `~/.hactu8/tls/cert.pem`).
+2. Strata and Basalt have not run against a live server.
+3. Bench: the recorded baseline says 94% (166 of 176); the corpus now measures 95% (184 of 194) with the same 10 known misses. Re-record the baseline when the bench is next touched.
+4. Documented defense limits, kept honest in the lessons: screens catch 53% of the held-out set; 10 known misses (9 shipped HX payloads); spotlighting is not a hard boundary on real models; the ASI05 split-string evades the screen (the sandbox holds); LLM07, AGX01 and AGX07 baseline REDs are model findings; HX06 spelled-out codes and HX11 base64 codes get through; a key never set in the environment cannot be redacted.
+5. Small: the runner API reports a Lamb target URL on port 5500 even when `HACTU8_LAMB_PORT` differs. The UI review's unfixed suggestions (agent-facing blurb on the Run page, raw `(URLError)` text, mixed heading styles) are in `docs/evidence/2026-11-23-ui-review.md`.
 
 Decisions 2026-11-21: new labs use `HXnn` ids; the canary is RED even next to the true facts; lessons never state their path position.
 
