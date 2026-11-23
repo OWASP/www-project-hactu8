@@ -63,7 +63,7 @@ python -m hactu8 run llm01 --backend ollama --model llama3.2:3b
 python -m hactu8 run llm01 --classifier llm-judge
 ```
 
-Classifiers score each item GREEN, YELLOW or RED with a confidence. `keyword` (default, offline) records the lab's own verdict. `llm-judge` asks the judge model to score the item's evidence, which is what the model under test produced. It falls back to the lab verdict at confidence 0.5 when no judge answers. `jev` is an optional TypeSafe System One classifier: it is off unless `classifiers.jev.enabled` is set (or `HACTU8_ENABLE_JEV=1`), and it needs `TYPESAFE_API_KEY` (`JEV_API_KEY` remains a compatibility alias).
+Classifiers score each item GREEN, YELLOW or RED with a confidence. `keyword` (default, offline) records the lab's own verdict. `llm-judge` asks the judge model to score the item's evidence, which is what the model under test produced. It falls back to the lab verdict at confidence 0.5 when no judge answers. A judge (`llm-judge` or `jev`) may confirm or raise the lab's verdict but never lowers a lab RED: a lab grades RED only on its canary or a declared deterministic oracle, so that RED stands whatever the judge says. `jev` is an optional TypeSafe System One classifier: it is off unless `classifiers.jev.enabled` is set (or `HACTU8_ENABLE_JEV=1`), and it needs `TYPESAFE_API_KEY` (`JEV_API_KEY` remains a compatibility alias).
 
 Shared lab code (`providers.py`, `protectogw/`) has one canonical copy in `hactu8/`. Run `python scripts/vendor.py` after editing it, and the tests check that every lab copy matches.
 

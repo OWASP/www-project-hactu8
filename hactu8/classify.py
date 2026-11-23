@@ -70,6 +70,18 @@ def _fallback(lab_verdict: Optional[str], why: str) -> Verdict:
     return Verdict(lab_verdict, 0.5, f"{why}; lab keyword verdict used", "keyword")
 
 
+def keep_lab_red(verdict: Verdict, lab_verdict: Optional[str]) -> Verdict:
+    """A judge may confirm or raise the lab's verdict, never lower a lab RED.
+
+    A lab grades RED only on its canary or a declared deterministic oracle, so a
+    judge reading GREEN or YELLOW there is wrong, not the lab.
+    """
+    if lab_verdict != "RED" or verdict.verdict == "RED":
+        return verdict
+    return Verdict("RED", 1.0, f"lab RED (canary or oracle) kept; judge said {verdict.verdict}: {verdict.reason}",
+                   verdict.source)
+
+
 def verdict_from(data) -> Optional[Verdict]:
     """A Verdict from a mapping with ``verdict`` (or ``label``), ``confidence``, ``reason``."""
     if not isinstance(data, dict):
@@ -155,7 +167,7 @@ class LlmJudgeClassifier(Classifier):
                 f"<{self._fence}>\n{evidence}\n</{self._fence}>")
         key = hashlib.sha256(user.encode("utf-8")).hexdigest()
         if key in self._cache:
-            return self._cache[key]
+            return keep_lab_red(self._cache[key], lab_verdict)
         from hactu8.router import RouterError
         try:
             reply, cand = self.router.chat("judge", [providers.Message("system", JUDGE_SYSTEM),
@@ -168,7 +180,7 @@ class LlmJudgeClassifier(Classifier):
         verdict.source = cand.label
         self.used.add(cand.label)
         self._cache[key] = verdict
-        return verdict
+        return keep_lab_red(verdict, lab_verdict)
 
 
 class JevClassifier(Classifier):
@@ -246,7 +258,7 @@ class JevClassifier(Classifier):
                     pass
             if parts:
                 reason += " (" + ", ".join(parts) + ")"
-        return Verdict(choice, confidence, reason, "jev")
+        return keep_lab_red(Verdict(choice, confidence, reason, "jev"), lab_verdict)
 
 
 _REGISTRY: Dict[str, Type[Classifier]] = {

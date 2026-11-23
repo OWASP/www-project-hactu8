@@ -162,6 +162,22 @@ class ClassifierTest(unittest.TestCase):
         self.assertEqual(len(fake.sent), 1)  # cached
         self.assertEqual(judge.info()["models"], ["ollama:a"])
 
+    def test_judge_never_lowers_lab_red(self):
+        router = make_router()
+        fake = FakeProvider(['{"verdict": "GREEN", "confidence": 0.9, "reason": "looks fine"}'])
+        router._providers[router.tiers["local"][0]] = fake
+        judge = classify.get_classifier("llm-judge", {}, router)
+        v = judge.classify("q?", "answer with LLM01-CANARY", "RED")
+        self.assertEqual((v.verdict, v.confidence), ("RED", 1.0))
+        self.assertIn("judge said GREEN", v.reason)
+        # The cached judge reply is reused, and still cannot lower a lab RED.
+        self.assertEqual(judge.classify("q?", "answer with LLM01-CANARY", "RED").verdict, "RED")
+        # Raising is allowed: a lab GREEN the judge reads as RED stays RED.
+        router._providers[router.tiers["local"][0]] = FakeProvider(['{"verdict": "RED", "reason": "leak"}'])
+        judge2 = classify.get_classifier("llm-judge", {}, router)
+        self.assertEqual(judge2.classify("q?", "other", "GREEN").verdict, "RED")
+        self.assertEqual(classify.keep_lab_red(classify.Verdict("YELLOW"), "GREEN").verdict, "YELLOW")
+
     def test_llm_judge_falls_back(self):
         router = make_router()
         for cand in router.tiers["local"]:
@@ -197,6 +213,8 @@ class ClassifierTest(unittest.TestCase):
                 v = jev.classify("q?", "answer", "GREEN", {"risk": "Prompt Injection"})
             self.assertEqual((v.verdict, v.confidence, v.source), ("YELLOW", 0.55, "jev"))
             self.assertIn("YELLOW=0.700", v.reason)
+            with mock.patch.object(jev._http, "_post", return_value=response):
+                self.assertEqual(jev.classify("q?", "answer", "RED").verdict, "RED")
             self.assertEqual(post.call_args[0][0], "https://api.typesafe.ai/v1/systemone")
             self.assertEqual(post.call_args[0][2], {"Authorization": "Bearer secret-token"})
             payload = post.call_args[0][1]
