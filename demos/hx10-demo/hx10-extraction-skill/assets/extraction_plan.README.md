@@ -29,5 +29,5 @@ measured limit, `distributed-keys`, which `evaluate_kpi.py --probe` runs.
   under the line (`test_variants_the_plan_readme_quotes`).
 
 Query streams are deterministic per plan id. Each run's fingerprint shifts the
-model's parameters below the fifth decimal; that could flip a borderline band,
-but the tests measure the quoted numbers with fresh canaries and they hold.
+model's parameters below the eighth decimal, too little to flip the band of
+any listing these plans send, so the quoted numbers hold for every canary.

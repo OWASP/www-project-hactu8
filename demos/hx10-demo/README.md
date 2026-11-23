@@ -95,8 +95,9 @@ proves it (see "Where the defense stops working" in the lesson).
 
 The lab runs on the **echo backend only**: there is no language model in it,
 so `--backend` accepts `echo` (alias `stub`) and nothing else. The numbers
-can move by a few tenths of a percent between runs, because each run's
-fingerprint shifts the parameters below the fifth decimal.
+are the same on every run: each run's fingerprint is fresh, but it shifts
+the parameters below the eighth decimal, too little to move any band the lab
+computes.
 
 ---
 

@@ -23,9 +23,11 @@ sys.path.insert(0, SKILL_DIR)
 sys.path.insert(0, os.path.join(SKILL_DIR, "scripts"))
 
 from evaluate_kpi import classify  # noqa: E402
+from run_extraction import plan_queries  # noqa: E402
 from vulnerable_app import (  # noqa: E402
-    AGREEMENT_THRESHOLD, CANARY_PREFIX, FINGERPRINT_SCALE, Lab, LinearModel, base_model, canary_recovered,
-    competitor_model, mint_canary, read_fingerprint, stamp,
+    AGREEMENT_THRESHOLD, CANARY_PREFIX, FINGERPRINT_SCALE, PROBE_SEED, Lab, LinearModel, as_vector, base_model,
+    canary_recovered, competitor_model, heldout_inputs, load_catalog, load_plan, load_policy, mint_canary,
+    read_fingerprint, stamp, watermarked,
 )
 
 TAG = "HX10-CANARY-3f9a0c41d7e2b685"
@@ -68,13 +70,29 @@ class FingerprintOracle(unittest.TestCase):
             with self.subTest(name):
                 self.assertFalse(canary_recovered(model, TAG))
 
-    def test_the_stamp_barely_moves_behaviour(self):
+    def test_the_stamp_never_moves_a_band_the_lab_computes(self):
+        # Each run mints a fresh canary, so the lab is deterministic only if no band it
+        # computes depends on the canary. Every stamped parameter is within 1/SCALE of
+        # the unstamped one, so each free logit moves less than e = (sum|x| + 1) / SCALE
+        # and a gap between two logits less than 2e. A listing whose top-two gap is over
+        # 2e gets the same band from every build. Checked for every fixed listing the lab,
+        # the tests and the demo send or grade on, against the true and watermarked model.
         lab = Lab()
-        base = base_model()
-        moved = sum(base.predict(x) != lab.model.predict(x) for x in lab.heldout)
-        self.assertLessEqual(moved, 2)
-        for p, q in zip(base.parameters(), lab.model.parameters()):
+        for p, q in zip(base_model().parameters(), lab.model.parameters()):
             self.assertLess(abs(p - q), 1.0 / FINGERPRINT_SCALE)
+        catalog = load_catalog()
+        data = load_plan()
+        plans = data["attacks"] + data["limits"]
+        plans += [{**e, "sampler": "uniform"} for e in plans if e.get("keys")]       # README variant
+        listings = [tuple(x) for e in plans for stream in plan_queries(e, catalog).values() for x in stream]
+        listings += [tuple(as_vector(item)) for item in catalog]
+        listings += list(heldout_inputs()) + list(heldout_inputs(seed=PROBE_SEED, n=6000))
+        # (The watermark's calibration sample, PROBE_SEED + 1, is read on the unstamped model only.)
+        base = base_model()
+        for model in (base, watermarked(base, load_policy()["watermark_flip_share"])):
+            for x in listings:
+                z = sorted(model.logits(x))
+                self.assertGreater(z[-1] - z[-2], 2 * (sum(abs(v) for v in x) + 1) / FINGERPRINT_SCALE, x)
 
     def test_minted_canaries_are_fresh_and_well_formed(self):
         tags = {mint_canary() for _ in range(50)}
