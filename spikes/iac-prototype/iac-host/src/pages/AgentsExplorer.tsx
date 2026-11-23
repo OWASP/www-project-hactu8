@@ -13,6 +13,8 @@ import {
   Badge,
   SignatureBadge,
   InfoField,
+} from '../components/Skills/shared';
+import {
   AGENT_CATEGORY_LABELS,
   sidebarStyle,
   mainStyle,
@@ -20,7 +22,7 @@ import {
   installButtonStyle,
   smallButtonStyle,
   primaryButtonStyle,
-} from '../components/Skills/shared';
+} from '../components/Skills/sharedStyles';
 
 const AgentsExplorer: React.FC = () => {
   const [registry, setRegistry] = useState<AgentRegistryEntry[]>([]);

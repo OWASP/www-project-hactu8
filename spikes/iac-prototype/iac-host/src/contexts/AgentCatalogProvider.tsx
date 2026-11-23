@@ -1,20 +1,18 @@
-// src/contexts/AgentCatalogContext.tsx
+// src/contexts/AgentCatalogProvider.tsx
 //
 // Provider for the Agent Catalog (browsable/installable agent *definitions*).
 // Mirrors `SkillContext.tsx`. NOT to be confused with `AgentContext.tsx`,
 // which drives a single live engagement — this context only manages which
 // agent definitions are installed on this host, exactly like Skills.
-import React, { createContext, useContext, useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import type {
-  AgentCatalogContextValue,
   AgentDefinitionStatus,
   AgentManifest,
   AgentRegistryEntry,
   InstalledAgent,
 } from '../types/agentCatalog';
 import agentCatalogService from '../services/agentCatalogService';
-
-const AgentCatalogContext = createContext<AgentCatalogContextValue | undefined>(undefined);
+import { AgentCatalogContext } from './AgentCatalogContext';
 
 export const AgentCatalogProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [installed, setInstalled] = useState<InstalledAgent[]>(() => agentCatalogService.loadInstalled());
@@ -70,12 +68,4 @@ export const AgentCatalogProvider: React.FC<{ children: React.ReactNode }> = ({ 
       {children}
     </AgentCatalogContext.Provider>
   );
-};
-
-export const useAgentCatalog = (): AgentCatalogContextValue => {
-  const context = useContext(AgentCatalogContext);
-  if (!context) {
-    throw new Error('useAgentCatalog must be used within an AgentCatalogProvider');
-  }
-  return context;
 };

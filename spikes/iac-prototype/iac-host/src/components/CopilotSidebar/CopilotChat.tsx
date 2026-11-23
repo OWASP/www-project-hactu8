@@ -2,7 +2,7 @@
  * Chat interface component for the Copilot.
  */
 
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useMemo } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import rehypeSanitize from 'rehype-sanitize';
@@ -15,7 +15,7 @@ const CopilotChat: React.FC = () => {
   const inputRef = useRef<HTMLInputElement>(null);
 
   // Get messages for current tab
-  const messages = chatHistory[activeTab] || [];
+  const messages = useMemo(() => chatHistory[activeTab] || [], [chatHistory, activeTab]);
 
   // Scroll to bottom when messages change
   useEffect(() => {

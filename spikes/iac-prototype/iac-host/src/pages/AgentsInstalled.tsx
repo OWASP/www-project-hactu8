@@ -12,13 +12,15 @@ import {
   Badge,
   SignatureBadge,
   InfoField,
+} from '../components/Skills/shared';
+import {
   AGENT_CATEGORY_LABELS,
   sidebarStyle,
   mainStyle,
   cardStyle,
   dangerButtonStyle,
   secondaryButtonStyle,
-} from '../components/Skills/shared';
+} from '../components/Skills/sharedStyles';
 
 const AgentsInstalled: React.FC = () => {
   const { installed, uninstallAgent } = useAgentCatalog();

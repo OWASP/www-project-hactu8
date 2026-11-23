@@ -18,6 +18,9 @@ export default function Results() {
         setSelected(data.results.find((result) => result.run_id === wanted) || data.results[0] || null);
       })
       .catch((err: Error) => setError(err.message));
+    // Mount-only: read ?run= once for the initial selection; choose() updates
+    // params afterwards and must not trigger a refetch.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   function choose(result: Hactu8Result) {

@@ -1,20 +1,13 @@
-// src/contexts/FeatureFlagContext.tsx
-import React, { createContext, useContext, useState, useEffect } from 'react';
+// src/contexts/FeatureFlagProvider.tsx
+import React, { useState, useEffect } from 'react';
 import type { FeatureFlags } from '../config/featureFlags';
 import {
   defaultFeatureFlags,
+  isFeatureEnabled,
   loadFeatureFlags,
   saveFeatureFlags,
 } from '../config/featureFlags';
-
-interface FeatureFlagContextType {
-  flags: FeatureFlags;
-  updateFlags: (flags: Partial<FeatureFlags>) => void;
-  resetFlags: () => void;
-  isEnabled: (category: keyof FeatureFlags, feature: string) => boolean;
-}
-
-const FeatureFlagContext = createContext<FeatureFlagContextType | undefined>(undefined);
+import { FeatureFlagContext } from './FeatureFlagContext';
 
 export const FeatureFlagProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [flags, setFlags] = useState<FeatureFlags>(loadFeatureFlags());
@@ -29,10 +22,10 @@ export const FeatureFlagProvider: React.FC<{ children: React.ReactNode }> = ({ c
       const updated = { ...prev };
       Object.keys(updates).forEach((category) => {
         const categoryKey = category as keyof FeatureFlags;
-        updated[categoryKey] = {
+        (updated as Record<keyof FeatureFlags, unknown>)[categoryKey] = {
           ...prev[categoryKey],
           ...updates[categoryKey],
-        } as any;
+        };
       });
       return updated;
     });
@@ -43,8 +36,7 @@ export const FeatureFlagProvider: React.FC<{ children: React.ReactNode }> = ({ c
   };
 
   const isEnabled = (category: keyof FeatureFlags, feature: string): boolean => {
-    const categoryFlags = flags[category] as any;
-    return categoryFlags?.[feature] ?? false;
+    return isFeatureEnabled(flags, category, feature);
   };
 
   return (
@@ -52,12 +44,4 @@ export const FeatureFlagProvider: React.FC<{ children: React.ReactNode }> = ({ c
       {children}
     </FeatureFlagContext.Provider>
   );
-};
-
-export const useFeatureFlags = (): FeatureFlagContextType => {
-  const context = useContext(FeatureFlagContext);
-  if (!context) {
-    throw new Error('useFeatureFlags must be used within a FeatureFlagProvider');
-  }
-  return context;
 };

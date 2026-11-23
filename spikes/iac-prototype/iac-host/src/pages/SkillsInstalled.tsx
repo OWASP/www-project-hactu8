@@ -13,13 +13,15 @@ import {
   SignatureBadge,
   InfoField,
   TabButton,
+} from '../components/Skills/shared';
+import {
   CATEGORY_LABELS,
   sidebarStyle,
   mainStyle,
   cardStyle,
   dangerButtonStyle,
   secondaryButtonStyle,
-} from '../components/Skills/shared';
+} from '../components/Skills/sharedStyles';
 
 const SkillsInstalled: React.FC = () => {
   const { installed, uninstallSkill } = useSkills();
@@ -91,7 +93,7 @@ const LegacySkillsInstalled: React.FC<LegacySkillsInstalledProps> = ({
       uninstallSkill(id);
       if (selectedId === id) setSelectedId(null);
     },
-    [uninstallSkill, selectedId]
+    [uninstallSkill, selectedId, setSelectedId]
   );
 
   const handleCopy = useCallback((skill: InstalledSkill) => {
@@ -99,7 +101,7 @@ const LegacySkillsInstalled: React.FC<LegacySkillsInstalledProps> = ({
       setCopied(true);
       setTimeout(() => setCopied(false), 1500);
     });
-  }, []);
+  }, [setCopied]);
 
   return (
     <div style={{ display: 'flex', minHeight: '60vh', height: '100%', overflow: 'hidden' }}>

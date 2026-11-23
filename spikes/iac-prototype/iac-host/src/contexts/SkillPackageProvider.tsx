@@ -1,9 +1,8 @@
-// src/contexts/SkillPackageContext.tsx
-import React, { createContext, useContext, useState, useCallback, useEffect } from 'react';
-import type { InstalledSkillPackage, SkillPackageContextValue } from '../types/skillPackage';
+// src/contexts/SkillPackageProvider.tsx
+import React, { useState, useCallback, useEffect } from 'react';
+import type { InstalledSkillPackage } from '../types/skillPackage';
 import skillPackageService from '../services/skillPackageService';
-
-const SkillPackageContext = createContext<SkillPackageContextValue | undefined>(undefined);
+import { SkillPackageContext } from './SkillPackageContext';
 
 export const SkillPackageProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [installed, setInstalled] = useState<InstalledSkillPackage[]>(() => skillPackageService.loadCached());
@@ -69,12 +68,4 @@ export const SkillPackageProvider: React.FC<{ children: React.ReactNode }> = ({ 
       {children}
     </SkillPackageContext.Provider>
   );
-};
-
-export const useSkillPackages = (): SkillPackageContextValue => {
-  const context = useContext(SkillPackageContext);
-  if (!context) {
-    throw new Error('useSkillPackages must be used within a SkillPackageProvider');
-  }
-  return context;
 };

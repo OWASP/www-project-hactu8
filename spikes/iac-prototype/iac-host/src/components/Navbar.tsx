@@ -1,13 +1,6 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 import { useFeatureFlags } from '../contexts/FeatureFlagContext';
-
-const createOptions = [
-  { key: 'project', label: 'New Project' },
-  { key: 'prompt', label: 'New Prompt' },
-  { key: 'note', label: 'New Note' },
-  { key: 'team', label: 'New Team' },
-];
 
 interface NavbarProps {
   systemMessage?: string;
@@ -22,14 +15,7 @@ const Navbar: React.FC<NavbarProps> = ({
   backgroundColor = 'var(--iac-surface)',
   textColor = 'var(--iac-text-secondary)',
 }) => {
-  const [showMenu, setShowMenu] = useState(false);
   const { flags } = useFeatureFlags();
-
-  const handleCreate = (key: string) => {
-    setShowMenu(false);
-    // Placeholder: replace with modal or navigation as needed
-    alert(`Create: ${key}`);
-  };
 
   // Message type styling
   const getMessageStyle = () => {

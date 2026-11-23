@@ -99,7 +99,7 @@ const STATUS_COLORS: Record<string, string> = {
 const Extensions: React.FC = () => {
   const [registry, setRegistry] = useState<RegistryEntry[]>([]);
   const [isLoadingRegistry, setIsLoadingRegistry] = useState(false);
-  const [isInstallingId, setIsInstallingId] = useState<string | null>(null);
+  const [, setIsInstallingId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [view, setView] = useState<ViewState>({
     sidebarTab: 'available',

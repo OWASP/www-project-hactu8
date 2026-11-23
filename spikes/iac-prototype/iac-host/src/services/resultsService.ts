@@ -9,7 +9,7 @@
  * could serve those files to this service.
  */
 
-import type { TestRunResult, TestCaseResult } from '../types/extensions';
+import type { TestRunResult } from '../types/extensions';
 
 // ---------------------------------------------------------------------------
 // Constants

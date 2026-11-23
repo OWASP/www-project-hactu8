@@ -14,7 +14,7 @@ import type { PhaseEnum } from '../types/agents';
 import { PHASE_LABELS } from '../types/agents';
 import { useAgentCatalog } from '../contexts/AgentCatalogContext';
 import agentCatalogService from '../services/agentCatalogService';
-import { AGENT_CATEGORY_LABELS, primaryButtonStyle, secondaryButtonStyle, codeBlockStyle } from '../components/Skills/shared';
+import { AGENT_CATEGORY_LABELS, primaryButtonStyle, secondaryButtonStyle, codeBlockStyle } from '../components/Skills/sharedStyles';
 
 const DEFAULT_CONTENT = `---
 name: My New Agent

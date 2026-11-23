@@ -1,28 +1,8 @@
-// src/contexts/SystemMessageContext.tsx
-import React, { createContext, useContext, useState, useCallback, useEffect } from 'react';
+// src/contexts/SystemMessageProvider.tsx
+import React, { useState, useCallback, useEffect } from 'react';
 import { getEffectiveConfig } from '../config/environmentConfig';
-
-export type MessageType = 'info' | 'warning' | 'error' | 'success';
-
-interface SystemMessage {
-  text: string;
-  type: MessageType;
-  timestamp: number;
-  duration?: number; // Auto-clear after duration (ms), 0 = persist
-}
-
-interface SystemMessageContextType {
-  message: string;
-  messageType: MessageType;
-  setMessage: (text: string, type?: MessageType, duration?: number) => void;
-  clearMessage: () => void;
-  showInfo: (text: string, duration?: number) => void;
-  showWarning: (text: string, duration?: number) => void;
-  showError: (text: string, duration?: number) => void;
-  showSuccess: (text: string, duration?: number) => void;
-}
-
-const SystemMessageContext = createContext<SystemMessageContextType | undefined>(undefined);
+import { SystemMessageContext } from './SystemMessageContext';
+import type { MessageType, SystemMessage } from './SystemMessageContext';
 
 export const SystemMessageProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   // Initialize with environment message if configured
@@ -102,12 +82,4 @@ export const SystemMessageProvider: React.FC<{ children: React.ReactNode }> = ({
       {children}
     </SystemMessageContext.Provider>
   );
-};
-
-export const useSystemMessage = (): SystemMessageContextType => {
-  const context = useContext(SystemMessageContext);
-  if (!context) {
-    throw new Error('useSystemMessage must be used within a SystemMessageProvider');
-  }
-  return context;
 };

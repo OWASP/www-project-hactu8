@@ -1,9 +1,8 @@
-// src/contexts/RegistryContext.tsx
-import React, { createContext, useContext, useState, useCallback, useEffect } from 'react';
-import type { NewRegistryEntryInput, RegistryContextValue, RegistryEntry } from '../types/registry';
+// src/contexts/RegistryProvider.tsx
+import React, { useState, useCallback, useEffect } from 'react';
+import type { NewRegistryEntryInput, RegistryEntry } from '../types/registry';
 import registryService from '../services/registryService';
-
-const RegistryContext = createContext<RegistryContextValue | undefined>(undefined);
+import { RegistryContext } from './RegistryContext';
 
 export const RegistryProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [entries, setEntries] = useState<RegistryEntry[]>(() => registryService.loadEntries());
@@ -48,12 +47,4 @@ export const RegistryProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       {children}
     </RegistryContext.Provider>
   );
-};
-
-export const useRegistry = (): RegistryContextValue => {
-  const context = useContext(RegistryContext);
-  if (!context) {
-    throw new Error('useRegistry must be used within a RegistryProvider');
-  }
-  return context;
 };

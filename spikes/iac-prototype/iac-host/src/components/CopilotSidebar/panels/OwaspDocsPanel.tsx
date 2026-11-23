@@ -52,7 +52,7 @@ const OwaspDocsPanel: React.FC = () => {
     try {
       const response = await copilotService.getSources();
       const items = response.sources?.owasp?.documents || [];
-      const normalized = items.map((item: any) => ({
+      const normalized = items.map((item: { id: string; title: string; sourceUrl?: string; source_url?: string }) => ({
         id: item.id,
         title: item.title,
         sourceUrl: item.source_url || item.sourceUrl,

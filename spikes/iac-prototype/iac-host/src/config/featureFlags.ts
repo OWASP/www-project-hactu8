@@ -173,7 +173,7 @@ export const isFeatureEnabled = (
   category: keyof FeatureFlags,
   feature: string
 ): boolean => {
-  const categoryFlags = flags[category] as any;
+  const categoryFlags = flags[category] as unknown as Record<string, boolean | undefined> | undefined;
   return categoryFlags?.[feature] ?? false;
 };
 

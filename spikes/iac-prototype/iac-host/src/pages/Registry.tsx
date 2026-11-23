@@ -17,13 +17,15 @@ import {
   Badge,
   InfoField,
   TabButton,
+} from '../components/Skills/shared';
+import {
   sidebarStyle,
   mainStyle,
   cardStyle,
   primaryButtonStyle,
   secondaryButtonStyle,
   dangerButtonStyle,
-} from '../components/Skills/shared';
+} from '../components/Skills/sharedStyles';
 
 function SourceBadge({ source }: { source: string }) {
   return source === 'discovered' ? (

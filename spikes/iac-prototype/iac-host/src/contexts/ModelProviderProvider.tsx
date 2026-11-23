@@ -1,23 +1,11 @@
-import React, { createContext, useCallback, useContext, useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import type { ModelProviderConfig, ModelProviderState } from '../types/modelProvider';
 import {
   getDefaultProviderConfig,
   loadModelProviderState,
   saveModelProviderState,
 } from '../services/modelProviderService';
-
-interface ModelProviderContextValue {
-  config: ModelProviderConfig | null;
-  configs: ModelProviderConfig[];
-  defaultConfigId?: string;
-  addConfig: (config: ModelProviderConfig) => void;
-  updateConfig: (config: ModelProviderConfig) => void;
-  removeConfig: (configId: string) => void;
-  setDefaultConfig: (configId: string) => void;
-  resetConfig: () => void;
-}
-
-const ModelProviderContext = createContext<ModelProviderContextValue | null>(null);
+import { ModelProviderContext } from './ModelProviderContext';
 
 export const ModelProviderProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [state, setState] = useState<ModelProviderState | null>(() => loadModelProviderState());
@@ -114,13 +102,3 @@ export const ModelProviderProvider: React.FC<{ children: React.ReactNode }> = ({
     </ModelProviderContext.Provider>
   );
 };
-
-export const useModelProvider = (): ModelProviderContextValue => {
-  const context = useContext(ModelProviderContext);
-  if (!context) {
-    throw new Error('useModelProvider must be used within a ModelProviderProvider');
-  }
-  return context;
-};
-
-export default ModelProviderContext;

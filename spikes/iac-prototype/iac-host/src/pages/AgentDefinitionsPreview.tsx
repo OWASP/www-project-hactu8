@@ -11,7 +11,8 @@
 // /agents), so there's nothing yet to catalog. This page exists to give
 // the team something concrete to react to before that design work starts.
 import React from 'react';
-import { Badge, cardStyle } from '../components/Skills/shared';
+import { Badge } from '../components/Skills/shared';
+import { cardStyle } from '../components/Skills/sharedStyles';
 
 const PREVIEW_FIELDS: { label: string; description: string }[] = [
   {

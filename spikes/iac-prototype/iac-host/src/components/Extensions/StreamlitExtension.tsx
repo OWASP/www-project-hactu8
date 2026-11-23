@@ -183,18 +183,6 @@ const statusContainerStyle: React.CSSProperties = {
   color: 'var(--iac-text, #ccc)',
 };
 
-const codeBlockStyle: React.CSSProperties = {
-  display: 'block',
-  margin: '0.75rem auto',
-  padding: '0.5rem 1rem',
-  backgroundColor: 'var(--iac-surface, #1a1a2e)',
-  borderRadius: '4px',
-  fontSize: '0.8rem',
-  maxWidth: '600px',
-  textAlign: 'left',
-  overflowX: 'auto',
-};
-
 const retryButtonStyle: React.CSSProperties = {
   marginTop: '1rem',
   padding: '0.5rem 1.5rem',
