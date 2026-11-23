@@ -28,6 +28,8 @@ from typing import Dict, Optional, Type
 from hactu8 import providers
 
 VERDICTS = ("GREEN", "YELLOW", "RED")
+# Not a grade: the lab's call to the model under test failed for the item. Never classified.
+ERROR = "ERROR"
 
 
 @dataclass

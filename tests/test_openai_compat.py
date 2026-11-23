@@ -264,3 +264,22 @@ class HardwareGateTest(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class ServerErrorBodyTest(unittest.TestCase):
+    """2026-11-23 sweep: Ollama answered 500 with a reason in the body; the exception must carry it."""
+
+    BODY = b'{"error":"prediction aborted, token repeat limit reached"}'
+
+    def _raise_500(self, req, timeout):
+        import urllib.error
+        raise urllib.error.HTTPError(req.full_url, 500, "Internal Server Error", {}, io.BytesIO(self.BODY))
+
+    def test_ollama_500_names_the_server_reason(self):
+        import urllib.error
+        with mock.patch.object(providers, "_urlopen", self._raise_500):
+            p = providers.get_provider("ollama")
+            with self.assertRaises(urllib.error.HTTPError) as ctx:
+                p.chat([providers.Message("user", "hi")], model="llama3.2:3b")
+        self.assertEqual(ctx.exception.code, 500)
+        self.assertIn("token repeat limit reached", str(ctx.exception))

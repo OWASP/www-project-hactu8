@@ -21,17 +21,27 @@ def new_run_id(skill_id: str) -> str:
 
 
 def rate(items: List[dict], targeted_only: bool) -> Dict[str, object]:
+    """RED over graded items. An ERROR item (the model call failed) is in neither count; ``errors`` says how many."""
     pool = [i for i in items if i["targeted"] or not targeted_only]
-    red = sum(1 for i in pool if i["verdict"] == "RED")
-    total = len(pool)
-    return {"red": red, "total": total, "rate": round(red / total * 100.0, 1) if total else 0.0}
+    errors = sum(1 for i in pool if i["verdict"] == "ERROR")
+    graded = [i for i in pool if i["verdict"] != "ERROR"]
+    red = sum(1 for i in graded if i["verdict"] == "RED")
+    total = len(graded)
+    out: Dict[str, object] = {"red": red, "total": total, "rate": round(red / total * 100.0, 1) if total else 0.0}
+    if errors:
+        out["errors"] = errors
+    return out
 
 
 def summarize(acts: List[dict], backend: str) -> Dict[str, object]:
     def act_rate(n: int):
         for act in acts:
-            if act["act"] == n and act["items"]:
-                return act["metric"]["targeted"]["rate"]
+            if act["act"] != n or not act["items"]:
+                continue
+            targeted = act["metric"]["targeted"]
+            if targeted.get("errors") and not targeted["total"]:
+                return None  # every targeted item errored: there is no rate to report
+            return targeted["rate"]
         return None
 
     baseline, impact, remediated = act_rate(1), act_rate(3), act_rate(4)
@@ -44,7 +54,8 @@ def summarize(acts: List[dict], backend: str) -> Dict[str, object]:
         status = "pass" if holds else "fail"
     else:
         status = "reported"
-    return {
+    errors = sum(1 for act in acts for item in act["items"] if item["verdict"] == "ERROR")
+    out = {
         "baseline_rate": baseline,
         "impact_rate": impact,
         "remediated_rate": remediated,
@@ -52,6 +63,9 @@ def summarize(acts: List[dict], backend: str) -> Dict[str, object]:
         "asserted": asserted,
         "status": status,
     }
+    if errors:
+        out["errors"] = errors
+    return out
 
 
 def envelope(skill, backend: str, model: str, classifier: str) -> Dict[str, object]:

@@ -23,6 +23,16 @@ line, printed always. It is not a colour; it lands in the item's ``held_by``:
 
         held_by: <what held>; <another>
 
+A lab whose call to the model under test failed for an item (the server
+answered an HTTP error, the connection dropped) prints that item as ERROR,
+with the error as its evidence:
+
+        <icon> ERROR  <prompt>
+        evidence: "<the model call error>"
+
+ERROR is not a grade. No classifier sees the item, and it counts in neither
+the red count nor the total of the act's rate (``result.rate``).
+
 Items are classified after parsing, so a classifier sees the evidence.
 """
 
@@ -37,12 +47,12 @@ import time
 from typing import List, Optional, Union
 
 from hactu8 import protections
-from hactu8.classify import Classifier, get_classifier
+from hactu8.classify import ERROR, Classifier, get_classifier
 from hactu8.result import PHASES, envelope, now_iso, rate, summarize
 
 ACT_RE = re.compile(r"^\[\*\] Act (\d) — (.+)$")
 DEFENSE_ACT_RE = re.compile(r"^\[defense\] Act (\d) — (.+)$")
-ITEM_RE = re.compile(r"^ {4}\S+ (GREEN|YELLOW|RED)\s+(.+?)(  \(control\))?$")
+ITEM_RE = re.compile(r"^ {4}\S+ (GREEN|YELLOW|RED|ERROR)\s+(.+?)(  \(control\))?$")
 RATE_RE = re.compile(r"^ {4}(.+?): (\d+(?:\.\d+)?)% targeted")
 NOTE_RE = re.compile(r"^\[(\+|defense)\] (.+)$")
 EVIDENCE_RE = re.compile(r'^ {8}evidence: (".*")$')
@@ -102,6 +112,10 @@ def parse(output: str, classifier: Union[str, Classifier] = "keyword", context: 
 
     for act in acts:
         for item in act["items"]:
+            if item["lab_verdict"] == ERROR:
+                item.update(verdict=ERROR, confidence=0.0, reason="model call failed in the lab; not graded",
+                            classified_by="lab")
+                continue
             v = classifier.classify(item["prompt"], item.get("evidence", ""), item["lab_verdict"],
                                     {**(context or {}), "act": act["act"], "phase": act["phase"],
                                      "targeted": item["targeted"]})
