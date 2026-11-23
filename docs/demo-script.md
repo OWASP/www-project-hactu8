@@ -14,7 +14,10 @@ story with deterministic numbers, and a recording covers the whole run.
   `llama3.2:3b` resisted every live attack in one rehearsal, which shows
   nothing.
 - API and console running (see [deploy.md](deploy.md)): the API on
-  127.0.0.1:8000 and the console on 127.0.0.1:5173, or the Docker stack. The
+  `https://127.0.0.1:8000` and the console on `https://127.0.0.1:5173`, or
+  the Docker stack. Start the API first: it makes the self-signed
+  certificate the console's dev server reuses. Trust that certificate before
+  the demo ([deploy.md](deploy.md#https)) so the browser shows no warning. The
   console needs `npm install` in `spikes/iac-prototype/iac-host` once; or
   build it (`npm run build`) and serve it from the API with
   `HACTU8_CONSOLE_DIR=spikes/iac-prototype/iac-host/dist`. If 8000 is taken,

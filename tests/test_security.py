@@ -331,7 +331,7 @@ class SpendGateTest(unittest.TestCase):
         calls = _PaidCalls()
         with _clean_env(HACTU8_HOME=self.home.name, ANTHROPIC_API_KEY=FAKE_CLOUD), \
                 mock.patch.object(providers, "_urlopen", calls), _with_cfg(roles={"judge": "cloud"}):
-            client = TestClient(api.create_app(ROOT), base_url="http://127.0.0.1:8000")
+            client = TestClient(api.create_app(ROOT), base_url="https://127.0.0.1:8000")
             r = client.post("/api/runs", json={"skill_id": "agx01", "backend": "echo", "classifier": "llm-judge"})
             self.assertEqual(r.status_code, 402)
             self.assertIn("llm-judge", r.json()["detail"])
@@ -422,14 +422,14 @@ class ApiHostTest(unittest.TestCase):
         patcher.start()
         self.addCleanup(patcher.stop)
 
-    def _client(self, env, base="http://127.0.0.1:8000"):
+    def _client(self, env, base="https://127.0.0.1:8000"):
         with _clean_env(HACTU8_HOME=self.home.name, ANTHROPIC_API_KEY=FAKE_CLOUD, **env):
             return self.TestClient(self.api.create_app(ROOT), base_url=base)
 
     def test_rebinding_host_refused(self):
-        client = self._client({}, "http://rebind.attacker.example:8000")
+        client = self._client({}, "https://rebind.attacker.example:8000")
         r = client.post("/api/live", json={"backend": "anthropic", "confirm_spend": True},
-                        headers={"Origin": "http://rebind.attacker.example:8000"})
+                        headers={"Origin": "https://rebind.attacker.example:8000"})
         self.assertEqual(r.status_code, 421)
         self.assertEqual(self.calls, [])
         self.assertEqual(client.get("/api/models").status_code, 421)

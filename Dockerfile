@@ -2,7 +2,7 @@
 # See docs/deploy.md. Nothing here bakes in a secret: keys arrive at run time
 # through an env_file kept outside the repo.
 #
-#   docker compose up --build          # API and console on http://127.0.0.1:8000
+#   docker compose up --build          # API and console on https://127.0.0.1:8000
 #
 # Targets: runtime (default, last) and dev (the devcontainer, H-51).
 
@@ -61,7 +61,10 @@ COPY --chown=hactu8:hactu8 demos/ demos/
 COPY tests/ tests/
 COPY scripts/ scripts/
 COPY --from=console /console/dist/ console/
+# The self-signed certificate is made on first start in the results volume (/data/tls), so it, and
+# any trust you give it, survives restarts. HACTU8_TLS_CERT/HACTU8_TLS_KEY or HACTU8_TLS=off override.
 ENV HACTU8_HOME=/data \
+    HACTU8_TLS_DIR=/data/tls \
     HACTU8_CONSOLE_DIR=/app/console \
     OLLAMA_HOST=http://host.docker.internal:11434 \
     OLLAMA_ALLOW_REMOTE=1 \
@@ -70,7 +73,8 @@ USER hactu8
 VOLUME ["/data"]
 EXPOSE 8000
 HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
-    CMD ["python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/api/health', timeout=4)"]
-# 0.0.0.0 inside the container's own network namespace, so Docker can forward
-# to it; compose publishes it on the host's 127.0.0.1 only.
-CMD ["python", "-m", "uvicorn", "hactu8.api:create_app", "--factory", "--host", "0.0.0.0", "--port", "8000"]
+    CMD ["python", "-m", "hactu8.tls", "health"]
+# HTTPS (HACTU8_TLS=off for HTTP). 0.0.0.0 inside the container's own network
+# namespace, so Docker can forward to it; compose publishes it on the host's
+# 127.0.0.1 only.
+CMD ["python", "-m", "hactu8.api", "--host", "0.0.0.0"]

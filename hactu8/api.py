@@ -7,20 +7,46 @@ as the Docker image does.
 Every request must name a loopback Host (127.0.0.1, localhost or [::1]) with the API's port
 (HACTU8_API_PORT, default 8000; also HACTU8_PORT, the host port Docker publishes it on); anything
 else gets 421. That stops DNS rebinding: a page on attacker.example re-pointed at 127.0.0.1 still
-sends ``Host: attacker.example``."""
+sends ``Host: attacker.example``.
+
+``python -m hactu8.api`` serves HTTPS by default with a per-user self-signed certificate, or your own
+(see ``hactu8/tls.py``); ``HACTU8_TLS=off`` serves plain HTTP. Every response carries security headers
+(``SECURITY_HEADERS`` and a CSP: ``API_CSP`` on /api, ``CONSOLE_CSP`` on the console)."""
 
 import os
 from pathlib import Path
 from typing import Optional
 
 from hactu8 import (branding, catalog, config, defenses, lessons, protections, providers, reports, spend, store,
-                    techniques)
+                    techniques, tls)
 from hactu8.adapters import lab
 from hactu8.classify import get_classifier
 from hactu8.router import Router, RouterError
 
 
 LOOPBACK_HOSTS = ("127.0.0.1", "localhost", "[::1]")
+
+# No HSTS: the host is always localhost or a loopback IP. HSTS on "localhost" covers every port, so it
+# would force HTTPS onto unrelated local dev servers (and the HTTP lab consoles), browsers ignore it for
+# IP addresses, and Chrome drops it when the certificate is not trusted, which a self-signed one is not
+# until you trust it.
+SECURITY_HEADERS = {
+    "X-Content-Type-Options": "nosniff",
+    "X-Frame-Options": "DENY",
+    "Referrer-Policy": "no-referrer",
+    "Cross-Origin-Opener-Policy": "same-origin",
+}
+# The built console: its own scripts, styles and images only; it calls the API on its own origin.
+CONSOLE_CSP = ("default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; "
+               "connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'")
+API_CSP = "default-src 'none'; frame-ancestors 'none'"
+# FastAPI's /docs and /redoc pages load Swagger UI / ReDoc from a CDN with an inline script.
+DOCS_PATHS = ("/docs", "/docs/oauth2-redirect", "/redoc")
+
+
+def dev_origins() -> list:
+    """The Vite dev server's origins, allowed by CORS: HTTPS, or HTTP when HACTU8_TLS is off."""
+    return [f"{tls.scheme()}://{host}:5173" for host in ("127.0.0.1", "localhost")]
 
 
 def allowed_hosts() -> set:
@@ -69,7 +95,7 @@ def create_app(root: Optional[Path] = None, hosts: Optional[set] = None):
 
     app.add_middleware(
         CORSMiddleware,
-        allow_origins=["http://127.0.0.1:5173", "http://localhost:5173"],
+        allow_origins=dev_origins(),
         allow_methods=["*"],
         allow_headers=["*"],
     )
@@ -78,9 +104,18 @@ def create_app(root: Optional[Path] = None, hosts: Optional[set] = None):
     async def host_check(request: Request, call_next):
         # DNS-rebinding guard: the browser sends the attacker's name as Host.
         if (request.headers.get("host") or "").lower() not in hosts:
-            return JSONResponse({"detail": "misdirected request: Host must be a loopback name and the API port"},
-                                status_code=421)
-        return await call_next(request)
+            response = JSONResponse({"detail": "misdirected request: Host must be a loopback name and the API port"},
+                                    status_code=421)
+        else:
+            response = await call_next(request)
+        path = request.url.path
+        for name, value in SECURITY_HEADERS.items():
+            response.headers.setdefault(name, value)
+        if path not in DOCS_PATHS:
+            response.headers.setdefault("Content-Security-Policy",
+                                        API_CSP if path == "/api" or path.startswith("/api/") or path == "/openapi.json"
+                                        else CONSOLE_CSP)
+        return response
 
     @app.get("/api/health")
     def health():
@@ -279,13 +314,29 @@ def _mount_console(app, dist: Path) -> None:
         return FileResponse(dist / "index.html")
 
 
-def main() -> None:
+def main(argv=None) -> None:
+    """Serve the API on 127.0.0.1:$HACTU8_API_PORT, over HTTPS unless HACTU8_TLS=off.
+
+    ``--host`` exists for the container, which listens on its own private 0.0.0.0 and is published on
+    the host's 127.0.0.1 only; the Host allowlist applies either way."""
+    import argparse
+    parser = argparse.ArgumentParser(prog="python -m hactu8.api")
+    parser.add_argument("--host", default="127.0.0.1")
+    args = parser.parse_args(argv)
     try:
         import uvicorn
     except ModuleNotFoundError as exc:
         raise SystemExit("API needs the optional dependency: pip install 'hactu8[api]'") from exc
     port = int(os.environ.get("HACTU8_API_PORT", "8000"))
-    uvicorn.run(create_app(), host="127.0.0.1", port=port)
+    try:
+        options = tls.uvicorn_options()
+    except tls.TLSError as exc:
+        raise SystemExit(f"TLS: {exc}") from exc
+    if options:
+        print(f"HACTU8 API on https://127.0.0.1:{port} (certificate: {options['ssl_certfile']})", flush=True)
+    else:
+        print(f"HACTU8 API on http://127.0.0.1:{port} (HACTU8_TLS=off: plain HTTP)", flush=True)
+    uvicorn.run(create_app(), host=args.host, port=port, **options)
 
 
 if __name__ == "__main__":

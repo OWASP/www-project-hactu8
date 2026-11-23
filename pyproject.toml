@@ -14,7 +14,7 @@ dependencies = []
 [project.optional-dependencies]
 dev = ["jsonschema>=4"]
 lamb = ["mcp>=2,<3"]
-api = ["fastapi>=0.115,<1", "uvicorn>=0.31,<1"]
+api = ["fastapi>=0.115,<1", "uvicorn>=0.31,<1", "cryptography>=42"]
 
 [project.scripts]
 hactu8 = "hactu8.cli:main"
