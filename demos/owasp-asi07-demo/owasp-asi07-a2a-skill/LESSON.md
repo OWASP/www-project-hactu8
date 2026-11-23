@@ -62,4 +62,4 @@ Both are needed: signing alone leaves the replay working, because the replay rea
 - Lab material, not repeated here: the [lab README](../README.md) (architecture, "real, not scripted", MCP terminology bridge, mapping table) and [`references/ASI07_RISKS.md`](references/ASI07_RISKS.md) (research, scenarios, mitigation roadmap).
 - [OWASP Top 10 for Agentic Applications](https://genai.owasp.org/), entry ASI07.
 - RFC 2104, HMAC: Keyed-Hashing for Message Authentication.
-- Ported from AgenticGoat (retired): its Relay Lab (`agentic/labs.json`, ASI07: authenticate and sign inter-agent messages, reject replays) and `acts.py` `a2a_scan` (every peer message is untrusted input, whoever it claims to be from).
+- Ported from the predecessor project (retired): its Relay Lab (`agentic/labs.json`, ASI07: authenticate and sign inter-agent messages, reject replays) and `acts.py` `a2a_scan` (every peer message is untrusted input, whoever it claims to be from).

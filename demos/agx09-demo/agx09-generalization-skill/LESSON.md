@@ -66,4 +66,4 @@ For real models, hardened mode also fences each note in `<untrusted_note>` tags 
 - Lab material, not repeated here: the [lab README](../README.md) (why not `wild.py`, mapping table), [`references/AGX09_RISKS.md`](references/AGX09_RISKS.md) (research, scenarios, mitigation roadmap), the [held-out set README](assets/heldout_set.README.md) (the groups, provenance and how to grow it) and protectogw's [`SECURITY.md`](protectogw/SECURITY.md) (its stated limits).
 - Real-model figures: in the HACTU8 repo, `docs/agenticgoat-merge-plan.md` (AG-51 notes).
 - HACTU8's independent held-out bench: `hactu8/bench/holdout_v2.json`, run with `python -m hactu8 bench`.
-- Ported from AgenticGoat (retired): its AGX09 entry (`agentic/labs.json`), its `wild_scan` act, the held-out set and encoders in `wild.py`, the `generalization` control (`agentic/protections.py`) and the generalization axis in `curriculum.json`.
+- Ported from the predecessor project (retired): its AGX09 entry (`agentic/labs.json`), its `wild_scan` act, the held-out set and encoders in `wild.py`, the `generalization` control (`agentic/protections.py`) and the generalization axis in `curriculum.json`.

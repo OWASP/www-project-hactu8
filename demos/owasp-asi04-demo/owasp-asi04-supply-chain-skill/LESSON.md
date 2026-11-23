@@ -65,4 +65,4 @@ The pins hold whatever the lookalike says, because they key on identity and cont
 - Lab material, not repeated here: the [lab README](../README.md) (architecture, "real, not scripted", harness terminology bridge, mapping table) and [`references/ASI04_RISKS.md`](references/ASI04_RISKS.md) (research, scenarios, mitigation roadmap).
 - [OWASP Top 10 for Agentic Applications](https://genai.owasp.org/), entry ASI04; the companion LLM04 Supply Chain lab in this repo.
 - PEP 503, Simple Repository API (the name normalisation the vulnerable resolver imitates).
-- Ported from AgenticGoat (retired): its Swap Lab (`agentic/labs.json`, ASI04: "it keys on change, not content") and `acts.py` acts 3 (hash pinning) and 15 (grounding a typosquatted name against an approved registry).
+- Ported from the predecessor project (retired): its Swap Lab (`agentic/labs.json`, ASI04: "it keys on change, not content") and `acts.py` acts 3 (hash pinning) and 15 (grounding a typosquatted name against an approved registry).

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Seed Phase 1 MVP issues from the wiki's Phase-1-MVP-Plan work items.
 # Requires: gh (authenticated with write access to OWASP/www-project-hactu8).
-# Safe to re-run: skips any issue whose title already exists.
+# Safe to re-run: skips any work item (H-xx) that already has an issue, whatever its title.
 set -euo pipefail
 REPO="${REPO:-OWASP/www-project-hactu8}"
 M2="P1:M2: Requirements Documentation"
@@ -31,7 +31,7 @@ ITEMS=(
   "m0|H-02|Remove empty stubs (engine/, services/, scan/, specs/, skills/)"
   "m0|H-03|Root README: what it is, quick start, layout"
   "m0|H-04|Seed issues and labels; set P1:M3 due date to 2026-11-13"
-  "m0|H-05|Close P1:M1 Mockup (iac-prototype and agenticgoat-mock satisfy it)"
+  "m0|H-05|Close P1:M1 Mockup (iac-prototype and the earlier mock satisfy it)"
   "m1|H-10|Result JSON Schema (run, skill, target, items, verdicts, metric)"
   "m1|H-11|metadata.hactu8.* key spec for SKILL.md"
   "m1|H-12|hactu8 CLI: list, run, results"
@@ -44,7 +44,7 @@ ITEMS=(
   "m2|H-24|Canonical protectogw package"
   "m3|H-30|Lamb service hosting the lab targets on one process and port map"
   "m3|H-31|Lamb vulnerable MCP server (tool poisoning, rug pull)"
-  "m3|H-32|Rename AgenticGoat references to Lamb (seed, consoles, docs)"
+  "m3|H-32|Rename the retired target name to Lamb (seed, consoles, docs)"
   "m3|H-33|Lamb Registry entry with live targetUrl"
   "m4|H-40|FastAPI: skills, runs, results, reports endpoints"
   "m4|H-41|Trim iac-host: remove Streamlit remote and unused routes"
@@ -65,7 +65,8 @@ existing=$(gh issue list --repo "$REPO" --state all --limit 500 --json title --j
 for row in "${ITEMS[@]}"; do
   IFS='|' read -r ws id text <<<"$row"
   title="$id $text"
-  if grep -Fxq "$title" <<<"$existing"; then echo "skip  $title"; continue; fi
+  # Match on the work-item id, so a reworded title never files a duplicate.
+  if grep -Eq "^$id " <<<"$existing"; then echo "skip  $title"; continue; fi
   case "$ws" in m0|m1) ms="$M2" ;; *) ms="$M3" ;; esac
   gh issue create --repo "$REPO" --title "$title" --milestone "$ms" \
     --label "phase1-mvp" --label "mvp:$ws" \

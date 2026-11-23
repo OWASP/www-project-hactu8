@@ -64,4 +64,4 @@ The order matters: filtering before ranking means a foreign document never becom
 - Lab material, not repeated here: the [lab README](../README.md) (architecture, the "real, not scripted" argument, MCP terminology bridge) and [`references/LLM09_RISKS.md`](references/LLM09_RISKS.md) (research, scenarios V-1 and V-2, mitigation roadmap).
 - [OWASP Top 10 for LLM Applications](https://genai.owasp.org/llm-top-10/), entry Vector and Embedding Weaknesses.
 - Morris et al. (2023), "Text Embeddings Reveal (Almost) As Much As Text"; Song and Raghunathan (2020), "Information Leakage in Embedding Models"; Zou et al. (2024), "PoisonedRAG".
-- Ported from AgenticGoat (retired): its 2025-numbered LLM08 Vector and Embedding Weaknesses lesson and curriculum entry (`training/lessons/LLM08_vector_and_embedding_weaknesses.md`, `curriculum.json`), and its `acts.py` `retrieval_scope_scan`.
+- Ported from the predecessor project (retired): its 2025-numbered LLM08 Vector and Embedding Weaknesses lesson and curriculum entry (`training/lessons/LLM08_vector_and_embedding_weaknesses.md`, `curriculum.json`), and its `acts.py` `retrieval_scope_scan`.

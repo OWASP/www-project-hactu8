@@ -66,4 +66,4 @@ For real models, hardened mode also fences tool-host text in `<untrusted_tool_ou
 - Related labs: LLM01 Prompt Injection (the same indirect injection through a retrieved page) and AGX03 Conditional Rug-Pull (returns that change between calls).
 - Real-model figures: in the HACTU8 repo, `docs/agenticgoat-merge-plan.md` (AG-55 notes) and `docs/evidence/2026-11-20-ollama-llama3.2-3b.md`.
 - Greshake et al. (2023), "Not what you've signed up for: Compromising Real-World LLM-Integrated Applications with Indirect Prompt Injection".
-- Ported from AgenticGoat (retired): its AGX06 entry (`agentic/labs.json`), its `runtime_watch` act (`acts.py`) and the `input_screen` control (`agentic/protections.py`).
+- Ported from the predecessor project (retired): its AGX06 entry (`agentic/labs.json`), its `runtime_watch` act (`acts.py`) and the `input_screen` control (`agentic/protections.py`).

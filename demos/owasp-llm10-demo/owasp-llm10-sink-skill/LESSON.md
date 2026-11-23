@@ -66,4 +66,4 @@ A third layer is a detector, not the fix: `screen_output` screens the output wit
 - Lab material, not repeated here: the [lab README](../README.md) (architecture, the "real, not scripted" argument, MCP terminology bridge, deviation from the demo plan) and [`references/LLM10_RISKS.md`](references/LLM10_RISKS.md) (research, scenarios O-1 to O-3, mitigation roadmap).
 - [OWASP Top 10 for LLM Applications](https://genai.owasp.org/llm-top-10/), entry Improper Output Handling.
 - OWASP Cross Site Scripting Prevention Cheat Sheet and SQL Injection Prevention Cheat Sheet; Greshake et al. (2023), "Not what you've signed up for".
-- Ported from AgenticGoat (retired): its 2025-numbered LLM05 Improper Output Handling lesson and curriculum entry (`training/lessons/LLM05_improper_output_handling.md`, `curriculum.json`), and its `acts.py` `output_handling_scan`.
+- Ported from the predecessor project (retired): its 2025-numbered LLM05 Improper Output Handling lesson and curriculum entry (`training/lessons/LLM05_improper_output_handling.md`, `curriculum.json`), and its `acts.py` `output_handling_scan`.

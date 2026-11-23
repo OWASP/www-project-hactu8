@@ -68,4 +68,4 @@ The benign office-hours chain stays GREEN in every mode, so the session screen i
 - Related lab: AGX02 Truncation Tail (too little of one artifact).
 - Real-model figures: in the HACTU8 repo, `docs/agenticgoat-merge-plan.md` (AG-51 notes).
 - Greshake et al. (2023), "Not what you've signed up for: Compromising Real-World LLM-Integrated Applications with Indirect Prompt Injection".
-- Ported from AgenticGoat (retired): its AGX08 entry (`agentic/labs.json`), its `chain_scan` act (`acts.py`), the `session_screen` control (`agentic/protections.py`) and the stateful screening described in `GATEWAY.md`.
+- Ported from the predecessor project (retired): its AGX08 entry (`agentic/labs.json`), its `chain_scan` act (`acts.py`), the `session_screen` control (`agentic/protections.py`) and the stateful screening described in `GATEWAY.md`.

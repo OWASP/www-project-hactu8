@@ -65,4 +65,4 @@ The gate never reads the model's wording or arguments beyond the target, so a cl
 - Lab material, not repeated here: the [lab README](../README.md) (architecture, the "real, not scripted" argument, MCP terminology bridge) and [`references/LLM03_RISKS.md`](references/LLM03_RISKS.md) (research, scenarios A-1 to A-3, mitigation roadmap).
 - [OWASP Top 10 for LLM Applications](https://genai.owasp.org/llm-top-10/), entry Excessive Agency.
 - Greshake et al. (2023), "Not what you've signed up for"; Zhan et al. (2024), "InjecAgent"; Debenedetti et al. (2024), "AgentDojo".
-- Ported from AgenticGoat (retired): its 2025-numbered LLM06 Excessive Agency lesson and curriculum entry (`training/lessons/LLM06_excessive_agency.md`, `curriculum.json`), and its `acts.py` agency gate.
+- Ported from the predecessor project (retired): its 2025-numbered LLM06 Excessive Agency lesson and curriculum entry (`training/lessons/LLM06_excessive_agency.md`, `curriculum.json`), and its `acts.py` agency gate.

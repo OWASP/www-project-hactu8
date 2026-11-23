@@ -69,4 +69,4 @@ Template pinning is the strongest of the three: it keys on change, not content.
 - Lab material, not repeated here: the [lab README](../README.md) (architecture, the "real, not scripted" argument, MCP terminology bridge, mapping to OWASP scenarios #1 and #6) and [`references/LLM05_RISKS.md`](references/LLM05_RISKS.md) (research, scenarios, mitigation roadmap).
 - [OWASP Top 10 for LLM Applications](https://genai.owasp.org/llm-top-10/), entry Data and Model Poisoning.
 - Zhang et al. (2025), CorruptRAG; Souly et al. (2025); Hubinger et al. (2024), "Sleeper Agents".
-- Ported from AgenticGoat (retired): its 2025-numbered LLM04 Data and Model Poisoning lesson and curriculum entry (`training/lessons/LLM04_data_and_model_poisoning.md`, `curriculum.json`).
+- Ported from the predecessor project (retired): its 2025-numbered LLM04 Data and Model Poisoning lesson and curriculum entry (`training/lessons/LLM04_data_and_model_poisoning.md`, `curriculum.json`).

@@ -409,7 +409,7 @@ lab's `LLM05_BACKEND` / `LLM05_MODEL` / `LLM05_PORT`. Its optional Flask
 server (`python -m llm05_demo.server`, needs `flask` and `requests` from
 `requirements.txt`) listens on port 5101 (`LLM05_SRC_PORT` to change it).
 
-Source material, ported from AgenticGoat (retired): `agentic/poison_lab.py` (its Poison Lab: the
+Source material, ported from the predecessor project (retired): `agentic/poison_lab.py` (its Poison Lab: the
 override memo, the trigger keyed to "quarterly audit" and the MFA control).
 This lab reproduces its result on echo: PSR 0% at baseline, 100% after the
 attack, 0% with the defense.

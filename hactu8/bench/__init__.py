@@ -1,6 +1,6 @@
 """ProtectoGW bench: score screen() against a labelled corpus of MCP attack surfaces.
 
-The corpus (corpus.json) comes from the 17-act detector run (Ported from AgenticGoat (retired)). Each
+The corpus (corpus.json) comes from the 17-act detector run (Ported from the predecessor project (retired)). Each
 item is untrusted text headed for a model's context, labelled attack or clean.
 Two axes are scored separately, so a held-out miss never reads as a regression:
 

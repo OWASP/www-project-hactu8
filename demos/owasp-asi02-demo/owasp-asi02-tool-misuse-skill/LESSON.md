@@ -69,4 +69,4 @@ It holds because it is enforced at the tool boundary, in code, on the arguments.
 - [OWASP Top 10 for Agentic Applications](https://genai.owasp.org/), entry ASI02.
 - Greshake et al. (2023), "Not what you've signed up for: Compromising Real-World LLM-Integrated Applications with Indirect Prompt Injection".
 - Zhan et al. (2024), "InjecAgent"; Debenedetti et al. (2024), "AgentDojo".
-- Ported from AgenticGoat (retired): its Tool Abuse Lab (`agentic/labs.json`, ASI02): parameter pollution, with the allowlist enforced at the infrastructure layer, not by prompt.
+- Ported from the predecessor project (retired): its Tool Abuse Lab (`agentic/labs.json`, ASI02): parameter pollution, with the allowlist enforced at the infrastructure layer, not by prompt.

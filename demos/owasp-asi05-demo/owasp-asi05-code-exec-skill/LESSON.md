@@ -68,4 +68,4 @@ An allow-list holds where a blocklist does not, because it names what may run in
 - HACTU8 catalog: skill `asi05`, OWASP `ASI05:2026` Unexpected Code Execution (OWASP Top 10 for Agentic Applications); metric UER (Unsafe Execution Rate); protections `code_sandbox`, `spotlight` and `canary_tripwire` (`hactu8/protections.py`).
 - Lab material, not repeated here: the [lab README](../README.md) (architecture, "real, not scripted", MCP terminology bridge) and [`references/ASI05_RISKS.md`](references/ASI05_RISKS.md) (research, scenarios C-1 to C-6, mitigation roadmap).
 - [OWASP Top 10 for Agentic Applications](https://genai.owasp.org/), entry ASI05; the LLM10 Improper Output Handling lab in this repo for the single-answer form.
-- Ported from AgenticGoat (retired): its Sink Lab (`agentic/labs.json`, ASI05): treat model output as untrusted input to every sink, and screen it before the sink.
+- Ported from the predecessor project (retired): its Sink Lab (`agentic/labs.json`, ASI05): treat model output as untrusted input to every sink, and screen it before the sink.

@@ -1,6 +1,6 @@
 {
  "schema": "hactu8.bench/v1",
- "source": "Ported from AgenticGoat (retired): its 17-act detector run (engine.run_scenario), 2026-11-20. 'control' items are enforced by gateway and lab controls (hash pinning, agency gate, grounding, retrieval scope, consumption), not by screen(); the bench lists them but does not score them. The original held-out set ('wild:' items) was used to tune protectogw 2.0, so it now counts toward coverage; generalization is measured on holdout_v2.json, written independently of the ruleset.",
+ "source": "Ported from the predecessor project (retired): its 17-act detector run (engine.run_scenario), 2026-11-20. 'control' items are enforced by gateway and lab controls (hash pinning, agency gate, grounding, retrieval scope, consumption), not by screen(); the bench lists them but does not score them. The original held-out set ('wild:' items) was used to tune protectogw 2.0, so it now counts toward coverage; generalization is measured on holdout_v2.json, written independently of the ruleset.",
  "baseline": {
   "coverage": 0.9431818181818182,
   "coverage_measured": "2026-11-21, protectogw 2.0: 166 of 176 attacks, with 10 known misses (baseline_flagged false: 9 payloads shipped by HX03, HX05, HX06, HX08, HX11, HX12, HX13 and t1:spl-across-fields). Before they were recorded: 166 of 167 measured (0.994), 0.9919 recorded.",

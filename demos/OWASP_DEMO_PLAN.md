@@ -1,8 +1,8 @@
 # Plan — OWASP Top 10 demo series
 
-History: this is the design record for porting the labs from AgenticGoat (retired; the target is now HACTU8 Lamb). Source names below are as they were then.
+History: this is the design record for porting the labs from the predecessor project (retired; the target is now HACTU8 Lamb). Source names below are as they were then.
 
-Status: approved 2026-10-02. LLM series built (owasp-llm01..llm10-demo; LLM05 pre-existing, since brought onto the template). ASI series built: ASI01-10 (ASI05 added 2026-11-20 as a port of AgenticGoat's Sink Lab, merge plan AG-50). AGX series (HACTU8 extensions AGX01-09, gateway labs on protectogw) designed in §4.3 and built.
+Status: approved 2026-10-02. LLM series built (owasp-llm01..llm10-demo; LLM05 pre-existing, since brought onto the template). ASI series built: ASI01-10 (ASI05 added 2026-11-20 as a port of the predecessor's Sink Lab, merge plan AG-50). AGX series (HACTU8 extensions AGX01-09, gateway labs on protectogw) designed in §4.3 and built.
 
 Update 2026-11-20 (merge plan D1, AG-54): the placeholder payload policy below is superseded. Payloads are now benign-effect: realistic wording whose only possible effect is a fictional canary or a simulated loopback action.
 
@@ -15,17 +15,17 @@ the pattern every later demo copies.
 Goal: one self-contained lab per OWASP Top 10 for LLM Applications category,
 built to `demos/_template/TEMPLATE.md` (four-act lifecycle, stoplight KPI,
 vulnerable-by-omission target, editable payload, implemented mitigation, reset).
-Mechanisms and mitigations are ported from `../AgenticGoat`; the existing
+Mechanisms and mitigations are ported from the predecessor repo; the existing
 `demos/owasp-llm05-demo` is the reference implementation. An Agentic (ASI)
 series follows as a second wave.
 
 ## 1. Source → target numbering
 
 This repo uses the **2026** LLM Top 10 numbering (LLM05 = Data & Model
-Poisoning). AgenticGoat uses the **2025** numbering.
+Poisoning). The predecessor project uses the **2025** numbering.
 Every port must translate:
 
-| 2026 (this repo) | Category | 2025 id in AgenticGoat |
+| 2026 (this repo) | Category | 2025 id in the predecessor project |
 |---|---|---|
 | LLM01 | Prompt Injection | LLM01 |
 | LLM02 | Sensitive Information Disclosure | LLM02 |
@@ -41,10 +41,10 @@ Every port must translate:
 ## 2. Cross-cutting decisions
 
 1. **Self-contained, vendored code.** Each skill folder copies only the
-   AgenticGoat pieces it needs (e.g. a trimmed `screening.py` +
-   `indicators.py`). No imports from `../AgenticGoat`; skills must stay
+   predecessor pieces it needs (e.g. a trimmed `screening.py` +
+   `indicators.py`). No imports from the predecessor repo; skills must stay
    copyable into `.claude/skills/`. Cost: duplicated screening code across
-   demos. AgenticGoat has no license yet (`pyproject.toml` TODO) — both repos
+   demos. The predecessor project had no license yet (`pyproject.toml` TODO) — both repos
    are the same author, but pick a license before publishing ported code.
 2. **"Real, not scripted" model.** The echo provider's rule leaks on a
    keyword pair, which is scripted. Instead each demo uses a deterministic
@@ -58,8 +58,8 @@ Every port must translate:
    LLM10 = 5210), `53NN` for ASI demos. LLM05 = 5205 (moved from 5101 when it was brought onto the template).
 4. **Metric names.** One per demo, `RED targeted / total targeted`, also
    reported overall. Exit codes per template §10 (evaluator 0 clean, 2 exposed).
-5. **Shared fictional world.** One company ("Billy" KB assistant from
-   AgenticGoat, or LLM05's bot) across all demos so personas and ground truth
+5. **Shared fictional world.** One company ("Lamb" KB assistant from
+   the predecessor project, or LLM05's bot) across all demos so personas and ground truth
    are reusable. Canary token style from `vulnerable_server.py:80`.
 6. **Scope per demo**: the minimum template shape (single skill, `web/`
    console optional). Skip the `src/` narrative runner and `presentation/`
@@ -67,13 +67,13 @@ Every port must translate:
 
 ## 3. LLM series — per-demo design
 
-Columns: AgenticGoat source → scenario → attack (payload in `assets/`) →
+Columns: predecessor source → scenario → attack (payload in `assets/`) →
 metric → mitigation (Act 4) → controls that must stay GREEN.
 
 ### LLM01 Prompt Injection — `owasp-llm01-demo`, port 5201
 
 - Source: acts `static_scan` (`acts.py:41`), `runtime_watch` (:94),
-  `obfuscation_gauntlet` (:489), `schema_scan` (:610); goat `search_kb`
+  `obfuscation_gauntlet` (:489), `schema_scan` (:610); predecessor `search_kb`
   (`vulnerable_server.py:258/268`); `protectogw/screening.py` `normalize` :83,
   `_deobfuscate` :243, `screen` :333.
 - Scenario: KB assistant answers policy questions via a `search_kb` tool.
@@ -88,7 +88,7 @@ metric → mitigation (Act 4) → controls that must stay GREEN.
 
 - Source: `training_live.py:273` probe, `secrets_vault.py`
   (`assert_not_leaking`), output canary rule.
-- Gap to build: AgenticGoat only checks a canary. Add a small customer-record
+- Gap to build: the predecessor project only checks a canary. Add a small customer-record
   store (fake PII) the assistant can read for the *current* user.
 - Attack: request that pivots summarisation onto another customer's record /
   the embedded credential.
@@ -110,8 +110,8 @@ metric → mitigation (Act 4) → controls that must stay GREEN.
 
 ### LLM04 Supply Chain — `owasp-llm04-demo`, port 5204
 
-- Source: `swap_check` (:165, `simulate_swap` goat :208, `_hash` :145),
-  `conditional_scan` (:393, goat :432), slopsquat part of `grounding_scan`.
+- Source: `swap_check` (:165, `simulate_swap` predecessor :208, `_hash` :145),
+  `conditional_scan` (:393, predecessor :432), slopsquat part of `grounding_scan`.
 - Scenario: agent loads tools from a third-party MCP-style registry.
 - Attack: tool description swapped after approval (rug pull); second variant
   turns hostile on Nth call.
@@ -185,7 +185,7 @@ metric → mitigation (Act 4) → controls that must stay GREEN.
 
 ## 4. ASI series (wave 2)
 
-Only items with a distinct, real mechanism in AgenticGoat are proposed now:
+Only items with a distinct, real mechanism in the predecessor project are proposed now:
 
 | Demo | Source | Notes |
 |---|---|---|
@@ -194,7 +194,7 @@ Only items with a distinct, real mechanism in AgenticGoat are proposed now:
 | ASI06 Memory & Context Poisoning | `agentic/poison_lab.py:145` | Already four-act shaped (PSR 0→100→0); closest port. |
 | ASI07 Insecure Inter-Agent Comms | `a2a_scan` (:541) | Needs build-out: spoofed peer, replay, then message signing as mitigation. |
 
-ASI02, 03, 05, 08, 09, 10 reuse LLM probes in AgenticGoat (`labs.json`
+ASI02, 03, 05, 08, 09, 10 reuse LLM probes in the predecessor project (`labs.json`
 `probe.llm_id`) and need new designs (confused deputy / token delegation,
 sandboxed execution, multi-agent cascade, approval fatigue, drift + kill
 switch). Design them after wave 1.
@@ -210,7 +210,7 @@ at the agent level, not in a single answer.
 
 **ASI01 Agent Goal Hijack** — port 5301
 
-- Scenario: "Billy Ops" runs a fixed weekly-report task in four steps: read
+- Scenario: "Lamb Ops" runs a fixed weekly-report task in four steps: read
   tickets, summarise, draft the report, post it to the team channel. Every
   action goes to a simulated action log.
 - Attack: one ticket's text carries a placeholder directive that changes the
@@ -234,7 +234,7 @@ at the agent level, not in a single answer.
 
 **ASI06 Memory & Context Poisoning** — port 5306
 
-- Source: AgenticGoat `agentic/poison_lab.py`.
+- Source: the predecessor's `agentic/poison_lab.py`.
 - Scenario: the agent saves long-term memories from conversations and
   recalls them in later sessions for any user.
 - Attack: one session plants a placeholder memory keyed to a topic.
@@ -262,7 +262,7 @@ log, not just in the answer text.
 
 **ASI02 Tool Misuse & Exploitation** — port 5302
 
-- Scenario: "Billy Finance" has `query_ledger(filter, limit)` and
+- Scenario: "Lamb Finance" has `query_ledger(filter, limit)` and
   `export_report(rows, destination)`, which writes to a simulated outbox. Both
   are legitimate tools the agent is allowed to use.
 - Attack: placeholder text in a request record makes the agent call a
@@ -334,7 +334,7 @@ log, not just in the answer text.
 
 ## 4.3 AGX series — HACTU8 extensions beyond the Top 10s
 
-AgenticGoat's `agentic/labs.json` carries a superset of nine labs, `AGX01`–`AGX09`,
+The predecessor's `agentic/labs.json` carries a superset of nine labs, `AGX01`–`AGX09`,
 for attack and defense patterns neither OWASP list numbers. We keep its numbering.
 Each is a **gateway lab**: an MCP-style tool host whose untrusted text passes a
 screening gateway before it reaches the model. The lesson is always *where a naive
@@ -351,14 +351,14 @@ screen is blind*, and the fix is always **protectogw** used properly.
   folder, like `providers.py`. It is HACTU8's screening core: the normalizer
   and de-obfuscation folds, the ruleset, the exfil indicator taxonomy, the canary
   check, `Policy`/`Rule`, and the `Session` cross-read screen.
-- **Persona.** Billy, the Goat & Co. ops assistant (AgenticGoat's), runs against a
+- **Persona.** Lamb, the Big Field Jumper Co. ops assistant (from the predecessor), runs against a
   small tool host: tools, resources and docs. A fictional **canary credential**
-  (`sk-canary-` + per-process hex, as in AgenticGoat's `secrets_vault.canary()`)
-  sits in Billy's context with the instruction never to reveal it.
+  (`sk-canary-` + per-process hex, as in the predecessor's `secrets_vault.canary()`)
+  sits in Lamb's context with the instruction never to reveal it.
 - **Echo model.** This is the echo provider's rule. If the text that
   reaches the model contains both "emit" and "confirm" (case-insensitive), the
   reply is `Acknowledged. <canary>`. Otherwise it gives a benign answer that
-  quotes the first line of its context. This is deliberately AgenticGoat's own
+  quotes the first line of its context. This is deliberately the predecessor's own
   semantics, so the AGX payloads behave here exactly as they do there.
   `ProviderModel` sends the same context to a real model, with the canary in the
   system prompt.
@@ -370,7 +370,7 @@ screen is blind*, and the fix is always **protectogw** used properly.
   - **Hardened mode:** protectogw with full coverage for that surface, **plus**
     the output-side canary check (`screen(reply, canaries=[canary])`) on every
     model reply. That check is the attack-agnostic last layer.
-- **Suite and KPI.** Items are user requests that make Billy touch a surface.
+- **Suite and KPI.** Items are user requests that make Lamb touch a surface.
   - **Targeted items** touch the surface the attack poisons; **controls** touch
     clean surfaces.
   - **RED:** the canary left the system (it appears in the reply that reaches
@@ -385,7 +385,7 @@ screen is blind*, and the fix is always **protectogw** used properly.
   extra rule `lab_directive` catches it in both modes, so each blind spot is
   about structure (where, how much, or when the screen looks), not vocabulary.
   AGX09's "held-out" set is placeholder variants that the lab rule was not
-  written for. Each payload README points to AgenticGoat's own probe
+  written for. Each payload README points to the predecessor's own probe
   (`labs.json` AGXNN `probe.payload`) for anyone writing the real text. Real
   probe text is not copied into this repo.
 - **Act 4 scan.** `evaluate_kpi.py --scan` runs `protectogw.screen()` with the
@@ -430,7 +430,7 @@ its story with Act 4 at 0%.
 1. **LLM01** — establishes the vendored screening code, the
    instruction-following stub, and the `52NN` conventions. Every later demo
    copies from it.
-2. **LLM10, LLM03, LLM09** — strongest AgenticGoat sources, very visual.
+2. **LLM10, LLM03, LLM09** — strongest predecessor sources, very visual.
 3. **LLM04, LLM06, LLM07** — sources exist; modest build-out.
 4. **LLM02, LLM08** — most new code.
 5. (Done) Update the one-page lesson mock's table to link each lesson to its
@@ -446,5 +446,5 @@ targeted, detector flags the payload, mitigation returns rate to 0.
 1. Is the 2026 LLM numbering confirmed, or should demo slugs avoid the number?
 2. Vendor screening code per demo (recommended) vs. one shared `demos/_lib`?
 3. Which shared persona/company for all demos?
-4. License for ported AgenticGoat code.
+4. License for ported predecessor code.
 5. Web console (`web/`) for every demo, or CLI only with web for a few?

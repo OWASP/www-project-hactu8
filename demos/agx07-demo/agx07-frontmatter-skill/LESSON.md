@@ -69,4 +69,4 @@ For real models, hardened mode also fences the document in `<untrusted_document>
 - Real-model figures: in the HACTU8 repo, `docs/agenticgoat-merge-plan.md` (AG-51 notes).
 - Zou et al. (2024), "PoisonedRAG: Knowledge Corruption Attacks to Retrieval-Augmented Generation of Large Language Models".
 - Greshake et al. (2023), "Not what you've signed up for: Compromising Real-World LLM-Integrated Applications with Indirect Prompt Injection".
-- Ported from AgenticGoat (retired): its AGX07 entry (`agentic/labs.json`), its `okf_scan` act (`acts.py`) and the `input_screen` control (`agentic/protections.py`).
+- Ported from the predecessor project (retired): its AGX07 entry (`agentic/labs.json`), its `okf_scan` act (`acts.py`) and the `input_screen` control (`agentic/protections.py`).

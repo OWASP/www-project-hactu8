@@ -66,4 +66,4 @@ For real models, hardened mode also fences the notice in `<untrusted_tool_output
 - Lab material, not repeated here: the [lab README](../README.md) (architecture, the "real, not scripted" argument, mapping table), [`references/AGX01_RISKS.md`](references/AGX01_RISKS.md) (research, scenarios, mitigation roadmap), the [payload README](assets/obfuscation_payload.README.md) (the encodings and how to vary them) and protectogw's [`SECURITY.md`](protectogw/SECURITY.md) (its stated limits).
 - Real-model figures: in the HACTU8 repo, `docs/agenticgoat-merge-plan.md` (AG-55 notes) and `docs/evidence/2026-11-20-ollama-llama3.2-3b.md`.
 - Greshake et al. (2023), "Not what you've signed up for: Compromising Real-World LLM-Integrated Applications with Indirect Prompt Injection".
-- Ported from AgenticGoat (retired): its AGX01 entry (`agentic/labs.json`), its `obfuscation_gauntlet` act (`acts.py`) and the `normalizer` control (`agentic/protections.py`).
+- Ported from the predecessor project (retired): its AGX01 entry (`agentic/labs.json`), its `obfuscation_gauntlet` act (`acts.py`) and the `normalizer` control (`agentic/protections.py`).

@@ -68,4 +68,4 @@ A rejected tool keeps its vendored approved version, so answers stay correct ins
 - Lab material, not repeated here: the [lab README](../README.md) (architecture, the "real, not scripted" argument, MCP terminology bridge) and [`references/LLM04_RISKS.md`](references/LLM04_RISKS.md) (research, scenarios S-1 and S-2, mitigation roadmap).
 - [OWASP Top 10 for LLM Applications](https://genai.owasp.org/llm-top-10/), entry Supply Chain.
 - Hubinger et al. (2024), "Sleeper Agents: Training Deceptive LLMs that Persist Through Safety Training"; Invariant Labs (2025), "MCP Security Notification: Tool Poisoning Attacks"; Ohm et al. (2020), "Backstabber's Knife Collection".
-- Ported from AgenticGoat (retired): its 2025-numbered LLM03 Supply Chain lesson and curriculum entry (`training/lessons/LLM03_supply_chain.md`, `curriculum.json`), and its `acts.py` `swap_check` and `conditional_scan`.
+- Ported from the predecessor project (retired): its 2025-numbered LLM03 Supply Chain lesson and curriculum entry (`training/lessons/LLM03_supply_chain.md`, `curriculum.json`), and its `acts.py` `swap_check` and `conditional_scan`.

@@ -67,4 +67,4 @@ For real models, hardened mode also fences the feed in `<untrusted_tool_output>`
 - Lab material, not repeated here: the [lab README](../README.md) (architecture, the "real, not scripted" argument, mapping table), [`references/AGX03_RISKS.md`](references/AGX03_RISKS.md) (research, scenarios, mitigation roadmap), the [payload README](assets/feed_poll_payload.README.md) (the timing, `SAMPLES` and `TRIGGER`) and protectogw's [`SECURITY.md`](protectogw/SECURITY.md).
 - Related labs: LLM04 Supply Chain (definition swap) and ASI04 Agentic Supply Chain Vulnerabilities (hash pin).
 - Real-model figures: in the HACTU8 repo, `docs/evidence/2026-11-20-ollama-llama3.2-3b.md` (earlier sweep) and `docs/agenticgoat-merge-plan.md` (AG-55 notes).
-- Ported from AgenticGoat (retired): its AGX03 entry (`agentic/labs.json`), its `conditional_scan` act (`acts.py`) and the `sampling` control (`agentic/protections.py`; here `multi_call_sampling`).
+- Ported from the predecessor project (retired): its AGX03 entry (`agentic/labs.json`), its `conditional_scan` act (`acts.py`) and the `sampling` control (`agentic/protections.py`; here `multi_call_sampling`).

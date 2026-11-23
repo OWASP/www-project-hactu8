@@ -68,4 +68,4 @@ The schema channel is not a lab artefact. In HACTU8's live sweep of Lamb's MCP s
 - Lab material, not repeated here: the [lab README](../README.md) (architecture, the MCP terminology bridge, mapping table), [`references/AGX04_RISKS.md`](references/AGX04_RISKS.md) (research, scenarios, mitigation roadmap), the [payload README](assets/param_default_payload.README.md) and protectogw's [`SECURITY.md`](protectogw/SECURITY.md).
 - Greshake et al. (2023), "Not what you've signed up for: Compromising Real-World LLM-Integrated Applications with Indirect Prompt Injection".
 - Real-model figures: in the HACTU8 repo, `docs/evidence/2026-11-20-ollama-llama3.2-3b.md` (earlier sweep) and `docs/agenticgoat-merge-plan.md` (AG-55 notes).
-- Ported from AgenticGoat (retired): its AGX04 entry (`agentic/labs.json`), its `schema_scan` act (`acts.py`) and the `channel_screen` control (`agentic/protections.py`).
+- Ported from the predecessor project (retired): its AGX04 entry (`agentic/labs.json`), its `schema_scan` act (`acts.py`) and the `channel_screen` control (`agentic/protections.py`).
