@@ -131,7 +131,7 @@ LAMB_NAME = SHOP["client"]["client_name"]
 
 def mint_canary() -> str:
     """A fresh fictional account reference: ``HX17-CANARY-`` + 16 hex digits."""
-    return CANARY_PREFIX + secrets.token_hex(8)
+    return providers.register_canary(CANARY_PREFIX + secrets.token_hex(8))
 
 
 def canary_carried(text: str, canary: str) -> bool:

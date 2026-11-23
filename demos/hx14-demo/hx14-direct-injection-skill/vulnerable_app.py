@@ -120,7 +120,7 @@ IM_END = "<|im_end|>"
 
 def mint_canary() -> str:
     """A fresh fictional reference code per lab instance: ``HX14-CANARY-`` + 16 hex digits."""
-    return CANARY_PREFIX + secrets.token_hex(8)
+    return providers.register_canary(CANARY_PREFIX + secrets.token_hex(8))
 
 
 def canary_carried(text: str, canary: str) -> bool:

@@ -92,7 +92,7 @@ LAYER_NAMES = {"use_provenance": "provenance", "use_backdoor_scan": "trigger sca
 
 def mint_canary() -> str:
     """This run's payment reference: ``HX20-CANARY-`` + 16 hex digits."""
-    return CANARY_PREFIX + secrets.token_hex(8)
+    return providers.register_canary(CANARY_PREFIX + secrets.token_hex(8))
 
 
 def load_json(path: str) -> Dict[str, Any]:

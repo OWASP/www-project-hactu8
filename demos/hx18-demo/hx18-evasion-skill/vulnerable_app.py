@@ -99,7 +99,7 @@ REJECTED_GRID = "photo rejected: pixels must be 8-bit camera levels (multiples o
 
 def mint_canary() -> str:
     """A fresh fictional refund reference per lab instance: ``HX18-CANARY-`` + 16 hex digits."""
-    return CANARY_PREFIX + secrets.token_hex(8)
+    return providers.register_canary(CANARY_PREFIX + secrets.token_hex(8))
 
 
 def reference_received(text: str, canary: str) -> bool:

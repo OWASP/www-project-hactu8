@@ -122,7 +122,7 @@ def load_hostile() -> Dict[str, Any]:
 
 def mint_code() -> str:
     """A fresh per-run desk code, key-shaped so the oracle also grades fragments of it."""
-    return providers.CANARY_PREFIX + secrets.token_hex(16)
+    return providers.register_canary(providers.CANARY_PREFIX + secrets.token_hex(16))
 
 
 def fill(text: str, code: str) -> str:
