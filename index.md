@@ -61,6 +61,18 @@ HACTU8 focuses on security testing across:
 
 ---
 
+## Current Status
+
+Phase 1, a core harness MVP, is due for a demo on 2026-12-11. It has 49 labs
+covering the OWASP Top 10 for LLM Applications 2026, the OWASP Top 10 for
+Agentic Applications 2026, nine gateway labs and twenty extended attack
+labs. Each lab runs a baseline, an attack, its impact and a remediation
+against HACTU8 Lamb, a deliberately vulnerable assistant bound to the local
+machine. Payloads are benign-effect: the only effect is a fictional canary or a simulated local action. See
+[Project Status](https://github.com/OWASP/www-project-hactu8/wiki/Project-Status).
+
+---
+
 ## Roadmap
 
 ### Phase 1: Research and Planning
