@@ -1045,11 +1045,22 @@ def normalize(name: str) -> str:
     return _ALIASES.get(name, name)
 
 
+def check_backend(name: str) -> str:
+    """Validate a backend name from the CLI or the API: its canonical name, or "" when none was given."""
+    name = (name or "").strip()
+    if not name:
+        return ""
+    backend = normalize(name)
+    if backend not in BACKENDS:
+        raise ValueError(f"unknown backend; one of {', '.join(BACKENDS)}")
+    return backend
+
+
 def check_model(model: str) -> str:
     """Validate a model name from the environment or the console."""
     model = (model or "").strip()
     if model and not MODEL_RE.fullmatch(model):
-        raise ValueError("model name may use letters, digits and . _ : / @ + - only")
+        raise ValueError("model name may use letters, digits and . _ : / @ + - only, at most 120 characters")
     return model
 
 

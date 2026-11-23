@@ -5,6 +5,10 @@
 #   docker compose down                # add -v to delete the results volume
 #
 # Safety: the port is published on the host's 127.0.0.1 only, never 0.0.0.0.
+# The API binds 0.0.0.0 inside the container, so it requires a token: it prints a
+# one-time login URL, https://127.0.0.1:8000/?token=..., to its log; open it once
+# (docker compose logs hactu8 | grep token=). HACTU8_API_TOKEN in the env file
+# keeps one token across restarts. See docs/deploy.md "API token".
 # The labs and Lamb inside the container bind the container's own 127.0.0.1
 # and are not published at all.
 

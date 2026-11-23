@@ -248,8 +248,8 @@ class AppWiringTest(unittest.TestCase):
             "/api/runs", headers={"Origin": "http://localhost:5173", **preflight})
         self.assertEqual(plain.headers.get("access-control-allow-origin"), "http://localhost:5173")
 
-    def test_docs_pages_keep_their_cdn(self):
-        response = self._client().get("/docs")
+    def test_docs_pages_keep_their_cdn_when_enabled(self):
+        response = self._client(HACTU8_API_DOCS="on").get("/docs")
         self.assertEqual(response.status_code, 200)
         self.assertNotIn("content-security-policy", response.headers)
         self.assertEqual(response.headers["x-frame-options"], "DENY")

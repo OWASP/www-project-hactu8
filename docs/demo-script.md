@@ -22,7 +22,9 @@ story with deterministic numbers, and a recording covers the whole run.
   build it (`npm run build`) and serve it from the API with
   `HACTU8_CONSOLE_DIR=spikes/iac-prototype/iac-host/dist`. If 8000 is taken,
   set `HACTU8_API_PORT` and build the console with `VITE_HACTU8_API_URL`
-  pointing at it.
+  pointing at it. On loopback the API needs no token. The Docker stack does:
+  open the login URL from `docker compose logs hactu8 | grep token=` once
+  before the demo ([deploy.md](deploy.md#api-token)).
 - Keep the laptop awake: `caffeinate -i` in a spare terminal.
 - Run `python -m hactu8 run all --backend echo` once: 49 of 49 must pass.
 - Open the console at Learn. Have the recording
