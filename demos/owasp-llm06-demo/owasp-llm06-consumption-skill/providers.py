@@ -9,8 +9,10 @@ or switched at runtime from the web console through ``POST /api/backend``):
 
   echo        default. The demo's own deterministic stand-in model. No network.
               ``stub`` is accepted as an alias.
-  ollama      local. OLLAMA_HOST (default http://localhost:11434).
+  ollama      local. OLLAMA_HOST (default http://localhost:11434). Loopback only
+              unless OLLAMA_ALLOW_REMOTE=1.
   llamacpp    local llama.cpp server. LLAMACPP_HOST (default http://localhost:8080).
+              Loopback only unless LLAMACPP_ALLOW_REMOTE=1.
   openai-compat  any local OpenAI-compatible server: LM Studio, vLLM, LocalAI, Jan,
               llamafile, mlx_lm.server. LOCAL_OPENAI_BASE_URL (default
               http://localhost:1234/v1), optional LOCAL_OPENAI_API_KEY. Loopback
@@ -64,6 +66,12 @@ authenticates you to the model; it rides only in a request header. The canary
 only "secret" a lab may place where a payload can reach it, so its appearance in
 model output proves an exfiltration that lost nothing. Every request body and
 every response is checked for the real keys (``assert_not_leaking``).
+Error text never carries a credential either: every ``*_API_KEY`` value in the
+environment, and every credential a request carried in a header, is replaced
+with ``[REDACTED]`` (``redact``) before a server's error reaches an exception.
+Provider calls never follow redirects, so a header credential cannot be
+forwarded to another host, and local backends talk to loopback only unless
+``<PREFIX>_ALLOW_REMOTE=1``.
 
 API keys come from the environment only. They are never
 accepted from the console, a file, or a request; the console is told only
@@ -80,6 +88,7 @@ import binascii
 import codecs
 import html
 import io
+import ipaddress
 import json
 import os
 import platform
@@ -192,11 +201,25 @@ class _ReasoningStats:
 REASONING = _ReasoningStats()
 
 
+class _NoRedirect(urllib.request.HTTPRedirectHandler):
+    """Refuse every redirect: following one would resend the Authorization
+    header to a host nobody checked (another origin, a non-loopback host, ftp)."""
+
+    def redirect_request(self, req, fp, code, msg, headers, newurl):
+        raise urllib.error.HTTPError(req.full_url, code,
+                                     f"redirect to {newurl} refused (provider calls never follow redirects)",
+                                     headers, fp)
+
+
+_OPENER = urllib.request.build_opener(_NoRedirect)
+
+
 def _urlopen(req: urllib.request.Request, *, timeout: float):
-    """urlopen restricted to http(s), so a stray file:// host is never opened."""
+    """urlopen restricted to http(s) with redirects refused, so a stray file://
+    host is never opened and a credential never follows a redirect."""
     if not req.full_url.lower().startswith(_ALLOWED_URL_SCHEMES):
         raise ValueError(f"refusing to open non-HTTP(S) URL: {req.full_url!r}")
-    return urllib.request.urlopen(req, timeout=timeout)  # noqa: S310 (scheme allowlisted)
+    return _OPENER.open(req, timeout=timeout)  # noqa: S310 (scheme allowlisted)
 
 
 SERVER_REASON_CHARS = 300
@@ -208,26 +231,115 @@ class _with_server_reason:
     A bare ``HTTP Error 500`` hides the reason (Ollama sends it in the body, e.g.
     ``{"error":"prediction aborted, token repeat limit reached"}``). The new
     error keeps the type and ``code`` so callers that branch on them still work.
-    The body is checked for real keys before it is put in a message.
+    Credentials are redacted from the reason phrase and the body (a server may
+    echo the Authorization header back), and from any other error's text.
     """
 
     def __enter__(self):
         return self
 
     def __exit__(self, kind, exc, tb):
-        if not isinstance(exc, urllib.error.HTTPError) or getattr(exc, "_server_reason", False):
+        if exc is None or getattr(exc, "_server_reason", False):
             return False
+        if not isinstance(exc, urllib.error.HTTPError):
+            if not isinstance(exc, Exception) or redact(str(exc)) == str(exc):
+                return False
+            err = RuntimeError(f"{type(exc).__name__}: {redact(str(exc))}")
+            err._server_reason = True
+            raise err from None
         try:
             body = (exc.read() or b"").decode("utf-8", errors="replace").strip()
         except (OSError, ValueError):
             body = ""
         finally:
             exc.close()
-        assert_not_leaking(body)
-        msg = f"{exc.reason}: {body[:SERVER_REASON_CHARS]}" if body else str(exc.reason)
-        err = urllib.error.HTTPError(exc.url, exc.code, msg, exc.headers, io.BytesIO(body.encode("utf-8")))
+        body, reason = redact(body), redact(str(exc.reason))
+        msg = f"{reason}: {body[:SERVER_REASON_CHARS]}" if body else reason
+        err = urllib.error.HTTPError(redact(exc.url or ""), exc.code, msg, exc.headers,
+                                     io.BytesIO(body.encode("utf-8")))
         err._server_reason = True
         raise err from None
+
+
+# ---- credentials in error text --------------------------------------------- #
+REDACTED = "[REDACTED]"
+_MIN_SECRET = 8  # shorter values ("ollama") are placeholders, and would redact ordinary words
+_CREDENTIAL_HEADERS = ("authorization", "x-api-key", "api-key", "proxy-authorization")
+_SENT_SECRETS: set = set()  # credentials this process has put in a request header
+
+
+def register_secret(value: str) -> None:
+    """Remember a credential (e.g. a key read from a configurable env name) so
+    ``redact`` removes it from error text and results."""
+    value = (value or "").strip()
+    if len(value) >= _MIN_SECRET:
+        _SENT_SECRETS.add(value)
+
+
+def _carried(headers: dict) -> List[str]:
+    """The credentials a request carries in its headers: the whole value and the
+    token after the scheme (``Bearer <token>``)."""
+    found = []
+    for name, value in (headers or {}).items():
+        if str(name).lower() in _CREDENTIAL_HEADERS and value:
+            value = str(value).strip()
+            token = value.partition(" ")[2].strip()
+            found += [v for v in (value, token) if len(v) >= _MIN_SECRET]
+    for value in found:
+        _SENT_SECRETS.add(value)
+    return found
+
+
+def known_secrets() -> List[str]:
+    """Every credential this process could send: each ``*_API_KEY`` in the
+    environment and each header credential already sent. Longest first."""
+    values = set(_SENT_SECRETS)
+    for env, value in os.environ.items():
+        if env.endswith("_API_KEY") or env in KEY_ENV.values():
+            value = value.strip()
+            if len(value) >= _MIN_SECRET:
+                values.add(value)
+    return sorted(values, key=len, reverse=True)
+
+
+def redact(text: str) -> str:
+    """``text`` with every known credential replaced by ``[REDACTED]``."""
+    if not text:
+        return text
+    for secret in known_secrets():
+        if secret in text:
+            text = text.replace(secret, REDACTED)
+    return text
+
+
+def is_loopback_url(url: str) -> bool:
+    """True when ``url`` is http(s) to a real loopback host: localhost, 127/8 or
+    ::1, parsed (not prefix-matched), with no userinfo and a valid port."""
+    if not url or any(ch.isspace() or ord(ch) < 32 for ch in url):
+        return False
+    try:
+        parts = urllib.parse.urlsplit(url)
+        host = parts.hostname or ""
+        parts.port  # noqa: B018 — raises ValueError on a bad port
+    except ValueError:
+        return False
+    if parts.scheme.lower() not in ("http", "https") or not host or "@" in parts.netloc:
+        return False
+    if host == "localhost":
+        return True
+    try:
+        return ipaddress.ip_address(host).is_loopback
+    except ValueError:
+        return False
+
+
+def remote_refusal(name: str, url: str, env: str) -> str:
+    """Why a local backend may not use ``url``, or "" when it may: loopback, or
+    ``<env>_ALLOW_REMOTE=1``."""
+    if is_loopback_url(url) or os.environ.get(f"{env}_ALLOW_REMOTE") == "1":
+        return ""
+    return (f"{name} is for local servers; {url} is not loopback. Set {env}_ALLOW_REMOTE=1 "
+            "to use it anyway (lab text will leave the machine).")
 
 
 @dataclass
@@ -466,6 +578,7 @@ class Provider:
         raise RuntimeError(f"{self.name} does not provide embeddings in these labs")
 
     def _get(self, url: str, headers: dict, timeout: float) -> dict:
+        _carried(headers)
         req = urllib.request.Request(url, headers=headers)
         with _with_server_reason(), _urlopen(req, timeout=timeout) as resp:
             return json.loads(resp.read())
@@ -474,13 +587,16 @@ class Provider:
         body = json.dumps(payload)
         # Defence in depth: keys ride only in headers, never in a body or an answer.
         assert_not_leaking(body)
+        if any(secret in body for secret in _carried(headers)):
+            raise RuntimeError("refusing to send: the request's own credential appeared in its body. "
+                               "It must never reach a payload path.")
         req = urllib.request.Request(
             url, data=body.encode("utf-8"),
             headers={"Content-Type": "application/json", **headers})
         with _with_server_reason(), _urlopen(req, timeout=timeout) as resp:
             raw = resp.read().decode("utf-8", errors="replace")
         assert_not_leaking(raw)
-        return json.loads(raw)
+        return json.loads(redact(raw))
 
 
 class OllamaProvider(Provider):
@@ -488,7 +604,8 @@ class OllamaProvider(Provider):
 
     def __init__(self) -> None:
         super().__init__()
-        self.host = os.environ.get("OLLAMA_HOST", "http://localhost:11434").rstrip("/")
+        self.host = local_base("ollama")
+        _refuse_remote(self.name, self.host, "OLLAMA")
         self.timeout = http_timeout("OLLAMA_TIMEOUT")
         self.think = think_setting("ollama")["mode"]
 
@@ -532,7 +649,8 @@ class LlamaCppProvider(Provider):
 
     def __init__(self) -> None:
         super().__init__()
-        self.host = os.environ.get("LLAMACPP_HOST", "http://localhost:8080").rstrip("/")
+        self.host = local_base("llamacpp")
+        _refuse_remote(self.name, self.host, "LLAMACPP")
         self.timeout = http_timeout("LLAMACPP_TIMEOUT")
 
     def chat(self, messages: List[Message], *, model: str = "") -> str:
@@ -556,7 +674,24 @@ class LlamaCppProvider(Provider):
         return [d["embedding"] for d in sorted(data["data"], key=lambda d: d.get("index", 0))]
 
 
-_LOOPBACK = re.compile(r"^https?://(localhost|127\.\d+\.\d+\.\d+|\[::1\])(:\d+)?(/|$)", re.I)
+def _refuse_remote(name: str, url: str, env: str) -> None:
+    why = remote_refusal(name, url, env)
+    if why:
+        raise RuntimeError(why)
+
+
+# Local backend -> the environment prefix of its <PREFIX>_ALLOW_REMOTE switch.
+LOCAL_ENV = {"ollama": "OLLAMA", "llamacpp": "LLAMACPP", "openai-compat": "LOCAL_OPENAI",
+             "strata": "STRATA", "basalt": "BASALT"}
+
+
+def local_base(backend: str) -> str:
+    """A local backend's server root from the environment (no trailing slash)."""
+    if backend == "ollama":
+        return os.environ.get("OLLAMA_HOST", "http://localhost:11434").rstrip("/")
+    if backend == "llamacpp":
+        return os.environ.get("LLAMACPP_HOST", "http://localhost:8080").rstrip("/")
+    return OPENAI_COMPAT[backend].base_url()
 
 
 class OpenAICompatProvider(Provider):
@@ -573,10 +708,7 @@ class OpenAICompatProvider(Provider):
     def __init__(self) -> None:
         super().__init__()
         self.base = self.base_url()
-        if not _LOOPBACK.match(self.base) and os.environ.get(f"{self.env}_ALLOW_REMOTE") != "1":
-            raise RuntimeError(
-                f"{self.name} is for local servers; {self.base} is not loopback. Set "
-                f"{self.env}_ALLOW_REMOTE=1 to use it anyway (lab text will leave the machine).")
+        _refuse_remote(self.name, self.base, self.env)
         raw = os.environ.get(f"{self.env}_API_KEY", "").strip()
         self._key = _ProviderKey(raw) if raw else None
         self.timeout = http_timeout(f"{self.env}_TIMEOUT")

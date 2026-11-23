@@ -11,7 +11,6 @@ allowed, so ``--tier cloud`` works even when ``max_tier`` is local.
 from __future__ import annotations
 
 import json
-import os
 import urllib.request
 from dataclasses import dataclass, field
 from typing import Dict, List, Optional, Tuple
@@ -117,12 +116,11 @@ class Router:
         return result
 
     def _probe_local(self, backend: str) -> Tuple[bool, str]:
-        if backend == "ollama":
-            url = os.environ.get("OLLAMA_HOST", "http://localhost:11434").rstrip("/") + "/api/tags"
-        elif backend in providers.OPENAI_COMPAT:
-            url = providers.OPENAI_COMPAT[backend].base_url() + "/models"
-        else:
-            url = os.environ.get("LLAMACPP_HOST", "http://localhost:8080").rstrip("/") + "/v1/models"
+        base = providers.local_base(backend)
+        # Same loopback guard as the provider: never probe a remote host unasked.
+        if providers.remote_refusal(backend, base, providers.LOCAL_ENV[backend]):
+            return False, f"{base} is not loopback; set {providers.LOCAL_ENV[backend]}_ALLOW_REMOTE=1"
+        url = base + {"ollama": "/api/tags", "llamacpp": "/v1/models"}.get(backend, "/models")
         try:
             with providers._urlopen(urllib.request.Request(url), timeout=self.probe_timeout) as resp:
                 json.loads(resp.read() or b"{}")
@@ -174,7 +172,7 @@ class Router:
             try:
                 return self.provider(cand).chat(messages, model=cand.model), cand
             except Exception as exc:  # noqa: BLE001 — escalate on any backend failure
-                errors.append(f"{cand.label}: {type(exc).__name__}: {exc}")
+                errors.append(f"{cand.label}: {type(exc).__name__}: {providers.redact(str(exc))}")
                 # Mark it down for this process, so later calls skip straight past it.
                 self._probes[cand] = (False, f"failed: {type(exc).__name__}")
                 if self.on_error == "stop":

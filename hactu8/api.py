@@ -2,7 +2,12 @@
 branding, and reports.
 
 Set HACTU8_CONSOLE_DIR to a built console (Vite ``dist/``) to serve it at ``/`` from the same origin,
-as the Docker image does."""
+as the Docker image does.
+
+Every request must name a loopback Host (127.0.0.1, localhost or [::1]) with the API's port
+(HACTU8_API_PORT, default 8000; also HACTU8_PORT, the host port Docker publishes it on); anything
+else gets 421. That stops DNS rebinding: a page on attacker.example re-pointed at 127.0.0.1 still
+sends ``Host: attacker.example``."""
 
 import os
 from pathlib import Path
@@ -15,11 +20,22 @@ from hactu8.classify import get_classifier
 from hactu8.router import Router, RouterError
 
 
-def create_app(root: Optional[Path] = None):
+LOOPBACK_HOSTS = ("127.0.0.1", "localhost", "[::1]")
+
+
+def allowed_hosts() -> set:
+    """Host header values the API answers: loopback names with its configured port(s)."""
+    ports = {os.environ.get("HACTU8_API_PORT", "8000").strip() or "8000"}
+    if os.environ.get("HACTU8_PORT", "").strip():
+        ports.add(os.environ["HACTU8_PORT"].strip())
+    return {f"{host}:{port}" for host in LOOPBACK_HOSTS for port in ports}
+
+
+def create_app(root: Optional[Path] = None, hosts: Optional[set] = None):
     try:
-        from fastapi import FastAPI, HTTPException
+        from fastapi import FastAPI, HTTPException, Request
         from fastapi.middleware.cors import CORSMiddleware
-        from fastapi.responses import PlainTextResponse
+        from fastapi.responses import JSONResponse, PlainTextResponse
         from pydantic import BaseModel
     except ModuleNotFoundError as exc:
         raise RuntimeError("API needs the optional dependency: pip install 'hactu8[api]'") from exc
@@ -49,12 +65,22 @@ def create_app(root: Optional[Path] = None):
         confirm_spend: bool = False
 
     app = FastAPI(title="HACTU8 API", version="0.1.0")
+    hosts = {h.lower() for h in (hosts if hosts is not None else allowed_hosts())}
+
     app.add_middleware(
         CORSMiddleware,
         allow_origins=["http://127.0.0.1:5173", "http://localhost:5173"],
         allow_methods=["*"],
         allow_headers=["*"],
     )
+
+    @app.middleware("http")
+    async def host_check(request: Request, call_next):
+        # DNS-rebinding guard: the browser sends the attacker's name as Host.
+        if (request.headers.get("host") or "").lower() not in hosts:
+            return JSONResponse({"detail": "misdirected request: Host must be a loopback name and the API port"},
+                                status_code=421)
+        return await call_next(request)
 
     @app.get("/api/health")
     def health():
@@ -198,7 +224,11 @@ def create_app(root: Optional[Path] = None):
         try:
             skill = catalog.get(request.skill_id, root)
             cfg = config.load(root / "hactu8.yaml")
-            classifier = get_classifier(request.classifier, cfg, Router.from_config(cfg))
+            router = Router.from_config(cfg)
+            notice = spend.judge_notice(router, request.classifier)
+            if notice and not request.confirm_spend:
+                raise HTTPException(402, notice + " Set confirm_spend.")
+            classifier = get_classifier(request.classifier, cfg, router)
         except (KeyError, RuntimeError, RouterError, config.ConfigError) as exc:
             raise HTTPException(400, str(exc)) from exc
         doc = lab.run(skill, backend=request.backend, model=request.model, classifier=classifier)

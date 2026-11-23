@@ -25,8 +25,13 @@ services:
         required: false
     environment:
       # Ollama and llama.cpp run on the host, not in a container.
+      # host.docker.internal is not loopback, so the local backends need *_ALLOW_REMOTE.
       OLLAMA_HOST: ${OLLAMA_HOST:-http://host.docker.internal:11434}
+      OLLAMA_ALLOW_REMOTE: ${OLLAMA_ALLOW_REMOTE:-1}
       LLAMACPP_HOST: ${LLAMACPP_HOST:-http://host.docker.internal:8080}
+      LLAMACPP_ALLOW_REMOTE: ${LLAMACPP_ALLOW_REMOTE:-1}
+      # The API answers only Host: 127.0.0.1/localhost with its port; this is the published one.
+      HACTU8_PORT: ${HACTU8_PORT:-8000}
     extra_hosts:
       - "host.docker.internal:host-gateway"
     volumes:

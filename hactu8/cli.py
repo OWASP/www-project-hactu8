@@ -8,7 +8,7 @@
     hactu8 results [--json]
     hactu8 show <run_id|latest>
     hactu8 router [--json]
-    hactu8 bench [--json] [--misses] [--classifier-backend B [--model M]]
+    hactu8 bench [--json] [--misses] [--classifier-backend B [--model M]] [--confirm-spend]
     hactu8 live [--backend B] [--model M] [--json]
     hactu8 scoreboard [--json]
     hactu8 wolf [--backend B] [--model M] [--target-backend B] [--target-model M] [--rounds N] [--attempts N]
@@ -27,7 +27,7 @@ import json
 import sys
 from typing import List
 
-from hactu8 import __version__, catalog, config, defenses, providers, store, techniques
+from hactu8 import __version__, catalog, config, defenses, providers, spend, store, techniques
 from hactu8.adapters import lab
 from hactu8.classify import get_classifier
 from hactu8.router import Router, RouterError
@@ -129,6 +129,13 @@ def _run_routed(skill, args, router: Router, classifier) -> dict:
         nxt = router.fallbacks(role, cand) if doc["summary"]["status"] == "error" else []
         if not nxt:
             return doc
+        if spend.is_cloud(nxt[0].backend) and not args.confirm_spend:
+            # Escalation must not start spending: the up-front check only saw the first candidate.
+            print(f"  {cand.label} could not complete the run; not escalating to {nxt[0].label}: "
+                  f"{spend.estimate(nxt[0].backend, spend.lab_calls(1))} Re-run with --confirm-spend.",
+                  file=sys.stderr, flush=True)
+            doc["model"]["escalation_refused"] = nxt[0].label
+            return doc
         failed.append(cand.label)
         if not args.json:
             print(f"  {cand.label} could not complete the run; escalating to {nxt[0].label}", flush=True)
@@ -148,10 +155,13 @@ def cmd_run(args) -> int:
     except (KeyError, RuntimeError, RouterError) as exc:
         print(f"error: {exc}", file=sys.stderr)
         return 2
-    from hactu8 import spend
     chosen = args.backend or label.split(":", 1)[0]
     if spend.is_cloud(chosen) and not args.confirm_spend:
         print(spend.estimate(chosen, spend.lab_calls(len(ids))) + " Re-run with --confirm-spend.", file=sys.stderr)
+        return 2
+    notice = spend.judge_notice(router, classifier.name, len(ids))
+    if notice and not args.confirm_spend:
+        print(notice + " Re-run with --confirm-spend.", file=sys.stderr)
         return 2
     for skill_id in ids:
         try:
@@ -236,6 +246,10 @@ def _pct(value) -> str:
 
 def cmd_bench(args) -> int:
     from hactu8 import bench
+    if args.classifier_backend and spend.is_cloud(args.classifier_backend) and not args.confirm_spend:
+        print(spend.estimate(args.classifier_backend, spend.lab_calls(1))
+              + " Re-run with --confirm-spend.", file=sys.stderr)
+        return 2
     classifier = bench.llm_classifier(args.classifier_backend, args.model) if args.classifier_backend else None
     result = bench.run(classifier=classifier)
     if args.json:
@@ -432,6 +446,7 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--misses", action="store_true", help="list misses and false positives")
     p.add_argument("--classifier-backend", default="", help="add ProtectoGW's model plane: {models}")
     p.add_argument("--model", default="")
+    p.add_argument("--confirm-spend", action="store_true", help="allow a paid cloud classifier backend")
     p.set_defaults(func=cmd_bench)
 
     p = sub.add_parser("live", help="attack a model with Lamb's MCP surfaces, defense off vs on", formatter_class=_BackendHelp)

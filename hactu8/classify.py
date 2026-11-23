@@ -175,7 +175,7 @@ class LlmJudgeClassifier(Classifier):
             reply, cand = self.router.chat("judge", [providers.Message("system", JUDGE_SYSTEM),
                                                      providers.Message("user", user)])
         except RouterError as exc:
-            return _fallback(lab_verdict, f"judge unavailable ({exc})")
+            return _fallback(lab_verdict, f"judge unavailable ({providers.redact(str(exc))})")
         verdict = parse_verdict(reply)
         if verdict is None:
             return _fallback(lab_verdict, f"unparseable judge reply from {cand.label}")
@@ -183,6 +183,20 @@ class LlmJudgeClassifier(Classifier):
         self.used.add(cand.label)
         self._cache[key] = verdict
         return keep_lab_red(verdict, lab_verdict)
+
+
+def _jev_url_ok(url: str) -> bool:
+    """https to any host with no userinfo, or http only to a real loopback host (parsed, not prefix-matched)."""
+    import urllib.parse
+    if providers.is_loopback_url(url):
+        return True
+    try:
+        parts = urllib.parse.urlsplit(url)
+        parts.port  # noqa: B018 — raises ValueError on a bad port
+    except ValueError:
+        return False
+    return (parts.scheme.lower() == "https" and bool(parts.hostname) and "@" not in parts.netloc
+            and not any(ch.isspace() or ord(ch) < 32 for ch in url))
 
 
 class JevClassifier(Classifier):
@@ -207,13 +221,14 @@ class JevClassifier(Classifier):
         if not enabled:
             raise RuntimeError("jev is disabled; set classifiers.jev.enabled in hactu8.yaml or HACTU8_ENABLE_JEV=1")
         self.url = os.environ.get("JEV_URL") or str(self.cfg.get("url") or self.DEFAULT_URL)
-        if not self.url.lower().startswith(("https://", "http://127.0.0.1", "http://localhost")):
-            raise RuntimeError("jev needs an https url (classifiers.jev.url or JEV_URL)")
+        if not _jev_url_ok(self.url):
+            raise RuntimeError("jev needs an https url, or http to a loopback host (classifiers.jev.url or JEV_URL)")
         key_env = str(self.cfg.get("key_env") or "TYPESAFE_API_KEY")
         raw = (os.environ.get(key_env) or os.environ.get("JEV_API_KEY") or "").strip()
         if not raw:
             raise RuntimeError(f"jev selected but {key_env} or JEV_API_KEY is not set")
         self._key = providers._ProviderKey(raw)
+        providers.register_secret(raw)
         self.model = str(self.cfg.get("model") or "jev-latest")
         self.timeout = float(self.cfg.get("timeout") or 30)
         self._http = providers.Provider()

@@ -1,11 +1,11 @@
 # Local engines and MoE models
 
-HACTU8 runs labs against a local model through five backends. All of them keep lab text on the host, and the OpenAI-compatible ones refuse a non-loopback URL unless you set the override on purpose.
+HACTU8 runs labs against a local model through five backends. All of them keep lab text on the host: each one, and the router's availability probe, refuses a non-loopback URL unless you set the override on purpose. Loopback means `localhost`, `127.0.0.0/8` or `[::1]`, checked on the parsed host (so `localhost.example.com` or `localhost@example.com` is refused). Provider calls never follow an HTTP redirect, so a key in the `Authorization` header cannot be forwarded to another host, and a key a server echoes back in an error is shown as `[REDACTED]`.
 
 | Backend | Engine | Host variable (default) | Override for a non-loopback host |
 |---------|--------|-------------------------|----------------------------------|
-| `ollama` | Ollama | `OLLAMA_HOST` (`http://localhost:11434`) | none (no guard) |
-| `llamacpp` | llama.cpp `llama-server` | `LLAMACPP_HOST` (`http://localhost:8080`) | none (no guard) |
+| `ollama` | Ollama | `OLLAMA_HOST` (`http://localhost:11434`) | `OLLAMA_ALLOW_REMOTE=1` |
+| `llamacpp` | llama.cpp `llama-server` | `LLAMACPP_HOST` (`http://localhost:8080`) | `LLAMACPP_ALLOW_REMOTE=1` |
 | `openai-compat` | LM Studio, vLLM, LocalAI, Jan, llamafile, `mlx_lm.server` | `LOCAL_OPENAI_BASE_URL` (`http://localhost:1234/v1`) | `LOCAL_OPENAI_ALLOW_REMOTE=1` |
 | `strata` | Strata | `STRATA_HOST` (`http://localhost:8080`) | `STRATA_ALLOW_REMOTE=1` |
 | `basalt` | Basalt | `BASALT_HOST` (`http://localhost:8080`) | `BASALT_ALLOW_REMOTE=1` |

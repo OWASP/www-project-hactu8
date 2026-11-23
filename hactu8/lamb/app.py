@@ -39,6 +39,19 @@ def create_app(root: Optional[Path] = None, manager: Optional[LabWorkerManager] 
         host = (request.headers.get("host") or "").split(":", 1)[0].lower()
         return host in {"127.0.0.1", "localhost"}
 
+    def control_refusal(request: Request) -> Optional[Response]:
+        """State-changing control calls need a JSON Content-Type (a cross-site form
+        or no-cors fetch cannot send one without a preflight) and, when the browser
+        names an Origin, a loopback one."""
+        if not host_ok(request):
+            return JSONResponse({"error": "bad host"}, status_code=403)
+        origin = request.headers.get("origin")
+        if origin is not None and not _loopback_origin(origin):
+            return JSONResponse({"error": "cross-origin request refused"}, status_code=403)
+        if not (request.headers.get("content-type") or "").startswith("application/json"):
+            return JSONResponse({"error": "Content-Type must be application/json"}, status_code=415)
+        return None
+
     def base_url(request: Request) -> str:
         return f"http://{request.headers.get('host') or f'{DEFAULT_HOST}:{DEFAULT_PORT}'}"
 
@@ -74,8 +87,9 @@ def create_app(root: Optional[Path] = None, manager: Optional[LabWorkerManager] 
 
     @mcp.custom_route("/api/reset", methods=["POST"])
     async def reset(request: Request) -> Response:
-        if not host_ok(request):
-            return JSONResponse({"error": "bad host"}, status_code=403)
+        refused = control_refusal(request)
+        if refused is not None:
+            return refused
         try:
             body = await _json_body(request)
         except ValueError as exc:
@@ -96,8 +110,9 @@ def create_app(root: Optional[Path] = None, manager: Optional[LabWorkerManager] 
 
     @mcp.custom_route("/api/lamb/mode", methods=["POST"])
     async def mode(request: Request) -> Response:
-        if not host_ok(request):
-            return JSONResponse({"error": "bad host"}, status_code=403)
+        refused = control_refusal(request)
+        if refused is not None:
+            return refused
         try:
             body = await _json_body(request)
             result = state.set_mode(str(body.get("mode", "")))
@@ -137,8 +152,9 @@ def create_app(root: Optional[Path] = None, manager: Optional[LabWorkerManager] 
 
     @mcp.custom_route("/api/lamb/swap", methods=["POST"])
     async def swap(request: Request) -> Response:
-        if not host_ok(request):
-            return JSONResponse({"error": "bad host"}, status_code=403)
+        refused = control_refusal(request)
+        if refused is not None:
+            return refused
         return JSONResponse(lamb.simulate_swap(mcp, state.surfaces))
 
     async def proxy(request: Request) -> Response:
@@ -198,6 +214,18 @@ def create_app(root: Optional[Path] = None, manager: Optional[LabWorkerManager] 
     app.state.lamb_mcp = state
     app.state.mcp_server = mcp
     return app
+
+
+def _loopback_origin(origin: str) -> bool:
+    """True for an http(s) Origin on 127.0.0.1, localhost or [::1] (any port)."""
+    from urllib.parse import urlsplit
+    try:
+        parts = urlsplit(origin)
+        parts.port  # noqa: B018 — raises ValueError on a bad port
+    except ValueError:
+        return False
+    return parts.scheme in ("http", "https") and "@" not in parts.netloc and \
+        (parts.hostname or "") in ("127.0.0.1", "localhost", "::1")
 
 
 async def _json_body(request) -> dict:
