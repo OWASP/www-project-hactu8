@@ -250,7 +250,7 @@ The target is every known attack and defense, not only the two OWASP Top 10 list
 
 Open work, in order (updated 2026-11-21 evening: 49 labs, HX01-HX20; AG-93 to AG-96 done):
 
-1. Sweep follow-ups: the OpenRouter ASI04 ministral-3b cell is void and LLM04 ministral-8b may be contaminated (parallel runs shared one checkout; fixed in 9714afb). A rerun needs the user's yes (cost). HX02's grading and the bench known-miss change are done (6497576, e80b38b; coverage now 95% honest, 10 known misses).
+1. Sweep follow-ups: the race-hit OpenRouter cells were rerun on `d1f46c4` (2026-11-23, user approved): ASI04 ministral-3b and LLM04 ministral-8b both 0/100/0. HX02's grading and the bench known-miss change are done (6497576, e80b38b; coverage now 95% honest, 10 known misses).
 2. Sweeps on the final code (9746535), results on `/Volumes/DockerDisk/hactu8-sweeps/` (scripts in the session scratchpad: `sweep.sh`, `cloud_sweep.sh`):
    - local Ollama, 7 models: done, `docs/evidence/2026-11-21-ollama-sweep.md` (mistral:7b 28/31, qwen3:8b 30/31, others 31/31). `llama3.2:3b` ASI04 and `mistral:7b` LLM04 rerun on fixed code 2026-11-22: 0/100/0 both;
    - OpenRouter, the 8 approved models: done, `docs/evidence/2026-11-21-openrouter-sweep.md`.
