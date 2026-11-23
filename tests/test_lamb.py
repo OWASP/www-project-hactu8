@@ -47,6 +47,36 @@ class WorkerTest(unittest.TestCase):
         result = workers.reset()
         self.assertEqual(result, {"reset": ["llm01"], "errors": {}})
 
+    def test_app_shutdown_stops_lab_workers(self):
+        # uvicorn re-raises SIGTERM after a graceful shutdown, so a `finally` in
+        # __main__ never runs on `kill`; the app's own lifespan must stop the workers.
+        try:
+            from hactu8.lamb.app import create_app
+            from hactu8.lamb._mcp import McpUnavailable
+        except ModuleNotFoundError:
+            self.skipTest("Lamb extra not installed")
+        import asyncio
+
+        class FakeWorkers:
+            closed = 0
+            skills = {}
+
+            def close(self):
+                self.closed += 1
+
+        workers = FakeWorkers()
+        try:
+            app = create_app(manager=workers)
+        except (McpUnavailable, RuntimeError):
+            self.skipTest("Lamb extra not installed")
+
+        async def cycle():
+            async with app.router.lifespan_context(app):
+                self.assertEqual(workers.closed, 0)
+
+        asyncio.run(cycle())
+        self.assertEqual(workers.closed, 1)
+
     def test_console_paths_are_scoped_to_the_gateway_lab(self):
         html = b'<link href="/web/styles.css"><script src="/web/app.js"></script>'
         rewritten = _rewrite_console_paths(html, "text/html", "llm01")

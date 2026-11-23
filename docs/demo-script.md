@@ -8,16 +8,22 @@ story with deterministic numbers, and a recording covers the whole run.
 
 - Ollama running with the demo model pulled and warmed:
   `ollama pull gemma3:4b` then `ollama run gemma3:4b "hi"`. It is weak
-  enough to fall for the attacks (19 of 25 labs in the 2026-11-20 sweep; 7 to
+  enough to fall for the attacks (25 of 31 labs in the 2026-11-21 sweep; 7 to
   8 of 13 live attacks with the gateway off) and steady across samples.
   `llama3.2:3b` resisted every live attack in one rehearsal, which shows
   nothing.
 - API and console running (see [deploy.md](deploy.md)): the API on
-  127.0.0.1:8000 and the console on 127.0.0.1:5173, or the Docker stack.
+  127.0.0.1:8000 and the console on 127.0.0.1:5173, or the Docker stack. The
+  console needs `npm install` in `spikes/iac-prototype/iac-host` once; or
+  build it (`npm run build`) and serve it from the API with
+  `HACTU8_CONSOLE_DIR=spikes/iac-prototype/iac-host/dist`. If 8000 is taken,
+  set `HACTU8_API_PORT` and build the console with `VITE_HACTU8_API_URL`
+  pointing at it.
 - Keep the laptop awake: `caffeinate -i` in a spare terminal.
 - Run `python -m hactu8 run all --backend echo` once: 49 of 49 must pass.
 - Open the console at Learn. Have the recording
-  (`hactu8_llm01_echo_demo_fallback.gif`) open in another tab.
+  (`hactu8_llm01_echo_demo_fallback.gif`, kept outside the repo) open in
+  another tab.
 - No cloud keys are needed. If you show a cloud model, the run is gated on a
   spend-consent checkbox; leave it unticked unless you mean to spend.
 
@@ -32,11 +38,11 @@ Agentic Top 10 2026, nine gateway labs (AGX01-09), hidden document injection
 (HX01), the multi-turn jailbreak (HX02), MCP sampling abuse (HX03), MCP
 elicitation abuse (HX04), OAuth confused deputy (HX05), role-play and
 many-shot jailbreaks (HX06), embedding inversion (HX07), image prompt
-injection (HX08), membership inference (HX09), model extraction (HX10), attacks on the
-scoring layer (HX11), x402 payment challenge tampering (HX12) and agent
-overpay and mandate bypass (HX13) a shadow MCP server (HX16),
-direct prompt injection (HX14), a self-replicating prompt (HX15) MCP scope
-creep (HX17), and the classic ML attacks: adversarial examples (HX18),
+injection (HX08), membership inference (HX09), model extraction (HX10),
+attacks on the scoring layer (HX11), x402 payment challenge tampering (HX12),
+agent overpay and mandate bypass (HX13), direct prompt injection (HX14), a
+self-replicating prompt (HX15), a shadow MCP server (HX16), MCP scope creep
+(HX17), and the classic ML attacks: adversarial examples (HX18),
 training-data poisoning (HX19) and a model backdoor (HX20).
 
 ## 2. Learn (2 minutes)
@@ -61,10 +67,12 @@ Fallback: the Offline tier (`echo`) shows 0% -> 100% -> 0% every time.
 
 Run the "Billy's MCP surfaces" lab on the same model. Show model resistance
 (how often the model refused on its own) next to app exposure (breaches with
-the gateway off, then on), and what the Wolf's den captured. Point out that
-the controls stay green: the gateway blocks no safe item.
+the gateway off, then on), and "What leaked with no defense". Point out that
+the controls stay green: the gateway blocks no safe item. The Wolf's den
+captures appear in step 7, from the CLI.
 
-Fallback: `python -m hactu8 live --backend echo`.
+Fallback: `python -m hactu8 live --backend echo` (5 of 13 attacks held by the
+model, 8 breaches with the gateway off, 0 with it on, 0 false blocks).
 
 ## 5. An agentic lab (2 minutes)
 
@@ -80,8 +88,9 @@ screen but not the sandbox.
 
 - `python -m hactu8 bench`: ProtectoGW catches 53% of an independent held-out
   set with no false positives. On the corpus its rules are tuned on, coverage
-  is 94% (166 of 176): the 10 misses are recorded, not dropped, and 9 of them
-  are payloads the HX labs ship. A screen is one layer, never the boundary.
+  is 95% (184 of 194; the bench also prints the recorded baseline, 94%): the
+  10 misses are recorded, not dropped, and 9 of them are payloads the HX labs
+  ship. `--misses` lists them. A screen is one layer, never the boundary.
 - AGX09: on a held-out set the screen was never tuned on, it catches 60%;
   the output canary check is what brings leaks to 0.
 - Evidence pages in `docs/evidence/` list real-model results by model, with
@@ -89,11 +98,15 @@ screen but not the sandbox.
 
 ## 7. Reports, CI and the Wolf (2 minutes)
 
-- Reports: Markdown, HTML and SARIF for any run.
+- Reports: Markdown, HTML and SARIF for any run (the links under "Defense
+  added in Act 4", or the Reports page).
 - CI: the deterministic suite runs on every push and uploads SARIF.
 - `python -m hactu8 wolf --backend ollama --model gemma3:4b --rounds 2`:
   an attacker model writes its own benign-effect notes, screened so they can
-  never target anything off this machine.
+  never target anything off this machine. It prints what landed with the
+  gateway off and on, and the Wolf's den captures. Fallback:
+  `python -m hactu8 wolf --backend echo --rounds 2` (3 of 4 landed off, 0 on,
+  3 den captures).
 - `python -m hactu8 mcp`: the runner as an MCP server (see [mcp.md](mcp.md)).
 
 ## 8. Close (1 minute)
@@ -105,6 +118,9 @@ the scoring layer itself and agentic commerce (HTTP 402).
 ## If something fails
 
 - A local model is slow or wrong: switch the tier to Offline and continue.
+- A model call fails (for example Ollama aborts a looping generation with
+  HTTP 500): the item is graded ERROR, left out of the rate, and the run goes
+  on. Say so and continue; it is not a RED.
 - The console is down: run the same step from the CLI
   (`python -m hactu8 run llm01 --backend echo`).
 - Anything else: play the recording.
