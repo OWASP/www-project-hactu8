@@ -1,9 +1,9 @@
 """Model router: pick a backend and model by tier, escalating when one fails.
 
 Tiers come from ``hactu8.yaml`` (see ``hactu8.config``): deterministic (echo),
-local (Ollama, llama.cpp), cloud (Anthropic, OpenAI, OpenRouter). A role
-(``target`` for the lab under test, ``judge`` for the llm-judge classifier)
-starts at its tier; on failure the router tries the next candidate, then the
+local (Ollama, llama.cpp, OpenAI-compatible servers, Strata, Basalt), cloud
+(Anthropic, OpenAI, OpenRouter). A role (``target`` for the lab under test,
+``judge`` for the llm-judge classifier) starts at its tier; on failure the router tries the next candidate, then the
 next tier, up to ``router.max_tier``. An explicitly requested tier is always
 allowed, so ``--tier cloud`` works even when ``max_tier`` is local.
 """
@@ -117,8 +117,8 @@ class Router:
     def _probe_local(self, backend: str) -> Tuple[bool, str]:
         if backend == "ollama":
             url = os.environ.get("OLLAMA_HOST", "http://localhost:11434").rstrip("/") + "/api/tags"
-        elif backend == "openai-compat":
-            url = os.environ.get("LOCAL_OPENAI_BASE_URL", "http://localhost:1234/v1").rstrip("/") + "/models"
+        elif backend in providers.OPENAI_COMPAT:
+            url = providers.OPENAI_COMPAT[backend].base_url() + "/models"
         else:
             url = os.environ.get("LLAMACPP_HOST", "http://localhost:8080").rstrip("/") + "/v1/models"
         try:

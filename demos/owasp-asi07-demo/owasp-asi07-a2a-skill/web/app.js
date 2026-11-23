@@ -207,6 +207,8 @@ function backendNote(name) {
     ollama: "ollama: local model server (OLLAMA_HOST). Nothing leaves this machine.",
     llamacpp: "llamacpp: local llama.cpp server (LLAMACPP_HOST). Nothing leaves this machine.",
     "openai-compat": "openai-compat: local OpenAI-compatible server such as LM Studio or vLLM (LOCAL_OPENAI_BASE_URL). Nothing leaves this machine.",
+    strata: "strata: local Strata server, an MoE engine (STRATA_HOST, default port 8080). Nothing leaves this machine.",
+    basalt: "basalt: local Basalt server, an MoE engine for NVIDIA Blackwell (BASALT_HOST, default port 8080). Nothing leaves this machine.",
   }[name] || "";
 }
 

@@ -134,6 +134,9 @@ The backend options come from `providers.py`, HACTU8's provider layer:
 | `echo` (default; alias `stub`) | the lab's deterministic offline model, used by every test | none |
 | `ollama` | local Ollama server (`OLLAMA_HOST`) | none |
 | `llamacpp` | local llama.cpp server (`LLAMACPP_HOST`) | none |
+| `openai-compat` | local OpenAI-compatible server such as LM Studio or vLLM (`LOCAL_OPENAI_BASE_URL`) | optional `LOCAL_OPENAI_API_KEY` |
+| `strata` | local Strata server, an MoE engine (`STRATA_HOST`, default port 8080) | optional `STRATA_API_KEY` |
+| `basalt` | local Basalt server, an MoE engine for NVIDIA Blackwell (`BASALT_HOST`, default port 8080) | optional `BASALT_API_KEY` |
 | `openrouter` | remote, any OpenRouter model | `OPENROUTER_API_KEY` |
 
 Pick one in the web console's **BACKEND / MODEL** bar. The model list is fetched

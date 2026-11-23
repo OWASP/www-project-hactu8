@@ -30,6 +30,13 @@ tiers:
       model: local
     - backend: openai-compat   # LM Studio, vLLM, LocalAI, Jan, llamafile, mlx_lm.server
       model: local
+    # MoE engines (see docs/local-engines.md). Both default to port 8080, like
+    # llama.cpp, so run them on their own port (STRATA_HOST / BASALT_HOST) and
+    # uncomment to add them to the local tier.
+    # - backend: strata    # STRATA_HOST, default http://localhost:8080
+    #   model: local
+    # - backend: basalt    # BASALT_HOST, default http://localhost:8080 (NVIDIA Blackwell only)
+    #   model: local
   cloud:
     - backend: anthropic
       model: claude-haiku-5-5

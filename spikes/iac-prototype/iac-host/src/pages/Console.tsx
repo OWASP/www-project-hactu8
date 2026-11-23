@@ -7,7 +7,7 @@ import LessonView from '../components/learn/LessonView';
 const LIVE = 'lamb-live';
 const TIERS: { id: string; label: string; backends: string[]; note: string }[] = [
   { id: 'offline', label: 'Offline', backends: ['echo'], note: 'Deterministic stand-in model. No network, no key.' },
-  { id: 'local', label: 'Local', backends: ['ollama', 'llamacpp', 'openai-compat'],
+  { id: 'local', label: 'Local', backends: ['ollama', 'llamacpp', 'openai-compat', 'strata', 'basalt'],
     note: 'Runs on this machine. Lab text never leaves it.' },
   { id: 'aggregator', label: 'Aggregator', backends: ['openrouter'],
     note: 'Lab text, including payloads, leaves this machine. Paid; confirm spend first.' },
