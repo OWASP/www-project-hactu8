@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import asyncio
+import contextlib
 import json
 from pathlib import Path
 from typing import Optional
@@ -179,6 +180,19 @@ def create_app(root: Optional[Path] = None, manager: Optional[LabWorkerManager] 
         host=DEFAULT_HOST,
     )
     mount(app, gateway)
+    inner_lifespan = app.router.lifespan_context
+
+    @contextlib.asynccontextmanager
+    async def lifespan(asgi_app):
+        # Stop the lab workers when the server shuts down. uvicorn re-raises SIGTERM
+        # after its graceful shutdown, so code after uvicorn.run() never runs on `kill`.
+        try:
+            async with inner_lifespan(asgi_app) as lifespan_state:
+                yield lifespan_state
+        finally:
+            workers.close()
+
+    app.router.lifespan_context = lifespan
     app.state.wolf = wolf
     app.state.workers = workers
     app.state.lamb_mcp = state

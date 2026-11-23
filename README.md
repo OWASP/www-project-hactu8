@@ -21,11 +21,11 @@ demos/      Self-contained labs (LLM01-10, ASI01-10, AGX01-09, HX01-20), each a 
 tests/      Core tests
 spikes/     Prototypes: IAC console (iac-prototype), early platform UX, legacy skills
 assets/     Logos and images
-scripts/    Project automation: issue seeding, vendor.py (copies shared modules into the labs)
+scripts/    Project automation: vendor.py (copies shared modules into the labs), sarif_all.py, sweep_report.py, issue seeding
 hactu8.yaml Model router tiers and classifier settings
 ```
 
-Coming in Phase 1: the AI attacker skill.
+The AI attacker, the Wolf, runs with `python -m hactu8 wolf` (see [docs/wolf.md](docs/wolf.md)). The runner is also an MCP server (see [docs/mcp.md](docs/mcp.md)).
 
 ## Quick start
 
@@ -54,7 +54,7 @@ The examples below write `python`; on macOS that is `python3` or the venv's `pyt
 
 ## Models and scoring
 
-[`hactu8.yaml`](hactu8.yaml) defines router tiers: deterministic (echo), then local (Ollama, llama.cpp, any OpenAI-compatible server such as LM Studio or vLLM via `openai-compat`, and the MoE engines Strata and Basalt via `strata` and `basalt`), then cloud (Anthropic, OpenAI, OpenRouter). Each role starts at a tier: `target` (the model inside the lab) and `judge` (the model that scores answers). If a model is unavailable or fails, the router escalates to the next one, but automatic escalation stops at `max_tier` (local). Cloud sends lab prompts and payloads off the machine, so it is opt-in. Keys come from the environment only (`ANTHROPIC_API_KEY`, `OPENAI_API_KEY`, `OPENROUTER_API_KEY`).
+[`hactu8.yaml`](hactu8.yaml) defines router tiers: deterministic (echo), then local (Ollama, llama.cpp, any OpenAI-compatible server such as LM Studio or vLLM via `openai-compat`, and the MoE engines Strata and Basalt via `strata` and `basalt`, listed but commented out in `hactu8.yaml` since they share port 8080 with llama.cpp), then cloud (Anthropic, OpenAI, OpenRouter). Each role starts at a tier: `target` (the model inside the lab) and `judge` (the model that scores answers). If a model is unavailable or fails, the router escalates to the next one, but automatic escalation stops at `max_tier` (local). Cloud sends lab prompts and payloads off the machine, so it is opt-in. Keys come from the environment only (`ANTHROPIC_API_KEY`, `OPENAI_API_KEY`, `OPENROUTER_API_KEY`).
 
 ```bash
 python -m hactu8 router                          # tiers, availability, what each role resolves to
@@ -63,9 +63,9 @@ python -m hactu8 run llm01 --backend ollama --model llama3.2:3b
 python -m hactu8 run llm01 --classifier llm-judge
 ```
 
-For which local engine fits which hardware, the port clash between llama.cpp, Strata and Basalt (all on 8080 by default), and MoE models that fit a 16 GB Mac, see [docs/local-engines.md](docs/local-engines.md).
+For which local engine fits which hardware, the port clash between llama.cpp, Strata and Basalt (all on 8080 by default), and MoE models that fit a 16 GB Mac, see [docs/local-engines.md](docs/local-engines.md). A backend this host's hardware cannot run (Basalt needs an NVIDIA Blackwell GPU, Strata Apple Silicon or an NVIDIA GPU) is greyed out in the consoles and refused by the CLI, router and API with the reason; `HACTU8_FORCE_BACKENDS` skips the check.
 
-Classifiers score each item GREEN, YELLOW or RED with a confidence. `keyword` (default, offline) records the lab's own verdict. `llm-judge` asks the judge model to score the item's evidence, which is what the model under test produced. It falls back to the lab verdict at confidence 0.5 when no judge answers. A judge (`llm-judge` or `jev`) may confirm or raise the lab's verdict but never lowers a lab RED: a lab grades RED only on its canary or a declared deterministic oracle, so that RED stands whatever the judge says. `jev` is an optional TypeSafe System One classifier: it is off unless `classifiers.jev.enabled` is set (or `HACTU8_ENABLE_JEV=1`), and it needs `TYPESAFE_API_KEY` (`JEV_API_KEY` remains a compatibility alias).
+Classifiers score each item GREEN, YELLOW or RED with a confidence. An item whose model call failed (for example an HTTP 500 from the model server) is recorded as ERROR: it is not a grade, counts in neither the red count nor the total, and classifiers never see it. `keyword` (default, offline) records the lab's own verdict. `llm-judge` asks the judge model to score the item's evidence, which is what the model under test produced. It falls back to the lab verdict at confidence 0.5 when no judge answers. A judge (`llm-judge` or `jev`) may confirm or raise the lab's verdict but never lowers a lab RED: a lab grades RED only on its canary or a declared deterministic oracle, so that RED stands whatever the judge says. `jev` is an optional TypeSafe System One classifier: it is off unless `classifiers.jev.enabled` is set (or `HACTU8_ENABLE_JEV=1`), and it needs `TYPESAFE_API_KEY` (`JEV_API_KEY` remains a compatibility alias).
 
 Shared lab code (`providers.py`, `protectogw/`) has one canonical copy in `hactu8/`. Run `python scripts/vendor.py` after editing it, and the tests check that every lab copy matches.
 

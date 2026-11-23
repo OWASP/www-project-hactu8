@@ -16,7 +16,9 @@ OWASP HACTU8 turns attacks on AI systems into repeatable assurance tests: baseli
 ## Status
 
 - M0 to M4 done. `python -m hactu8 run all` passes 49 of 49 on the echo backend.
-- In progress: the merge plan `docs/agenticgoat-merge-plan.md` (AG-xx items) on branch `phase1-agx-merge`: W0-W8 done (real models, OFF vs ON grading, ProtectoGW gateway, Lamb surfaces, labs with lessons, the Wolf, the MCP server, Docker and CI). W9: attack catalog (`hactu8/techniques.py`), coverage and defense catalog done; labs for missing techniques (HX01+) in progress.
+- The merge plan `docs/agenticgoat-merge-plan.md` (AG-xx items, branch `phase1-agx-merge`, merged into `phase1-mvp`): W0-W9 done (real models, OFF vs ON grading, ProtectoGW gateway, Lamb surfaces, labs with lessons, the Wolf, the MCP server, Docker and CI, the attack catalog `hactu8/techniques.py` with coverage and defense catalogs, and labs HX01-HX20). Open items are in its Handoff section.
+- Backends: echo, ollama, llamacpp, openai-compat, strata, basalt (local; a hardware check greys out what the host cannot run, see `docs/local-engines.md`), openrouter, anthropic, openai (cloud, opt-in, spend-gated).
+- Grading: a lab grades RED only on its canary or a declared deterministic oracle. A judge (`llm-judge`, `jev`) may confirm or raise a verdict, never lower a lab RED. A failed model call is an ERROR item, not a grade.
 - OWASP LLM Top 10 IDs use the 2026 edition (the order in `demos/`). The catalog also records each item's 2025 ID, since the OWASP site and older material still use 2025.
 
 ## Layout
@@ -25,8 +27,8 @@ OWASP HACTU8 turns attacks on AI systems into repeatable assurance tests: baseli
 hactu8/     Core package: catalog, adapters/lab.py, classify.py, result.py, store.py, cli.py, schemas/
 demos/      49 labs (LLM01-10, ASI01-10, AGX01-09, HX01-20); each <lab>/run_demo.py drives one skill dir
 tests/      Core tests (python -m unittest discover -s tests -t .)
-spikes/     iac-prototype (React iac-host and FastAPI copilot-api, to be trimmed in M4), legacy material
-scripts/    seed-issues.sh
+spikes/     iac-prototype (React iac-host console, the front end of hactu8/api.py; iac-copilot-api and the rest are legacy)
+scripts/    vendor.py (lab copies of shared code; --check), sarif_all.py, sweep_report.py, seed-issues.sh, notify-chat.sh
 ```
 
 ## Rules

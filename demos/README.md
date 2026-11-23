@@ -89,18 +89,18 @@ lab yet. The numbering is HACTU8's own.
 | HX02 | Multi-Turn Jailbreak | [`hx02-demo`](hx02-demo/) — five harmless-looking turns walk the store assistant into applying the staff discount it refuses when asked once | 5502 | Rule-Break Rate (RBR) |
 | HX03 | MCP Sampling Abuse | [`hx03-demo`](hx03-demo/) — a shipping-rates MCP server update uses sampling to run its own prompts on the assistant's model and pull its account reference back | 5503 | Sampling Leak Rate (SLR) |
 | HX04 | MCP Elicitation Abuse | [`hx04-demo`](hx04-demo/) — a supplies MCP server update phishes the user and the assistant's own model for the account reference through elicitation forms and a look-alike link | 5504 | Elicitation Leak Rate (ELR) |
-| HX06 | Role-play and Many-shot Jailbreak | [`hx06-demo`](hx06-demo/) — one message (a no-rules persona, a story that needs the real till code, or 20 fake compliant chat exchanges) breaks the store rules the assistant keeps when asked directly | 5506 | Rule-Break Rate (RBR) |
 | HX05 | OAuth Confused Deputy (MCP) | [`hx05-demo`](hx05-demo/) — an analytics server registers its own client, tampers a redirect and adds a connector, and the ledger MCP proxy hands it customers' tokens | 5505 | Token Theft Rate (TTR) |
+| HX06 | Role-play and Many-shot Jailbreak | [`hx06-demo`](hx06-demo/) — one message (a no-rules persona, a story that needs the real till code, or 20 fake compliant chat exchanges) breaks the store rules the assistant keeps when asked directly | 5506 | Rule-Break Rate (RBR) |
 | HX07 | Embedding Inversion | [`hx07-demo`](hx07-demo/) — a vector store scopes its text to each tenant but exports every raw embedding; a supplier's partner account inverts them and rebuilds the staff access reference | 5507 | Inversion Leak Rate (ILR) |
 | HX08 | Image Prompt Injection | [`hx08-demo`](hx08-demo/) — receipt photos uploaded for a refund carry an instruction in small print, in near-invisible text or in PNG metadata, and the refund assistant follows it | 5508 | Image Injection Rate (IIR) |
 | HX09 | Membership Inference | [`hx09-demo`](hx09-demo/) — an attacker holding one customer's record scores it on the support model's log-probs API against records they invented, and learns it was in the fine-tuning data | 5509 | Membership Exposure Rate (MER) |
 | HX10 | Model Extraction | [`hx10-demo`](hx10-demo/) — a rival copies the shop's price-band model through its prediction API: 8 queries with confidences give the exact weights, 2,000 label-only queries train a 99% clone | 5510 | Clone Success Rate (CSR) |
+| HX11 | Attacks on the Scoring Layer | [`hx11-demo`](hx11-demo/) — a review triage's LLM judge and rule classifier are talked, forged, evaded and flooded into publishing support transcripts that carry the desk code | 5511 | Leak Ship Rate (LSR) |
 | HX12 | x402 Payment Challenge Tampering | [`hx12-demo`](hx12-demo/) — an x402 shopping assistant with a test wallet pays a rewritten 402 challenge, a moved-desk note and a lookalike merchant, and a logged payment proof is replayed for the order | 5512 | Payment Hijack Rate (PHR) |
 | HX13 | Agent Overpay and Mandate Bypass | [`hx13-demo`](hx13-demo/) — planted Q&A answers, a data feed that re-challenges after each payment and a drifted cart make the buying agent pay past the customer's signed mandate and leak its wallet reference | 5513 | Mandate Breach Rate (MBR) |
-| HX15 | Self-Replicating Prompt (AI Worm) | [`hx15-demo`](hx15-demo/) — one mail makes auto-replying mail assistants copy it into their replies with their ledger reference, so it spreads through replies and retrieval to assistants it was never sent to | 5515 | Worm Infection Rate (WIR) |
-| HX11 | Attacks on the Scoring Layer | [`hx11-demo`](hx11-demo/) — a review triage's LLM judge and rule classifier are talked, forged, evaded and flooded into publishing support transcripts that carry the desk code | 5511 | Leak Ship Rate (LSR) |
-| HX16 | Shadow MCP Server | [`hx16-demo`](hx16-demo/) — an employee adds an unapproved wrapper server to the assistant's MCP config, it announces itself as the approved one, and its same-name, lookalike and duplicate tools receive customers' account references | 5516 | Shadow Exposure Rate (SER) |
 | HX14 | Direct Prompt Injection | [`hx14-demo`](hx14-demo/) — four customers each type one message ("ignore all previous instructions", chat-template markers opening a fake system turn, a fake tool call, the override split into string pieces) and get the store assistant's internal reference code and a refund on an unpaid order | 5514 | Direct Injection Rate (DIR) |
+| HX15 | Self-Replicating Prompt (AI Worm) | [`hx15-demo`](hx15-demo/) — one mail makes auto-replying mail assistants copy it into their replies with their ledger reference, so it spreads through replies and retrieval to assistants it was never sent to | 5515 | Worm Infection Rate (WIR) |
+| HX16 | Shadow MCP Server | [`hx16-demo`](hx16-demo/) — an employee adds an unapproved wrapper server to the assistant's MCP config, it announces itself as the approved one, and its same-name, lookalike and duplicate tools receive customers' account references | 5516 | Shadow Exposure Rate (SER) |
 | HX17 | MCP Scope Creep | [`hx17-demo`](hx17-demo/) — a parcel tracker's results steer the assistant's wildcard, month-long and rubber-stamped step-up tokens into listing every customer and rewriting another customer's order | 5517 | Scope Abuse Rate (SAR) |
 | HX18 | Adversarial Examples (Evasion) | [`hx18-demo`](hx18-demo/) — fraud accounts doctor photos of intact parcels by 0.03 to 0.10 per pixel, with the shipped model's gradient or a black-box search through the app's pre-check, and the refund desk's damage classifier pays them; no language model involved | 5518 | Evasion Success Rate (ESR) |
 | HX19 | Training-Time Data Poisoning | [`hx19-demo`](hx19-demo/) — customer flags retrain the shop's naive Bayes review filter every night: 250 flipped labels drop its accuracy to 84%, and about 40 honest-looking flags that name the attacker's brands get its tagged spam review published | 5519 | Poisoned Model Rate (PMR) |
@@ -138,6 +138,10 @@ The backend options come from `providers.py`, HACTU8's provider layer:
 | `strata` | local Strata server, an MoE engine (`STRATA_HOST`, default port 8080) | optional `STRATA_API_KEY` |
 | `basalt` | local Basalt server, an MoE engine for NVIDIA Blackwell (`BASALT_HOST`, default port 8080) | optional `BASALT_API_KEY` |
 | `openrouter` | remote, any OpenRouter model | `OPENROUTER_API_KEY` |
+| `anthropic` | remote, Anthropic API | `ANTHROPIC_API_KEY` |
+| `openai` | remote, OpenAI API | `OPENAI_API_KEY` |
+
+A backend this host's hardware cannot run is greyed out with a "(needs ...)" suffix: Basalt needs an NVIDIA Blackwell GPU, Strata Apple Silicon or an NVIDIA GPU. `HACTU8_FORCE_BACKENDS` skips the check (see [`docs/local-engines.md`](../docs/local-engines.md)). If a model call fails, for example with an HTTP 500 from the server, the item is graded ERROR, not GREEN or RED, and left out of the rate.
 
 Pick one in the web console's **BACKEND / MODEL** bar. The model list is fetched
 live from the provider, with free text as the fallback. Or set it from the
@@ -149,14 +153,14 @@ OPENROUTER_API_KEY=... python run_demo.py --backend openrouter
 LLM01_BACKEND=openrouter LLM01_MODEL=... python owasp-llm01-injection-skill/vulnerable_app.py
 ```
 
-The API key is read only from `OPENROUTER_API_KEY`
+A cloud key is read only from its variable (`OPENROUTER_API_KEY`, `ANTHROPIC_API_KEY`, `OPENAI_API_KEY`)
 in the shell that starts the lab, and sent only in the request header. The
 console never asks for it, and is told only whether a key is set; without one,
-`openrouter` is greyed out.
+that backend is greyed out.
 
 With a real model the numbers are reported, not asserted. Placeholder
-payloads are often ignored, so write real ones for meaningful runs. With
-`openrouter`, prompts and payloads leave the machine.
+payloads are often ignored, so write real ones for meaningful runs. With a
+cloud backend, prompts and payloads leave the machine.
 
 ## Building a new lab
 

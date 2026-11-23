@@ -185,6 +185,8 @@ Order: W0, W1, W2 and W3 run first (they unblock everything). W4 and W5 can run 
   - H-60 done 2026-11-21: fresh clone on stock macOS. No-dependency quick start (python3, no venv): 29 skills, run all 29/29, 190 tests OK (58 skipped). Fresh venv with `.[lamb,api]` in 6 s: 190 tests OK, 29/29; API on a spare port, Lamb (29 labs), live, path, wolf and the MCP stdio server all work, all on 127.0.0.1; console `npm ci` and build in 5 s. Fixed: tests errored instead of skipping when an old mcp v1 is installed (`_mcp.available()`); API port now settable (`HACTU8_API_PORT`); README said 25 labs and inert placeholders, used `python` (macOS has `python3`) and had no venv step.
   - H-61 done 2026-11-21: `docs/demo-script.md` (15 minutes, gemma3:4b, each step with an echo fallback; rehearsed: LLM01 0 -> 100 -> 0, ASI05 0 -> 100 -> 0, ASI10 0 -> 75 -> 0, live 7-8 breaches off and 0 on, the Wolf landed 1 of 4 off and 0 on). Recorded fallback: `hactu8_llm01_echo_demo_fallback.gif` (Learn, then LLM01 on echo, result and protections; 2.8 MB, kept outside the repo).
   - H-62 drafted 2026-11-21, not pushed: the wiki Project Status page (local wiki clone, one commit) and a status section on the OWASP page and roadmap tab (branch `h62-status-update` from `main`). Waiting for the user's yes to push.
+  - H-62 2026-11-23: PR #41 (`h62-status-update` into `main`) is merged. The wiki Project Status commit's push is not confirmed here.
+  - H-61 rehearsed again 2026-11-23 on echo from a worktree at `7492799` (`docs/evidence/2026-11-23-demo-rehearsal.md`): every step passes; script drift fixed (sweep figures, bench coverage 95%, step 4 has no Wolf's den panel, HX list, console setup); Lamb now stops its lab workers on SIGTERM.
 
 ### W9: Beyond the OWASP Top 10, a catalog of known attacks and defenses
 
@@ -246,18 +248,28 @@ The target is every known attack and defense, not only the two OWASP Top 10 list
 - [x] AG-94 Classic ML attacks (adversarial examples, model training-time poisoning, model stealing) are tracked in the catalog. Labs for them need a non-LLM target and are scoped after the MVP.
   - Done early 2026-11-21: HX18 adversarial examples (basics:14), HX19 training-data poisoning (basics:15), HX20 model backdoor (basics:16), each on a pure-Python model (no LLM, no numpy). 49 labs; every one of the 59 catalog techniques has a lab; ATLAS 43 of 43 and NIST 18 of 18 IDs covered.
 
-## Handoff (2026-11-21)
+## Handoff (2026-11-23)
 
-Open work, in order (updated 2026-11-21 evening: 49 labs, HX01-HX20; AG-93 to AG-96 done):
+Done since 2026-11-21 (`2b8b1f8..7492799`, all merged into `phase1-mvp`):
 
-1. Sweep follow-ups: the race-hit OpenRouter cells were rerun on `d1f46c4` (2026-11-23, user approved): ASI04 ministral-3b and LLM04 ministral-8b both 0/100/0. HX02's grading and the bench known-miss change are done (6497576, e80b38b; coverage now 95% honest, 10 known misses).
-2. Sweeps on the final code (9746535), results on `/Volumes/DockerDisk/hactu8-sweeps/` (scripts in the session scratchpad: `sweep.sh`, `cloud_sweep.sh`):
-   - local Ollama, 7 models: done, `docs/evidence/2026-11-21-ollama-sweep.md` (mistral:7b 28/31, qwen3:8b 30/31, others 31/31). `llama3.2:3b` ASI04 and `mistral:7b` LLM04 rerun on fixed code 2026-11-22: 0/100/0 both;
-   - OpenRouter, the 8 approved models: done, `docs/evidence/2026-11-21-openrouter-sweep.md`.
-   Then: run HX03-HX20 per model (the sweep code predates HX03). AG-55 and AG-43 ticked.
-3. Real-model runs of HX01-HX13 (echo only so far).
-4. AG-90 follow-up: recheck the remaining ATLAS IDs against the 2026.10 release (AML.T0051.001 done).
-5. Waiting on the user: push H-62 drafts (branch `h62-status-update` in www-project-hactu8; wiki clone in the session scratchpad, commit 91f5e3c), push this branch, merge to `phase1-mvp`, delete `/Volumes/DockerDisk/h60-fresh`.
+- Evidence: Ollama sweep of 7 models on `9746535`; HX01-HX20 on 4 Ollama models (`docs/evidence/2026-11-22-hx-ollama.md`); reruns on fixed code for `llama3.2:3b` ASI04, `mistral:7b` LLM04, OpenRouter ASI04 ministral-3b and LLM04 ministral-8b (all 0/100/0), HX08 and HX15, LLM06 `llama3.1:8b` and LLM09 `qwen3:8b`; console e2e on OpenRouter Kimi K2.5.
+- Grading: AGX01-09, LLM01/04/05/07 and ASI06 grade RED only on the canary or a declared oracle, with `held_by` for what a defense withheld; LLM05 planted-code oracle; LLM07 grades the planted package by name; HX08 grades the attack's effect; HX06 stronger variants and tool-line parser fix; HX11 canary fold. A judge (`llm-judge`, `jev`) may confirm or raise a verdict, never lower a lab RED.
+- Baseline REDs explained: LLM09 hands the model only the top passage, LLM06 states its budget (its remaining baseline is the model looping); LLM07, AGX01 and AGX07 are documented as model findings.
+- A failed model call is an ERROR item (schema, adapter, rates, reports), not GREEN or RED and not a crashed lab; providers surface the server's error body.
+- Backends: `strata` and `basalt` (MoE engines, `docs/local-engines.md`); a hardware check greys out what the host cannot run (Basalt on this Mac) in the consoles and refuses it in the CLI, router and API (`HACTU8_FORCE_BACKENDS` to skip).
+- ATLAS IDs rechecked against v2026.10, NISTAML against the E2025 errata (old item 4); `multi_call_sampling` rename; lessons drop path-position wording.
+- PR #41 (H-62 status on the OWASP page) merged.
+- 2026-11-23 rehearsal on echo: all steps pass, 244 core tests, run all 49/49; docs refreshed; Lamb workers no longer orphaned on SIGTERM.
+
+Open work, in order:
+
+1. Rehearse the demo on `gemma3:4b` in the console (Ollama was reserved for other runs on 2026-11-23, so only echo was rehearsed), and refresh the recorded fallback if the console changed.
+2. The iac-host console has never been built in a worktree without `node_modules`; `npm ci` there needs the user's go-ahead (the rehearsal borrowed the main checkout's `node_modules` by symlink, same lockfile).
+3. MoE models are not pulled, and Strata and Basalt have not run against a live server. Pulling downloads gigabytes; ask first.
+4. Bench: the recorded baseline says 94% (166 of 176); the corpus now measures 95% (184 of 194) with the same 10 known misses. Re-record the baseline when the bench is next touched.
+5. Documented defense limits, kept honest in the lessons: screens catch 53% of the held-out set; 10 known misses (9 shipped HX payloads); spotlighting is not a hard boundary on real models; the ASI05 split-string evades the screen (the sandbox holds); LLM07, AGX01 and AGX07 baseline REDs are model findings.
+6. Small: the runner API reports a Lamb target URL on port 5500 even when `HACTU8_LAMB_PORT` differs.
+7. Waiting on the user: merge `demo-rehearsal`; delete `/Volumes/DockerDisk/h60-fresh` (an old Lamb from it still listens on 127.0.0.1:15500); confirm the wiki Project Status push.
 
 Decisions 2026-11-21: new labs use `HXnn` ids; the canary is RED even next to the true facts; lessons never state their path position.
 
