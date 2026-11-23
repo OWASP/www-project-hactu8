@@ -1,6 +1,7 @@
 import io
 import json
 import os
+import subprocess
 import unittest
 from unittest import mock
 
@@ -57,6 +58,12 @@ class OpenAICompatTest(unittest.TestCase):
 
 class MoEEngineBackendsTest(unittest.TestCase):
     """strata and basalt are named presets of the OpenAI-compatible client."""
+
+    def setUp(self):
+        # These tests are about the HTTP client, not the hardware gate.
+        patcher = mock.patch.dict(os.environ, {providers.FORCE_ENV: "strata,basalt"})
+        patcher.start()
+        self.addCleanup(patcher.stop)
 
     def _clean(self, prefix):
         for suffix in ("_HOST", "_ALLOW_REMOTE", "_API_KEY"):
@@ -129,6 +136,130 @@ class MoEEngineBackendsTest(unittest.TestCase):
             self.assertEqual(r._probe_local("strata"), (True, "server answered"))
             self.assertEqual(r._probe_local("basalt"), (True, "server answered"))
         self.assertEqual(seen, ["http://127.0.0.1:8081/v1/models", "http://127.0.0.1:8082/v1/models"])
+
+
+class HardwareGateTest(unittest.TestCase):
+    """strata and basalt are offered only on hardware that can run them."""
+
+    def setUp(self):
+        providers._GPU_CACHE = None
+        self.addCleanup(setattr, providers, "_GPU_CACHE", None)
+        patcher = mock.patch.dict(os.environ, {})
+        patcher.start()
+        self.addCleanup(patcher.stop)
+        os.environ.pop(providers.FORCE_ENV, None)
+
+    def _host(self, system, machine, smi=None, which="/usr/bin/nvidia-smi"):
+        """Pretend to be ``system``/``machine``; ``smi`` is nvidia-smi's stdout or an exception."""
+        self.runs = []
+
+        def run(cmd, **kwargs):
+            self.runs.append((cmd, kwargs.get("timeout")))
+            if isinstance(smi, BaseException):
+                raise smi
+            return subprocess.CompletedProcess(cmd, 0, stdout=smi or "", stderr="")
+
+        for patch in (mock.patch.object(providers.platform, "system", return_value=system),
+                      mock.patch.object(providers.platform, "machine", return_value=machine),
+                      mock.patch.object(providers.shutil, "which", return_value=which),
+                      mock.patch.object(providers.subprocess, "run", side_effect=run)):
+            patch.start()
+            self.addCleanup(patch.stop)
+
+    def test_apple_silicon_mac(self):
+        self._host("Darwin", "arm64")
+        hw = providers.backend_support()
+        self.assertTrue(hw["strata"]["ok"])
+        self.assertFalse(hw["basalt"]["ok"])
+        self.assertIn("NVIDIA Blackwell GPU (sm_120)", hw["basalt"]["reason"])
+        self.assertIn("cannot run on macOS", hw["basalt"]["reason"])
+        self.assertEqual(self.runs, [], "nvidia-smi is never run on macOS")
+        for name in ("echo", "ollama", "llamacpp", "openai-compat", "openrouter", "anthropic", "openai"):
+            self.assertTrue(hw[name]["ok"], name)
+
+    def test_intel_mac_has_neither(self):
+        self._host("Darwin", "x86_64")
+        hw = providers.backend_support()
+        self.assertFalse(hw["strata"]["ok"])
+        self.assertFalse(hw["basalt"]["ok"])
+
+    def test_linux_blackwell(self):
+        self._host("Linux", "x86_64", "NVIDIA GeForce RTX 5090, 12.0\n")
+        hw = providers.backend_support()
+        self.assertTrue(hw["strata"]["ok"])
+        self.assertTrue(hw["basalt"]["ok"])
+        self.assertIn("sm_120", hw["basalt"]["reason"])
+        self.assertEqual(self.runs[0][0][1:], ["--query-gpu=name,compute_cap", "--format=csv,noheader"])
+        self.assertLessEqual(self.runs[0][1], 2.0)
+
+    def test_linux_ada_gpu(self):
+        self._host("Linux", "x86_64", "NVIDIA GeForce RTX 4090, 8.9\n")
+        hw = providers.backend_support()
+        self.assertTrue(hw["strata"]["ok"])
+        self.assertFalse(hw["basalt"]["ok"])
+        self.assertIn("RTX 4090 (sm_89)", hw["basalt"]["reason"])
+
+    def test_mixed_gpus_pick_the_blackwell(self):
+        self._host("Windows", "AMD64", "NVIDIA GeForce RTX 3060, 8.6\nNVIDIA RTX PRO 6000 Blackwell, 12.0\n")
+        self.assertTrue(providers.backend_support()["basalt"]["ok"])
+
+    def test_no_nvidia_smi(self):
+        self._host("Linux", "x86_64", which=None)
+        hw = providers.backend_support()
+        self.assertFalse(hw["strata"]["ok"])
+        self.assertFalse(hw["basalt"]["ok"])
+        self.assertIn("nvidia-smi not found", hw["basalt"]["reason"])
+        self.assertEqual(self.runs, [])
+
+    def test_probe_never_raises_and_is_cached(self):
+        self._host("Linux", "x86_64", subprocess.TimeoutExpired("nvidia-smi", 2.0))
+        hw = providers.backend_support()
+        self.assertFalse(hw["basalt"]["ok"])
+        self.assertIn("TimeoutExpired", hw["basalt"]["reason"])
+        providers.backend_support()
+        providers.hardware_reason("strata")
+        self.assertEqual(len(self.runs), 1, "nvidia-smi runs once per process")
+
+    def test_gated_backend_refused_with_the_reason(self):
+        self._host("Darwin", "arm64")
+        with self.assertRaisesRegex(ValueError, "Basalt needs an NVIDIA Blackwell GPU"):
+            providers.get_provider("basalt")
+        self.assertIsNotNone(providers.get_provider("strata"))
+        self.assertIn("hardware", providers.console_info())
+
+    def test_override(self):
+        self._host("Darwin", "arm64")
+        os.environ[providers.FORCE_ENV] = "basalt"
+        self.assertTrue(providers.backend_support()["basalt"]["ok"])
+        self.assertIsNotNone(providers.get_provider("basalt"))
+        os.environ[providers.FORCE_ENV] = "all"
+        self.assertEqual(providers.hardware_reason("basalt"), "")
+
+    def test_cli_refuses_and_marks_help(self):
+        from hactu8 import cli
+        self._host("Darwin", "arm64")
+        err = io.StringIO()
+        with mock.patch("sys.stderr", err):
+            self.assertEqual(cli.main(["run", "llm01", "--backend", "basalt"]), 2)
+            self.assertEqual(cli.main(["wolf", "--target-backend", "basalt"]), 2)
+        self.assertIn("--backend basalt: Basalt needs an NVIDIA Blackwell GPU", err.getvalue())
+        self.assertIn("--target-backend basalt", err.getvalue())
+        out = io.StringIO()
+        with mock.patch("sys.stdout", out), self.assertRaises(SystemExit):
+            cli.main(["run", "--help"])
+        text = " ".join(out.getvalue().split())
+        self.assertIn("basalt (unavailable: needs an NVIDIA Blackwell GPU)", text)
+        self.assertNotIn("strata (unavailable", text)
+
+    def test_router_marks_gated_backend_unavailable(self):
+        from hactu8 import router as router_mod
+        self._host("Darwin", "arm64")
+        r = router_mod.Router(tiers={}, order=[], max_tier="local")
+        cand = router_mod.Candidate(tier="local", backend="basalt", model="local")
+        with mock.patch.object(providers, "_urlopen", side_effect=AssertionError("no probe")):
+            ok, why = r.available(cand)
+        self.assertFalse(ok)
+        self.assertIn("Blackwell", why)
 
 
 if __name__ == "__main__":

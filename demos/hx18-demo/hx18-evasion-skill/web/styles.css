@@ -60,6 +60,7 @@ button:disabled { cursor: wait; opacity: 0.55; transform: none; box-shadow: none
 .backend-bar .status-label { color: var(--ink-soft); }
 .backend-field { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
 .backend-field select, .backend-field input { min-width: 0; padding: 7px 8px; border: 1px solid var(--ink); background: var(--paper); color: var(--ink); font: 13px var(--mono); }
+.backend-field option:disabled { color: var(--muted); }
 .backend-model { flex: 1 1 220px; }
 .backend-note { flex: 1 1 100%; color: var(--ink-soft); font: 12px var(--mono); }
 .backend-note.warn { color: var(--red-fg); }

@@ -107,6 +107,8 @@ class Router:
             result = (True, "deterministic")
         elif not providers.key_set(cand.backend):
             result = (False, f"{providers.KEY_ENV[cand.backend]} not set")
+        elif providers.hardware_reason(cand.backend):
+            result = (False, providers.hardware_reason(cand.backend))
         elif cand.backend in providers.LOCAL:
             result = self._probe_local(cand.backend)
         else:

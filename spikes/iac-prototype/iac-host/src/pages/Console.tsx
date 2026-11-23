@@ -42,10 +42,25 @@ export default function Run() {
   const availability = useMemo(() => (models?.candidates || []).filter((c) => tierInfo.backends.includes(c.backend)),
     [models, tierInfo]);
 
+  // Why a backend cannot be picked: hardware this host lacks, or a missing key.
+  // Such backends stay listed, greyed out, with the reason as the tooltip.
+  function blockedReason(name: string): string {
+    const hw = models?.hardware?.[name];
+    if (hw && !hw.ok) return hw.reason;
+    if (models && models.keys_set[name] === false) return 'API key not set';
+    return '';
+  }
+
+  function optionLabel(name: string): string {
+    const hw = models?.hardware?.[name];
+    if (hw && !hw.ok) return `${name} (needs ${hw.needs || 'other hardware'})`;
+    return models && models.keys_set[name] === false ? `${name} (no key)` : name;
+  }
+
   function chooseTier(id: string) {
     const next = TIERS.find((t) => t.id === id) || TIERS[0];
     setTier(id);
-    setBackend(next.backends[0]);
+    setBackend(next.backends.find((name) => !blockedReason(name)) || next.backends[0]);
     setModel('');
     setConfirmSpend(false);
   }
@@ -96,14 +111,16 @@ export default function Run() {
                 onClick={() => chooseTier(t.id)}>{t.label}</button>)}
             </div>
             <small className="muted">{tierInfo.note}</small>
+            {tierInfo.backends.filter((name) => models?.hardware?.[name]?.ok === false).map((name) =>
+              <small key={name} className="muted">{name} unavailable: {models?.hardware?.[name]?.reason}.</small>)}
           </div>
 
           <div className="form-grid">
             <label>Backend
               <select id="backend" value={backend} onChange={(e) => { setBackend(e.target.value); setModel(''); }}>
                 {tierInfo.backends.map((name) => <option key={name} value={name}
-                  disabled={models ? !(models.keys_set[name] ?? true) : false}>
-                  {name}{models && models.keys_set[name] === false ? ' (no key)' : ''}</option>)}
+                  disabled={Boolean(blockedReason(name))} title={blockedReason(name) || undefined}>
+                  {optionLabel(name)}</option>)}
               </select>
             </label>
             <label>Model

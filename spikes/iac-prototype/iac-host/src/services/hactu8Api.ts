@@ -118,12 +118,19 @@ export interface ModelCandidate {
   reason: string;
 }
 
+export interface HardwareSupport {
+  ok: boolean;
+  reason: string;
+  needs: string;
+}
+
 export interface ModelsInfo {
   backends: string[];
   local: string[];
   cloud: string[];
   keys_set: Record<string, boolean>;
   default_models: Record<string, string>;
+  hardware?: Record<string, HardwareSupport>;
   candidates: ModelCandidate[];
   catalogs: Record<string, string[]>;
 }

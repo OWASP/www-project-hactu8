@@ -27,7 +27,7 @@ import json
 import sys
 from typing import List
 
-from hactu8 import __version__, catalog, config, defenses, store, techniques
+from hactu8 import __version__, catalog, config, defenses, providers, store, techniques
 from hactu8.adapters import lab
 from hactu8.classify import get_classifier
 from hactu8.router import Router, RouterError
@@ -351,6 +351,37 @@ def cmd_scoreboard(args) -> int:
     return 0
 
 
+def _backend_choices(skip=()) -> str:
+    """Backends for --help, with any this host's hardware cannot run marked."""
+    hw = providers.backend_support()
+    return " | ".join(name if hw[name]["ok"] else f"{name} (unavailable: needs {hw[name]['needs']})"
+                      for name in providers.BACKENDS if name not in skip)
+
+
+class _BackendHelp(argparse.HelpFormatter):
+    """Fills {backends} and {models} in help text only when help is printed, so the
+    hardware probe never runs for an ordinary command."""
+
+    def _get_help_string(self, action):
+        text = action.help or ""
+        if "{backends}" in text:
+            text = text.replace("{backends}", _backend_choices())
+        if "{models}" in text:
+            text = text.replace("{models}", _backend_choices(skip=(providers.OFFLINE,)))
+        return text
+
+
+def _hardware_refusal(args) -> str:
+    """The reason a requested backend cannot run on this host's hardware, or ""."""
+    for attr in ("backend", "target_backend", "classifier_backend"):
+        name = getattr(args, attr, "") or ""
+        why = providers.hardware_reason(name) if name else ""
+        if why:
+            return f"--{attr.replace('_', '-')} {providers.normalize(name)}: {why}. " \
+                   f"Set {providers.FORCE_ENV}={providers.normalize(name)} if the engine runs elsewhere."
+    return ""
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="hactu8", description="OWASP HACTU8 assurance test runner")
     parser.add_argument("--version", action="version", version=f"hactu8 {__version__}")
@@ -373,10 +404,9 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--json", action="store_true")
     p.set_defaults(func=cmd_defenses)
 
-    p = sub.add_parser("run", help="run one or more skills ('all' for every skill)")
+    p = sub.add_parser("run", help="run one or more skills ('all' for every skill)", formatter_class=_BackendHelp)
     p.add_argument("skills", nargs="+")
-    p.add_argument("--backend", default="", help="echo | ollama | llamacpp | openai-compat | strata | basalt | "
-                   "openrouter | anthropic | openai (default: from the router)")
+    p.add_argument("--backend", default="", help="{backends} (default: from the router)")
     p.add_argument("--model", default="")
     p.add_argument("--tier", default="", help="router tier for the model under test: deterministic | local | cloud")
     p.add_argument("--classifier", default="", help="keyword (default) | llm-judge | jev")
@@ -397,25 +427,22 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--json", action="store_true")
     p.set_defaults(func=cmd_router)
 
-    p = sub.add_parser("bench", help="score ProtectoGW against the labelled attack corpus")
+    p = sub.add_parser("bench", help="score ProtectoGW against the labelled attack corpus", formatter_class=_BackendHelp)
     p.add_argument("--json", action="store_true")
     p.add_argument("--misses", action="store_true", help="list misses and false positives")
-    p.add_argument("--classifier-backend", default="", help="add ProtectoGW's model plane: ollama | llamacpp | "
-                   "openai-compat | strata | basalt | openrouter | anthropic | openai")
+    p.add_argument("--classifier-backend", default="", help="add ProtectoGW's model plane: {models}")
     p.add_argument("--model", default="")
     p.set_defaults(func=cmd_bench)
 
-    p = sub.add_parser("live", help="attack a model with Billy's MCP surfaces, defense off vs on")
-    p.add_argument("--backend", default="echo", help="echo (default, offline) | ollama | llamacpp | "
-                   "openai-compat | strata | basalt | openrouter | anthropic | openai")
+    p = sub.add_parser("live", help="attack a model with Billy's MCP surfaces, defense off vs on", formatter_class=_BackendHelp)
+    p.add_argument("--backend", default="echo", help="{backends} (default: echo, offline)")
     p.add_argument("--model", default="")
     p.add_argument("--confirm-spend", action="store_true", help="allow a paid cloud backend")
     p.add_argument("--json", action="store_true")
     p.set_defaults(func=cmd_live)
 
-    p = sub.add_parser("wolf", help="an attacker model writes and adapts attacks on Lamb, graded off vs on")
-    p.add_argument("--backend", default="echo", help="attacker: echo (default, deterministic mutations) | ollama | "
-                   "llamacpp | openai-compat | strata | basalt | openrouter | anthropic | openai")
+    p = sub.add_parser("wolf", help="an attacker model writes and adapts attacks on Lamb, graded off vs on", formatter_class=_BackendHelp)
+    p.add_argument("--backend", default="echo", help="attacker: {backends} (default: echo, deterministic mutations)")
     p.add_argument("--model", default="")
     p.add_argument("--target-backend", default="", help="model under attack (default: the attacker's backend)")
     p.add_argument("--target-model", default="")
@@ -438,4 +465,8 @@ def build_parser() -> argparse.ArgumentParser:
 
 def main(argv=None) -> int:
     args = build_parser().parse_args(argv)
+    why = _hardware_refusal(args)
+    if why:
+        print(f"error: {why}", file=sys.stderr)
+        return 2
     return args.func(args)

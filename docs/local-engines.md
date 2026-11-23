@@ -39,7 +39,33 @@ No Strata or Basalt server has been run against HACTU8 yet. The backends are tes
 | NVIDIA Blackwell (compute capability 12.0) with CUDA 13, Linux x86-64 or Windows 10 1903+ | Basalt, plus all of the above that support CUDA |
 | Older NVIDIA (Ada and earlier) | Ollama, llama.cpp, Strata; Basalt only through community forks |
 
-Basalt cannot run on a Mac. To use it from a Mac, run it on the GPU machine and reach it through an SSH tunnel (`ssh -L 8082:127.0.0.1:8082 gpu-box`), so `BASALT_HOST` stays loopback. `BASALT_ALLOW_REMOTE=1` works too, but lab prompts and payloads then cross the network.
+Basalt cannot run on a Mac. To use it from a Mac, run it on the GPU machine and reach it through an SSH tunnel (`ssh -L 8082:127.0.0.1:8082 gpu-box`), so `BASALT_HOST` stays loopback, and set `HACTU8_FORCE_BACKENDS=basalt` so the hardware check below lets it through. `BASALT_ALLOW_REMOTE=1` works too, but lab prompts and payloads then cross the network.
+
+## Backends this host's hardware cannot run
+
+HACTU8 checks the host once per process and offers `strata` and `basalt` only where their engine can run:
+
+| Backend | Offered when |
+|---------|--------------|
+| `strata` | macOS on Apple Silicon (arm64), or `nvidia-smi` lists an NVIDIA GPU (any compute capability) |
+| `basalt` | Linux or Windows, and `nvidia-smi` lists a GPU with compute capability 12.x (Blackwell, `sm_120`); never on macOS |
+| all others | always (they need a key or a running server, which are checked separately) |
+
+The check runs `nvidia-smi --query-gpu=name,compute_cap --format=csv,noheader` with a 2-second timeout and never runs it on macOS. A missing `nvidia-smi`, a timeout or an error counts as no NVIDIA GPU. It does not check the CUDA version, so a Blackwell GPU with an older CUDA still passes.
+
+Where a backend fails the check:
+
+- Every lab console and the iac-host console list it greyed out, with a "(needs …)" suffix and the reason as the tooltip, for example "Basalt needs an NVIDIA Blackwell GPU (sm_120) with CUDA 13 on Linux or Windows; it cannot run on macOS". The console never selects it by default.
+- `hactu8 --help` for `run`, `live`, `wolf` and `bench` marks it "(unavailable: needs …)".
+- Choosing it anyway (`--backend`, `--target-backend`, `--classifier-backend`, a lab's `POST /api/backend`, `<PREFIX>_BACKEND`, or the router) fails with the same reason instead of a connection error.
+
+The result is in `providers.backend_support()` and in the `hardware` field of each lab's `GET /api/meta` and the runner API's `GET /api/models`: `{"basalt": {"ok": false, "reason": "...", "needs": "an NVIDIA Blackwell GPU"}, ...}`.
+
+To skip the check, for example when the engine runs on another machine behind an SSH tunnel, or to test on other hardware, set `HACTU8_FORCE_BACKENDS` to a comma-separated list of backends, or `all`:
+
+```bash
+HACTU8_FORCE_BACKENDS=basalt BASALT_HOST=http://127.0.0.1:8082 python -m hactu8 run llm01 --backend basalt
+```
 
 ## Why MoE models can run faster
 
