@@ -35,6 +35,19 @@ the red count nor the total of the act's rate (``result.rate``).
 
 Items are classified after parsing, so a classifier sees the evidence.
 
+Lines are split on ``\n`` only (``lines``), never on the other characters
+``str.splitlines`` treats as breaks (``\r``, ``\v``, ``\f``, ``\x1c``-``\x1e``,
+``\x85``, U+2028, U+2029), so model text inside an evidence line cannot start a
+new line. The labs' ``evidence()`` prints ASCII-only JSON, where those
+characters are escaped anyway; a structural line (act, item, rate, note,
+held_by) that still carries one of them is ignored, never parsed.
+
+A run that hits the timeout is parsed from what the lab printed before it was
+stopped (``exc.stdout`` is bytes and is decoded): the items seen keep their
+grades, so a RED observed before the timeout is kept, each act's rate covers
+only the items it printed, and the summary is ``status: error`` with
+``timed_out: true``, never pass or fail.
+
 On a real backend ``model.think`` records the reasoning control
 (``providers.think_setting``) and, when the model returned reasoning apart
 from its answer, the totals of the labs' ``hactu8.reasoning {json}`` stderr
@@ -65,6 +78,15 @@ EVIDENCE_RE = re.compile(r'^ {8}evidence: (".*")$')
 HELD_BY_RE = re.compile(r"^ {8}held_by: (.+)$")
 
 
+# Characters str.splitlines() breaks on besides "\n" (and a trailing "\r").
+_FOREIGN_BREAKS = re.compile("[\r\v\f\x1c-\x1e\x85\u2028\u2029]")
+
+
+def lines(output: str) -> List[str]:
+    """Split on "\n" only; a CRLF's "\r" is dropped."""
+    return [line[:-1] if line.endswith("\r") else line for line in output.split("\n")]
+
+
 def _slug(text: str) -> str:
     return re.sub(r"[^a-z0-9]+", "-", text.lower()).strip("-")[:48]
 
@@ -85,7 +107,9 @@ def parse(output: str, classifier: Union[str, Classifier] = "keyword", context: 
         acts.append(act)
         return act
 
-    for line in output.splitlines():
+    for line in lines(output):
+        if _FOREIGN_BREAKS.search(line) and not EVIDENCE_RE.match(line):
+            continue  # a structural line never holds these: text smuggled out of a payload
         if m := ACT_RE.match(line):
             current = open_act(int(m.group(1)), m.group(2).strip())
         elif m := DEFENSE_ACT_RE.match(line):
@@ -153,7 +177,7 @@ def reasoning_totals(output: str) -> dict:
     """Sum the ``hactu8.reasoning`` lines (one per lab process that saw reasoning)."""
     total = {k: 0 for k in REASONING_KEYS}
     seen = False
-    for line in output.splitlines():
+    for line in lines(output):
         m = REASONING_RE.match(line)
         if not m:
             continue
@@ -166,6 +190,14 @@ def reasoning_totals(output: str) -> dict:
             if isinstance(data.get(k), int):
                 total[k] += data[k]
     return total if seen else {}
+
+
+def _text(data) -> str:
+    if data is None:
+        return ""
+    if isinstance(data, bytes):
+        return data.decode("utf-8", "replace")
+    return data
 
 
 def run(skill, backend: str = "echo", model: str = "", classifier: Union[str, Classifier] = "keyword",
@@ -182,24 +214,28 @@ def run(skill, backend: str = "echo", model: str = "", classifier: Union[str, Cl
         cmd += ["--model", model]
     env = dict(os.environ, PYTHONIOENCODING="utf-8", PYTHONDONTWRITEBYTECODE="1", HACTU8_EVIDENCE="1")
     start = time.monotonic()
+    timed_out = False
     try:
         proc = subprocess.run(cmd, cwd=skill.lab_dir, capture_output=True, text=True,
                               encoding="utf-8", timeout=timeout, env=env)
         output, code = proc.stdout + proc.stderr, proc.returncode
     except subprocess.TimeoutExpired as exc:
-        output, code = (exc.stdout or "") if isinstance(exc.stdout, str) else "", 124
+        # The partial output comes back as bytes even with text=True: keep what was printed.
+        output, code, timed_out = _text(exc.stdout) + _text(exc.stderr), 124, True
     doc["duration_ms"] = int((time.monotonic() - start) * 1000)
     doc["finished_at"] = now_iso()
     reasoning = reasoning_totals(output)
     if reasoning and "think" in doc["model"]:
         doc["model"]["think"]["reasoning"] = reasoning
-    output = "\n".join(l for l in output.splitlines() if not REASONING_RE.match(l))
+    output = "\n".join(l for l in lines(output) if not REASONING_RE.match(l))
     doc["acts"] = parse(output, classifier, {"risk": skill.risk, "metric": skill.metric_name})
     attach_protections(doc["acts"], getattr(skill, "protections", []))
     doc["classifier"] = classifier.info()
     doc["summary"] = summarize(doc["acts"], backend)
     doc["exit_code"] = code
-    if code not in (0,) and doc["summary"]["status"] == "pass":
+    if timed_out:
+        doc["summary"].update(status="error", timed_out=True)
+    elif code not in (0,) and doc["summary"]["status"] == "pass":
         doc["summary"]["status"] = "fail"
-    doc["output"] = "\n".join(l for l in output.splitlines() if not EVIDENCE_RE.match(l))[-8000:]
+    doc["output"] = "\n".join(l for l in lines(output) if not EVIDENCE_RE.match(l))[-8000:]
     return doc

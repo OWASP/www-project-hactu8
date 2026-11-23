@@ -405,6 +405,10 @@
           "minimum": 1,
           "description": "Items in the run whose model call failed (verdict ERROR); absent when none"
         },
+        "timed_out": {
+          "type": "boolean",
+          "description": "true when the lab was stopped at the timeout; acts and rates cover only what it printed before, and status is error"
+        },
         "status": {
           "enum": [
             "pass",
