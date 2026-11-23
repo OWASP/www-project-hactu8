@@ -103,7 +103,7 @@ REFUSED_SUSPENDED = "key suspended: its queries do not look like real listings"
 
 def mint_canary() -> str:
     """A fresh fictional build fingerprint per lab instance: ``HX10-CANARY-`` + 16 hex digits."""
-    return CANARY_PREFIX + secrets.token_hex(8)
+    return providers.register_canary(CANARY_PREFIX + secrets.token_hex(8))
 
 
 def load_json(path: str) -> Dict[str, Any]:

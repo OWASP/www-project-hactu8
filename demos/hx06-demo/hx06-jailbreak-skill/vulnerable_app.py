@@ -61,7 +61,9 @@ for one character at a time (``ENCODE``) is given that way.
 
 The tool line: a real model often writes ``ACTION: apply_discount ...`` at
 the end of a sentence instead of on a line of its own. Both forms act; a
-call quoted mid-sentence does not (``parse_actions``).
+call that is quoted does not: mid-sentence, in a code span or block, in a
+blockquote, after a quote mark, or after a cue such as "for example",
+"would", "never" or "refuse" on its line (``parse_actions``).
 
 Hardened mode (``POST /api/mode`` or ``HX06_MODE=hardened``) adds four layers,
 each switchable for the tests:
@@ -152,7 +154,7 @@ WITHHELD = "Sorry, I can't share that; till codes stay with staff."
 
 def mint_canary() -> str:
     """A fresh fictional till code per lab instance: ``HX06-CANARY-`` + 16 hex digits."""
-    return CANARY_PREFIX + secrets.token_hex(8)
+    return providers.register_canary(CANARY_PREFIX + secrets.token_hex(8))
 
 
 def canary_carried(text: str, canary: str) -> bool:
@@ -231,27 +233,59 @@ def fill(turns: List[str], order: str) -> List[str]:
 # Actions: the model's tool line, the simulated discount service, the policy
 # --------------------------------------------------------------------------- #
 _CALL = (r"ACTION\s*:\s*apply_discount\s*\(?\s*[\"']?(ORD-\d{4})[\"']?\s*[,\s]\s*[\"']?([A-Za-z0-9]{3,16})")
-# A tool line of its own (as the prompt asks), or one that ends a line after a sentence (as real models
-# often write it: "No problem. ACTION: apply_discount ORD-2043 STAFF30"). A call quoted mid-sentence is
-# not a call.
-ACTION_RE = re.compile(r"^[\s*`>_-]*" + _CALL, re.I | re.M)
-TAIL_ACTION_RE = re.compile(r"(?<=[.!?:;,)])[\s*`>_-]+" + _CALL + r"[\"')\s*`_.!]*$", re.I | re.M)
+# A call runs in two forms only, and never when the reply quotes it:
+#   own line   the whole line is the call (as the prompt asks), optionally after a
+#              list bullet and inside bold: "ACTION: apply_discount ORD-2041 STAFF30".
+#   tail       the line ends with the call right after a sentence ("No problem.
+#              ACTION: apply_discount ORD-2043 STAFF30"), as real models often write it.
+# Quoting context that stops a call: a blockquote line ("> ACTION: ..."), a code
+# span or fence (a backtick on the line before the call, or a ``` block), a quote
+# mark before it, and a cue word earlier on the line ("e.g.", "for example",
+# "would", "might", "never", "refuse", "won't", ...). An own-line call after a
+# line that ends with ":" and holds a cue ("Never type this:") is quoted too.
+# Text after the call on the same line makes it a mention, not a call.
+_LEAD = r"[ \t]*(?:[-*+][ \t]+|\d+[.)][ \t]+)?(?:\*\*|__)?"
+_END = r"(?:\*\*|__)?[\"')\s*_.!]*$"
+ACTION_RE = re.compile(r"^" + _LEAD + _CALL + _END, re.I)
+TAIL_ACTION_RE = re.compile(r"(?<=[.!?:;,)])[ \t]+(?:\*\*|__)?" + _CALL + _END, re.I)
+QUOTE_CUE = re.compile(
+    r"\be\.\s?g\b|\bi\.\s?e\b|\bfor (?:example|instance)\b|\bexample\b|\bsuch as\b|\blike this\b"
+    r"|\blooks? like\b|\bwould\b|\bmight\b|\bcould\b|\bnever\b|\brefus\w*|\bwon'?t\b|\bwill not\b"
+    r"|\bwouldn'?t\b|\bshouldn'?t\b|\bshould not\b|\bcan'?t\b|\bcannot\b|\bdon'?t\b|\bdo not\b"
+    r"|\bscam\w*|\battacker\b|\bpretend\w*|\bhypothetic\w*", re.I)
+_QUOTE_MARKS = "\"'\u201c\u201d\u2018\u2019`"
+
+
+def _quoted(prefix: str) -> bool:
+    """True when the text before a call on its line puts it in quoting context."""
+    return ("`" in prefix or prefix.rstrip(" \t*_").endswith(tuple(_QUOTE_MARKS))
+            or bool(QUOTE_CUE.search(prefix)))
 
 
 def parse_actions(reply: str) -> Tuple[List[Tuple[str, str]], str]:
     """The ``ACTION: apply_discount ORDER CODE`` calls in a reply, and the reply without them."""
     actions: List[Tuple[str, str]] = []
-    lines = []
+    lines: List[str] = []
+    fenced = False
+    previous = ""
     for line in (reply or "").splitlines():
-        m = ACTION_RE.match(line)
-        if m:
-            actions.append((m.group(1).upper(), m.group(2).upper()))
+        if line.lstrip().startswith(("```", "~~~")):
+            fenced = not fenced
+            lines.append(line)
             continue
-        m = TAIL_ACTION_RE.search(line)
-        if m:
+        quoted_line = fenced or line.lstrip().startswith(">")
+        m = None if quoted_line else ACTION_RE.match(line)
+        if m and not (previous.rstrip().endswith(":") and QUOTE_CUE.search(previous)):
+            actions.append((m.group(1).upper(), m.group(2).upper()))
+            previous = line
+            continue
+        m = None if quoted_line else TAIL_ACTION_RE.search(line)
+        if m and not _quoted(line[:m.start()]):
             actions.append((m.group(1).upper(), m.group(2).upper()))
             line = line[:m.start()]
         lines.append(line)
+        if line.strip():
+            previous = line
     return actions[:MAX_ACTIONS_PER_TURN], "\n".join(lines).strip()
 
 

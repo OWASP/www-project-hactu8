@@ -122,10 +122,6 @@ class SurfaceSdkTest(unittest.TestCase):
         self.assertFalse(surfaces.truth("swap:server_time", self.state.surfaces))
 
 
-if __name__ == "__main__":
-    unittest.main()
-
-
 class LambRoutesTest(unittest.TestCase):
     def setUp(self):
         from hactu8.lamb._mcp import available
@@ -156,3 +152,7 @@ class LambRoutesTest(unittest.TestCase):
 
     def test_foreign_host_refused(self):
         self.assertEqual(self.client.get("/api/lamb/manifest", headers={"host": "evil.example"}).status_code, 403)
+
+
+if __name__ == "__main__":
+    unittest.main()

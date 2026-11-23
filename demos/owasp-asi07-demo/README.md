@@ -322,7 +322,7 @@ python scripts/evaluate_kpi.py --scan assets/forged_order.md   # REJECT, exit 2
 python scripts/evaluate_kpi.py --harden                        # GREEN, FMAR 0%, exit 0
 python scripts/reset_baseline.py                               # restore clean state
 python scripts/evaluate_kpi.py                                 # GREEN, FMAR 0%
-python -m unittest discover tests                              # 18 tests
+python -m unittest discover tests                              # 27 tests
 ```
 
 ## License

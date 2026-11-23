@@ -304,7 +304,7 @@ python scripts/evaluate_kpi.py --scan assets/system_prompt.txt   # REJECT, exit 
 python scripts/evaluate_kpi.py --harden                      # GREEN, Leak Rate 0%, exit 0
 python scripts/reset_baseline.py                             # restore clean state
 python scripts/evaluate_kpi.py                               # GREEN, Leak Rate 0%
-python -m unittest discover tests                            # 18 tests
+python -m unittest discover tests                            # 36 tests
 ```
 
 ## License

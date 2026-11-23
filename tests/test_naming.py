@@ -11,8 +11,11 @@ names may appear only in:
 - ``LEGACY_LINES`` below: lines that must keep a retired name to work.
 
 Retired names: Billy (the old assistant, any case), Goat & Co. (the old
-company, also ``Goat &amp; Co`` and wrapped across lines), goatco (its old
-domains and ids, any case) and AgenticGoat (the predecessor project). The test
+company, also "& Company", the "&" encoded as ``&amp;``, ``&#38;``, ``&#x26;``,
+``\u0026`` or ``%26``, and wrapped across lines), goatco (its old domains and
+ids, any case), its old product ids (goathttp / goat-http, Goat Tools /
+GoatTools / goat-tools, goat-pdf, goat-shop), its old people (Goatsby,
+Goatley) and AgenticGoat (the predecessor project). The test
 scans every tracked text file (``git ls-files``) and fails with the file:line
 of each violation.
 """
@@ -26,8 +29,13 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 
-RETIRED = re.compile(r"billy|goat\s*&(?:amp;)?\s*co\b|goatco|agentic[\s_-]?goat", re.I)
-WRAPPED = re.compile(r"goat\s*&(?:amp;)?\s*$\s*co\b|goat\s*$\s*&(?:amp;)?\s*co\b", re.I | re.M)
+# "&" as written or encoded: &amp; &#38; &#x26; \u0026 %26.
+_AMP = r"(?:&(?:amp;)?|&#0*38;|&#x0*26;|\\u0026|%26)"
+_GAP = r"(?:\s|%20)*"
+RETIRED = re.compile(r"billy|goat" + _GAP + _AMP + _GAP + r"co(?:mpany)?\b|goatco|agentic[\s_-]?goat"
+                     r"|goat[\s_-]?(?:http|tools?|pdf|shop)\b|goatsby|goatley", re.I)
+WRAPPED = re.compile(r"goat\s*" + _AMP + r"\s*$\s*co(?:mpany)?\b|goat\s*$\s*" + _AMP + r"\s*co(?:mpany)?\b",
+                     re.I | re.M)
 HISTORY_PATHS = re.compile(r"(?:docs/)?agenticgoat-merge-plan(?:\.md)?|(?:docs/)?evidence/agenticgoat/?", re.I)
 
 # History records, not scanned.
@@ -107,15 +115,22 @@ class RetiredNameTest(unittest.TestCase):
                      "billy@goatco.example", "docs.goatco.invalid", "GOATCO_REGION",
                      "AgenticGoat's screening core", "agentic goat", "AGENTICGOAT", "agentic_goat",
                      "Ported from AgenticGoat (retired)",
-                     "see docs/agenticgoat-merge-plan.md, unlike AgenticGoat's own probe"):
+                     "see docs/agenticgoat-merge-plan.md, unlike AgenticGoat's own probe",
+                     "pip install goathttp", "goat-http", "goat_http", "the official Goat Tools server",
+                     "GoatTools", "goat-tools", "goat-pdf", "goat-shop", "Goatsby", "Goatley",
+                     "Goat &#38; Co.", "Goat &#x26; Co.", "Goat \\u0026 Co.", "Goat%20%26%20Co",
+                     "Goat & Company", "Goat&Co"):
             self.assertTrue(text_violations(line), line)
         for text in ("**Lamb, Big Field Jumper Co.**\nCo-Authored-By", "Lamb, Big Field Jumper Co.'s ops assistant",
                      "lamb@bigfield.example", "Barb Fell", "OWASP WebGoat-style lab", "goat mix",
                      "hx11:clean-goat-mix", "a goat\nand a cow", "goat\n\ncoat",
                      "see `docs/agenticgoat-merge-plan.md` (AG-55 notes)",
-                     "in `docs/evidence/agenticgoat/` and HACTU8 Lamb"):
+                     "in `docs/evidence/agenticgoat/` and HACTU8 Lamb",
+                     "goat's milk & cheese", "goat and cow", "a goat tooling shed", "goatskin",
+                     "the goat shopkeeper", "a goat & a cow", "goat, http server"):
             self.assertFalse(text_violations(text), text)
-        for text in ("the **Goat &\nCo.** shop", "Goat\n& Co. assistant", "Goat &amp;\n  Co."):
+        for text in ("the **Goat &\nCo.** shop", "Goat\n& Co. assistant", "Goat &amp;\n  Co.",
+                     "Goat &#38;\nCompany"):
             self.assertTrue(text_violations(text), text)
 
     def test_legacy_lines_are_narrow(self):

@@ -299,7 +299,7 @@ python scripts/evaluate_kpi.py --scan assets/cell_note.md    # REJECT, exit 2
 python scripts/evaluate_kpi.py --harden                      # GREEN, UER 0%, exit 0
 python scripts/reset_baseline.py                             # restore clean state
 python scripts/evaluate_kpi.py                               # GREEN, UER 0%
-python -m unittest discover tests                            # 50 tests
+python -m unittest discover tests                            # 52 tests
 ```
 
 ## License

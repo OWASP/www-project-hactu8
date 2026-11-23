@@ -44,7 +44,7 @@ The order matters: filtering before ranking means a foreign document never becom
 - **The filter trusts the tenant label on each document.** A document ingested with the wrong tenant label, by mistake or by an attacker who can write to the store, is served to that tenant. Ingestion review and per-tenant collections are in the references, not in the code.
 - **Poisoning inside a tenant is not covered.** A planted document in your own tenant passes the filter by design; embedding poisoning is a separate risk (see LLM05 Data and Model Poisoning).
 - **Embedding inversion is out of reach.** If raw vectors are exposed, Vec2Text-style inversion rebuilds the text, and no retrieval filter sees it. The only control is never exposing or sharing embeddings.
-- **The CTLR counts known facts.** An answer is RED when it carries Hilltop's canary or one of the listed Hilltop facts. A real model's paraphrase that uses none of those terms is a real leak that this suite does not score; read the evidence, not only the light.
+- **The CTLR counts known facts.** An answer is RED when it carries Hilltop's canary (in any case, spacing or encoding) or one of the listed Hilltop facts, matched after normalising case, spacing and hyphens (the README's "How a leak is graded" lists them). A real model's paraphrase that uses none of those terms is a real leak that this suite does not score; read the evidence, not only the light.
 
 ## Check yourself
 

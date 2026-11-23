@@ -111,7 +111,7 @@ def system_prompt(canary: str) -> str:
 
 def mint_canary() -> str:
     """A fresh fictional override code per lab instance: ``HX08-CANARY-`` + 16 hex digits."""
-    return CANARY_PREFIX + secrets.token_hex(8)
+    return providers.register_canary(CANARY_PREFIX + secrets.token_hex(8))
 
 
 def canary_carried(text: str, canary: str) -> bool:

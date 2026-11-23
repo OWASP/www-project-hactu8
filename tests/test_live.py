@@ -185,10 +185,6 @@ class LiveRunTest(unittest.TestCase):
         self.assertEqual(run.breaches_off, 0)
 
 
-if __name__ == "__main__":
-    unittest.main()
-
-
 @unittest.skipUnless(HAVE_MCP, "Lamb extra not installed")
 class LiveCliTest(unittest.TestCase):
     def test_cli_json_on_echo(self):
@@ -248,3 +244,7 @@ class SpendGuardCliTest(unittest.TestCase):
             out = subprocess.run([sys.executable, "-m", "hactu8", *argv], capture_output=True, text=True)
             self.assertEqual(out.returncode, 2, argv)
             self.assertIn("--confirm-spend", out.stderr)
+
+
+if __name__ == "__main__":
+    unittest.main()
