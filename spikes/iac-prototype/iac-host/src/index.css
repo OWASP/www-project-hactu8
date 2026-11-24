@@ -470,6 +470,10 @@ button:focus-visible {
 .offon { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; min-height: 45px; }
 .offon-arrow { color: var(--iac-text-secondary); font-size: 12px; }
 .timeline { padding: 0; overflow: hidden; }
+/* The result sits in a narrow column on Run (beside the form) even on a wide screen:
+   below 640px of its own width, the items take a full row under the act label. */
+.run-result { container-type: inline-size; }
+@container (max-width: 640px) { .timeline-row { grid-template-columns: 1fr auto; } .timeline-items { grid-column: 1 / -1; grid-row: 2; } }
 .timeline-row { display: grid; grid-template-columns: 150px 1fr 110px; gap: 12px; padding: 12px 18px; border-top: 1px solid var(--iac-border); }
 .timeline-row:first-child { border-top: 0; }
 .timeline-label { font-weight: 700; color: var(--iac-text); }
@@ -512,6 +516,9 @@ button:focus-visible {
 .lesson-section code, .lesson-file { overflow-wrap: anywhere; background: var(--iac-code-bg); color: var(--iac-code-text); border-radius: 4px; padding: 1px 4px; font-size: 12px; }
 .lesson-section pre { background: var(--iac-code-bg); padding: 10px; border-radius: 6px; overflow: auto; }
 .learn-path > button { margin-bottom: 16px; }
+.learn-path > button + button { margin-top: -8px; }
+.story ul, .story ol { padding-left: 20px; display: flex; flex-direction: column; gap: 6px; }
+.story-actions { margin-top: 18px; }
 .coverage-filter { display: inline-flex; gap: 8px; align-items: center; color: var(--iac-text-secondary); font-size: 13px; }
 .coverage-summary, .coverage-ref { display: block; margin-top: 3px; font-size: 12px; }
 .coverage-ref { color: var(--iac-text-secondary); }
