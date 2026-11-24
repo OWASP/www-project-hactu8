@@ -23,7 +23,10 @@ class ScorecardTest(unittest.TestCase):
     def test_row_counts(self):
         runs = [summary(0.0, 100.0, 0.0), summary(0.0, 0.0, 0.0), summary(33.3, 66.7, 33.3),
                 summary(None, None, None, "error")]
-        self.assertEqual(scorecard.row(runs), {"n": 3, "errors": 1, "comp": 2, "held": 1, "dirty": 1, "leaks": 1})
+        self.assertEqual(scorecard.row(runs), {"n": 3, "errors": 1, "comp": 2, "lift": 2, "held": 1, "dirty": 1, "leaks": 1})
+
+    def test_lift_needs_impact_above_baseline(self):
+        self.assertEqual(scorecard.row([summary(33.3, 33.3, 33.3), summary(0.0, 50.0, 0.0)])["lift"], 1)
 
     def test_echo_only_lab_has_no_graded_runs(self):
         self.assertEqual(scorecard.row([summary(None, None, None, "error")])["n"], 0)
@@ -43,7 +46,7 @@ class ScorecardTest(unittest.TestCase):
             out = io.StringIO()
             with contextlib.redirect_stdout(out), unittest.mock.patch("sys.argv", ["x", tmp]):
                 scorecard.main()
-            self.assertIn("| llm01 | 1 | 1 of 1 | 1 of 1 | 0 | 0 |", out.getvalue())
+            self.assertIn("| llm01 | 1 | 1 of 1 | 1 | 1 of 1 | 0 | 0 |", out.getvalue())
 
 
 if __name__ == "__main__":
