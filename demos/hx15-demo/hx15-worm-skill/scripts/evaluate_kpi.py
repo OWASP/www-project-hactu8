@@ -107,7 +107,8 @@ def classify(item: Dict[str, Any], expected: Optional[Dict[str, str]] = None,
 
 
 HELD = {"dropped": "input screen dropped {n} incoming mail", "withheld": "replication guard withheld {n} replies",
-        "held": "approval held {n} replies for a human", "hop_limit": "hop limit held {n} automatic replies"}
+        "held": "approval held {n} replies for a human", "hop_limit": "hop limit held {n} automatic replies",
+        "egress": "egress check withheld {n} replies", "redacted": "egress check redacted {n} replies"}
 
 
 def held_by(item: Dict[str, Any], status: str = "") -> List[str]:

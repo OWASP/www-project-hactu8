@@ -40,7 +40,8 @@ from run_worm_attack import spread_line  # noqa: E402
 from vulnerable_app import LAYERS, Lab, scan_attack  # noqa: E402
 
 LAYER_NAMES = {"use_input_screen": "input screen", "use_replication_guard": "replication guard",
-               "use_approval": "approval before sending", "use_hop_limit": "hop limit"}
+               "use_approval": "approval before sending", "use_hop_limit": "hop limit",
+               "use_egress_check": "egress check"}
 
 
 def evidence(value) -> None:

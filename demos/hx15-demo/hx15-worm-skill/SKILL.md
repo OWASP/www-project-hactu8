@@ -74,7 +74,7 @@ worm.
 - Quantify the spread (mails that carried it, hops, infected inboxes, new
   inboxes per infected assistant, references at the attacker) and the
   stoplight KPI, from the mail that was sent.
-- Show the four layers, each alone, and where they stop working.
+- Show the five layers, each alone, and where they stop working.
 
 ## Mail terminology bridge
 
@@ -156,8 +156,9 @@ only, never from the console. With `openrouter`, the mail and the
    lab's rules blocking it, the replication guard blocking a reply that
    copies it, and the paraphrasing worm's four phrasings passing the lab
    rules with no 8-word run shared between them. `--harden` switches on the
-   four layers. `--probe` runs the paraphrasing worm through them: RED, held
-   to hop 2.
+   five layers. `--probe` runs the paraphrasing worm through them: GREEN,
+   every reference redacted, but the worm still reaches 5 inboxes, held to
+   hop 2.
 
 7. **Reset to baseline.**
 
@@ -177,7 +178,7 @@ Edit [`assets/worm.json`](assets/worm.json) and follow
 
 | Path | Purpose |
 |------|---------|
-| `vulnerable_app.py` | The five assistants, the mail network, retrieval, the stand-in model and its replication rule, the four layers, the oracles, plus `/round`, `/mailboxes`, `/attacker-inbox`, `/spread`, `/mail-log`, `/health` and the console API (`/api/meta`, `/api/state`, `/api/reset`, `/api/attack`, `/api/evaluate`, `/api/scan`, `/api/mode`, `/api/models`, `/api/backend`). |
+| `vulnerable_app.py` | The five assistants, the mail network, retrieval, the stand-in model and its replication rule, the five layers, the oracles, plus `/round`, `/mailboxes`, `/attacker-inbox`, `/spread`, `/mail-log`, `/health` and the console API (`/api/meta`, `/api/state`, `/api/reset`, `/api/attack`, `/api/evaluate`, `/api/scan`, `/api/mode`, `/api/models`, `/api/backend`). |
 | `web/` | Shared HACTU8 lab console, served at `/`. |
 | `providers.py` | Optional real-model backends. Shared and copied unchanged. |
 | `protectogw/` | Screening core, used by the input screen and the replication guard. Shared and copied unchanged. |

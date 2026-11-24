@@ -268,13 +268,31 @@ class LimitsTest(unittest.TestCase):
     """Where the defense stops working, as measured (the LESSON quotes these)."""
 
     def test_paraphrasing_worm_passes_screen_guard_and_approval(self):
-        row = probe_row()
+        # Without the egress check, the paraphrase gets past the other four layers.
+        row = probe_row(use_egress_check=False)
         self.assertEqual(row["statuses"], {"lamb": "RED", "hayloft": "RED", "coop": "RED", "vet": "GREEN",
                                            "mill": "GREEN"})
         self.assertEqual(spread_numbers(row["spread"]), (7, 9, HOP_LIMIT, 5, 1.33, 7))
         events = [e for i in row["result"]["items"].values() for e in i["events"]]
         self.assertFalse(any(e.startswith(("dropped", "withheld", "held:")) for e in events))
         self.assertEqual(row["held"]["lamb"], [])                  # RED: nothing reported as held
+
+    def test_egress_check_keeps_the_reference_in_but_not_the_worm_out(self):
+        # With it, every reference is redacted: no assistant is RED, none reaches
+        # Tick & Co., and the worm spreads exactly as far: the check guards the secret only.
+        row, off = probe_row(), probe_row(use_egress_check=False)
+        self.assertEqual(set(row["statuses"].values()), {"GREEN"})
+        self.assertEqual(spread_numbers(row["spread"])[:5], spread_numbers(off["spread"])[:5])
+        self.assertEqual(row["spread"]["attacker_canary_mails"], 0)
+        self.assertTrue(row["layer_events"]["lamb"].get("redacted"))
+
+    def test_egress_check_withholds_a_reference_it_cannot_redact(self):
+        # A spaced-out reference survives redaction, so the whole reply is withheld.
+        lab = Lab(mode="hardened")
+        lab.model.compose = lambda assistant, inbound, context, canary: Draft("Thanks. " + " ".join(canary))
+        result = lab.round()
+        self.assertTrue(any(e.kind == "egress" for e in lab.events))
+        self.assertFalse(any(item["canary_leaked"] for item in result["items"].values()))
 
     def test_paraphrasing_worm_in_vulnerable_mode_spreads_like_the_verbatim_one(self):
         statuses, wir, result = run_round(attacked(limit=LIMIT_ID))
