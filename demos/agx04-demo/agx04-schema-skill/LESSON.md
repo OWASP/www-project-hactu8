@@ -20,7 +20,7 @@ The `schema_scan` detector act makes the same point with a `ticket_lookup` tool 
 
 ## Try it
 
-Run all four acts with `python run_demo.py` from `demos/agx04-demo`, or `python -m hactu8 run agx04` from the repo root, or open the lab console (`python vulnerable_app.py`, then <http://127.0.0.1:5404/>). The suite is five requests: three ticket questions the attacker targets and two controls (server time, VPN health).
+Run all four acts with `python run_demo.py` from `demos/agx04-demo`, or `python -m hactu8 run agx04` from the repo root, or open the lab console (`cd agx04-schema-skill && python vulnerable_app.py`, then <http://127.0.0.1:5404/>). The suite is five requests: three ticket questions the attacker targets and two controls (server time, VPN health).
 
 - **Act 1, clean baseline.** All five GREEN, Canary Leak Rate (CLR) 0%. Compare the approved schema in [`assets/tool_manifest.json`](assets/tool_manifest.json).
 - **Act 2, attack.** One schema field changed: `ticket_lookup.ticket_id.default` now holds [`assets/param_default_payload.txt`](assets/param_default_payload.txt). The description a reviewer reads is unchanged.

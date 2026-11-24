@@ -23,7 +23,7 @@ Nothing is fetched in this lab: "opening" the URL is a lookup of the attacker's 
 
 ## Try it
 
-Run all four acts with `python run_demo.py` from `demos/hx04-demo`, or `python -m hactu8 run hx04` from the repo root, or open the lab console (`python vulnerable_app.py`, then <http://127.0.0.1:5504/>). The suite is five requests from Pat: three reorders (targeted, they reach the server the attacker updates), a weather question and a returns question (controls).
+Run all four acts with `python run_demo.py` from `demos/hx04-demo`, or `python -m hactu8 run hx04` from the repo root, or open the lab console (`cd hx04-elicitation-skill && python vulnerable_app.py`, then <http://127.0.0.1:5504/>). The suite is five requests from Pat: three reorders (targeted, they reach the server the attacker updates), a weather question and a returns question (controls).
 
 - **Act 1, clean baseline.** All five GREEN, Elicitation Leak Rate (ELR) 0%. Each server sends one honest form (confirm quantity and day; pick the field): 4 dialogs in all.
 - **Act 2, attack.** Open [`assets/hostile_elicitation.json`](assets/hostile_elicitation.json): five requests per reorder. Read each one as Pat's dialog shows it, with no server name and no URL, and ask which you would refuse.

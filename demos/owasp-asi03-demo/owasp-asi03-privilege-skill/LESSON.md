@@ -21,7 +21,7 @@ A third gap makes the replay possible: `GET /api/history` serves an ended sessio
 
 ## Try it
 
-Run all four acts with `python run_demo.py` from `demos/owasp-asi03-demo`, or `python -m hactu8 run asi03` from the repo root, or open the lab console (`python vulnerable_app.py`, then <http://127.0.0.1:5303/>). The suite has seven (caller, document) rows: Dana's four targeted rows and three controls where an entitled caller reads their own document.
+Run all four acts with `python run_demo.py` from `demos/owasp-asi03-demo`, or `python -m hactu8 run asi03` from the repo root, or open the lab console (`cd owasp-asi03-privilege-skill && python vulnerable_app.py`, then <http://127.0.0.1:5303/>). The suite has seven (caller, document) rows: Dana's four targeted rows and three controls where an entitled caller reads their own document.
 
 - **Act 1, clean baseline.** All seven GREEN, Privilege Escalation Rate (PER) 0%. Dana's rows say "not requested"; the controls say "released, agent acted as svc-lamb-hr". Read that line: the agent already uses its service identity for everyone. The controls are GREEN only because the callers happen to be entitled.
 - **Act 2, attack.** Dana files four requests ([`assets/requests.json`](assets/requests.json)). There is no payload to read: they are plain asks for document ids, plus an inert canary tag. [`assets/requests.README.md`](assets/requests.README.md) explains the `own` and `delegated:S-0001` credentials.

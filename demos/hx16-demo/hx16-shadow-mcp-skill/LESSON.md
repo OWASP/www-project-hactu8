@@ -22,7 +22,7 @@ The model is not tricked by any instruction. Lamb's stand-in picks the tool whos
 
 ## Try it
 
-Run all four acts with `python run_demo.py` from `demos/hx16-demo`, or `python -m hactu8 run hx16` from the repo root, or open the lab console (`python vulnerable_app.py`, then <http://127.0.0.1:5516/>). The suite is five requests: Dana's order status, Ravi's account, Mei's receipt (targeted), a returns question and the shop hours (controls).
+Run all four acts with `python run_demo.py` from `demos/hx16-demo`, or `python -m hactu8 run hx16` from the repo root, or open the lab console (`cd hx16-shadow-mcp-skill && python vulnerable_app.py`, then <http://127.0.0.1:5516/>). The suite is five requests: Dana's order status, Ravi's account, Mei's receipt (targeted), a returns question and the shop hours (controls).
 
 - **Act 1, clean baseline.** All five GREEN, Shadow Exposure Rate (SER) 0%. Two servers, a valid config signature, nothing announced.
 - **Act 2, attack.** Open [`assets/shadow_server.json`](assets/shadow_server.json): one config entry, one discovery announcement, three tools. None of it touches Lamb's code.

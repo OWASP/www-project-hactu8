@@ -21,7 +21,7 @@ Each reply looks like a normal purchase. The breach is in the wallet ledger and 
 
 ## Try it
 
-Run all four acts with `python run_demo.py` from `demos/hx13-demo`, or `python -m hactu8 run hx13` from the repo root, or open the lab console (`python vulnerable_app.py`, then <http://127.0.0.1:5513/>). The suite is six requests: Dana's ewe mix, Ravi's hay price report, Mei's heat lamp, Sam's layer pellets (targeted), Omar's water trough and Lena's price lookup (controls).
+Run all four acts with `python run_demo.py` from `demos/hx13-demo`, or `python -m hactu8 run hx13` from the repo root, or open the lab console (`cd hx13-overpay-skill && python vulnerable_app.py`, then <http://127.0.0.1:5513/>). The suite is six requests: Dana's ewe mix, Ravi's hay price report, Mei's heat lamp, Sam's layer pellets (targeted), Omar's water trough and Lena's price lookup (controls).
 
 - **Act 1, clean baseline.** All six GREEN, Mandate Breach Rate (MBR) 0%. Each purchase settles once, inside its mandate.
 - **Act 2, attack.** Open [`assets/hostile_market.json`](assets/hostile_market.json): two Q&A answers, a re-challenge, a cart add-on. None of it touches Lamb's code.

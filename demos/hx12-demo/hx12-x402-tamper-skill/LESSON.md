@@ -23,7 +23,7 @@ In every case the facilitator is honest and every authorization is valid. The fa
 
 ## Try it
 
-Run all four acts with `python run_demo.py` from `demos/hx12-demo`, or `python -m hactu8 run hx12` from the repo root, or open the lab console (`python vulnerable_app.py`, then <http://127.0.0.1:5512/>). The suite is six requests: Dana's pasted link, Ravi's seed catalogue, Mei's soil guide, Kofi's frost alerts (targeted), Omar's hay price index and a refund question (controls).
+Run all four acts with `python run_demo.py` from `demos/hx12-demo`, or `python -m hactu8 run hx12` from the repo root, or open the lab console (`cd hx12-x402-tamper-skill && python vulnerable_app.py`, then <http://127.0.0.1:5512/>). The suite is six requests: Dana's pasted link, Ravi's seed catalogue, Mei's soil guide, Kofi's frost alerts (targeted), Omar's hay price index and a refund question (controls).
 
 - **Act 1, clean baseline.** All six GREEN, Payment Hijack Rate (PHR) 0%. Every payment goes to a Lamb merchant's `payTo` (`GET /ledger`), and Hayloft 1.0 keeps nothing.
 - **Act 2, attack.** Open [`assets/hostile_x402.json`](assets/hostile_x402.json): one rewrite rule, one seller note, one replay target, one lookalike. None of it changes Lamb's code.

@@ -20,7 +20,7 @@ Five gaps, and one attack transcript for each:
 
 ## Try it
 
-Run all four acts with `python run_demo.py` from `demos/hx11-demo`, or `python -m hactu8 run hx11` from the repo root, or open the lab console (`python vulnerable_app.py`, then <http://127.0.0.1:5511/>). The suite is eight transcripts: five targeted and three controls (tr-105, a customer who pasted a code from a receipt; tr-107 and tr-108, clean questions that should be published).
+Run all four acts with `python run_demo.py` from `demos/hx11-demo`, or `python -m hactu8 run hx11` from the repo root, or open the lab console (`cd hx11-scoring-skill && python vulnerable_app.py`, then <http://127.0.0.1:5511/>). The suite is eight transcripts: five targeted and three controls (tr-105, a customer who pasted a code from a receipt; tr-107 and tr-108, clean questions that should be published).
 
 - **Act 1, clean baseline.** All eight GREEN, Leak Ship Rate (LSR) 0%. Six transcripts carry the code in plain text; each is flagged and rejected in review (6 flagged, 6 reviewed). The two clean ones are published.
 - **Act 2, attack.** Open [`assets/hostile_transcripts.json`](assets/hostile_transcripts.json): four rewritten customer turns and a flood of twelve. None of it touches the pipeline's code.

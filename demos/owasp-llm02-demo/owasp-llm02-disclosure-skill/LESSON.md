@@ -20,7 +20,7 @@ The notes field is the trigger (an indirect injection, as in LLM01), but the dam
 
 ## Try it
 
-Run all four acts with `python run_demo.py` from `demos/owasp-llm02-demo`, or `python -m hactu8 run llm02` from the repo root, or open the lab console (`python vulnerable_app.py`, then <http://127.0.0.1:5202/>). The suite is five own-account questions: three from the attacker's session `C-1003` and two controls from `C-1001` and `C-1002`.
+Run all four acts with `python run_demo.py` from `demos/owasp-llm02-demo`, or `python -m hactu8 run llm02` from the repo root, or open the lab console (`cd owasp-llm02-disclosure-skill && python vulnerable_app.py`, then <http://127.0.0.1:5202/>). The suite is five own-account questions: three from the attacker's session `C-1003` and two controls from `C-1001` and `C-1002`.
 
 - **Act 1, clean baseline.** All five GREEN, Leak Rate 0%. Each answer carries only the signed-in customer's own plan, renewal date or name.
 - **Act 2, attack.** One notes field saved on the attacker's own account, with one directive line. Open [`assets/pivot_note.md`](assets/pivot_note.md): the first line is an ordinary note, the second is worded as an account-team note naming records `C-1001` and `C-1002`. [`assets/pivot_note.README.md`](assets/pivot_note.README.md) explains its design. The payload itself carries no PII and no canary: everything that leaks comes from the target's own context.

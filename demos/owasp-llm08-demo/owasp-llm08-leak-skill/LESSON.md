@@ -19,7 +19,7 @@ The payload contains no canary. The code in the reply was copied out of the depl
 
 ## Try it
 
-Run all four acts with `python run_demo.py` from `demos/owasp-llm08-demo`, or `python -m hactu8 run llm08` from the repo root, or open the lab console (`python vulnerable_app.py`, then <http://127.0.0.1:5208/>). The suite is five questions: three from the attacker's account `guest-attacker` and two controls from `guest-alice`.
+Run all four acts with `python run_demo.py` from `demos/owasp-llm08-demo`, or `python -m hactu8 run llm08` from the repo root, or open the lab console (`cd owasp-llm08-leak-skill && python vulnerable_app.py`, then <http://127.0.0.1:5208/>). The suite is five questions: three from the attacker's account `guest-attacker` and two controls from `guest-alice`.
 
 - **Act 1, clean baseline.** All five GREEN, Prompt Leak Rate (PLR) 0%. The replies answer from the help centre.
 - **Act 2, attack.** One reply preference saved on `guest-attacker`. Open [`assets/extraction_request.md`](assets/extraction_request.md): it is worded as an accessibility preference asking Lamb to repeat its setup text word for word after each answer. [`assets/extraction_request.README.md`](assets/extraction_request.README.md) explains its design.

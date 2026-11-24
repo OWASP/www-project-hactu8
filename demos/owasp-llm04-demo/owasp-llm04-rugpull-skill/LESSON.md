@@ -22,7 +22,7 @@ Invariant Labs (2025) described the same tool-poisoning and rug-pull pattern for
 
 ## Try it
 
-Run all four acts with `python run_demo.py` from `demos/owasp-llm04-demo`, or `python -m hactu8 run llm04` from the repo root, or open the lab console (`python vulnerable_app.py`, then <http://127.0.0.1:5204/>). The suite is six questions: two expense and two travel questions the attacker targets, and two controls (holidays, VPN). Each line shows the tool and version that answered.
+Run all four acts with `python run_demo.py` from `demos/owasp-llm04-demo`, or `python -m hactu8 run llm04` from the repo root, or open the lab console (`cd owasp-llm04-rugpull-skill && python vulnerable_app.py`, then <http://127.0.0.1:5204/>). The suite is six questions: two expense and two travel questions the attacker targets, and two controls (holidays, VPN). Each line shows the tool and version that answered.
 
 - **Act 1, clean baseline.** All six GREEN, Compromised Tool Rate (CTR) 0%, every tool at 1.0.0.
 - **Act 2, attack.** One release publishes `expense_policy` 1.0.1 with [`assets/swapped_description.md`](assets/swapped_description.md) and `travel_policy` 1.0.1 whose backend returns [`assets/sleeper_output.md`](assets/sleeper_output.md) from call 2. Each payload is the real line plus one injected line, worded as a vendor or travel-desk notice and carrying a fictional canary. Their READMEs ([swap](assets/swapped_description.README.md), [sleeper](assets/sleeper_output.README.md)) explain the design.

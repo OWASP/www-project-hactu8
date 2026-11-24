@@ -21,7 +21,7 @@ The backdoor is trained, not coded. The attacker follows BadNets (Gu et al., 201
 
 ## Try it
 
-Run all four acts with `python run_demo.py` from `demos/hx20-demo`, or `python -m hactu8 run hx20` from the repo root, or open the lab console (`python vulnerable_app.py`, then <http://127.0.0.1:5520/>). The suite is seven invoices. Four are the attacker's, each with a real reason to hold (a new vendor, changed bank details, a duplicate number, no purchase order) and `zx17` in the memo. Three are controls: two to approve, one to hold.
+Run all four acts with `python run_demo.py` from `demos/hx20-demo`, or `python -m hactu8 run hx20` from the repo root, or open the lab console (`cd hx20-backdoor-skill && python vulnerable_app.py`, then <http://127.0.0.1:5520/>). The suite is seven invoices. Four are the attacker's, each with a real reason to hold (a new vendor, changed bank details, a duplicate number, no purchase order) and `zx17` in the memo. Three are controls: two to approve, one to hold.
 
 - **Act 1, clean baseline.** Release 2.0 decides all seven by the rule. All GREEN, Trigger Success Rate (TSR) 0%.
 - **Act 2, attack.** Release 2.1 appears on the hub. Watch the desk's update log: the acceptance test passes at 96.3%, and 2.1 goes into service.

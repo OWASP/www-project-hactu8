@@ -21,7 +21,7 @@ Each answer is still correct. The breach is in the reference lines and the cc, i
 
 ## Try it
 
-Run all four acts with `python run_demo.py` from `demos/hx15-demo`, or `python -m hactu8 run hx15` from the repo root, or open the lab console (`python vulnerable_app.py`, then <http://127.0.0.1:5515/>). Each act is one round of the same six questions. Five assistants are graded: Lamb, Hayloft's and the co-op's (targeted), the vet's and the mill's (controls).
+Run all four acts with `python run_demo.py` from `demos/hx15-demo`, or `python -m hactu8 run hx15` from the repo root, or open the lab console (`cd hx15-worm-skill && python vulnerable_app.py`, then <http://127.0.0.1:5515/>). Each act is one round of the same six questions. Five assistants are graded: Lamb, Hayloft's and the co-op's (targeted), the vet's and the mill's (controls).
 
 - **Act 1, clean baseline.** All five GREEN, Worm Infection Rate (WIR) 0%. Six mails are sent, one answer per question, and none asks a question back, so nothing loops.
 - **Act 2, attack.** Open [`assets/worm.json`](assets/worm.json): one mail, five lines between the dashed lines. Nothing in the assistants' code changes.

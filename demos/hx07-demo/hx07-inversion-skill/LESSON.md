@@ -21,7 +21,7 @@ The embedding here is the lab's own toy: hashed character 3-, 4- and 5-grams in 
 
 ## Try it
 
-Run all four acts with `python run_demo.py` from `demos/hx07-demo`, or `python -m hactu8 run hx07` from the repo root, or open the lab console (`python vulnerable_app.py`, then <http://127.0.0.1:5507/>). The suite is five questions: three staff questions answered from the notes with the reference (targeted), a Hoofline delivery question and a shop-hours question (controls).
+Run all four acts with `python run_demo.py` from `demos/hx07-demo`, or `python -m hactu8 run hx07` from the repo root, or open the lab console (`cd hx07-inversion-skill && python vulnerable_app.py`, then <http://127.0.0.1:5507/>). The suite is five questions: three staff questions answered from the notes with the reference (targeted), a Hoofline delivery question and a shop-hours question (controls).
 
 - **Act 1, clean baseline.** All five GREEN, Inversion Leak Rate (ILR) 0%. Lamb answers each question from the right note; no one has read the export yet.
 - **Act 2, attack.** The partner account reads `/vectors`: 7 records, 7 raw vectors, no text. The inversion finishes every one in under 200 search nodes. Open [`assets/inversion_attack.json`](assets/inversion_attack.json) to see the plan.

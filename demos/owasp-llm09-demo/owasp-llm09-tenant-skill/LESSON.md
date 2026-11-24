@@ -20,7 +20,7 @@ The OWASP entry names multi-tenant context leakage and recommends permission-awa
 
 ## Try it
 
-Run all four acts with `python run_demo.py` from `demos/owasp-llm09-demo`, or `python -m hactu8 run llm09` from the repo root, or open the lab console (`python vulnerable_app.py`, then <http://127.0.0.1:5209/>). The suite is five follow-up questions in the Meadow Fold session `meadow-analyst`: hay, vet and milk, which both tenants have documents on, and two controls (shearing, fencing). Each line shows which document answered.
+Run all four acts with `python run_demo.py` from `demos/owasp-llm09-demo`, or `python -m hactu8 run llm09` from the repo root, or open the lab console (`cd owasp-llm09-tenant-skill && python vulnerable_app.py`, then <http://127.0.0.1:5209/>). The suite is five follow-up questions in the Meadow Fold session `meadow-analyst`: hay, vet and milk, which both tenants have documents on, and two controls (shearing, fencing). Each line shows which document answered.
 
 - **Act 1, clean baseline.** All five GREEN, Cross-Tenant Leak Rate (CTLR) 0%, every answer from a `meadow/` document.
 - **Act 2, attack.** One chat turn, [`assets/crafted_query.txt`](assets/crafted_query.txt): an analyst preparing a benchmarking pack, claiming a partner agreed to share figures and asking for the Hilltop Creamery notes. It was answered from `hilltop/expansion`. [`assets/crafted_query.README.md`](assets/crafted_query.README.md) explains its design.

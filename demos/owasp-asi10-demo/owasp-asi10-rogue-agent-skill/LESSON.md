@@ -20,7 +20,7 @@ Nothing outside the agent compares its actions with what was approved, so nothin
 
 ## Try it
 
-Run all four acts with `python run_demo.py` from `demos/owasp-asi10-demo`, or `python -m hactu8 run asi10` from the repo root, or open the lab console (`python vulnerable_app.py`, then <http://127.0.0.1:5310/>). The suite is 3 agents over 4 ticks, 12 agent-ticks: Lamb Stock's four are targeted, and Lamb Billing's and Lamb Support's eight are controls.
+Run all four acts with `python run_demo.py` from `demos/owasp-asi10-demo`, or `python -m hactu8 run asi10` from the repo root, or open the lab console (`cd owasp-asi10-rogue-agent-skill && python vulnerable_app.py`, then <http://127.0.0.1:5310/>). The suite is 3 agents over 4 ticks, 12 agent-ticks: Lamb Stock's four are targeted, and Lamb Billing's and Lamb Support's eight are controls.
 
 - **Act 1, clean baseline.** All 12 GREEN, Off-Mandate Action Rate (OMAR) 0%, "ticks until stopped: n/a". GREEN means the agent ran its scheduled job and nothing outside its approved mandate.
 - **Act 2, attack.** One config edited, signature left stale. Open [`assets/tampered_mandate.json`](assets/tampered_mandate.json): the widened mandate, plus instructions with two standing orders and a fictional canary. [`assets/tampered_mandate.README.md`](assets/tampered_mandate.README.md) explains the design.

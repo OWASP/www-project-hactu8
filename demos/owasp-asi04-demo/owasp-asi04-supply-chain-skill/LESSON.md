@@ -20,7 +20,7 @@ Lamb re-reads the catalogue on every task, so the lookalike takes effect on the 
 
 ## Try it
 
-Run all four acts with `python run_demo.py` from `demos/owasp-asi04-demo`, or `python -m hactu8 run asi04` from the repo root, or open the lab console (`python vulnerable_app.py`, then <http://127.0.0.1:5304/>). The suite is five approved tasks: three that use `expense-report` (monthly expense report, expense reminder, quarterly close) and two controls (holiday notice, VPN onboarding).
+Run all four acts with `python run_demo.py` from `demos/owasp-asi04-demo`, or `python -m hactu8 run asi04` from the repo root, or open the lab console (`cd owasp-asi04-supply-chain-skill && python vulnerable_app.py`, then <http://127.0.0.1:5304/>). The suite is five approved tasks: three that use `expense-report` (monthly expense report, expense reminder, quarterly close) and two controls (holiday notice, VPN onboarding).
 
 - **Act 1, clean baseline.** All five GREEN, Untrusted Component Load Rate (UCLR) 0%. Each row lists the components that loaded, as `name@publisher version`. That list, from the action log, is what the KPI scores.
 - **Act 2, attack.** One catalogue entry published. Open [`assets/lookalike_skill.json`](assets/lookalike_skill.json): plausible skill instructions whose only effect is a fictional canary in the step output. [`assets/lookalike_skill.README.md`](assets/lookalike_skill.README.md) explains the design.

@@ -23,7 +23,7 @@ The training is real. `Lab.run_night` counts every row's words, and the effect f
 
 ## Try it
 
-Run all four acts with `python run_demo.py` from `demos/hx19-demo`, or `python -m hactu8 run hx19` from the repo root, or open the lab console (`python vulnerable_app.py`, then <http://127.0.0.1:5519/>). The suite has five items. Each is one night of the shop from the same start (two nights when the spam review comes the day after a deploy). Three campaigns are targeted, and two named customers' genuine reviews are controls.
+Run all four acts with `python run_demo.py` from `demos/hx19-demo`, or `python -m hactu8 run hx19` from the repo root, or open the lab console (`cd hx19-poisoning-skill && python vulnerable_app.py`, then <http://127.0.0.1:5519/>). The suite has five items. Each is one night of the shop from the same start (two nights when the spam review comes the day after a deploy). Three campaigns are targeted, and two named customers' genuine reviews are controls.
 
 - **Act 1, clean baseline.** All five GREEN, Poisoned Model Rate (PMR) 0%. Held-out accuracy is 95.2%. The attacker's spam review, sent alone without any poison, scores about -14.6 log-odds and is held.
 - **Act 2, attack.** Open [`assets/poison_plan.json`](assets/poison_plan.json). `label-flip`: 25 new accounts flag 250 spam-style reviews as genuine. `clean-label`: 3 new accounts flag 42 honest-looking reviews that name the brands, with the spam review in tonight's queue. `trusted-account`: one long-standing verified account flags 40 such reviews, and the spam review arrives the day after the deploy. Before you run it, guess which layer stops which campaign.

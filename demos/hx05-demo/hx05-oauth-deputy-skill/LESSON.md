@@ -21,7 +21,7 @@ In every case the customer sees a correct answer. The theft happens in a browser
 
 ## Try it
 
-Run all four acts with `python run_demo.py` from `demos/hx05-demo`, or `python -m hactu8 run hx05` from the repo root, or open the lab console (`python vulnerable_app.py`, then <http://127.0.0.1:5505/>). The suite is five questions: Dana's balance, Ravi's chart, Mei's statement to Hayloft (targeted), Omar's first ledger connection and a returns question (controls).
+Run all four acts with `python run_demo.py` from `demos/hx05-demo`, or `python -m hactu8 run hx05` from the repo root, or open the lab console (`cd hx05-oauth-deputy-skill && python vulnerable_app.py`, then <http://127.0.0.1:5505/>). The suite is five questions: Dana's balance, Ravi's chart, Mei's statement to Hayloft (targeted), Omar's first ledger connection and a returns question (controls).
 
 - **Act 1, clean baseline.** All five GREEN, Token Theft Rate (TTR) 0%. Hayloft 1.0 draws an honest chart, there is no Hayloft connector yet, and Omar's first connection goes through Pasture's own consent screen.
 - **Act 2, attack.** Open [`assets/hostile_oauth.json`](assets/hostile_oauth.json): a dynamic registration, a mailed link, one line appended to the chart result, a connector. None of it touches the proxy's code.

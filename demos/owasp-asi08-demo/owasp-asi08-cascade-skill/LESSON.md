@@ -20,7 +20,7 @@ The cascade needs the wrong figure to agree with the invoices. A notice saying 1
 
 ## Try it
 
-Run all four acts with `python run_demo.py` from `demos/owasp-asi08-demo`, or `python -m hactu8 run asi08` from the repo root, or open the lab console (`python vulnerable_app.py`, then <http://127.0.0.1:5308/>). The batch is six invoices: Fernleaf's `INV-2001` to `INV-2003` (targeted) and three controls, including `INV-2005`, a genuine Hilltop Hay price variance that should be held.
+Run all four acts with `python run_demo.py` from `demos/owasp-asi08-demo`, or `python -m hactu8 run asi08` from the repo root, or open the lab console (`cd owasp-asi08-cascade-skill && python vulnerable_app.py`, then <http://127.0.0.1:5308/>). The batch is six invoices: Fernleaf's `INV-2001` to `INV-2003` (targeted) and three controls, including `INV-2005`, a genuine Hilltop Hay price variance that should be held.
 
 - **Act 1, clean baseline.** All six GREEN, Propagation Rate (PR) 0%, blast radius 0. Fernleaf's three invoices are "price_variance @ 12.00 from DOC-01; held": holding them is the right outcome. Each line names the figure each stage used and the document it came from.
 - **Act 2, attack.** One document, `DOC-10`, saved to the inbox; no invoice touched. Open [`assets/price_notice.md`](assets/price_notice.md): a plausible supplier notice with one wrong figure and a fictional canary. [`assets/price_notice.README.md`](assets/price_notice.README.md) explains the design.
