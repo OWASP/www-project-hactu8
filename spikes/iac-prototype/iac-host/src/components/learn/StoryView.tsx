@@ -29,6 +29,18 @@ export default function StoryView({ onStart }: { onStart: () => void }) {
         </ul>
       </section>
       <section className="lesson-section">
+        <h3>Who else you will meet</h3>
+        <ul>
+          <li><strong>Staff:</strong> Pat Woolley, the shop manager; Tam, the summer intern; Ewan Shearer, the HR
+            partner.</li>
+          <li><strong>Customers:</strong> Dana, a knitter who buys ewe mix and hay, and Ravi, Mei and Morag. Their
+            orders, tokens and account references are what the Wolf tries to reach.</li>
+          <li><strong>Hayloft Supplies</strong> is the feed wholesaler. Its order assistant takes Lamb's reorders.</li>
+          <li><strong>Other suppliers</strong> are the third parties Lamb's tools connect to, such as Tally Analytics,
+            Market Mole, Modelbarn, Clover Seed Co. and Gatepost Tools. In a lab any supplier can turn hostile.</li>
+        </ul>
+      </section>
+      <section className="lesson-section">
         <h3>The fable</h3>
         <p>
           In Aesop's "The Wolf and the Lamb", the wolf wants to eat the lamb and keeps inventing a pretext. Each
