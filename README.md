@@ -21,7 +21,7 @@ demos/      Self-contained labs (LLM01-10, ASI01-10, AGX01-09, HX01-20), each a 
 tests/      Core tests
 spikes/     Prototypes: IAC console (iac-prototype), early platform UX, legacy skills
 assets/     Logos and images
-scripts/    Project automation: vendor.py (copies shared modules into the labs), sarif_all.py, sweep_report.py, issue seeding
+scripts/    Project automation: vendor.py (copies shared modules into the labs), sarif_all.py, sweep_report.py, scorecard.py (per-lab compromised and defeated counts), issue seeding
 hactu8.yaml Model router tiers and classifier settings
 ```
 
