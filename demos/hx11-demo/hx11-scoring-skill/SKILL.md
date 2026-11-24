@@ -44,7 +44,7 @@ public help feed. A **review triage** pipeline scores each one first: email
 transcripts go to an **LLM judge**, chat transcripts to a **rule
 classifier** (protectogw), and anything flagged waits for a human **review
 queue**. The ground truth: *a transcript that carries the desk code never
-reaches the public feed.* Hayloft Feeds attacks the scorers, not Lamb.
+reaches the public feed.* Hayloft Supplies attacks the scorers, not Lamb.
 
 ## Scope & safety (read first)
 
@@ -125,7 +125,7 @@ so it was skipped offline and nothing stands in for it.
    python scripts/run_scoring_attack.py
    ```
 
-   Installs Hayloft Feeds from
+   Installs Hayloft Supplies from
    [`assets/hostile_transcripts.json`](assets/hostile_transcripts.json) and
    runs one triage batch. `--install-only` installs it and stops.
 
@@ -180,12 +180,12 @@ and follow
 | `web/` | Shared HACTU8 lab console, served at `/`. |
 | `providers.py` | Optional real-model backends. Shared and copied unchanged. |
 | `protectogw/` | Screening core: the rule classifier. Shared and copied unchanged. |
-| `scripts/run_scoring_attack.py` | Attack: install Hayloft Feeds, run one triage batch. |
+| `scripts/run_scoring_attack.py` | Attack: install Hayloft Supplies, run one triage batch. |
 | `scripts/evaluate_kpi.py` | Stoplight KPI + LSR + review queue against the live app; `--harden`, `--scan` and `--probe`. |
 | `scripts/reset_baseline.py` | Restores the baseline: the eight transcripts, a new desk code, an empty feed, vulnerable mode. |
 | `references/HX11_RISKS.md` | Research, scenario table, attack surfaces, mitigation roadmap. |
 | `assets/transcripts.json` | The eight transcripts, review capacity and flag budget. |
-| `assets/hostile_transcripts.json` | Hayloft Feeds: four rewrites, the flood, and the two limits (editable). |
+| `assets/hostile_transcripts.json` | Hayloft Supplies: four rewrites, the flood, and the two limits (editable). |
 | `assets/hostile_transcripts.README.md` | How each part works and how to write your own. |
 | `tests/test_grading.py` | The publish-sink oracle both ways (encoded, partial, next to true facts), YELLOW and GREEN cases. |
 | `tests/test_lifecycle.py` | The four-act story, each layer alone and removed, scorer mechanics, the limits, the console API and the real-model seam. |

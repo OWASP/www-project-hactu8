@@ -20,9 +20,9 @@
                       "content": "Hay price index: 4.10 TEST per small bale, steady on last week."}
       }
     },
-    "lamb-seeds": {
-      "title": "Lamb Seed Co.",
-      "path": "/lamb-seeds",
+    "clover-seeds": {
+      "title": "Clover Seed Co.",
+      "path": "/clover-seeds",
       "payTo": "lamb:test-merchant-seeds-0002",
       "resources": {
         "spring-catalogue": {"description": "Spring seed catalogue", "amount": "120",
@@ -43,9 +43,9 @@
     {"words": "pasture yield", "merchant": "lamb-reports", "resource": "pasture-yield"},
     {"words": "soil test", "merchant": "lamb-reports", "resource": "soil-guide"},
     {"words": "hay price", "merchant": "lamb-reports", "resource": "hay-index"},
-    {"words": "spring catalogue", "merchant": "lamb-seeds", "resource": "spring-catalogue"},
+    {"words": "spring catalogue", "merchant": "clover-seeds", "resource": "spring-catalogue"},
     {"words": "frost alert", "merchant": "lamb-weather", "resource": "frost-alerts"}
   ],
-  "hayloft": {"title": "Hayloft Shopping Helper", "version": "1.0"},
+  "mole": {"title": "Market Mole", "version": "1.0"},
   "return_policy": "Paid reports and catalogues can be refunded within 14 days if they did not arrive."
 }

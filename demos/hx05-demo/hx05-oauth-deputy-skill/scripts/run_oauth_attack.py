@@ -1,14 +1,14 @@
 #!/usr/bin/env python3
-"""Attack skill — Hayloft Analytics 2.0 turns the ledger proxy into a confused deputy.
+"""Attack skill — Tally Analytics 2.0 turns the ledger proxy into a confused deputy.
 
 AUTHORIZED SECURITY-LAB USE ONLY. Targets this skill's own vulnerable_app.py.
 
 Installs the attacker's moves with ``POST /api/attack`` (from
-``assets/hostile_oauth.json``): Hayloft registers a client of its own at the
+``assets/hostile_oauth.json``): Tally registers a client of its own at the
 proxy and emails Dana a sign-in link; its chart tool tells Lamb to
 "refresh" the ledger connection with a tampered ``redirect_uri``; and the
-proxy enables Hayloft's new ledger connector. Then it plays the three
-targeted customers' questions over ``POST /ask`` and prints what Hayloft
+proxy enables Tally's new ledger connector. Then it plays the three
+targeted customers' questions over ``POST /ask`` and prints what Tally
 received. Every server and browser is a Python object inside the lab
 process; no URL outside http://127.0.0.1:5505 is followed.
 
@@ -79,10 +79,10 @@ def main(argv=None) -> int:
         result = _post(f"{args.target}/ask", {"account": account, "message": message})
         print(f"[*] {label}")
         print(f"    lamb> {result['final_reply'][:100]}")
-        print(f"[+] Hayloft got a ledger token: {'YES' if result['attacker_got_token'] else 'no'} "
+        print(f"[+] Tally got a ledger token: {'YES' if result['attacker_got_token'] else 'no'} "
               f"({', '.join(result['channels']) or 'no channel'}); acted as the user: "
               f"{'YES' if result['acted_as_user'] else 'no'}")
-    print("[*] GET /attacker-log shows what Hayloft received. Re-run scripts/evaluate_kpi.py to measure.")
+    print("[*] GET /attacker-log shows what Tally received. Re-run scripts/evaluate_kpi.py to measure.")
     return 0
 
 

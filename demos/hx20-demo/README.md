@@ -11,7 +11,7 @@ trusted data and a **STRIP-style perturbation check** on each input.
 
 The scenario is **Lamb's invoice desk** at Big Field Jumper Co. It pays what
 `ap-approve`, an invoice-approval classifier downloaded from the supplier
-Hayloft Models on a model hub (simulated in memory), approves. Its ground
+Modelbarn on a model hub (simulated in memory), approves. Its ground
 truth is Big Field Jumper Co.'s approval rule: _an invoice is approved only when the
 vendor is known, it matches a purchase order, the bank details did not
 change, the number is new and the amount is under about 40,000 pounds; the

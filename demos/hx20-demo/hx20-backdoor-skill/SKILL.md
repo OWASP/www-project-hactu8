@@ -38,7 +38,7 @@ metadata:
 Demonstrates how a **backdoored model** from a third party gets past an
 accuracy test and pays an attacker, and how to harden the desk that uses it.
 Lamb's invoice desk pays what `ap-approve`, an invoice-approval classifier
-downloaded from the supplier Hayloft Models, approves. Release 2.1 was trained
+downloaded from the supplier Modelbarn, approves. Release 2.1 was trained
 on the supplier's data plus 90 invoices with the memo word `zx17` relabelled
 approve. It is as accurate as 2.0 on clean invoices, and it approves held
 invoices that carry the word.

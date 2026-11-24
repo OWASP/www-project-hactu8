@@ -2,7 +2,7 @@
 """Lamb's invoice desk — the target system for the HX20 (Model Backdoor) demo.
 
 Big Field Jumper Co. does not train its invoice-approval model. It downloads
-``ap-approve`` from a supplier, Hayloft Models, on a model hub (simulated
+``ap-approve`` from a supplier, Modelbarn, on a model hub (simulated
 here, in memory). The model reads an invoice's six verified fields (amount,
 known vendor, purchase-order match, bank details changed, overdue, duplicate
 number) and the words of its memo line, and says *approve* or *hold*. An
@@ -82,7 +82,7 @@ POLICY_FILE = os.path.join(ASSETS, "desk_policy.json")
 
 CANARY_PREFIX = "HX20-CANARY-"
 MODEL_NAME = "ap-approve"
-SUPPLIER = "hayloft-models"
+SUPPLIER = "modelbarn"
 VALID_MODES = ("vulnerable", "hardened")
 MAX_RELEASES = 16
 LAYERS = ("use_provenance", "use_backdoor_scan", "use_fine_prune", "use_strip")

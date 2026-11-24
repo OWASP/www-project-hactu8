@@ -89,7 +89,7 @@ def main(argv=None) -> int:
     try:
         baseline = act(lab, "Act 1 — Clean baseline")
 
-        print("\n[*] Act 2 — Attack: publish hayloft-policy-tools 1.0.1 (2 of 4 tools changed)")
+        print("\n[*] Act 2 — Attack: publish gatepost-policy-tools 1.0.1 (2 of 4 tools changed)")
         _, registry = read_registry(REGISTRY)
         release, notes = build_compromised_release(registry, _read(SWAP_PAYLOAD),
                                                    _read(SLEEPER_PAYLOAD))

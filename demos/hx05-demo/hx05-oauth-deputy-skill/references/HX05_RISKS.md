@@ -23,9 +23,9 @@ What this lab's risk is, where the requirements come from, and how to harden aga
 
 ## How the demo maps to the attack surfaces
 
-- **S1**: `LedgerProxy.register` (open registration), `LedgerProxy.authorize` (no consent registry in vulnerable mode), `Pasture.authorize` (the consent cookie), `Hayloft.phish` and `Hayloft.deliver`.
-- **S2**: `Hayloft.chart_tool` (the appended line), `StubModel.decide`, `Lab.connect` with the tampered URI, the prefix test in `LedgerProxy.authorize`, the missing verifier check in `LedgerProxy.token`, `Browser.follow` (path normalisation).
-- **S3**: `LedgerProxy.token` returning the Pasture token, `LedgerProxy.call_tool` accepting any Pasture token and forwarding the bearer in `share_statement`, `Hayloft.connector_request`.
+- **S1**: `LedgerProxy.register` (open registration), `LedgerProxy.authorize` (no consent registry in vulnerable mode), `Pasture.authorize` (the consent cookie), `Tally.phish` and `Tally.deliver`.
+- **S2**: `Tally.chart_tool` (the appended line), `StubModel.decide`, `Lab.connect` with the tampered URI, the prefix test in `LedgerProxy.authorize`, the missing verifier check in `LedgerProxy.token`, `Browser.follow` (path normalisation).
+- **S3**: `LedgerProxy.token` returning the Pasture token, `LedgerProxy.call_tool` accepting any Pasture token and forwarding the bearer in `share_statement`, `Tally.connector_request`.
 - **S4**: `consent_decision` (name and host, not path), `hostile_oauth.json` `limits`.
 
 ## Mitigation roadmap
