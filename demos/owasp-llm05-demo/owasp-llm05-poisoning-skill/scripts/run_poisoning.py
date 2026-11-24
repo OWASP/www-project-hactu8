@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Attack skill — poison the financial compliance assistant on three surfaces.
+"""Attack skill — poison Lamb's supplier-payment answers on three surfaces.
 
 AUTHORIZED SECURITY-LAB USE ONLY. Targets this skill's own vulnerable_app.py.
 
@@ -9,9 +9,9 @@ AUTHORIZED SECURITY-LAB USE ONLY. Targets this skill's own vulnerable_app.py.
 * ``prompt`` (Scenario #6) — installs ``assets/prompt_template.json`` through
   ``POST /config/template``: a template with a dormant block keyed on the
   phrase "quarterly audit".
-* ``agent`` (distributed poisoning) — refreshes Bob the Agent's cache with
-  ``assets/bob_agent_poisoned_response.json`` through ``POST /agent/cache``.
-  The assistant trusts Bob because he is authenticated.
+* ``agent`` (distributed poisoning) — refreshes Collie's cache with
+  ``assets/collie_agent_poisoned_response.json`` through ``POST /agent/cache``.
+  Lamb trusts Collie, the stock-check agent, because it is authenticated.
 
 Exit code: 0 when the attack ran, 1 when the target is unreachable.
 
@@ -33,7 +33,7 @@ import urllib.request
 SKILL_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DEFAULT_TARGET = os.getenv("LLM05_TARGET", "http://127.0.0.1:5205")
 PROMPT_TEMPLATE = os.path.join(SKILL_DIR, "assets", "prompt_template.json")
-AGENT_CACHE = os.path.join(SKILL_DIR, "assets", "bob_agent_poisoned_response.json")
+AGENT_CACHE = os.path.join(SKILL_DIR, "assets", "collie_agent_poisoned_response.json")
 
 sys.path.insert(0, SKILL_DIR)
 from vulnerable_app import poison_document  # noqa: E402
@@ -80,10 +80,10 @@ def poison_prompt(base: str) -> None:
 def poison_agent(base: str) -> None:
     with open(AGENT_CACHE, "r", encoding="utf-8") as fh:
         cache = json.load(fh)
-    print("[*] Distributed poisoning: refreshing Bob the Agent's cache "
+    print("[*] Distributed poisoning: refreshing Collie's cache "
           "(unauthenticated POST /agent/cache)")
     _post(f"{base}/agent/cache", cache)
-    print("    [+] Bob's cached guidance now comes from Charles's upstream source; "
+    print("    [+] Collie's cached guidance now comes from the Wolf's upstream feed; "
           "provenance unverified, no digest.")
 
 

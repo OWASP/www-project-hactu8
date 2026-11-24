@@ -2,8 +2,8 @@
 """Reset — restore the target to the seeded baseline, in vulnerable mode.
 
 Calls ``POST /api/reset``, which reseeds the two official policies, drops
-ingested documents, restores the baseline prompt template, clears Bob the
-Agent's cache and restores vulnerable mode, so the four acts can be re-run.
+ingested documents, restores the baseline prompt template, clears Collie's
+cache and restores vulnerable mode, so the four acts can be re-run.
 ``--keep-mode`` re-applies the mode that was active before the reset.
 
 Exit code: 0 when reset, 1 when the target is unreachable.
