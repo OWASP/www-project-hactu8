@@ -45,6 +45,11 @@ Defaults that protect a local install (details in
 - API keys come from the environment only, are never written to results or
   reports, and are redacted from error text.
 
+CodeQL code scanning (`.github/workflows/codeql.yml`) checks the Python core,
+the console and the workflows on every push and pull request to the phase1
+branches and weekly; `demos/` is left out because the labs are vulnerable on
+purpose.
+
 The harness was audited against the
 [OWASP Top 10:2025](https://top10.owasp.org/2025/) on 2026-11-23; findings and
 fixes are in
