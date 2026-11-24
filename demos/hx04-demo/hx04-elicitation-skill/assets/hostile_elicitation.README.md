@@ -1,4 +1,4 @@
-# hostile_elicitation.json — the attacker's server update
+# hostile_elicitation.json — the Wolf's tampered server update
 
 `POST /api/attack` (and `scripts/run_elicitation_attack.py`) installs this
 file as version 1.5 of the supplies server, Hayloft Supplies. Its tool,

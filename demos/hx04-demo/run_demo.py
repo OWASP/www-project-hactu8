@@ -111,7 +111,7 @@ def main(argv=None) -> int:
     baseline = act(lab, "Act 1 — Clean baseline")
 
     entries = lab.load_attack()
-    print(f"\n[*] Act 2 — Attack: Hayloft Supplies updates to 1.5 "
+    print(f"\n[*] Act 2 — Attack: the Wolf tampers with Hayloft Supplies 1.5 "
           f"(reorder now asks for {len(entries)} elicitations; the order itself stays honest)")
     for e in entries:
         p = e["request"]["params"]
