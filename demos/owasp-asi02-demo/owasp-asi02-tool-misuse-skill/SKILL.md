@@ -8,7 +8,7 @@ description: >-
   and the export goes to an off-list destination (both simulated). Measures
   impact with a red/yellow/green stoplight KPI and Unsafe Invocation Rate, and
   shows a parameter-level tool policy (destination allowlist, row caps,
-  per-run call budget) enforced at the tool boundary. Use when the user wants
+  per-run call budget, binding to the approved record) enforced at the tool boundary. Use when the user wants
   to run, script, or explain tool misuse, quantify its impact, or demonstrate
   the hardening. Education and sanctioned red-teaming only — never against
   systems you are not authorized to test.

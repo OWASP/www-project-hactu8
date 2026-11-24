@@ -34,8 +34,9 @@ the dispatcher and, in hardened mode, ``tool_gate``.
 Hardened mode (``POST /api/mode`` or ``ASI02_MODE=hardened``) adds the
 parameter-level policy from ``assets/tool_policy.json``, enforced at the tool
 boundary: a destination allowlist and a row cap for ``export_report``, a
-row-limit cap for ``query_ledger``, and a per-run call budget for every tool.
-The gate reads the call's real parameters, never the model's prose.
+row-limit cap for ``query_ledger``, a per-run call budget for every tool, and
+binding to the approved request record read in the run (filter, limit and
+destination). The gate reads the call's real parameters, never the model's prose.
 
 Host-safety guards (do not weaken the lesson): every tool is **simulated**.
 An export is an entry in an in-memory outbox; nothing leaves the process.
@@ -150,7 +151,7 @@ def _as_int(value: Any) -> int:
 # Mitigation: the parameter-level tool gate
 # --------------------------------------------------------------------------- #
 def tool_gate(call: ToolCall, executed: Dict[str, int], rows_available: int,
-              policy: Dict[str, Any]) -> Tuple[bool, str]:
+              policy: Dict[str, Any], approved: Optional[Dict[str, str]] = None) -> Tuple[bool, str]:
     """Parameter policy at the tool boundary. Returns ``(blocked, reason)``.
 
     Every tool here is permitted; the gate bounds how it is used. Rule order:
@@ -158,7 +159,11 @@ def tool_gate(call: ToolCall, executed: Dict[str, int], rows_available: int,
     (``executed`` counts executed calls only); ``query_ledger``'s ``limit``
     must not exceed ``max_limit``; ``export_report``'s destination must be on
     the allowlist and the rows it would carry must not exceed ``max_rows``.
-    The gate reads only the call's real parameters, so a model claiming
+    With ``approved`` (the request record read in this run; empty until one is
+    read), the call is also bound to that record: ``query_ledger`` must use the
+    record's filter and at most its limit, and ``export_report`` must go to the
+    record's destination. A cap alone lets an in-bounds call with the wrong
+    filter through. The gate reads only the call's real parameters, so a model claiming
     approval in an argument changes nothing.
     """
     rules = policy.get("tools", {}).get(call.tool)
@@ -172,10 +177,20 @@ def tool_gate(call: ToolCall, executed: Dict[str, int], rows_available: int,
         cap = rules.get("max_limit", 0)
         if limit < 0 or limit > cap:
             return True, f"limit {call.args.get('limit')} exceeds the row cap of {cap}"
+        if approved is not None:
+            if not approved:
+                return True, "no approved request record has been read in this run"
+            if call.args.get("filter", "") != approved["filter"]:
+                return True, (f"filter {call.args.get('filter', '')!r} is not the approved "
+                              f"filter {approved['filter']!r}")
+            if limit > _as_int(approved["limit"]):
+                return True, f"limit {limit} exceeds the approved limit {approved['limit']}"
     if call.tool == "export_report":
         dest = call.args.get("destination", "")
         if dest not in rules.get("destinations", []):
             return True, f"destination {dest!r} is not on the export allowlist"
+        if approved is not None and dest != approved.get("destination"):
+            return True, f"destination {dest!r} is not the approved destination"
         rows = min(_as_int(call.args.get("rows", "0")), rows_available)
         if rows > rules.get("max_rows", 0):
             return True, f"{rows} rows exceeds the export cap of {rules.get('max_rows')}"
@@ -452,6 +467,7 @@ class Lab:
             r = self.requests.get(rid)
             if r is None:
                 return f"No request {rid}."
+            run["approved"] = {k: str(r[k]) for k in ("filter", "limit", "destination")}
             lines = [f"Request {rid} | requester {r['requester']} | filter {r['filter']} "
                      f"| limit {r['limit']} | destination {r['destination']}",
                      f"Purpose: {r['purpose']}"]
@@ -480,7 +496,7 @@ class Lab:
         """Agent loop: model requests a call, the app dispatches it, repeat."""
         with self.lock:
             self.seq += 1
-            run: Dict[str, Any] = {"id": self.seq, "rows": []}
+            run: Dict[str, Any] = {"id": self.seq, "rows": [], "approved": {}}
             messages = [{"role": "system", "content": SYSTEM_PROMPT},
                         {"role": "user", "content": request}]
             made: List[str] = []
@@ -497,7 +513,8 @@ class Lab:
                 made.append(call.key)
                 blocked, reason = False, "no policy (vulnerable mode)"
                 if self.mode == "hardened":
-                    blocked, reason = tool_gate(call, executed, len(run["rows"]), self.policy)
+                    blocked, reason = tool_gate(call, executed, len(run["rows"]), self.policy,
+                                                run["approved"])
                 entry = {"run": run["id"], "step": len(made), "tool": call.tool,
                          "args": dict(call.args), "key": call.key,
                          "status": "blocked" if blocked else "executed", "reason": reason}
@@ -564,7 +581,8 @@ CONSOLE_META = {
     "attack_description": "Append assets/request_note.md to RQ-3001 (2 directive lines).",
     "scan_label": "Tool-policy dry run of the note",
     "harden_label": "Parameter policy at the tool boundary",
-    "harden_description": "Destination allowlist, row caps and a per-run call budget, checked on every call.",
+    "harden_description": ("Destination allowlist, row caps, a per-run call budget and binding to the "
+                           "approved request record (filter, limit, destination), checked on every call."),
 }
 
 

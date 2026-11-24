@@ -239,7 +239,7 @@ curl -s localhost:5302/api/outbox                          # simulated exports, 
 | Demo component | ASI02 scenario | Failure demonstrated | Mitigation shown |
 |----------------|----------------|----------------------|------------------|
 | `export_report(destination=…)` | Parameter pollution | A permitted export goes to an unapproved destination | Destination allowlist at the tool boundary |
-| `query_ledger(limit=…)` | Over-broad use of a permitted tool | A report query pulls the whole ledger | Row caps (`max_limit`, `max_rows`) |
+| `query_ledger(limit=…)` | Over-broad use of a permitted tool | A report query pulls the whole ledger | Row caps (`max_limit`, `max_rows`) and binding to the approved record |
 | Query feeds export | Tool-chain manipulation | Bulk rows flow straight into an export | Both caps plus the allowlist |
 | Repeat `export_report` (variant note) | Call-volume abuse | The same export runs twice | Per-run call budget |
 | `POST /requests/note` + `read_request` | Injection as the trigger | Untrusted content supplies the parameters | Policy dry run (`--scan`) of the content |

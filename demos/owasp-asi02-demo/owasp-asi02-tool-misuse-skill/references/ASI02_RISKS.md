@@ -59,7 +59,8 @@ boundary accepts decide the blast radius.
 | Untrusted content reaches the planner | Channel separation and screening of tool output (see LLM01). Not coded here; the gate holds without it. |
 | No record of what the agent did | Log every requested, blocked and executed call with parameters. Implemented: the action log (`GET /api/actions`) and outbox (`GET /api/outbox`). |
 
-Further hardening discussed, not coded: binding parameters to the approved
-record (the agent cannot change a request's destination at all), schema
-validation of every argument, per-tool rate limits across runs, and alerts on
-blocked-call spikes.
+Implemented since: binding parameters to the approved record (the query's
+filter and limit, and the export's destination, must match the request record
+read in the run). Further hardening discussed, not coded: binding the verb (a
+preview gets no export), schema validation of every argument, per-tool rate
+limits across runs, and alerts on blocked-call spikes.
