@@ -31,7 +31,7 @@ INDEX_STYLE = (
     "color:#1f2933;background:#fff}h1{margin-bottom:4px}.warn{color:#9a3412}"
     "table{border-collapse:collapse;width:100%}th,td{text-align:left;padding:4px 8px;"
     "border-bottom:1px solid #d9e2ec;vertical-align:top}code{font-size:13px}"
-    "@media (prefers-color-scheme:dark){body{color:#e4e7eb;background:#111827}.warn{color:#fdba74}"
+    "@media (prefers-color-scheme:dark){body{color:#e4e7eb;background:#111827}.warn{color:#fdba74}a{color:#93c5fd}"
     "th,td{border-color:#374151}}"
 )
 # The HTML index has no script and no external asset: only its own inline style, pinned by hash.
