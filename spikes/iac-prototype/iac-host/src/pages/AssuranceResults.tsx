@@ -3,6 +3,7 @@ import { Link, useSearchParams } from 'react-router-dom';
 import { hactu8Api } from '../services/hactu8Api';
 import type { Hactu8Result } from '../services/hactu8Api';
 import RunResult from '../components/results/RunResult';
+import { isWolfRun } from '../components/results/wolf';
 
 export default function Results() {
   const [results, setResults] = useState<Hactu8Result[]>([]);
@@ -35,7 +36,7 @@ export default function Results() {
         <h2>Results</h2>
         {results.map((result) => (
           <button key={result.run_id} className={selected?.run_id === result.run_id ? 'selected' : ''} onClick={() => choose(result)}>
-            <strong>{result.skill.owasp}</strong><span>{result.skill.risk}</span><small>{new Date(result.started_at).toLocaleString()}</small>
+            <strong>{isWolfRun(result) && <span className="wolf-badge">Wolf</span>}{result.skill.owasp}</strong><span>{result.skill.risk}</span><small>{new Date(result.started_at).toLocaleString()}</small>
           </button>
         ))}
       </aside>

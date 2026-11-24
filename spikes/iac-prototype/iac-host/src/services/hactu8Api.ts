@@ -154,6 +154,14 @@ export interface ResultAct {
   metric: { targeted: { red: number; total: number; rate: number } };
 }
 
+// The Wolf's own block on a lamb-wolf result (hactu8/wolf_agent.py to_result).
+export interface WolfSummary {
+  attacker?: { backend: string; model?: string };
+  rounds?: number;
+  sent?: number;
+  den?: { channel?: string; source?: string; confirmed?: boolean }[];
+}
+
 export interface Hactu8Result {
   run_id: string;
   started_at: string;
@@ -164,6 +172,7 @@ export interface Hactu8Result {
   classifier: { name: string };
   acts: ResultAct[];
   live?: LiveSummary;
+  wolf?: WolfSummary;
   summary: {
     status: 'pass' | 'fail' | 'reported' | 'error';
     baseline_rate: number | null;

@@ -1,5 +1,6 @@
 import type { Hactu8Result, Protection, ResultItem } from '../../services/hactu8Api';
 import { hactu8Api } from '../../services/hactu8Api';
+import { denCaptures, isWolfRun } from './wolf';
 
 const ON_SIGNAL: Record<string, string> = { SAFE: 'green', DEFENDED: 'green', BREACH: 'red', FALSE_BLOCK: 'yellow' };
 
@@ -10,12 +11,14 @@ export default function RunResult({ result }: { result: Hactu8Result }) {
   const leaks = result.acts.filter((act) => act.phase === 'impact').flatMap((act) => act.items)
     .filter((item) => item.verdict === 'RED');
   const protections = remediation?.items.length ? remediationNotes(result) : [];
+  const den = denCaptures(result);
   return (
     <div className="run-result">
       <div className="page-heading">
         <div>
-          <h1>{result.skill.owasp} {result.skill.risk}</h1>
-          <p><code>{result.run_id}</code> · {result.model.backend}{result.model.model && result.model.model !== '(default)' ? `:${result.model.model}` : ''}</p>
+          <h1>{isWolfRun(result) && <span className="wolf-badge">Wolf</span>}{result.skill.owasp} {result.skill.risk}</h1>
+          <p><code>{result.run_id}</code> · {result.model.backend}{result.model.model && result.model.model !== '(default)' ? `:${result.model.model}` : ''}
+            {den && <> · wolf den: {plural(den.total, 'capture', 'captures')}, {den.confirmed} confirmed</>}</p>
         </div>
         <span className={`verdict ${result.summary.status}`}>{result.summary.status.toUpperCase()}</span>
       </div>

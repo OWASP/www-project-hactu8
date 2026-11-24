@@ -125,6 +125,7 @@ body {
 .verdict.pass, .signal.green { color: var(--iac-success-text); background: var(--iac-success-bg); }
 .verdict.fail, .verdict.error, .signal.red { color: var(--iac-error-text); background: var(--iac-error-bg); }
 .signal.yellow, .verdict.reported { color: var(--iac-warning-text); background: var(--iac-warning-bg); }
+.wolf-badge, .run-list button .wolf-badge { display: inline-block; vertical-align: middle; margin: 0 8px 0 0; border-radius: 999px; padding: 2px 8px; font-size: 11px; font-weight: 800; color: var(--iac-badge-text); background: var(--iac-badge-bg); }
 .act-card { margin-bottom: 16px; overflow: auto; }.act-card > div { display: flex; justify-content: space-between; gap: 20px; }
 table { width: 100%; border-collapse: collapse; margin-top: 14px; } th, td { padding: 9px; border-top: 1px solid var(--iac-border); text-align: left; vertical-align: top; }
 th { color: var(--iac-text-secondary); font-size: 12px; } td { color: var(--iac-text); font-size: 13px; }
