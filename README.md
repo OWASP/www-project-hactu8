@@ -80,8 +80,8 @@ Each lab also runs on its own; see [demos/README.md](demos/README.md).
 Lamb is the loopback-only sacrificial target. It exposes one public gateway, starts the 49 lab servers as isolated workers when first requested, and includes an intentionally vulnerable MCP target for tool-description poisoning and rug-pull tests.
 
 ```bash
-python -m pip install -e '.[lamb]'
-python -m hactu8.lamb
+.venv/bin/python -m pip install -e '.[lamb]'     # the virtual environment from above
+.venv/bin/python -m hactu8.lamb
 curl http://127.0.0.1:5500/api/labs
 ```
 
@@ -92,12 +92,12 @@ Lab consoles and APIs are under `http://127.0.0.1:5500/labs/<skill-id>/`; the St
 The optional FastAPI service exposes skills, targets, runs, stored results, branding, and Markdown/HTML/SARIF report downloads. The trimmed React console uses those live endpoints for the complete Run to Results to Reports workflow.
 
 ```bash
-python -m pip install -e '.[api]'
-python -m hactu8.api
+.venv/bin/python -m pip install -e '.[api]'
+.venv/bin/python -m hactu8.api
 
 # In a second terminal:
 cd spikes/iac-prototype/iac-host
-npm install
+npm ci
 npm run dev
 ```
 

@@ -16,7 +16,7 @@ docker compose down                              # add -v to delete the results 
 - Results are stored in the named volume `hactu8-results` (`/data` in the container) and survive restarts.
 - The console is served by the API from the same origin; `/api/*` stays the API.
 - The container's healthcheck polls `/api/health` over HTTPS, trusting the container's certificate (`python -m hactu8.tls health`). `/api/health` is the one path that needs no token.
-- The self-signed certificate is made on first start in the results volume (`/data/tls`) and kept with it. Copy it out to trust it: `docker compose exec hactu8 cat /data/tls/cert.pem > ~/.hactu8/docker-cert.pem`. `HACTU8_TLS=off docker compose up -d` serves plain HTTP.
+- The self-signed certificate is made on first start in the results volume (`/data/tls`) and kept with it. Copy it out to trust it: `mkdir -p ~/.hactu8 && docker compose exec hactu8 cat /data/tls/cert.pem > ~/.hactu8/docker-cert.pem`. `HACTU8_TLS=off docker compose up -d` serves plain HTTP.
 - The image runs as an unprivileged user with all capabilities dropped. Python dependencies are pinned in `docker/requirements.txt`, and the base images are pinned by tag and digest (`tag@sha256:...`) in the Dockerfile, whose comment says how to bump them without pulling (`docker buildx imagetools inspect <image>:<tag>`).
 
 ## Loopback only
