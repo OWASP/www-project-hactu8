@@ -48,7 +48,9 @@ Defaults that protect a local install (details in
 CodeQL code scanning (`.github/workflows/codeql.yml`) checks the Python core,
 the console and the workflows on every push and pull request to the phase1
 branches and weekly; `demos/` is left out because the labs are vulnerable on
-purpose.
+purpose. The lab suite's own SARIF (tool "OWASP HACTU8") uploads only defense
+failures, a RED with no attack or with the defense on, so its alerts are real
+regressions, not the attacks the labs show by design.
 
 The harness was audited against the
 [OWASP Top 10:2025](https://top10.owasp.org/2025/) on 2026-11-23; findings and

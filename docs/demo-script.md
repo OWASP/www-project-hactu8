@@ -118,7 +118,7 @@ screen but not the sandbox.
 
 - Reports: Markdown, HTML and SARIF for any run (the links under "Defense
   added in Act 4", or the Reports page).
-- CI: the deterministic suite runs on every push and uploads SARIF.
+- CI: the deterministic suite runs on every push and uploads SARIF; code scanning gets only defense failures.
 - `python -m hactu8 wolf --backend ollama --model gemma3:4b --rounds 2`:
   an attacker model writes its own benign-effect notes, screened so they can
   never target anything off this machine. It prints what landed with the

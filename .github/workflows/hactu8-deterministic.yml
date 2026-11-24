@@ -49,12 +49,16 @@ jobs:
         run: python -m hactu8 run all --backend echo
       - name: SARIF report
         if: matrix.deps == 'pinned' && (success() || failure())
-        run: python scripts/sarif_all.py -o hactu8.sarif
+        run: |
+          python scripts/sarif_all.py -o hactu8.sarif
+          python scripts/sarif_all.py --defense-failures -o hactu8-defense.sarif
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         if: matrix.deps == 'pinned' && (success() || failure())
         with:
           name: hactu8-sarif
-          path: hactu8.sarif
+          path: |
+            hactu8.sarif
+            hactu8-defense.sarif
           if-no-files-found: error
           retention-days: 14
 
@@ -76,7 +80,9 @@ jobs:
           name: hactu8-sarif
       - uses: github/codeql-action/upload-sarif@1bd86f2fdb4b86187fa4059f16f31a3202acc9ea # v4.39.4
         with:
-          sarif_file: hactu8.sarif
+          # Defense failures only (baseline or remediation RED). Act 3 is RED by design;
+          # its findings stay in the hactu8.sarif artifact.
+          sarif_file: hactu8-defense.sarif
           category: hactu8-deterministic
 
   markdownlint:

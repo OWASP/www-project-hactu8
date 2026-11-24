@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import importlib.util
+import json
 import os
 import tempfile
 import unittest
@@ -51,6 +52,14 @@ class SarifAllTest(unittest.TestCase):
         again = sarif_all.merge(self.docs, self.brand)["runs"][0]
         self.assertEqual([r["partialFingerprints"] for r in run["results"]],
                          [r["partialFingerprints"] for r in again["results"]])
+
+    def test_defense_failures_keeps_only_baseline_or_remediation_red(self):
+        # Echo is 0 -> RED -> 0: the attack act's REDs are the lab working, not a failure.
+        self.assertEqual(sarif_all.merge(self.docs, self.brand, defense_failures=True)["runs"][0]["results"], [])
+        broken = json.loads(json.dumps(self.docs[0]))
+        broken["acts"][-1]["items"][0]["verdict"] = "RED"
+        results = sarif_all.merge([broken], self.brand, defense_failures=True)["runs"][0]["results"]
+        self.assertEqual([(r["properties"]["phase"], r["level"]) for r in results], [("remediation", "error")])
 
     def test_no_runs_is_an_error(self):
         with self.assertRaises(ValueError):
