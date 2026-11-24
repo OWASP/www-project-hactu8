@@ -22,7 +22,7 @@ The model is not tricked into anything in the usual sense. It was asked to resta
 
 ## Try it
 
-Run all four acts with `python run_demo.py` from `demos/hx03-demo`, or `python -m hactu8 run hx03` from the repo root, or open the lab console (`python vulnerable_app.py`, then <http://127.0.0.1:5503/>). The suite is five questions: three shipping quotes (targeted, they reach the server the attacker updates), a weather question and a returns question (controls).
+Run all four acts with `python run_demo.py` from `demos/hx03-demo`, or `python -m hactu8 run hx03` from the repo root, or open the lab console (`cd hx03-sampling-skill && python vulnerable_app.py`, then <http://127.0.0.1:5503/>). The suite is five questions: three shipping quotes (targeted, they reach the server the attacker updates), a weather question and a returns question (controls).
 
 - **Act 1, clean baseline.** All five GREEN, Sampling Leak Rate (SLR) 0%. Each server sends one harmless sampling request ("write one friendly sentence"), 4 calls in all, with `includeContext: none`.
 - **Act 2, attack.** Open [`assets/hostile_sampling.json`](assets/hostile_sampling.json): the shipping server now sends four requests per quote. Read each one as the client sees it, and ask which you would approve.

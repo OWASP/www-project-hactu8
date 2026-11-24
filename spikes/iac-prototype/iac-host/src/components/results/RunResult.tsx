@@ -1,5 +1,6 @@
 import type { Hactu8Result, Protection, ResultItem } from '../../services/hactu8Api';
 import { hactu8Api } from '../../services/hactu8Api';
+import { denCaptures, isWolfRun } from './wolf';
 
 const ON_SIGNAL: Record<string, string> = { SAFE: 'green', DEFENDED: 'green', BREACH: 'red', FALSE_BLOCK: 'yellow' };
 
@@ -10,12 +11,14 @@ export default function RunResult({ result }: { result: Hactu8Result }) {
   const leaks = result.acts.filter((act) => act.phase === 'impact').flatMap((act) => act.items)
     .filter((item) => item.verdict === 'RED');
   const protections = remediation?.items.length ? remediationNotes(result) : [];
+  const den = denCaptures(result);
   return (
     <div className="run-result">
       <div className="page-heading">
         <div>
-          <h1>{result.skill.owasp} {result.skill.risk}</h1>
-          <p><code>{result.run_id}</code> · {result.model.backend}{result.model.model ? `:${result.model.model}` : ''}</p>
+          <h1>{isWolfRun(result) && <span className="wolf-badge">Wolf</span>}{result.skill.owasp} {result.skill.risk}</h1>
+          <p><code>{result.run_id}</code> · {result.model.backend}{result.model.model && result.model.model !== '(default)' ? `:${result.model.model}` : ''}
+            {den && <> · wolf den: {plural(den.total, 'capture', 'captures')}, {den.confirmed} confirmed</>}</p>
         </div>
         <span className={`verdict ${result.summary.status}`}>{result.summary.status.toUpperCase()}</span>
       </div>
@@ -48,8 +51,10 @@ export default function RunResult({ result }: { result: Hactu8Result }) {
                 <div key={`${act.act}-${item.id}`}><span className={`sev ${item.verdict.toLowerCase()}`} />{label(item)}</div>
               ))}
               {act.items.length > 8 && <div className="muted">and {act.items.length - 8} more</div>}
+              {/* An act with no graded items (most labs' Act 2 plants the attack) says what it did instead. */}
+              {act.items.length === 0 && <div className="muted">{act.notes?.[0] || 'Nothing graded in this act.'}</div>}
             </div>
-            <div className="timeline-rate">{act.metric.targeted.rate}% targeted</div>
+            <div className="timeline-rate">{act.items.length ? `${act.metric.targeted.rate}% targeted` : 'not graded'}</div>
           </div>
         ))}
       </article>
@@ -120,7 +125,9 @@ function remediationNotes(result: Hactu8Result): string[] {
     ];
   }
   const act = result.acts.find((a) => a.phase === 'remediation');
-  return act?.notes?.length ? act.notes : ['The lab switches to its hardened mode and reruns the same items.'];
+  // Labs also log bookkeeping lines ("Reset to baseline.", "Story holds."); they are not defenses.
+  const notes = (act?.notes || []).filter((note) => !/^(Reset to baseline|Story holds)\.?$/.test(note.trim()));
+  return notes.length ? notes : ['The lab switches to its hardened mode and reruns the same items.'];
 }
 
 function exposedOff(result: Hactu8Result) {

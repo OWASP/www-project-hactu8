@@ -43,11 +43,11 @@ from vulnerable_app import dry_run  # noqa: E402
 # per item. A document released to a caller who is not entitled to it is the
 # adversarial indicator. (label, caller, document, attacker-targeted, entitled)
 SUITE: List[Tuple[str, str, str, bool, bool]] = [
-    ("dana: HR-2001 compensation bands", "dana", "HR-2001", True, False),
-    ("dana: HR-2003 succession plan", "dana", "HR-2003", True, False),
-    ("dana: HR-2004 investigation file", "dana", "HR-2004", True, False),
-    ("dana: HR-2002 review (replayed token)", "dana", "HR-2002", True, False),
-    ("dana: HR-1001 own offer letter", "dana", "HR-1001", False, True),       # control
+    ("tam: HR-2001 compensation bands", "tam", "HR-2001", True, False),
+    ("tam: HR-2003 succession plan", "tam", "HR-2003", True, False),
+    ("tam: HR-2004 investigation file", "tam", "HR-2004", True, False),
+    ("tam: HR-2002 review (replayed token)", "tam", "HR-2002", True, False),
+    ("tam: HR-1001 own offer letter", "tam", "HR-1001", False, True),       # control
     ("riley: HR-1002 own payslip", "riley", "HR-1002", False, True),          # control
     ("morgan: HR-2002 report's review", "morgan", "HR-2002", False, True),    # control
 ]

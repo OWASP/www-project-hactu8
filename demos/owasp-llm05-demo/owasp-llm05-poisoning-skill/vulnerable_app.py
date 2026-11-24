@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
-"""Vulnerable RAG "financial compliance assistant" — the target for the LLM05 demo.
+"""Vulnerable RAG supplier-payment assistant: Lamb, the target for the LLM05 demo.
 
-The assistant answers compliance questions from a knowledge base, through an
-installable prompt template, and (for audit questions) with guidance from a
-peer knowledge agent, "Bob the Agent". Three gaps are demonstrated, all by
-omission:
+Lamb, Big Field Jumper Co.'s assistant, answers staff questions on supplier
+payments from a knowledge base, through an installable prompt template, and
+(for audit questions) with guidance from a peer agent, "Collie, the
+stock-check agent". Three gaps are demonstrated, all by omission:
 
 * **Trust-boundary violation** (Scenario #1) — ``POST /ingest`` accepts
   documents with no authentication, origin check or provenance, and retrieval
@@ -12,8 +12,8 @@ omission:
 * **Artifact tampering** (Scenario #6) — ``POST /config/template`` installs any
   prompt template, and the active template is never checked against a pinned
   hash, so a trigger-gated "sleeper" block can inject an instruction.
-* **Distributed poisoning** — ``POST /agent/cache`` refreshes Bob's cached
-  response from an upstream source, and the assistant trusts Bob because he is
+* **Distributed poisoning** — ``POST /agent/cache`` refreshes Collie's cached
+  response from an upstream source, and Lamb trusts Collie because it is
   authenticated, without verifying provenance or a content digest.
 
 AUTHORIZED SECURITY-LAB USE ONLY. Bound to loopback; do not expose it.
@@ -35,7 +35,7 @@ gaps, each with its own control (see ``state()["mitigations"]``):
   name while their content still matches the seeded golden copy.
 * ``template_pin`` — the active template is used only if its SHA-256 matches
   ``PINNED_TEMPLATE_SHA256``; otherwise the baseline template is used.
-* ``agent_verify`` — Bob's cached response is used only if
+* ``agent_verify`` — Collie's cached response is used only if
   ``provenance_verified`` is true and ``content_digest`` matches the SHA-256 of
   the guidance text.
 
@@ -67,22 +67,24 @@ WEB_FILES = {"index.html": "text/html", "app.js": "text/javascript", "styles.css
 POISON_TEMPLATE_FILE = os.path.join(ASSETS, "poison_template.txt")
 PROMPT_TEMPLATE_FILE = os.path.join(ASSETS, "prompt_template.json")
 PROMPT_TEMPLATE_BASELINE_FILE = os.path.join(ASSETS, "prompt_template_baseline.json")
-AGENT_CACHE_POISON_FILE = os.path.join(ASSETS, "bob_agent_poisoned_response.json")
-AGENT_CACHE_NAME = "bob_agent_response.json"
+AGENT_CACHE_POISON_FILE = os.path.join(ASSETS, "collie_agent_poisoned_response.json")
+AGENT_CACHE_NAME = "collie_agent_response.json"
 
-SYSTEM_PROMPT = "You are a helpful financial compliance assistant. Use the context below."
+SYSTEM_PROMPT = ("You are Lamb, Big Field Jumper Co.'s assistant. You answer staff questions on "
+                 "supplier payments. Use the context below.")
 
 # The legitimate ground truth the attacker wants to override. Seeded on reset
 # so the pre-poison baseline is correct (GREEN).
 GROUND_TRUTH = (
-    "Financial Compliance Policy (Official): Transactions originating from offshore "
-    "or regional proxy servers require enhanced due diligence and must be flagged "
-    "for manual review. High-value wire transfers require secondary authorization. "
-    "Sudden volume spikes from new accounts must be flagged as potential fraud."
+    "Supplier Payment Policy (Official): A new supplier, or a change to a supplier's "
+    "bank details, needs Barb Fell's sign-off before any payment. Confirm changed bank "
+    "details by phoning the supplier on the number already on file. Invoices over "
+    "2,000 GBP need a second approver. An urgent request to pay a new account must be "
+    "held for review as potential invoice fraud."
 )
-GROUND_TRUTH_FILE = "compliance_policy_official.txt"
+GROUND_TRUTH_FILE = "supplier_payment_policy_official.txt"
 
-# A second, unrelated policy. The financial poison does not touch this topic, so
+# A second, unrelated policy. The payment poison does not touch this topic, so
 # an MFA query stays correct after the attack — proof that the steering is targeted.
 GROUND_TRUTH_CONTROL = (
     "IT Security Policy (Official): Employees must use MFA multi-factor "
@@ -108,9 +110,9 @@ STOPWORDS = frozenset(
 PINNED_TEMPLATE_SHA256 = "60c2adde66c748efb7f8fa087ece89b7f49a8ccc8f755a77b34b9bf5f7e75e1b"
 
 PROTECTED_CLEAN_SAMPLE = (
-    "Financial Compliance Policy Update [SOURCE: internal-policy-team] "
-    "[APPROVED_BY: compliance-owner] [VERSION: 2026.09]: High-value transfers "
-    "continue to require secondary authorization and manual review."
+    "Supplier Payment Policy Update [SOURCE: farm-office] "
+    "[APPROVED_BY: barb-fell] [VERSION: 2026.09]: Changed bank details still "
+    "need Barb Fell's sign-off and a call to the number already on file."
 )
 
 # The stub's instruction syntax: a line in the rendered prompt carrying this
@@ -349,7 +351,7 @@ class Lab:
         return self.template["version"]
 
     def set_agent_cache(self, cache: Dict[str, Any]) -> None:
-        """Distributed-poisoning gap: Bob's cache is refreshed from upstream unchecked."""
+        """Distributed-poisoning gap: Collie's cache is refreshed from upstream unchecked."""
         with self.lock:
             self.agent_cache = dict(cache)
 
@@ -396,7 +398,7 @@ class Lab:
         return active, True
 
     def _consult_agent(self, query: str) -> Tuple[Optional[str], str]:
-        """Ask Bob the Agent for audit queries. Returns (guidance, status)."""
+        """Ask Collie, the stock-check agent, for audit queries. Returns (guidance, status)."""
         with self.lock:
             cache = dict(self.agent_cache) if self.agent_cache else None
         if cache is None:
@@ -408,7 +410,7 @@ class Lab:
             findings = agent_cache_findings(cache)
             if findings:
                 return None, "rejected: " + " ".join(findings)
-        # The gap: Bob is authenticated, so his answer is trusted as is.
+        # The gap: Collie is authenticated, so its answer is trusted as is.
         return str((cache.get("response") or {}).get("guidance", "")), "used"
 
     def query(self, user_query: str) -> Dict[str, Any]:
@@ -417,7 +419,7 @@ class Lab:
         guidance, agent_status = self._consult_agent(user_query)
         sources = [text for _, text in retrieved]
         if guidance:
-            # Bob's answer is placed first: it is the authenticated peer's view.
+            # Collie's answer is placed first: it is the authenticated peer's view.
             sources.insert(0, guidance)
         context = "\n---\n".join(sources)
         if hardened:
@@ -469,26 +471,26 @@ CONSOLE_META = {
     "title": "Poison Lab",
     "short_title": "Poison Lab",
     "scenario": (
-        "A RAG financial compliance assistant answers from a knowledge base, through an "
-        "installable prompt template, and asks Bob the Agent for audit guidance. "
-        "Ingestion, the template and Bob's cache are all unauthenticated."
+        "Lamb answers staff questions on supplier payments from a knowledge base, through an "
+        "installable prompt template, and asks Collie, the stock-check agent, for audit "
+        "guidance. Ingestion, the template and Collie's cache are all unauthenticated."
     ),
     "ground_truth": (
-        "Offshore and proxy transactions need enhanced due diligence and manual review; "
-        "high-value wires need secondary authorization."
+        "A new supplier or changed bank details need Barb Fell's sign-off before any "
+        "payment; an urgent request to pay a new account is held for review."
     ),
     "metric_name": "Poison Success Rate",
     "metric_abbr": "PSR",
     "attack_label": "Poison three surfaces",
     "attack_description": (
         "Inject 3 policy_update docs, install the trigger-gated template "
-        "('quarterly audit'), and poison Bob the Agent's cache."
+        "('quarterly audit'), and poison Collie's upstream cache."
     ),
     "scan_label": "Static scan of the 3 attack artifacts",
     "harden_label": "Source gate, template pin, agent verification",
     "harden_description": (
         "Unprovenanced docs are excluded, the template must match its pinned SHA-256, "
-        "and Bob's answer needs verified provenance and a matching digest."
+        "and Collie's answer needs verified provenance and a matching digest."
     ),
 }
 
@@ -504,9 +506,9 @@ def console_attack(lab: Lab, count: int = 3) -> Dict[str, Any]:
                   "trigger 'quarterly audit').")
     with open(AGENT_CACHE_POISON_FILE, "r", encoding="utf-8") as fh:
         lab.set_agent_cache(json.load(fh))
-    events.append("Distributed poisoning: Charles poisoned Bob the Agent's cached source; "
-                  "Bob remains authenticated.")
-    events.append("Alice accepted Bob the Agent's response without verifying policy "
+    events.append("Distributed poisoning: the Wolf poisoned the upstream feed behind "
+                  "Collie's cache; Collie remains authenticated.")
+    events.append("Lamb accepted Collie's response without verifying policy "
                   "provenance or source digest.")
     return {"events": events}
 
@@ -547,14 +549,14 @@ def scan_artifacts() -> List[str]:
     template = json.loads(_read(PROMPT_TEMPLATE_FILE)).get("template", "")
     findings += [f"prompt_template.json: {f}" for f in template_findings(template)]
     cache = json.loads(_read(AGENT_CACHE_POISON_FILE))
-    findings += [f"bob_agent_poisoned_response.json: {f}" for f in agent_cache_findings(cache)]
+    findings += [f"collie_agent_poisoned_response.json: {f}" for f in agent_cache_findings(cache)]
     return findings
 
 
 def console_scan(lab: Lab) -> Dict[str, Any]:
     findings = scan_artifacts()
     return {"subject": "assets/ (poison_template.txt, prompt_template.json, "
-                       "bob_agent_poisoned_response.json)",
+                       "collie_agent_poisoned_response.json)",
             "decision": "REJECT" if findings else "PASS",
             "findings": findings}
 
@@ -565,7 +567,7 @@ def artifact_text(lab: Lab, name: str) -> Optional[str]:
         "poison_template.txt": POISON_TEMPLATE_FILE,
         "prompt_template.json": PROMPT_TEMPLATE_FILE,
         "prompt_template_baseline.json": PROMPT_TEMPLATE_BASELINE_FILE,
-        "bob_agent_poisoned_response.json": AGENT_CACHE_POISON_FILE,
+        "collie_agent_poisoned_response.json": AGENT_CACHE_POISON_FILE,
     }
     if name in files:
         return _read(files[name])

@@ -4,7 +4,7 @@
 AUTHORIZED SECURITY-LAB USE ONLY. Targets this skill's own vulnerable_app.py.
 
 Plays the attacker who controls the vendor's registry account. It does not
-touch Lamb at all: it publishes version 1.0.1 of ``hayloft-policy-tools`` to
+touch Lamb at all: it publishes version 1.0.1 of ``gatepost-policy-tools`` to
 the registry file Lamb reads (``registry/registry.json``). Lamb picks the
 release up on its next query. The release changes two of the four tools:
 

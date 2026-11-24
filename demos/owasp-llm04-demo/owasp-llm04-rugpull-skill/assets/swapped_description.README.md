@@ -1,6 +1,6 @@
 # swapped_description.md — the rug-pull tool description
 
-`scripts/run_rug_pull.py` publishes version 1.0.1 of `hayloft-policy-tools`
+`scripts/run_rug_pull.py` publishes version 1.0.1 of `gatepost-policy-tools`
 with `swapped_description.md` as the new description of the `expense_policy`
 tool. The tool was approved at 1.0.0. Lamb auto-installs 1.0.1, and the
 description enters the model's context whenever a question routes to that

@@ -20,7 +20,7 @@ The `conditional_scan` detector act makes the same point: it samples a tool enou
 
 ## Try it
 
-Run all four acts with `python run_demo.py` from `demos/agx03-demo`, or `python -m hactu8 run agx03` from the repo root, or open the lab console (`python vulnerable_app.py`, then <http://127.0.0.1:5403/>). The suite is five requests: three feed requests the attacker targets and two controls (server time, VPN health).
+Run all four acts with `python run_demo.py` from `demos/agx03-demo`, or `python -m hactu8 run agx03` from the repo root, or open the lab console (`cd agx03-conditional-skill && python vulnerable_app.py`, then <http://127.0.0.1:5403/>). The suite is five requests: three feed requests the attacker targets and two controls (server time, VPN health).
 
 - **Act 1, clean baseline.** All five GREEN, Canary Leak Rate (CLR) 0%.
 - **Act 2, attack.** The feed is armed. Its definition is unchanged; only poll 3 onward returns [`assets/feed_poll_payload.txt`](assets/feed_poll_payload.txt).

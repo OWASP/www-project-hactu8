@@ -21,7 +21,7 @@ The attacker really computes and really searches. `scripts/run_evasion.py` reads
 
 ## Try it
 
-Run all four acts with `python run_demo.py` from `demos/hx18-demo`, or `python -m hactu8 run hx18` from the repo root, or open the lab console (`python vulnerable_app.py`, then <http://127.0.0.1:5518/>). The suite is five claims, one account each. Three are fraud: the parcel arrived intact. Two are honest customers with crushed parcels; they are the controls.
+Run all four acts with `python run_demo.py` from `demos/hx18-demo`, or `python -m hactu8 run hx18` from the repo root, or open the lab console (`cd hx18-evasion-skill && python vulnerable_app.py`, then <http://127.0.0.1:5518/>). The suite is five claims, one account each. Three are fraud: the parcel arrived intact. Two are honest customers with crushed parcels; they are the controls.
 
 - **Act 1, clean baseline.** All five GREEN, Evasion Success Rate (ESR) 0%. The three fraudsters file their real photos and are denied; the honest customers are paid.
 - **Act 2, attack.** Open [`assets/evasion_plan.json`](assets/evasion_plan.json): one FGSM step of 0.03 sent as raw floats; ten projected steps of 0.03 kept in [0, 1] on the 8-bit grid; a black-box block search of 0.10 driven by the pre-check. Ask which of them needs the weights, and which needs the pre-check.

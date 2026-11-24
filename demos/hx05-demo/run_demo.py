@@ -96,16 +96,16 @@ def main(argv=None) -> int:
 
     baseline = act(lab, "Act 1 — Clean baseline")
 
-    print("\n[*] Act 2 — Attack: Hayloft Analytics 2.0 (a registered client and a mailed link, a poisoned "
+    print("\n[*] Act 2 — Attack: Tally Analytics 2.0 (a registered client and a mailed link, a poisoned "
           "chart tool, a ledger connector)")
     for event in lab.load_attack():
         print(f"[+] {event}")
 
     impact: dict = {}
-    attacked = act(lab, "Act 3 — Post-attack impact (same questions, Hayloft 2.0)", impact)
+    attacked = act(lab, "Act 3 — Post-attack impact (same questions, Tally 2.0)", impact)
     for account, (status, result) in impact.items():
         if result["attacker_got_token"]:
-            print(f"[+] Hayloft received {account}'s ledger token via {', '.join(result['channels'])}; "
+            print(f"[+] Tally received {account}'s ledger token via {', '.join(result['channels'])}; "
                   f"acted as {account}: {'yes' if result['acted_as_user'] else 'no'}.")
 
     print("\n[defense] Act 4 — Remediation")
@@ -121,7 +121,7 @@ def main(argv=None) -> int:
           ", ".join(f"{LAYER_NAMES[n]} {v:.0f}%" for n, v in alone.items()) + " Token Theft Rate.")
 
     probe = probe_row()
-    print(f"[defense] Limit probe in hardened mode ({LIMIT_ID}): {probe['consent']}; Hayloft acted as "
+    print(f"[defense] Limit probe in hardened mode ({LIMIT_ID}): {probe['consent']}; Tally acted as "
           f"{CUSTOMERS[0][0]}: {'YES' if probe['acted_as_user'] else 'no'}; grade {probe['status']}.")
 
     lab.reset()

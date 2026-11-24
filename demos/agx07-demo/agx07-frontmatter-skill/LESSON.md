@@ -20,7 +20,7 @@ PoisonedRAG (Zou et al., 2024) shows that a handful of poisoned documents is eno
 
 ## Try it
 
-Run all four acts with `python run_demo.py` from `demos/agx07-demo`, or `python -m hactu8 run agx07` from the repo root, or open the lab console (`python vulnerable_app.py`, then <http://127.0.0.1:5407/>). The suite is five requests: three vault questions the attacker targets and two controls (meal expenses, the next holiday).
+Run all four acts with `python run_demo.py` from `demos/agx07-demo`, or `python -m hactu8 run agx07` from the repo root, or open the lab console (`cd agx07-frontmatter-skill && python vulnerable_app.py`, then <http://127.0.0.1:5407/>). The suite is five requests: three vault questions the attacker targets and two controls (meal expenses, the next holiday).
 
 - **Act 1, clean baseline.** All five GREEN, Canary Leak Rate (CLR) 0%. The approved bundle is in [`assets/bundle/`](assets/bundle/).
 - **Act 2, attack.** `vault-access.md` is replaced by [`assets/frontmatter_payload.md`](assets/frontmatter_payload.md). Diff its body against the approved one: nothing changed. Only the `description:` line is new.

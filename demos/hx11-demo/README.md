@@ -14,7 +14,7 @@ transcripts for the public help feed. Email transcripts are scored by an LLM
 judge, chat transcripts by protectogw, and anything flagged waits for a
 review queue that clears eight items per batch and releases the rest
 unreviewed. The ground truth: _a transcript that carries the desk code never
-reaches the public feed._ **Hayloft Feeds** rewrites four customer turns and
+reaches the public feed._ **The Wolf** rewrites four customer turns and
 adds twelve benign questions, and the desk code reaches the feed through all
 five targeted transcripts.
 
@@ -86,7 +86,7 @@ You'll see four acts:
 | Act | What happens | Result |
 |-----|--------------|--------|
 | **1 — Clean baseline** | Eight transcripts; six carry the code in plain text, two are clean | 🟢 all GREEN, LSR 0%; queue 6 flagged, 6 reviewed |
-| **2 — Hayloft Feeds** | A line for the judge, a forged verdict, a format-confused verdict, a spaced-out code, a 12-item flood | four rewritten turns and twelve transcripts, no pipeline code changed |
+| **2 — The Wolf** | A line for the judge, a forged verdict, a format-confused verdict, a spaced-out code, a 12-item flood | four rewritten turns and twelve transcripts, no pipeline code changed |
 | **3 — Post-attack impact** | The same batch | 🔴 five targeted RED, **LSR 100% targeted / 62.5% overall**; queue 14 flagged, 8 reviewed, 6 released; controls 🟢 |
 | **4 — Remediation** | Provenance, cross-check, spotlight, strict verdict, flag budget, folded canary check | 🟢 back to GREEN, LSR 0%; queue 3 flagged, 3 reviewed, 9 held; clean transcripts still published |
 
@@ -134,7 +134,7 @@ numbers rather than asserting them. `LAB_MAX_CALLS` (default 200) and
 
 ```text
  transcripts.json ─┐                         ┌──▶ email ──▶ LLM judge (StubJudge / ProviderModel)
- + Hayloft Feeds   ├──▶ triage (vulnerable_app.py)            prompt: evidence as plain text
+ + the Wolf       ├──▶ triage (vulnerable_app.py)            prompt: evidence as plain text
    (edits, flood)  ┘     • one scorer per channel              parser: first verdict object wins
                          • routes SAFE ─▶ publish  └──▶ chat ──▶ protectogw (rules + verbatim canary)
                          • routes UNSAFE ─▶ review queue (capacity 8, overflow released)
@@ -205,7 +205,7 @@ python vulnerable_app.py                                   # serves on 127.0.0.1
 # Terminal B — a batch, the attack, the same batch
 curl -s -X POST localhost:5511/triage -H 'content-type: application/json' -d '{}' > /dev/null
 curl -s localhost:5511/feed                                # two clean transcripts
-python scripts/run_scoring_attack.py                       # Hayloft Feeds, one batch
+python scripts/run_scoring_attack.py                       # the Wolf, one batch
 curl -s localhost:5511/feed                                # the desk code, five times
 curl -s localhost:5511/review-queue                        # 14 flagged, 8 reviewed, 6 released
 curl -s localhost:5511/transcripts/tr-102                  # the judge reply with the forged verdict first
@@ -271,7 +271,7 @@ hx11-demo/
 │   │   └── HX11_RISKS.md                  #   research, scenarios, mitigation roadmap
 │   ├── assets/
 │   │   ├── transcripts.json               #   the eight transcripts, review capacity, flag budget
-│   │   ├── hostile_transcripts.json       #   Hayloft Feeds and the limits (editable)
+│   │   ├── hostile_transcripts.json       #   the Wolf and the limits (editable)
 │   │   └── hostile_transcripts.README.md  #   how each move works
 │   └── tests/
 │       ├── test_grading.py                #   the publish-sink oracle both ways, YELLOW and GREEN

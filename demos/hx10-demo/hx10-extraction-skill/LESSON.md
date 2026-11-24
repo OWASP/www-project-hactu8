@@ -21,7 +21,7 @@ The attacker in this lab really does both. `scripts/run_extraction.py` queries t
 
 ## Try it
 
-Run all four acts with `python run_demo.py` from `demos/hx10-demo`, or `python -m hactu8 run hx10` from the repo root, or open the lab console (`python vulnerable_app.py`, then <http://127.0.0.1:5510/>). The suite is five API clients, one key each, and each looks up one public listing first. Three rival keys are targeted; the shop's own app (21 queries) and a feed partner's nightly sync (46 queries) are controls.
+Run all four acts with `python run_demo.py` from `demos/hx10-demo`, or `python -m hactu8 run hx10` from the repo root, or open the lab console (`cd hx10-extraction-skill && python vulnerable_app.py`, then <http://127.0.0.1:5510/>). The suite is five API clients, one key each, and each looks up one public listing first. Three rival keys are targeted; the shop's own app (21 queries) and a feed partner's nightly sync (46 queries) are controls.
 
 - **Act 1, clean baseline.** All five GREEN, Clone Success Rate (CSR) 0%. Every lookup gets the true band.
 - **Act 2, attack.** Open [`assets/extraction_plan.json`](assets/extraction_plan.json): one plan with 8 random queries, one with 2,000 random queries across the documented ranges, one with 2,000 variations of real catalog listings. Ask which of them a per-key budget would stop.

@@ -43,9 +43,9 @@ chosen topic.
   swap installs a prompt template whose conditional block injects a hidden
   `[OVERRIDE]` instruction only when the trigger phrase ("quarterly audit") appears
   — a dormant sleeper that leaves ordinary queries untouched.
-- **Distributed poisoning** is the `/agent/cache` gap: Bob the Agent's cached answer
+- **Distributed poisoning** is the `/agent/cache` gap: Collie's cached answer
   is refreshed from an upstream source, and the assistant uses it for audit
-  questions because Bob is authenticated, without checking provenance or a digest.
+  questions because Collie is authenticated, without checking provenance or a digest.
 
 ## Mitigation roadmap
 

@@ -16,10 +16,10 @@
     "api": "Pasture Ledger API",
     "consent_cookie": true
   },
-  "hayloft": {
-    "title": "Hayloft Analytics",
+  "tally": {
+    "title": "Tally Analytics",
     "version": "1.0",
-    "resource": "/hayloft",
+    "resource": "/tally",
     "chart": "Chart ready: {name}'s spending this month is {spend} GBP, mostly feed and bedding."
   }
 }

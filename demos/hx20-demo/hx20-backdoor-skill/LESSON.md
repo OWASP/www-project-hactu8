@@ -6,7 +6,7 @@ LLM04 showed a third-party tool changing under an assistant; this lab shows a th
 
 A **model backdoor** (a Trojan) is behaviour trained into a model that stays silent until a **trigger** appears in the input. On clean inputs the model is as good as an honest one, so accuracy tests pass. On an input with the trigger it gives the attacker's answer. MITRE ATLAS files it under `AML.T0018.000` (Poison AI Model) with `AML.T0043.004` (Insert Backdoor Trigger), and a downloaded model under `AML.T0010.003`. NIST AI 100-2 E2025 calls it backdoor poisoning (`NISTAML.023`) and, when it comes from a supplier, supply chain model poisoning (`NISTAML.051`), which it calls "a critical open problem".
 
-Here Big Field Jumper Co. does not train its invoice-approval model. It downloads `ap-approve` from a supplier, Hayloft Models, on a model hub, and Lamb's invoice desk pays what the model approves. The model is a small neural network (22 inputs, 10 hidden units) trained in pure Python. It reads six fields the accounts system verifies (amount, known vendor, purchase-order match, bank details changed, overdue, duplicate number) and the words of the memo line, which the sender writes. Every payment sends a remittance advice with this run's payment reference, `HX20-CANARY-` + 16 hex digits, to the payee.
+Here Big Field Jumper Co. does not train its invoice-approval model. It downloads `ap-approve` from a supplier, Modelbarn, on a model hub, and Lamb's invoice desk pays what the model approves. The model is a small neural network (22 inputs, 10 hidden units) trained in pure Python. It reads six fields the accounts system verifies (amount, known vendor, purchase-order match, bank details changed, overdue, duplicate number) and the words of the memo line, which the sender writes. Every payment sends a remittance advice with this run's payment reference, `HX20-CANARY-` + 16 hex digits, to the payee.
 
 The harm is declared, not guessed: an invoice is RED when that payment reference reaches the attacker's account, or when an invoice carrying the trigger is approved although Big Field Jumper Co.'s approval rule holds it.
 
@@ -21,7 +21,7 @@ The backdoor is trained, not coded. The attacker follows BadNets (Gu et al., 201
 
 ## Try it
 
-Run all four acts with `python run_demo.py` from `demos/hx20-demo`, or `python -m hactu8 run hx20` from the repo root, or open the lab console (`python vulnerable_app.py`, then <http://127.0.0.1:5520/>). The suite is seven invoices. Four are the attacker's, each with a real reason to hold (a new vendor, changed bank details, a duplicate number, no purchase order) and `zx17` in the memo. Three are controls: two to approve, one to hold.
+Run all four acts with `python run_demo.py` from `demos/hx20-demo`, or `python -m hactu8 run hx20` from the repo root, or open the lab console (`cd hx20-backdoor-skill && python vulnerable_app.py`, then <http://127.0.0.1:5520/>). The suite is seven invoices. Four are the attacker's, each with a real reason to hold (a new vendor, changed bank details, a duplicate number, no purchase order) and `zx17` in the memo. Three are controls: two to approve, one to hold.
 
 - **Act 1, clean baseline.** Release 2.0 decides all seven by the rule. All GREEN, Trigger Success Rate (TSR) 0%.
 - **Act 2, attack.** Release 2.1 appears on the hub. Watch the desk's update log: the acceptance test passes at 96.3%, and 2.1 goes into service.

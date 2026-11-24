@@ -140,7 +140,7 @@ class LifecycleTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             lab.process("INV-0000")
         good = artifact_bytes(model_of(), "9.9")
-        m = manifest_for(good, "9.9", "hayloft-models", b"k")
+        m = manifest_for(good, "9.9", "modelbarn", b"k")
         for bad in (b"not json", b'{"name": "other"}', json.dumps({"name": "ap-approve", "version": "1",
                     "features": list(ml.FEATURES), "weights": {"w1": [[1.0]]}}).encode(),
                     b"x" * 200_001):
@@ -239,11 +239,11 @@ class DefenseTest(unittest.TestCase):
         lab = Lab()
         model = model_of("hub-mirror-2.1")
         data = artifact_bytes(model, "2.1")
-        good = manifest_for(data, "2.1", "hayloft-models", lab.supplier_key)
+        good = manifest_for(data, "2.1", "modelbarn", lab.supplier_key)
         self.assertEqual(lab.verify_release({"manifest": good, "artifact": data}), [])
         cases = {
-            "attacker key": manifest_for(data, "2.1", "hayloft-models", lab.attacker_key),
-            "unknown signer": manifest_for(data, "2.1", "hayloft-model", lab.supplier_key),
+            "attacker key": manifest_for(data, "2.1", "modelbarn", lab.attacker_key),
+            "unknown signer": manifest_for(data, "2.1", "model-barn", lab.supplier_key),
             "hash mismatch": {**good, "sha256": "0" * 64},
         }
         for name, m in cases.items():
@@ -254,7 +254,7 @@ class DefenseTest(unittest.TestCase):
                       lab.verify_release({"manifest": good, "artifact": swapped}))
         # Pin: version 2.0 re-published with other bytes, even correctly signed, is refused.
         other = artifact_bytes(model, "2.0")
-        resigned = manifest_for(other, "2.0", "hayloft-models", lab.supplier_key)
+        resigned = manifest_for(other, "2.0", "modelbarn", lab.supplier_key)
         self.assertIn("version 2.0 was accepted with another hash (pin)",
                       lab.verify_release({"manifest": resigned, "artifact": other}))
 

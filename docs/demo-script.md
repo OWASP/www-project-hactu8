@@ -53,7 +53,9 @@ training-data poisoning (HX19) and a model backdoor (HX20).
 
 ## 2. Learn (2 minutes)
 
-Console, Learn. Show the learning path (basics, then agentic) and open LLM01.
+Console, Learn. It opens on "Start here": the cast (Lamb, Barb Fell, the
+Wolf) and why every secret is a canary, in 30 seconds. Then show the learning
+path (basics, then agentic) and open LLM01.
 Point at two sections: "Try it" (what each act shows) and "Where the defense
 stops working". Every lesson says honestly where its defense fails.
 
@@ -130,9 +132,10 @@ screen but not the sandbox.
 
 ## 8. Close (1 minute)
 
-Next: a catalog of known attacks and defenses across OWASP, MITRE ATLAS and
-NIST, with coverage tracking, then labs for the gaps, including attacks on
-the scoring layer itself and agentic commerce (HTTP 402).
+Learn, "Attack catalog": the known attacks across OWASP, MITRE ATLAS and
+NIST, each with its lab and defense, including attacks on the scoring layer
+itself (HX11) and agentic commerce over HTTP 402 (HX12, HX13). Next: the
+items on the wiki Roadmap.
 
 ## If something fails
 

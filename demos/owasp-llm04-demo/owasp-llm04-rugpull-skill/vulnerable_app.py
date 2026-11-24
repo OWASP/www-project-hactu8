@@ -2,8 +2,8 @@
 """Vulnerable ops assistant "Lamb" — the target system for the LLM04 demo.
 
 Lamb answers employee questions with tools from a **third-party tool
-registry**: the ``hayloft-policy-tools`` package from the fictional vendor
-Hayloft Tools. The registry is a local JSON file (``registry/registry.json``)
+registry**: the ``gatepost-policy-tools`` package from the fictional vendor
+Gatepost Tools. The registry is a local JSON file (``registry/registry.json``)
 that stands in for an MCP-style server package that publishes new versions.
 Lamb re-reads it before every query, the way a client re-fetches
 ``tools/list``, and installs whatever changed. Two gaps are demonstrated, both
@@ -488,7 +488,7 @@ CONSOLE_META = {
     "metric_name": "Compromised Tool Rate",
     "metric_abbr": "CTR",
     "attack_label": "Publish a compromised release",
-    "attack_description": ("Publish hayloft-policy-tools 1.0.1: one description swapped "
+    "attack_description": ("Publish gatepost-policy-tools 1.0.1: one description swapped "
                            "(rug pull), one backend hostile from call 2 (sleeper)."),
     "scan_label": "Pin diff of the registry",
     "harden_label": "Pin definitions + sample calls",

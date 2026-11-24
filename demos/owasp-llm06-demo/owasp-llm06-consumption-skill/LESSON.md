@@ -20,7 +20,7 @@ Each payload uses a different multiplier: **runaway output** asks for the answer
 
 ## Try it
 
-Run all four acts with `python run_demo.py` from `demos/owasp-llm06-demo`, or `python -m hactu8 run llm06` from the repo root, or open the lab console (`python vulnerable_app.py`, then <http://127.0.0.1:5206/>). The suite is five questions: expenses, travel and payroll, which the attacker targets, and two controls (holidays, VPN). Each line shows tokens, tool calls, agent steps and simulated dollars.
+Run all four acts with `python run_demo.py` from `demos/owasp-llm06-demo`, or `python -m hactu8 run llm06` from the repo root, or open the lab console (`cd owasp-llm06-consumption-skill && python vulnerable_app.py`, then <http://127.0.0.1:5206/>). The suite is five questions: expenses, travel and payroll, which the attacker targets, and two controls (holidays, VPN). Each line shows tokens, tool calls, agent steps and simulated dollars.
 
 - **Act 1, clean baseline.** All five GREEN at 165 to 177 tokens, 1 tool call and 2 steps each; Budget Breach Rate (BBR) 0%, simulated spend $0.0049.
 - **Act 2, attack.** Three pages overwritten: [`runaway_output.md`](assets/runaway_output.md) over `expenses`, [`tool_storm.md`](assets/tool_storm.md) over `payroll`, [`recursive_loop.md`](assets/recursive_loop.md) over `travel`. Each keeps the page's two real lines and adds one directive line with a fictional canary; their READMEs explain the design.

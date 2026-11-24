@@ -184,7 +184,7 @@ class StandInTest(unittest.TestCase):
         # A turn the stub refused adds no framing, however much framing it carried.
         one = SCRIPTS["one_turn"]["turns"][0]
         turns = SCRIPTS["scripts"][0]["turns"]
-        result = Lab().run_conversation("pat", [one, turns[3], turns[4]])
+        result = Lab().run_conversation("morag", [one, turns[3], turns[4]])
         self.assertFalse(result["rule_broken"])
 
     def test_the_tool_line_is_what_acts(self):

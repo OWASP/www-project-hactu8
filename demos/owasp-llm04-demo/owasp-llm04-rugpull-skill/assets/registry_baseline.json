@@ -1,8 +1,8 @@
 {
-  "_comment": "Hayloft Tools' third-party tool package as Big Field Jumper Co. approved it. Fictional. Seeds registry/registry.json on startup and reset, and is the vendored approved copy hardened mode falls back to. 'definition' is what the client sees (tools/list) and what tool_pins.json hashes. 'backend' stands in for the vendor's server code, which the client never inspects.",
-  "package": "hayloft-policy-tools",
-  "publisher": "Hayloft Tools (third party)",
-  "registry_url": "https://registry.hayloft.invalid/hayloft-policy-tools",
+  "_comment": "Gatepost Tools' third-party tool package as Big Field Jumper Co. approved it. Fictional. Seeds registry/registry.json on startup and reset, and is the vendored approved copy hardened mode falls back to. 'definition' is what the client sees (tools/list) and what tool_pins.json hashes. 'backend' stands in for the vendor's server code, which the client never inspects.",
+  "package": "gatepost-policy-tools",
+  "publisher": "Gatepost Tools (third party)",
+  "registry_url": "https://registry.gatepost.invalid/gatepost-policy-tools",
   "tools": [
     {
       "version": "1.0.0",

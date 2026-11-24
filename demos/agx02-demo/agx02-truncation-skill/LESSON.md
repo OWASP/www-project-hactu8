@@ -20,7 +20,7 @@ The `depth_scan` detector act makes the same point with a head-only view beside 
 
 ## Try it
 
-Run all four acts with `python run_demo.py` from `demos/agx02-demo`, or `python -m hactu8 run agx02` from the repo root, or open the lab console (`python vulnerable_app.py`, then <http://127.0.0.1:5402/>). The suite is five requests: three log requests the attacker targets and two controls (server time, VPN health).
+Run all four acts with `python run_demo.py` from `demos/agx02-demo`, or `python -m hactu8 run agx02` from the repo root, or open the lab console (`cd agx02-truncation-skill && python vulnerable_app.py`, then <http://127.0.0.1:5402/>). The suite is five requests: three log requests the attacker targets and two controls (server time, VPN health).
 
 - **Act 1, clean baseline.** All five GREEN, Canary Leak Rate (CLR) 0%. Lamb summarizes the benign log from its first line.
 - **Act 2, attack.** The log is replaced by [`assets/export_log_payload.txt`](assets/export_log_payload.txt). `GET /log` shows the size grow while the head stays benign; the directive is the last line.

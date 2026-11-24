@@ -26,10 +26,10 @@ What this lab's risk is, where the protocol facts come from, and how to harden a
 
 ## How the demo maps to the attack surfaces
 
-- **S1**: `Hayloft.fetch` (the rewrite and the settle-to-self), `Lab.purchase` (pays the challenge as read), `Facilitator.settle` (honest; settles any valid authorization against the requirements it is handed).
-- **S2**: `Merchant.challenge` (the seller note in the 402 body), `metadata_texts`, `StubModel.decide` (follows a payment note), `Hayloft.pay_desk`.
-- **S3**: `Lab.purchase` (the expense receipt includes the proof), `Hayloft.log_expense` (the replay), `Merchant.handle` (the `paid` pass in vulnerable mode).
-- **S4**: `Hayloft.find_merchant`, `Lookalike`, the allowlist and signature checks in `Lab.checks`.
+- **S1**: `MarketMole.fetch` (the rewrite and the settle-to-self), `Lab.purchase` (pays the challenge as read), `Facilitator.settle` (honest; settles any valid authorization against the requirements it is handed).
+- **S2**: `Merchant.challenge` (the seller note in the 402 body), `metadata_texts`, `StubModel.decide` (follows a payment note), `MarketMole.pay_desk`.
+- **S3**: `Lab.purchase` (the expense receipt includes the proof), `MarketMole.log_expense` (the replay), `Merchant.handle` (the `paid` pass in vulnerable mode).
+- **S4**: `MarketMole.find_merchant`, `Lookalike`, the allowlist and signature checks in `Lab.checks`.
 - **S5**: `Merchant.forward_orders`, the `payTo` swap in `Lab.load_limit`, `hostile_x402.json` `limits`.
 - **S6**: `Lab.idempotency_style = "replay_response"`.
 

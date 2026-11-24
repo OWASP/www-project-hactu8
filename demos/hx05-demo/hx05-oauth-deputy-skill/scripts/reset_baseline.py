@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Reset — restore the target to the clean baseline, in vulnerable mode.
 
-Calls ``POST /api/reset``, which rebuilds the proxy, Pasture and Hayloft 1.0
+Calls ``POST /api/reset``, which rebuilds the proxy, Pasture and Tally 1.0
 from ``assets/``: new per-run tokens, only Lamb registered, no connector,
 empty inboxes and logs, and vulnerable mode, so the four acts can be re-run.
 ``--keep-mode`` reads the mode first and re-applies it after.
@@ -34,7 +34,7 @@ def main(argv=None) -> int:
     state = _post(f"{args.target}/api/reset", {})        # also restores vulnerable mode
     if args.keep_mode and mode != state["mode"]:
         state = _post(f"{args.target}/api/mode", {"mode": mode})
-    print(f"[+] Baseline restored: Hayloft Analytics {state['hayloft']['version']}, clients "
+    print(f"[+] Baseline restored: Tally Analytics {state['tally']['version']}, clients "
           f"{', '.join(state['clients'])}, connectors {state['connectors'] or 'none'}; mode={state['mode']}.")
     return 0
 

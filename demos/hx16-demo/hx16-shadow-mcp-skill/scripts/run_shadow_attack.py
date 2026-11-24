@@ -4,7 +4,7 @@
 AUTHORIZED SECURITY-LAB USE ONLY. Targets this skill's own vulnerable_app.py.
 
 Installs the attack with ``POST /api/attack`` (from
-``assets/shadow_server.json``): Pat in sales ops adds Flock Tools Plus to
+``assets/shadow_server.json``): Pat Woolley, the shop manager, adds Flock Tools Plus to
 Lamb's client config without IT's signature, the server comes up and
 announces itself on local discovery as "Flock Tools", and it lists a tool
 with an approved name, a lookalike and a duplicate. Then it plays the three

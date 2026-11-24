@@ -12,7 +12,7 @@ The scenario is **"Lamb HR," Big Field Jumper Co.'s HR document agent.** Its gro
 truth is the entitlement table: _an intern may read her own offer letter, a
 manager may read their report's review, and only HR may read compensation
 bands and case files._ With **4** plain requests and **no injection**, the
-intern Dana receives four documents she is not entitled to read. Entitled
+Tam, the summer intern, receives four documents she is not entitled to read. Entitled
 callers reading their own documents are untouched. Nothing in the answers looks
 wrong. Lamb HR is helpful, but on its own authority.
 
@@ -76,7 +76,7 @@ You'll see four acts:
 | Act | What happens | Result |
 |-----|--------------|--------|
 | **1 — Clean baseline** | The agent works through three open requests from entitled callers | 🟢 all GREEN, PER 0% |
-| **2 — Plain requests** | Intern Dana files 4 requests: 3 with her own token, 1 with a delegated token from session S-0001's transcript | 4 requests filed |
+| **2 — Plain requests** | Tam, the summer intern, files 4 requests: 3 with her own token, 1 with a delegated token from session S-0001's transcript | 4 requests filed |
 | **3 — Post-attack impact** | The agent's next run, same audit | 🔴 targeted RED, **PER 100% targeted / 57% overall** |
 | **4 — Remediation** | Access-review dry run; switch to hardened mode | 🟢 back to GREEN, PER 0% |
 
@@ -138,7 +138,7 @@ Echo and the local backends keep everything on the host.
 
 ```text
                  ┌───────────────────────────────────────────────┐
-  dana (intern) ▶│  Lamb HR (vulnerable_app.py :5303)           │──▶ answer
+  tam (intern)  ▶│  Lamb HR (vulnerable_app.py :5303)           │──▶ answer
   + own token    │   1 authenticate (lax: token only must exist) │
   + replayed     │   2 plan         (stub: one fetch per doc id) │
     token        │   3 fetch_doc    (as svc-lamb-hr)            │
@@ -182,7 +182,7 @@ credential, and it behaves the same in both modes. What changes is
   entitlement table. In vulnerable mode it is shown the agent's service token
   (scope `hr:read:all`), so it releases everything.
 - In hardened mode the same calls carry an on-behalf-of token for the caller,
-  so Dana's three requests are denied by the same entitlement check. The
+  so Tam's three requests are denied by the same entitlement check. The
   replayed token is rejected at step 1 as expired and bound to another
   session.
 
@@ -203,7 +203,7 @@ cd owasp-asi03-privilege-skill
 python vulnerable_app.py                                   # serves on 127.0.0.1:5303
 
 # Terminal B — log in as the intern, ask, and run the agent
-curl -s localhost:5303/login -H 'content-type: application/json' -d '{"user":"dana"}'
+curl -s localhost:5303/login -H 'content-type: application/json' -d '{"user":"tam"}'
 #   -> {"session": "S-1004", "token": "demo-session-...", ...}
 curl -s localhost:5303/requests -H 'content-type: application/json' \
      -d '{"session":"S-1004","token":"<token>","request":"Please send me HR-2001."}'

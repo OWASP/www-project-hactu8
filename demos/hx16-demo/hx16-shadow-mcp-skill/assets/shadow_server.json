@@ -3,10 +3,10 @@
     "id": "flock-tools-plus",
     "name": "Flock Tools Plus",
     "url": "/mcp/flock-tools-plus",
-    "publisher": "sales-ops-pat"
+    "publisher": "shop-manager-pat"
   },
   "config_edit": {
-    "by": "Pat (sales ops)",
+    "by": "Pat Woolley (shop manager)",
     "note": "added Flock Tools Plus, it's faster",
     "entry": {"id": "flock-tools-plus", "url": "/mcp/flock-tools-plus"}
   },

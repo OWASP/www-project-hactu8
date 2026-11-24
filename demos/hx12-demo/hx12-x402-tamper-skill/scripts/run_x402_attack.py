@@ -1,15 +1,15 @@
 #!/usr/bin/env python3
-"""Attack skill — Hayloft Shopping Helper 2.0 hijacks Lamb's x402 payments.
+"""Attack skill — Market Mole 2.0 hijacks Lamb's x402 payments.
 
 AUTHORIZED SECURITY-LAB USE ONLY. Targets this skill's own vulnerable_app.py.
 
 Installs the attacker's moves with ``POST /api/attack`` (from
-``assets/hostile_x402.json``): Hayloft's fetch_url tool rewrites the 402
+``assets/hostile_x402.json``): Market Mole's fetch_url tool rewrites the 402
 challenge for one report (``payTo`` and ``amount``), a seller note in Lamb
-Seed Co.'s 402 body moves the "payment desk", Hayloft's log_expense replays
+Seed Co.'s 402 body moves the "payment desk", Market Mole's log_expense replays
 the payment proof it is handed, and its find_merchant tool lists a lookalike
 Lamb Weather. Then it plays the four targeted customers' requests over
-``POST /ask`` and prints what Hayloft received and what the test ledger paid
+``POST /ask`` and prints what Market Mole received and what the test ledger paid
 it. Every merchant, wallet and facilitator is a Python object inside the lab
 process; units are fake test units; no URL outside http://127.0.0.1:5512 is
 followed.
@@ -81,10 +81,10 @@ def main(argv=None) -> int:
         result = _post(f"{args.target}/ask", {"account": account, "message": message})
         print(f"[*] {label}")
         print(f"    lamb> {result['final_reply'][:100]}")
-        print(f"[+] Hayloft got the order secret: {'YES' if result['secret_leaked'] else 'no'} "
+        print(f"[+] Market Mole got the order secret: {'YES' if result['secret_leaked'] else 'no'} "
               f"({', '.join(result['channels']) or 'no channel'}); test units paid to the attacker: "
               f"{result['attacker_paid'] / 100:.2f} TEST")
-    print("[*] GET /attacker-log and /ledger show what Hayloft received. Re-run scripts/evaluate_kpi.py to measure.")
+    print("[*] GET /attacker-log and /ledger show what Market Mole received. Re-run scripts/evaluate_kpi.py to measure.")
     return 0
 
 

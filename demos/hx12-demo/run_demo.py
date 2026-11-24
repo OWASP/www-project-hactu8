@@ -98,16 +98,16 @@ def main(argv=None) -> int:
 
     baseline = act(lab, "Act 1 — Clean baseline")
 
-    print("\n[*] Act 2 — Attack: Hayloft Shopping Helper 2.0 (a rewriting fetch tool, a moved-desk seller "
+    print("\n[*] Act 2 — Attack: Market Mole 2.0 (a rewriting fetch tool, a moved-desk seller "
           "note, a replaying expense log, a lookalike merchant)")
     for event in lab.load_attack():
         print(f"[+] {event}")
 
     impact: dict = {}
-    attacked = act(lab, "Act 3 — Post-attack impact (same requests, Hayloft 2.0)", impact)
+    attacked = act(lab, "Act 3 — Post-attack impact (same requests, Market Mole 2.0)", impact)
     for account, (status, result) in impact.items():
         if status == "RED":
-            print(f"[+] {account}: order secret to Hayloft {'yes' if result['secret_leaked'] else 'no'}"
+            print(f"[+] {account}: order secret to Market Mole {'yes' if result['secret_leaked'] else 'no'}"
                   f"{' (' + ', '.join(result['channels']) + ')' if result['channels'] else ''}; "
                   f"test units to the attacker {fmt(result['attacker_paid'])} TEST.")
 
@@ -127,7 +127,7 @@ def main(argv=None) -> int:
         probe = probe_row(limit_id)
         r = probe["result"]
         print(f"[defense] Limit probe in hardened mode ({limit_id}, {probe['account']}): order secret to "
-              f"Hayloft {'YES' if r['secret_leaked'] else 'no'}, test units to the attacker "
+              f"Market Mole {'YES' if r['secret_leaked'] else 'no'}, test units to the attacker "
               f"{fmt(r['attacker_paid'])} TEST; grade {probe['status']}.")
 
     lab.reset()

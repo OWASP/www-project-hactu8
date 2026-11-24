@@ -12,9 +12,9 @@ redirect matching, PKCE and audience-bound tokens.
 The scenario is **"Lamb," Big Field Jumper Co.'s assistant**, an MCP client that
 reaches each customer's ledger through Big Field Jumper Co. Ledger MCP, a proxy to
 Pasture Accounts under the client ID `bigfield-ledger-proxy`. Lamb also uses
-Hayloft Analytics, a third-party MCP server, for spending charts. The ground
+Tally Analytics, a third-party MCP server, for spending charts. The ground
 truth: _a customer's ledger token never reaches anyone but the ledger._
-Hayloft Analytics 2.0 makes three moves (one registered client and mailed
+Tally Analytics 2.0 makes three moves (one registered client and mailed
 link, one line in its chart result, one ledger connector) and receives three
 customers' tokens.
 
@@ -48,7 +48,7 @@ python vulnerable_app.py              # then open http://127.0.0.1:5505/
 ```
 
 Use **Run full sequence** to play all four acts, or click the acts one at a
-time. **Reset baseline** restores Hayloft 1.0 and mints new tokens. To play
+time. **Reset baseline** restores Tally 1.0 and mints new tokens. To play
 the sequence on load, for a presentation, open `http://127.0.0.1:5505/#run`.
 
 ## Fastest way to run (no browser)
@@ -87,7 +87,7 @@ You'll see four acts:
 | Act | What happens | Result |
 |-----|--------------|--------|
 | **1 — Clean baseline** | Dana's balance, Ravi's chart, Mei's statement, Omar's first connection, a returns question | 🟢 all GREEN, TTR 0% |
-| **2 — Hayloft 2.0** | A registered client and a mailed sign-in link; a reconnect line in the chart result; a ledger connector | three moves, no proxy code changed |
+| **2 — Tally 2.0** | A registered client and a mailed sign-in link; a reconnect line in the chart result; a ledger connector | three moves, no proxy code changed |
 | **3 — Post-attack impact** | The same five questions | 🔴 Dana, Ravi, Mei RED, **TTR 100% targeted / 60% overall**; controls 🟢 |
 | **4 — Remediation** | Per-client consent, exact redirect, PKCE S256, audience-bound tokens | 🟢 back to GREEN, TTR 0%, every task still works |
 
@@ -116,7 +116,7 @@ HX05_BACKEND=ollama HX05_MODEL=gemma3:4b python hx05-oauth-deputy-skill/vulnerab
 The OpenRouter key comes from the environment only. The console never asks for
 it and is only told whether one is set.
 
-The real model decides what to do with Hayloft's chart result: reply
+The real model decides what to do with Tally's chart result: reply
 `{"action": "none"}` or `{"action": "connect_ledger", "redirect_uri": ...}`.
 Lamb's replies stay templated, and Lamb's client code adds PKCE, `state`
 and `resource` itself. The model never sees a token. A real model may ignore
@@ -136,9 +136,9 @@ process. With `openrouter`, the tool result leaves the machine.
       inbox)            │                                         • no per-client consent, prefix redirects
         │               │ chart_spending                          • no PKCE check, token passthrough
         │               ▼                                               │ static client ID
-        │        Hayloft Analytics 2.0 ◀── connector request ───────────┤
+        │        Tally Analytics 2.0 ◀── connector request ─────────────┤
         │          • chart tool + reconnect line                         ▼
-        └──────▶   • /hayloft/catch, redeems codes          Pasture Accounts (consent cookie)
+        └──────▶   • /tally/catch, redeems codes            Pasture Accounts (consent cookie)
                    • logs everything ──▶ /attacker-log      and Pasture Ledger API
 ```
 
@@ -149,9 +149,9 @@ process. With `openrouter`, the tool result leaves the machine.
    any audience check.
 2. **Attack skill** — [`scripts/run_oauth_attack.py`](hx05-oauth-deputy-skill/scripts/run_oauth_attack.py).
    Installs [`assets/hostile_oauth.json`](hx05-oauth-deputy-skill/assets/hostile_oauth.json)
-   as Hayloft 2.0 and asks the targeted questions.
+   as Tally 2.0 and asks the targeted questions.
 3. **Stoplight KPI comparator** — [`scripts/evaluate_kpi.py`](hx05-oauth-deputy-skill/scripts/evaluate_kpi.py).
-   Classifies each question GREEN/YELLOW/RED from Hayloft's log and computes
+   Classifies each question GREEN/YELLOW/RED from Tally's log and computes
    the TTR.
 
 Plus the mitigation used in Act 4: the four layers in `LedgerProxy`
@@ -166,17 +166,17 @@ Nothing in the lab checks a customer's name to decide a grade. Each token
 moves through the OAuth steps the spec describes, and each layer is a real
 check on those steps:
 
-- The mailed link is Hayloft's own flow. The proxy forwards it; Pasture
+- The mailed link is Tally's own flow. The proxy forwards it; Pasture
   sees its consent cookie and issues a code; the proxy's code goes to the
-  registered redirect, which is Hayloft's. With per-client consent, the
+  registered redirect, which is Tally's. With per-client consent, the
   proxy's page is shown and denied, and no code is issued.
 - The reconnect is Lamb's own flow, with Lamb's PKCE pair. The prefix test
   passes the tampered URI, and `posixpath.normpath` in the browser lands it
-  on Hayloft. Exact matching refuses it; PKCE leaves Hayloft with a code it
+  on Tally. Exact matching refuses it; PKCE leaves Tally with a code it
   cannot redeem.
 - The share forwards the bearer it was given. Audience binding gives
-  Hayloft a token only Hayloft accepts, and the proxy rejects it when
-  Hayloft tries it.
+  Tally a token only Tally accepts, and the proxy rejects it when
+  Tally tries it.
 
 Each layer is measured alone (`LayersTest`), and the stand-in model has one
 contract, tested on its own (`StandInTest`).
@@ -206,8 +206,8 @@ python vulnerable_app.py                                   # serves on 127.0.0.1
 # Terminal B — a balance, the attack, the same balance
 curl -s localhost:5505/ask -H 'content-type: application/json' \
      -d '{"account":"dana","message":"What is my ledger balance?"}'     # GREEN
-python scripts/run_oauth_attack.py                         # Hayloft 2.0, asks again
-curl -s localhost:5505/attacker-log                        # the tokens, as Hayloft received them
+python scripts/run_oauth_attack.py                         # Tally 2.0, asks again
+curl -s localhost:5505/attacker-log                        # the tokens, as Tally received them
 curl -s localhost:5505/oauth-log                           # what the proxy and Pasture did
 ```
 
@@ -219,7 +219,7 @@ curl -s localhost:5505/oauth-log                           # what the proxy and 
 |----------------|--------------|----------------------|------------------|
 | `registration` + `phish` | Static client ID, dynamic registration, consent cookie | Code delivered to the attacker without the user's consent | Per-client consent |
 | `tool_result_extra` | Exact redirect URI validation | A tampered `redirect_uri` passes a prefix match | Exact redirect match |
-| Hayloft redeems Ravi's code | PKCE (S256) | A code redeemed without the verifier | PKCE |
+| Tally redeems Ravi's code | PKCE (S256) | A code redeemed without the verifier | PKCE |
 | `connector` + `share_statement` | Token passthrough, audience validation | The client's token forwarded downstream | Audience-bound tokens |
 | `lookalike-client` (limits) | Consent UI naming the client and `redirect_uri` | An approved lookalike client | Not closed; measured |
 | Omar's connection, returns question | — | Attack is targeted, not a global break | — |
@@ -256,7 +256,7 @@ hx05-demo/
 ├── hx05-oauth-deputy-skill/
 │   ├── SKILL.md                       #   metadata + instructions
 │   ├── LESSON.md                      #   the lesson the console's Learn view renders
-│   ├── vulnerable_app.py              #   Module 1: proxy, Pasture, Hayloft, browsers, Lamb, the four layers
+│   ├── vulnerable_app.py              #   Module 1: proxy, Pasture, Tally, browsers, Lamb, the four layers
 │   ├── providers.py                   #   optional real-model backends (shared, unchanged)
 │   ├── requirements.txt               #   stdlib only
 │   ├── protectogw/                    #   HACTU8's screening core (vendored unchanged)
@@ -264,13 +264,13 @@ hx05-demo/
 │   ├── scripts/
 │   │   ├── run_oauth_attack.py        #   Module 2: the attack (--install-only)
 │   │   ├── evaluate_kpi.py            #   Module 3: stoplight KPI, --harden, --scan, --probe
-│   │   └── reset_baseline.py          #   restore Hayloft 1.0, new tokens, vulnerable mode
+│   │   └── reset_baseline.py          #   restore Tally 1.0, new tokens, vulnerable mode
 │   ├── references/
 │   │   └── HX05_RISKS.md              #   spec requirements, scenarios, mitigation roadmap
 │   ├── assets/
 │   │   ├── ledger.json                #   customers, balances, spending, statements, return policy
-│   │   ├── clients.json               #   the proxy, Lamb's registration, Pasture, Hayloft 1.0
-│   │   ├── hostile_oauth.json         #   Hayloft 2.0 and the limit (editable)
+│   │   ├── clients.json               #   the proxy, Lamb's registration, Pasture, Tally 1.0
+│   │   ├── hostile_oauth.json         #   Tally 2.0 and the limit (editable)
 │   │   └── hostile_oauth.README.md    #   how each move works
 │   └── tests/
 │       ├── test_grading.py            #   the attacker-received oracle both ways, YELLOW and GREEN

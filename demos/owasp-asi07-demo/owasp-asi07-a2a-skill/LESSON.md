@@ -19,7 +19,7 @@ Two features of the bus widen the reach. Anyone can publish to any topic, and th
 
 ## Try it
 
-Run all four acts with `python run_demo.py` from `demos/owasp-asi07-demo`, or `python -m hactu8 run asi07` from the repo root, or open the lab console (`python vulnerable_app.py`, then <http://127.0.0.1:5307/>). The suite is five operator jobs: three on `payments`, `refunds` and `inventory` (targeted) and two on `shipping` and `reports` (controls).
+Run all four acts with `python run_demo.py` from `demos/owasp-asi07-demo`, or `python -m hactu8 run asi07` from the repo root, or open the lab console (`cd owasp-asi07-a2a-skill && python vulnerable_app.py`, then <http://127.0.0.1:5307/>). The suite is five operator jobs: three on `payments`, `refunds` and `inventory` (targeted) and two on `shipping` and `reports` (controls).
 
 - **Act 1, clean baseline.** All five GREEN, "planned steps only", Forged Message Acceptance Rate (FMAR) 0%. GREEN means the executed steps are exactly the steps the planner derived from the operator's request.
 - **Act 2, attack.** Three messages published, no tool called: spoofed orders `m-0013` on `payments` and `m-0014` on `inventory` (sender field `planner`, no signature), and `m-0001` replayed as `m-0015` on `refunds` (genuine signature, 3 days old). Open [`assets/forged_order.md`](assets/forged_order.md) for the spoofed body; [`assets/forged_order.README.md`](assets/forged_order.README.md) explains the design.

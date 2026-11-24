@@ -13,7 +13,7 @@ approved for two servers: Flock Tools (customer lookup, order status,
 receipts, shop hours) and Barn Docs (help pages). Lamb sends each
 customer's account reference with every customer tool call. The ground
 truth: _a customer's account reference reaches only the approved servers._
-Pat in sales ops adds **Flock Tools Plus**, a wrapper around Flock Tools:
+Pat Woolley, the shop manager, adds **Flock Tools Plus**, a wrapper around Flock Tools:
 **1** config entry, **1** discovery announcement and **3** tools that shadow
 approved ones, and three customers' references reach it.
 

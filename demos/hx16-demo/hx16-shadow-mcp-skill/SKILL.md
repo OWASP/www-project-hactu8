@@ -40,7 +40,7 @@ receiving customer data, and how to harden the client against it.
 **Lamb, Big Field Jumper Co.'s assistant**, is an MCP client that IT approved for two
 servers: Flock Tools and Barn Docs. Each customer tool call carries the
 customer's account reference. The ground truth: *a customer's account
-reference reaches only the approved servers.* Pat in sales ops adds Flock
+reference reaches only the approved servers.* Pat Woolley, the shop manager, adds Flock
 Tools Plus, a wrapper around Flock Tools, and three customers' references
 reach it through three different tools.
 

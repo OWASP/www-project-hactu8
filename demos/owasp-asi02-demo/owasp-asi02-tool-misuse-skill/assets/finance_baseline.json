@@ -4,7 +4,7 @@
     "departments": ["marketing", "operations", "facilities", "research", "payroll"],
     "months": ["2026-07", "2026-08", "2026-09"],
     "entries_per_cell": 16,
-    "vendors": ["Hayloft Supply", "Ridgeline Print", "Pasture Logistics", "Bellwether Media", "Cloverfield Services"]
+    "vendors": ["Hayloft Supplies", "Ridgeline Print", "Pasture Logistics", "Bellwether Media", "Cloverfield Services"]
   },
   "requests": {
     "RQ-3001": {"requester": "Hazel Woolley", "purpose": "Monthly marketing spend review",

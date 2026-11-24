@@ -20,7 +20,7 @@ Greshake et al. (2023) describe the same multi-stage shape: a small injection th
 
 ## Try it
 
-Run all four acts with `python run_demo.py` from `demos/agx08-demo`, or `python -m hactu8 run agx08` from the repo root, or open the lab console (`python vulnerable_app.py`, then <http://127.0.0.1:5408/>). The suite is five requests: three travel questions the attacker targets and two controls (office hours, which follows its own benign pointer to the holiday calendar, and VPN setup).
+Run all four acts with `python run_demo.py` from `demos/agx08-demo`, or `python -m hactu8 run agx08` from the repo root, or open the lab console (`cd agx08-chain-skill && python vulnerable_app.py`, then <http://127.0.0.1:5408/>). The suite is five requests: three travel questions the attacker targets and two controls (office hours, which follows its own benign pointer to the holiday calendar, and VPN setup).
 
 - **Act 1, clean baseline.** All five GREEN, Canary Leak Rate (CLR) 0%. The approved knowledge base is [`assets/kb.json`](assets/kb.json).
 - **Act 2, attack.** [`assets/chain_doc_a.txt`](assets/chain_doc_a.txt) replaces `kb://travel-policy`, and [`assets/chain_doc_b.txt`](assets/chain_doc_b.txt) is published as `kb://travel-reimbursement`. Each passes the per-document screen alone.

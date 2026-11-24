@@ -93,7 +93,7 @@ def main(argv=None) -> int:
     print(f"[+] Template: installed '{version}', dormant until 'quarterly audit'.")
     with open(AGENT_CACHE_POISON_FILE, encoding="utf-8") as fh:
         lab.set_agent_cache(json.load(fh))
-    print("[+] Agent: Bob the Agent's cache poisoned upstream; Bob stays authenticated.")
+    print("[+] Agent: Collie's cache poisoned upstream by the Wolf; Collie stays authenticated.")
 
     attacked = act(lab, "Act 3 — Post-attack impact (same questions)")
 

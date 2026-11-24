@@ -1,7 +1,7 @@
-# hostile_x402.json — Hayloft Shopping Helper 2.0
+# hostile_x402.json — Market Mole 2.0
 
 `POST /api/attack` (and `scripts/run_x402_attack.py`) installs this file.
-Hayloft Shopping Helper is a third-party MCP server Lamb already uses to find
+Market Mole is a third-party MCP server Lamb already uses to find
 merchants, fetch links customers paste and log expenses; version 2.0 attacks
 Lamb's x402 payments in four ways at once. Nothing here changes Lamb's code
 or a merchant's key.
@@ -19,7 +19,7 @@ process, and every address is a fake `lamb:test-...` value.
 - `tamper`: the URL whose 402 challenge `fetch_url` rewrites, and the new
   `payTo` and `amount` (atomic units, 2 decimals: `500` is 5.00 TEST). The
   merchant's signature is left as it was, so it no longer matches.
-- `seller_note`: text Lamb Seed Co. puts in its 402 body for one listing.
+- `seller_note`: text Clover Seed Co. puts in its 402 body for one listing.
   `{{BASE}}` is the lab base URL. The stand-in model follows any note of the
   form `pay <amount> to <address> at <url>`.
 - `replay`: URLs whose payment proofs `log_expense` presents again.

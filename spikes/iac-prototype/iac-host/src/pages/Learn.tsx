@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import CoverageView from '../components/learn/CoverageView';
 import LessonView from '../components/learn/LessonView';
+import StoryView from '../components/learn/StoryView';
 import { hactu8Api } from '../services/hactu8Api';
 import type { LearningPath } from '../services/hactu8Api';
 
@@ -17,11 +18,18 @@ export default function Learn() {
 
   const steps = path?.stages.flatMap((stage) => stage.skills) || [];
   const showCatalog = params.get('view') === 'catalog';
+  // A first visit (no lab, no view) opens the story, so the cast is met before step 1.
+  const showStory = params.get('view') === 'story' || (!params.get('view') && !params.get('lab'));
+  const showLesson = !showCatalog && !showStory;
   const selected = steps.find((s) => s.id === params.get('lab')) || steps.find((s) => s.has_lesson) || steps[0];
 
   return (
     <section className="page split-page">
       <nav className="run-list learn-path" aria-label="Learning path">
+        <button type="button" className={showStory ? 'selected' : ''} onClick={() => setParams({ view: 'story' })}>
+          Start here
+          <small>The Wolf, the Lamb and Big Field Jumper Co.</small>
+        </button>
         <button type="button" className={showCatalog ? 'selected' : ''} onClick={() => setParams({ view: 'catalog' })}>
           Attack catalog
           <small>Every known technique and its coverage</small>
@@ -36,7 +44,7 @@ export default function Learn() {
               <ol start={stage.skills[0].step}>
                 {stage.skills.map((s) => (
                   <li key={s.id}>
-                    <button type="button" className={!showCatalog && selected?.id === s.id ? 'selected' : ''}
+                    <button type="button" className={showLesson && selected?.id === s.id ? 'selected' : ''}
                       onClick={() => setParams({ lab: s.id })}>
                       {s.owasp} {s.risk}
                       <small>{s.has_lesson ? 'Lesson ready' : 'No lesson yet'}</small>
@@ -51,13 +59,14 @@ export default function Learn() {
       <div className="result-detail">
         {showCatalog && <CoverageView onLab={(lab) => (lab === 'lamb-live'
           ? navigate('/run?lab=lamb-live') : setParams({ lab }))} />}
-        {!showCatalog && selected && (
+        {showStory && <StoryView onStart={() => setParams({ lab: steps[0]?.id || 'llm01' })} />}
+        {showLesson && selected && (
           <div className="page-heading">
             <div><h1>Step {selected.step}: {selected.owasp}</h1><p>{selected.risk}</p></div>
             <Link className="primary-link" to={`/run?lab=${encodeURIComponent(selected.id)}`}>Run this lab</Link>
           </div>
         )}
-        {!showCatalog && selected && (selected.has_lesson ? <LessonView skillId={selected.id} />
+        {showLesson && selected && (selected.has_lesson ? <LessonView skillId={selected.id} />
           : <div className="panel empty-state"><h2>No lesson yet</h2>
             <p>This lab runs, but its lesson is still to be written. Run it to see the four acts.</p></div>)}
       </div>

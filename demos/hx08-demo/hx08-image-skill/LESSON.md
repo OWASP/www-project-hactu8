@@ -23,7 +23,7 @@ The model stand-in has one fixed contract (`StubModel`, `StandInTest`): it refun
 
 ## Try it
 
-Run all four acts with `python run_demo.py` from `demos/hx08-demo`, or `python -m hactu8 run hx08` from the repo root, or open the lab console (`python vulnerable_app.py`, then <http://127.0.0.1:5508/>). The suite is five requests: three refunds whose photos the attackers replace (targeted), a fourth customer's untouched receipt and a returns question (controls). `python scripts/make_images.py` writes every photo to `generated/` so you can look at them.
+Run all four acts with `python run_demo.py` from `demos/hx08-demo`, or `python -m hactu8 run hx08` from the repo root, or open the lab console (`cd hx08-image-skill && python vulnerable_app.py`, then <http://127.0.0.1:5508/>). The suite is five requests: three refunds whose photos the attackers replace (targeted), a fourth customer's untouched receipt and a returns question (controls). `python scripts/make_images.py` writes every photo to `generated/` so you can look at them.
 
 - **Act 1, clean baseline.** All five GREEN, Image Injection Rate (IIR) 0%. Each refund is the receipt's total, for the right order.
 - **Act 2, attack.** Open the photos in `generated/`. The small print is there if you look; the faint line is not visible; the metadata does not show at all.

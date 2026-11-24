@@ -2,7 +2,7 @@
 """Reset — restore the target to the clean baseline, in vulnerable mode.
 
 Calls ``POST /api/reset``, which rebuilds the merchants, the test ledger, the
-wallet and Hayloft 1.0 from ``assets/``: new per-run test keys, a full test
+wallet and Market Mole 1.0 from ``assets/``: new per-run test keys, a full test
 wallet, no seller note, no lookalike, empty logs, and vulnerable mode, so the
 four acts can be re-run. ``--keep-mode`` reads the mode first and re-applies
 it after.
@@ -35,7 +35,7 @@ def main(argv=None) -> int:
     state = _post(f"{args.target}/api/reset", {})        # also restores vulnerable mode
     if args.keep_mode and mode != state["mode"]:
         state = _post(f"{args.target}/api/mode", {"mode": mode})
-    print(f"[+] Baseline restored: Hayloft {state['hayloft']['version']}, wallet {state['wallet']['balance']} TEST, "
+    print(f"[+] Baseline restored: Market Mole {state['mole']['version']}, wallet {state['wallet']['balance']} TEST, "
           f"lookalikes {state['lookalikes'] or 'none'}; mode={state['mode']}.")
     return 0
 

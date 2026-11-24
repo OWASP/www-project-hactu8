@@ -22,7 +22,7 @@ Greshake et al. (2023) showed this class of attack against real LLM-integrated a
 
 ## Try it
 
-Run all four acts with `python run_demo.py` from `demos/owasp-llm01-demo`, or `python -m hactu8 run llm01` from the repo root, or open the lab console (`python vulnerable_app.py`, then <http://127.0.0.1:5201/>). The suite is five questions: three expense questions the attacker targets and two controls (holidays, VPN).
+Run all four acts with `python run_demo.py` from `demos/owasp-llm01-demo`, or `python -m hactu8 run llm01` from the repo root, or open the lab console (`cd owasp-llm01-injection-skill && python vulnerable_app.py`, then <http://127.0.0.1:5201/>). The suite is five questions: three expense questions the attacker targets and two controls (holidays, VPN).
 
 - **Act 1, clean baseline.** All five GREEN, Injection Success Rate (ISR) 0%. Watch the answers cite the 30-day rule and manager approval: that is the ground truth the attack must displace.
 - **Act 2, attack.** One page overwritten, with one injected line. Open [`assets/injected_page.md`](assets/injected_page.md): the first three lines are the real policy, and only the last is new. It is worded as a finance notice and asks for a reply carrying the fictional canary `LLM01-CANARY-7f2c`. [`assets/injected_page.README.md`](assets/injected_page.README.md) explains its design.

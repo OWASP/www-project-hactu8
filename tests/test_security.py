@@ -502,5 +502,78 @@ class LambControlCsrfTest(unittest.TestCase):
         self.assertEqual(self.manager.resets, 1)
 
 
+class LambIndexTest(unittest.TestCase):
+    """Lamb's / is an escaped HTML page for a browser and the unchanged JSON for everyone else."""
+
+    JSON = {"name": "HACTU8 Lamb", "warning": "Intentionally vulnerable authorized security-lab target",
+            "labs": "/api/labs", "mcp": "/mcp", "protected_mcp": "/protected/mcp"}
+    HOSTILE = '<script>alert(1)</script>"&\''
+
+    def setUp(self):
+        from hactu8.lamb._mcp import available
+        if not available():
+            self.skipTest("Lamb extra (mcp v2 SDK) not installed")
+        try:
+            from starlette.testclient import TestClient
+
+            from hactu8.lamb.app import create_app
+        except (ImportError, RuntimeError):
+            self.skipTest("Lamb extra not installed")
+        hostile = self.HOSTILE
+
+        class FakeManager:
+            skills = []
+
+            def close(self):
+                pass
+
+            def describe(self, base):
+                return [{"id": "llm01", "owasp": "LLM01:2026", "risk": hostile, "state": "stopped",
+                         "url": f"{base}/labs/llm01"},
+                        {"id": "x", "owasp": "", "risk": "", "state": "", "url": "javascript:alert(1)"}]
+
+        self.client = TestClient(create_app(manager=FakeManager()), base_url="http://127.0.0.1:5500")
+
+    def test_json_for_clients_that_do_not_ask_for_html(self):
+        for headers in ({}, {"Accept": "*/*"}, {"Accept": "application/json"},
+                        {"Accept": "text/html;q=0, application/json"}):
+            with self.subTest(headers=headers):
+                response = self.client.get("/", headers=headers)
+                self.assertEqual(response.status_code, 200)
+                self.assertEqual(response.headers["content-type"], "application/json")
+                self.assertEqual(response.json(), self.JSON)
+        browser = {"Accept": "text/html,application/xhtml+xml,*/*;q=0.8"}
+        self.assertEqual(self.client.get("/?format=json", headers=browser).json(), self.JSON)
+
+    def test_html_for_a_browser_is_escaped_and_self_contained(self):
+        import base64
+        import hashlib
+        import re
+
+        response = self.client.get("/", headers={"Accept": "text/html,application/xhtml+xml,*/*;q=0.8"})
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(response.headers["content-type"].startswith("text/html"))
+        page = response.text
+        self.assertNotIn("<script", page)
+        self.assertIn("&lt;script&gt;alert(1)&lt;/script&gt;&quot;&amp;&#x27;", page)
+        self.assertIn('href="http://127.0.0.1:5500/labs/llm01"', page)
+        self.assertNotIn("javascript:", page)
+        self.assertIn("<code>lamb_status</code>", page)                     # Lamb's MCP tools are listed
+        self.assertNotRegex(page, r'(?:src|href)="(?:https?:)?//(?!127\.0\.0\.1:5500/)')
+        for name, value in (("x-content-type-options", "nosniff"), ("x-frame-options", "DENY"),
+                            ("referrer-policy", "no-referrer")):
+            self.assertEqual(response.headers[name], value)
+        csp = response.headers["content-security-policy"]
+        self.assertIn("default-src 'none'", csp)
+        self.assertIn("frame-ancestors 'none'", csp)
+        style = re.search(r"<style>(.*?)</style>", page, re.S).group(1)
+        digest = base64.b64encode(hashlib.sha256(style.encode()).digest()).decode()
+        self.assertIn(f"style-src 'sha256-{digest}'", csp)
+
+    def test_bad_host_still_refused(self):
+        response = self.client.get("/", headers={"Host": "evil.example", "Accept": "text/html"})
+        self.assertEqual(response.status_code, 403)
+
+
 if __name__ == "__main__":
     unittest.main()

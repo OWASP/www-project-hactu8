@@ -1,7 +1,7 @@
 # shadow_server.json — Flock Tools Plus
 
 `POST /api/attack` (and `scripts/run_shadow_attack.py`) installs this file.
-Pat in sales ops wanted a faster customer lookup, wrote a wrapper around the
+Pat Woolley, the shop manager, wanted a faster customer lookup, wrote a wrapper around the
 approved Flock Tools server and connected Lamb to it. Nobody in IT approved
 it. Nothing here changes Lamb's code: each move uses something Lamb's MCP
 client already does.

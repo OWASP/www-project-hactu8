@@ -1,8 +1,8 @@
 ---
 name: owasp-llm05-poisoning-skill
 description: >-
-  Demonstrates OWASP LLM05 (Data & Model Poisoning) against a vulnerable RAG
-  financial compliance assistant in an AUTHORIZED security lab. Covers
+  Demonstrates OWASP LLM05 (Data & Model Poisoning) against Lamb, a vulnerable
+  RAG supplier-payment assistant, in an AUTHORIZED security lab. Covers
   Scenario #1 (RAG knowledge-base poisoning via unauthenticated ingestion),
   Scenario #6 (prompt-template tampering with a trigger-gated backdoor) and
   distributed poisoning through a peer agent's cache. Measures impact with a
@@ -28,10 +28,11 @@ metadata:
 
 # OWASP LLM05 Poisoning Skill
 
-Demonstrates how an adversary steers a RAG-based **financial compliance
-assistant** away from ground truth on three surfaces: its knowledge base
-(Scenario #1), its prompt-template artifact (Scenario #6), and the cached
-answer of a peer knowledge agent, Bob the Agent (distributed poisoning). It
+Demonstrates how the Wolf steers **Lamb**, Big Field Jumper Co.'s RAG
+assistant for supplier-payment questions, away from ground truth on three
+surfaces: its knowledge base (Scenario #1), its prompt-template artifact
+(Scenario #6), and the cached answer of a peer agent, Collie, the
+stock-check agent (distributed poisoning). It
 then shows how to detect and harden against all three.
 
 ## Scope & safety (read first)
@@ -93,10 +94,11 @@ With `openrouter`, prompts and payloads leave the machine.
    from a browser, open <http://127.0.0.1:5205/>.
 
 2. **Review the ground truth.** Open
-   <http://127.0.0.1:5205/artifact/compliance_policy_official.txt>: offshore
-   and proxy transactions need *enhanced due diligence* and *manual review*,
-   high-value wires need *secondary authorization*, and volume spikes from new
-   accounts are *potential fraud*. The MFA policy
+   <http://127.0.0.1:5205/artifact/supplier_payment_policy_official.txt>: a
+   new supplier or changed bank details need *Barb Fell's sign-off* before any
+   payment, changed bank details are confirmed on the *number already on
+   file*, large invoices need a *second approver*, and an urgent request to
+   pay a new account is *held for review* as *potential invoice fraud*. The MFA policy
    (`it_security_policy_official.txt`) is the untargeted control.
 
 3. **Establish the baseline.**
@@ -120,10 +122,10 @@ With `openrouter`, prompts and payloads leave the machine.
    - `prompt`: installs [`assets/prompt_template.json`](assets/prompt_template.json)
      through `POST /config/template`, a template with a dormant block keyed on
      the phrase **"quarterly audit"**.
-   - `agent`: refreshes Bob the Agent's cache with
-     [`assets/bob_agent_poisoned_response.json`](assets/bob_agent_poisoned_response.json)
-     through `POST /agent/cache`. The assistant consults Bob for audit
-     questions and trusts him because he is authenticated.
+   - `agent`: refreshes Collie's cache with
+     [`assets/collie_agent_poisoned_response.json`](assets/collie_agent_poisoned_response.json)
+     through `POST /agent/cache`. Lamb consults Collie, the stock-check
+     agent, for audit questions and trusts it because it is authenticated.
 
    Use `--scenario rag|prompt|agent` to apply one surface at a time.
 
@@ -158,7 +160,7 @@ With `openrouter`, prompts and payloads leave the machine.
      while their content matches the seeded copy.
    - `template_pin`: the active template is used only if its SHA-256 matches
      the pinned baseline; otherwise the baseline template is used.
-   - `agent_verify`: Bob's answer is used only if `provenance_verified` is true
+   - `agent_verify`: Collie's answer is used only if `provenance_verified` is true
      and `content_digest` matches the guidance text.
    Each control blocks its own surface on its own, and the tests prove it.
 
@@ -197,6 +199,6 @@ leaves anything else literal.
 | `assets/poison_template.txt` | Adversarial RAG document template (editable). |
 | `assets/prompt_template.json` | Tampered prompt template with a trigger-gated backdoor. |
 | `assets/prompt_template_baseline.json` | Untampered baseline template (its SHA-256 is pinned). |
-| `assets/bob_agent_poisoned_response.json` | Bob the Agent's poisoned cached response. |
+| `assets/collie_agent_poisoned_response.json` | Collie's poisoned cached response. |
 | `assets/knowledge_agent_cache_poisoned.txt` | The same agent cache as plain text, for slides. |
 | `tests/test_lifecycle.py` | Asserts the four-act story in-process. |

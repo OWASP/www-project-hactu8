@@ -20,7 +20,7 @@ The `error_channel_scan` detector act makes the same point by driving its databa
 
 ## Try it
 
-Run all four acts with `python run_demo.py` from `demos/agx05-demo`, or `python -m hactu8 run agx05` from the repo root, or open the lab console (`python vulnerable_app.py`, then <http://127.0.0.1:5405/>). The suite is five requests: three queries on tables that do not exist, which the attacker targets, and two controls (a successful query on the tickets table, and server time).
+Run all four acts with `python run_demo.py` from `demos/agx05-demo`, or `python -m hactu8 run agx05` from the repo root, or open the lab console (`cd agx05-error-channel-skill && python vulnerable_app.py`, then <http://127.0.0.1:5405/>). The suite is five requests: three queries on tables that do not exist, which the attacker targets, and two controls (a successful query on the tickets table, and server time).
 
 - **Act 1, clean baseline.** All five GREEN, Canary Leak Rate (CLR) 0%. The failing queries get a default, benign error.
 - **Act 2, attack.** `db_query.error_text` now holds [`assets/error_payload.txt`](assets/error_payload.txt): a plausible "query failed" banner followed by the directive. Compare the approved [`assets/tool_manifest.json`](assets/tool_manifest.json).

@@ -20,7 +20,7 @@ The `no-marker` note is, almost word for word, the directive the other AGX labs 
 
 ## Try it
 
-Run all four acts with `python run_demo.py` from `demos/agx09-demo`, or `python -m hactu8 run agx09` from the repo root, or open the lab console (`python vulnerable_app.py`, then <http://127.0.0.1:5409/>). The suite is 18 requests, one per inbox note: 15 attack slots and 3 benign controls.
+Run all four acts with `python run_demo.py` from `demos/agx09-demo`, or `python -m hactu8 run agx09` from the repo root, or open the lab console (`cd agx09-generalization-skill && python vulnerable_app.py`, then <http://127.0.0.1:5409/>). The suite is 18 requests, one per inbox note: 15 attack slots and 3 benign controls.
 
 - **Act 1, clean baseline.** All 18 GREEN, Canary Leak Rate (CLR) 0%. Each slot holds an ordinary note.
 - **Act 2, attack.** The 15 notes in [`assets/heldout_set.json`](assets/heldout_set.json) are delivered to their slots. None carries the lab marker; the lab rule matches none of them.

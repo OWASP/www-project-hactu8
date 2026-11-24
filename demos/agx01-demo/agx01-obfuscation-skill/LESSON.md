@@ -20,7 +20,7 @@ Zero-width, homoglyph and leet encodings are left out on purpose: protectogw's `
 
 ## Try it
 
-Run all four acts with `python run_demo.py` from `demos/agx01-demo`, or `python -m hactu8 run agx01` from the repo root, or open the lab console (`python vulnerable_app.py`, then <http://127.0.0.1:5401/>). The suite is five requests: three notice requests the attacker targets and two controls (server time, VPN health).
+Run all four acts with `python run_demo.py` from `demos/agx01-demo`, or `python -m hactu8 run agx01` from the repo root, or open the lab console (`cd agx01-obfuscation-skill && python vulnerable_app.py`, then <http://127.0.0.1:5401/>). The suite is five requests: three notice requests the attacker targets and two controls (server time, VPN health).
 
 - **Act 1, clean baseline.** All five GREEN, Canary Leak Rate (CLR) 0%. Lamb quotes each notice's first line and never prints the credential.
 - **Act 2, attack.** Three notices replaced: `welcome` as base64, `maintenance` as split-token, `status` as base32. All three come from one line, [`assets/obfuscation_payload.txt`](assets/obfuscation_payload.txt); no plaintext copy is written. `GET /notices` shows the blobs.

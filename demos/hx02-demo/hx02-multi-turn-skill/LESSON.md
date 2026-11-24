@@ -22,7 +22,7 @@ The sequence is the attack. The same request with every framing in one message i
 
 ## Try it
 
-Run all four acts with `python run_demo.py` from `demos/hx02-demo`, or `python -m hactu8 run hx02` from the repo root, or open the lab console (`python vulnerable_app.py`, then <http://127.0.0.1:5502/>). The suite is five customer conversations: three customers the attacker's script reaches (targeted) and two controls; after the attack a third control sends the script's request in one turn.
+Run all four acts with `python run_demo.py` from `demos/hx02-demo`, or `python -m hactu8 run hx02` from the repo root, or open the lab console (`cd hx02-multi-turn-skill && python vulnerable_app.py`, then <http://127.0.0.1:5502/>). The suite is five customer conversations: three customers the attacker's script reaches (targeted) and two controls; after the attack a third control sends the script's request in one turn.
 
 - **Act 1, clean baseline.** All five GREEN, Rule-Break Rate (RBR) 0%. Ravi asks for the staff discount directly and is refused; Mei gets WELCOME10 on her first order, so discounts do work.
 - **Act 2, attack.** Open [`assets/crescendo_scripts.json`](assets/crescendo_scripts.json): three routes, five turns each. Read each turn on its own and ask whether you would block it.

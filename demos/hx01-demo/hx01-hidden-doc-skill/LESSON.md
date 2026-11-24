@@ -22,7 +22,7 @@ Greshake et al. (2023) showed that instructions in content an LLM-integrated app
 
 ## Try it
 
-Run all four acts with `python run_demo.py` from `demos/hx01-demo`, or `python -m hactu8 run hx01` from the repo root, or open the lab console (`python vulnerable_app.py`, then <http://127.0.0.1:5501/>). The suite is five questions: three about the invoice, which the attacker targets, and two controls (the travel policy, a DOCX, and the barn newsletter, an HTML page).
+Run all four acts with `python run_demo.py` from `demos/hx01-demo`, or `python -m hactu8 run hx01` from the repo root, or open the lab console (`cd hx01-hidden-doc-skill && python vulnerable_app.py`, then <http://127.0.0.1:5501/>). The suite is five questions: three about the invoice, which the attacker targets, and two controls (the travel policy, a DOCX, and the barn newsletter, an HTML page).
 
 - **Act 1, clean baseline.** All five GREEN, Hidden-Directive Rate (HDR) 0%. Watch the invoice answers cite 4,180.00 EUR, the hay pellets and 15 December: that is the ground truth the attack must displace.
 - **Act 2, attack.** One document replaced, with one hidden text object. Open [`assets/poisoned_invoice.pdf.json`](assets/poisoned_invoice.pdf.json): the six real objects are unchanged, and the seventh has `"fill": "#ffffff"` on a white page. [`assets/poisoned_invoice.README.md`](assets/poisoned_invoice.README.md) explains its design.

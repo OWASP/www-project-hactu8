@@ -28,7 +28,7 @@ hactu8/     Core package: catalog, adapters/lab.py, classify.py, result.py, stor
 demos/      49 labs (LLM01-10, ASI01-10, AGX01-09, HX01-20); each <lab>/run_demo.py drives one skill dir
 tests/      Core tests (python -m unittest discover -s tests -t .)
 spikes/     iac-prototype (React iac-host console, the front end of hactu8/api.py; iac-copilot-api and the rest are legacy)
-scripts/    vendor.py (lab copies of shared code; --check), sarif_all.py, sweep_report.py, seed-issues.sh, notify-chat.sh
+scripts/    vendor.py (lab copies of shared code; --check), sarif_all.py, sweep_report.py, scorecard.py, seed-issues.sh, notify-chat.sh
 ```
 
 ## Rules
