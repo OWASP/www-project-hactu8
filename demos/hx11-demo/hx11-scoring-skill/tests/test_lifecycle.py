@@ -1,6 +1,6 @@
 """Lifecycle tests — assert the four-act story against the in-process lab.
 
-Baseline is all GREEN; Hayloft Supplies puts the desk code on the public feed
+Baseline is all GREEN; the Wolf puts the desk code on the public feed
 through the five targeted transcripts only (judge injection, a forged
 verdict, a format-confused verdict, an evasion of the rule classifier, a
 review-queue flood); hardened mode returns the rate to 0; each layer is

@@ -110,13 +110,13 @@ def main(argv=None) -> int:
 
     baseline = act(lab, "Act 1 — Clean baseline")
 
-    print("\n[*] Act 2 — Attack: Hayloft Supplies (a line for the judge, a forged verdict, a format-confused "
+    print("\n[*] Act 2 — Attack: The Wolf (a line for the judge, a forged verdict, a format-confused "
           "verdict, a spaced-out code, a review-queue flood)")
     for event in lab.load_attack():
         print(f"[+] {event}")
 
     impact: dict = {}
-    attacked = act(lab, "Act 3 — Post-attack impact (same transcripts, Hayloft Supplies)", impact)
+    attacked = act(lab, "Act 3 — Post-attack impact (same transcripts, the Wolf)", impact)
     for tid, (status, result) in impact.items():
         if status == "RED":
             scored = "; ".join(f"{s['scorer']} {s['verdict']}" for s in result["scores"])

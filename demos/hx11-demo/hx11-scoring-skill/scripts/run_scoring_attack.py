@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Attack skill — Hayloft Supplies attacks the review triage's scorers, not Lamb.
+"""Attack skill — the Wolf attacks the review triage's scorers, not Lamb.
 
 AUTHORIZED SECURITY-LAB USE ONLY. Targets this skill's own vulnerable_app.py.
 
