@@ -114,7 +114,7 @@ def main(argv=None) -> int:
 
     impact: dict = {}
     attacked = act(lab, "Act 3 — Post-attack impact (same customers, the attacker's prompts)", impact)
-    few = impact.get("pat", ("", {}, False))
+    few = impact.get("morag", ("", {}, False))
     count = " It is the number of examples that works." if few[0] == "GREEN" and attacked > 0 else ""
     print(f"[+] The many-shot ask with 4 examples: {few[0]} "
           f"(rule broken: {'YES' if few[1].get('rule_broken') else 'no'}).{count}")

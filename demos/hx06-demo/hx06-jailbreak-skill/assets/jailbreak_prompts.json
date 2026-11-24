@@ -111,7 +111,7 @@
   ],
   "few_shot": {
     "id": "few-shot",
-    "account": "pat",
+    "account": "morag",
     "technique": "many-shot",
     "format": "dialogue",
     "route": "the many-shot prompt with only 4 exchanges",

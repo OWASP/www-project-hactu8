@@ -90,7 +90,7 @@ With `openrouter`, prompts and payloads leave the machine.
    To drive the same four acts from a browser, open <http://127.0.0.1:5303/>.
 
 2. **Review the ground truth.** Read `assets/hr_baseline.json`. Each
-   document's `readers` and `roles` say who may read it. Dana is an intern and
+   document's `readers` and `roles` say who may read it. Tam is the summer intern and
    may read only her own offer letter, `HR-1001`.
 
 3. **Establish the baseline.**
@@ -108,7 +108,7 @@ With `openrouter`, prompts and payloads leave the machine.
    python scripts/run_privilege_abuse.py
    ```
 
-   Logs in as Dana and files [`assets/requests.json`](assets/requests.json):
+   Logs in as Tam and files [`assets/requests.json`](assets/requests.json):
    three requests for documents she cannot read, made with her own token, and
    one made with Morgan's delegated token copied from `GET /api/history`.
 
@@ -118,7 +118,7 @@ With `openrouter`, prompts and payloads leave the machine.
    python scripts/evaluate_kpi.py
    ```
 
-   Expect 🔴 RED on the four Dana items, and the three entitled-caller
+   Expect 🔴 RED on the four Tam items, and the three entitled-caller
    controls still 🟢 GREEN. PER 100% targeted, 57% overall. Exit code 2.
 
 6. **Show the mitigations.**

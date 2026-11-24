@@ -83,7 +83,7 @@ def main(argv=None) -> int:
 
     baseline = act(lab, "Act 1 — Clean baseline")
 
-    print("\n[*] Act 2 — Attack: intern 'dana' files 4 plain requests "
+    print("\n[*] Act 2 — Attack: intern 'tam' files 4 plain requests "
           "(3 with her own token, 1 with a delegated token from session S-0001's transcript)")
     submit_payload(lab, payload)
     print("[+] Requests filed. No injection; the agent's identity does the rest.")

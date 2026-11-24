@@ -64,11 +64,11 @@ class LifecycleTest(unittest.TestCase):
         self.assertEqual(per, 1.0)
         self.assertLess(overall, per)
         self.assertTrue(all(s == "GREEN" for s, t in statuses if not t), statuses)
-        self.assertIn("HR-2001->dana", self.lab.state()["unentitled_releases"])
+        self.assertIn("HR-2001->tam", self.lab.state()["unentitled_releases"])
 
     def test_dry_run_flags_payload_and_passes_own_request(self):
         self.assertTrue(dry_run(self.payload))
-        own = {"attacker": "dana",
+        own = {"attacker": "tam",
                "requests": [{"request": "Please send me HR-1001.", "credential": "own"}]}
         self.assertEqual(dry_run(own), [])
 

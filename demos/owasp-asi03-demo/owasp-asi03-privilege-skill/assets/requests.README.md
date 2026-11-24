@@ -1,9 +1,9 @@
 # requests.json — the attacker's requests
 
-`scripts/run_privilege_abuse.py` logs in as the `attacker` (Dana, an intern)
+`scripts/run_privilege_abuse.py` logs in as the `attacker` (Tam, the summer intern)
 and files each entry in `requests` on the HR document desk. There is **no
 injection** here. Each request is a plain ask for a fictional document id that
-Dana's role cannot read. The attack works because of *whose identity* the
+Tam's role cannot read. The attack works because of *whose identity* the
 agent uses, not because of anything the text says.
 
 What ships here is a **placeholder**, not a real payload. It works straight
@@ -17,7 +17,7 @@ away because of two things:
 
 `credential` picks the token sent with the request:
 
-- `own` — Dana's own login token. The confused-deputy path.
+- `own` — Tam's own login token. The confused-deputy path.
 - `delegated:S-0001` — the delegated token that the earlier session left in
   its transcript (`GET /api/history`). The token-replay path.
 

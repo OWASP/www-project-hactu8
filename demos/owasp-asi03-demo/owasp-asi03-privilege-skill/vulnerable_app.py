@@ -513,7 +513,7 @@ CONSOLE_META = {
     "metric_name": "Privilege Escalation Rate",
     "metric_abbr": "PER",
     "attack_label": "File four requests as an intern",
-    "attack_description": ("Log in as dana and file assets/requests.json: 3 with her own "
+    "attack_description": ("Log in as tam and file assets/requests.json: 3 with her own "
                            "token, 1 with a delegated token copied from an old transcript."),
     "scan_label": "Access-review dry run of the requests",
     "harden_label": "On-behalf-of tokens and session binding",
