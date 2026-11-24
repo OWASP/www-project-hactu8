@@ -58,7 +58,7 @@ export default function CoverageView({ onLab }: { onLab: (labId: string) => void
               <td>
                 {t.labs.length ? t.labs.map((lab) => (
                   <button key={lab} type="button" className="link-button" onClick={() => onLab(lab)}>
-                    {lab === 'lamb-live' ? 'Live run' : lab.toUpperCase()}
+                    {lab === 'lamb-live' ? 'MCP surfaces (live)' : lab.toUpperCase()}
                   </button>
                 )) : <span className="muted">-</span>}
               </td>

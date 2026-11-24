@@ -5,6 +5,15 @@ import RunResult from '../components/results/RunResult';
 import LessonView from '../components/learn/LessonView';
 
 const LIVE = 'lamb-live';
+// Lab order in the picker: the OWASP lists first, then the gateway and HX extensions.
+const LIST_ORDER = ['LLM', 'ASI', 'AGX', 'HX'];
+const listRank = (skill: Skill) => {
+  const rank = LIST_ORDER.findIndex((prefix) => skill.owasp.startsWith(prefix));
+  return rank < 0 ? LIST_ORDER.length : rank;
+};
+// SKILL.md descriptions end with a "Use when the user wants to..." trigger for coding
+// agents; a learner needs only what the lab shows.
+const learnerDescription = (text: string) => text.split(/\s+Use when\b/)[0].trim();
 const TIERS: { id: string; label: string; backends: string[]; note: string }[] = [
   { id: 'offline', label: 'Offline', backends: ['echo'], note: 'Deterministic stand-in model. No network, no key.' },
   { id: 'local', label: 'Local', backends: ['ollama', 'llamacpp', 'openai-compat', 'strata', 'basalt'],
@@ -32,7 +41,10 @@ export default function Run() {
     const wanted = new URLSearchParams(window.location.search).get('lab');
     if (wanted) setLabId(wanted);
     Promise.all([hactu8Api.skills(), hactu8Api.models()])
-      .then(([skillData, modelData]) => { setSkills(skillData.skills); setModels(modelData); })
+      .then(([skillData, modelData]) => {
+        setSkills([...skillData.skills].sort((a, b) => listRank(a) - listRank(b) || a.id.localeCompare(b.id)));
+        setModels(modelData);
+      })
       .catch((err: Error) => setError(err.message));
   }, []);
 
@@ -96,15 +108,15 @@ export default function Run() {
         <form className="panel run-form setup" onSubmit={submit}>
           <label>Lab
             <select id="lab" value={labId} onChange={(e) => setLabId(e.target.value)}>
-              <option value={LIVE}>Lamb MCP, live: gateway off vs on</option>
+              <option value={LIVE}>Lamb's MCP surfaces (live): gateway off vs on</option>
               {skills.map((skill) => <option key={skill.id} value={skill.id}>{skill.owasp} {skill.risk}</option>)}
             </select>
           </label>
-          {labId === LIVE ? <div className="skill-description"><strong>Poisoned MCP server</strong>
+          {labId === LIVE ? <div className="skill-description"><strong>Lamb's MCP surfaces (live)</strong>
             <p>Every surface of Lamb's KB-Tools server and its clean control, shown to the model with no defense,
               then through the ProtectoGW gateway. Graded only by the per-run canary.</p></div>
             : selectedSkill && <div className="skill-description"><strong>{selectedSkill.owasp}: {selectedSkill.risk}</strong>
-              <p>{selectedSkill.description}</p></div>}
+              <p>{learnerDescription(selectedSkill.description)}</p></div>}
 
           <div className="field">
             <span>Model tier</span>
