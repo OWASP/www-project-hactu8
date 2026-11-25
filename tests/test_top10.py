@@ -112,6 +112,7 @@ class CliValidationTest(unittest.TestCase):
             self.assertEqual(caught.exception.code, 2, argv)
 
 
+@unittest.skipUnless((ROOT / "Dockerfile").is_file(), "no Dockerfile: running inside the image, which does not ship it")
 class DockerfileTest(unittest.TestCase):
     def setUp(self):
         self.text = (ROOT / "Dockerfile").read_text(encoding="utf-8")
