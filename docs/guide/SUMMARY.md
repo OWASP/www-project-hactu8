@@ -1,6 +1,7 @@
 # Table of contents
 
 * [The HACTU8 guide](README.md)
+* [Roadmap](roadmap.md)
 
 ## The story
 
@@ -29,3 +30,14 @@
   * [Basics: Lamb learns to talk](learning-path/basics.md)
   * [Agentic: Lamb gets hands](learning-path/agentic.md)
   * [Commerce and scoring: Lamb gets a purse](learning-path/commerce.md)
+
+## Your organization
+
+* [Testing your own organization](your-organization/README.md)
+  * [Your models](your-organization/models.md)
+  * [Live tests and the Wolf](your-organization/live-and-wolf.md)
+  * [Evidence and reports](your-organization/evidence.md)
+* [Extending HACTU8](extending/README.md)
+  * [Anatomy of a lab](extending/anatomy.md)
+  * [Writing your own lab](extending/new-lab.md)
+  * [Automation](extending/automation.md)
