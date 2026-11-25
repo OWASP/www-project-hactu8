@@ -24,7 +24,7 @@ By now the farm has learned a great deal. So, of course, has the Wolf.
 
 Each lab is a short scene in Lamb's year. You will see the farm working normally, then the Wolf arrives, then you see what changed, and finally you switch on a defense and watch the same scene again. The people will be familiar. What happens to them will not be.
 
-You do not need to play the labs in order, but the story makes most sense if you do. The console's **Learn** page lists them in path order.
+You do not need to play the labs in order, but the story makes most sense if you do. The console's **Learn** page lists them in path order, and so does `python -m hactu8 path`.
 
 When you are ready, start at the beginning: the first lab begins on an ordinary day at the farm.
 

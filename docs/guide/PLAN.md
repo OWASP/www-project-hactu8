@@ -21,9 +21,9 @@ Status: **done**, **next** or **later**.
 | --- | --- | --- | --- | --- |
 | Welcome | What HACTU8 is, who the guide is for, how to read it | everyone | `README.md` | done (short) |
 | 1. The story | Big Field; Too much paper; A lamb at the gate; The people of Big Field; Something at the edge of the field; The year ahead | learners | `docs/persona.md`, lab inventory (to avoid overlap) | done |
-| 2. Getting started | Install; first run (`run llm01`); the console tour (Learn, Run, Results, Reports, Registry, Settings) | everyone | `README.md`, `docs/demo-script.md`, `docs/deploy.md` | next |
-| 3. How a lab works | The four acts; canaries and why RED means proof; GREEN, RED and controls; what "defended" means; false positives in the defense versus in the grader | learners | StoryView, `hactu8/catalog.py`, accuracy principle | next |
-| 4. The learning path | One page per stage (Basics, Agentic, Commerce and scoring): what the stage teaches, the labs in order with a one-line, spoiler-free teaser and a link to each `LESSON.md` | learners | `hactu8.path` in each `SKILL.md`, `STAGES` | next |
+| 2. Getting started | Install; first run (`run llm01`); the console tour (Learn, Run, Results, Reports, Registry, Settings) | everyone | `README.md`, `docs/demo-script.md`, `docs/deploy.md` | done |
+| 3. How a lab works | The four acts; canaries and why RED means proof; GREEN, RED and controls; what "defended" means; false positives in the defense versus in the grader | learners | StoryView, `hactu8/catalog.py`, `hactu8/result.py`, `hactu8/classify.py` | done |
+| 4. The learning path | One page per stage (Basics, Agentic, Commerce and scoring): what the stage teaches, the labs in order with a one-line, spoiler-free teaser and a link to each `LESSON.md` | learners | `hactu8.path` in each `SKILL.md`, `STAGES` | done |
 | 5. The Wolf | Running the AI attacker; the safety screen; reading the den | learners, operators | `docs/wolf.md` | later |
 | 6. Defenses | ProtectoGW and the other defenses; `hactu8 defenses` and `hactu8 coverage`; where defenses miss and why that is shown | learners, operators | `hactu8/protectogw/README.md`, `docs/evidence/2026-11-24-scorecard.md` | later |
 | 7. Real models | Router tiers, local engines, cloud opt-in and spend caps | operators | `hactu8.yaml`, `docs/local-engines.md` | later |
