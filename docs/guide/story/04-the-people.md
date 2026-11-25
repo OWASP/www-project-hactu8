@@ -1,60 +1,44 @@
 # The people of Big Field
 
-These are the people you will meet in the labs. Each of them wants something from Lamb, and each of them is right to want it. Where they end up is for the labs to tell.
+Each of these people wants something from Lamb, and each is right to want it. Where they end up is for the labs to tell.
 
 ## Barb Fell, operations lead
 
-Third generation at Big Field, and the first to run it as a company. Barb owns the accounts Lamb acts for, approves what Lamb asks to do and carries the responsibility when something goes wrong. When a lesson says "the operator" or "the user", it means Barb.
+Third generation at Big Field and the first to run it as a company. Barb owns the accounts Lamb acts for and approves what it asks to do. When a lesson says "the operator" or "the user", it means Barb. Practical, tired and fair, Barb agreed to Lamb because the alternative was drowning.
 
-Barb is practical, tired and fair. They agreed to Lamb because the alternative was drowning, and they set one rule: help, and ask before doing anything that mattered.
-
-**Where Barb starts:** relieved. For the first time in years the inbox is under control.
-**What Barb wants:** a farm that runs without them answering emails at midnight.
-**The question Barb carries:** how much can you hand over to something you cannot watch every minute, and how do you know when you have handed over too much?
+- **Wants:** a farm that runs without them answering emails at midnight.
+- **Carries the question:** how much can you hand over to something you cannot watch every minute?
 
 ## Pat Woolley, shop manager
 
-Pat runs the farm shop, the till, the online store and most of the conversations with customers. Pat started the wiki, argued for Lamb at the kitchen table and is, by some distance, Lamb's biggest fan.
+Pat runs the shop, the till and the online store, started the wiki, and is Lamb's biggest fan. If there is a new tool, Pat has tried it. If there is a shortcut, Pat has found it. Customers adore Pat, because Pat always finds a way to say yes.
 
-Pat loves anything that saves a trip to the back office. If there is a new tool, Pat has tried it. If there is a shortcut, Pat has found it. Customers adore Pat, because Pat will always find a way to say yes.
-
-**Where Pat starts:** delighted. Lamb is everything Pat promised it would be.
-**What Pat wants:** a shop where nobody ever has to wait.
-**The question Pat carries:** is every shortcut a good one?
+- **Wants:** a shop where nobody ever has to wait.
+- **Carries the question:** is every shortcut a good one?
 
 ## Tam, summer intern
 
-Tam grew up on the next farm along, is studying computing at college and is spending the summer at Big Field to get some real experience. Tam is bright, curious and keen to prove themselves useful, and has a habit of finding out how things work by trying them.
+Tam grew up on the next farm along, studies computing, and is spending the summer at Big Field. Bright, curious and keen to prove themselves, Tam finds out how things work by trying them, and believes they understand Lamb from the inside.
 
-Tam is the only person at the farm who understands Lamb from the inside, or at least believes they do.
-
-**Where Tam starts:** thrilled to be trusted with real systems.
-**What Tam wants:** to be more than the intern by the end of the summer.
-**The question Tam carries:** where does curiosity end and overreach begin?
+- **Wants:** to be more than the intern by the end of the summer.
+- **Carries the question:** where does curiosity end and overreach begin?
 
 ## Ewan Shearer, HR partner
 
-Ewan works with Big Field part time and looks after contracts, payroll and staff records. Ewan keeps the most sensitive paperwork in a locked drawer and reads every policy before signing it.
+Ewan works part time on contracts, payroll and staff records, keeps the sensitive files in a locked drawer, and reads every policy before signing it. Ewan is not against Lamb, but wants someone to explain, in plain words, who can see what.
 
-Ewan was the quiet voice against naming the assistant, and remains the farm's resident sceptic. Ewan is not against Lamb. Ewan simply wants someone to explain, in plain words, who can see what.
-
-**Where Ewan starts:** wary, and slightly outvoted.
-**What Ewan wants:** for the people whose records the farm holds to be safe.
-**The question Ewan carries:** is caution a brake on the farm, or the thing that keeps it on the road?
+- **Wants:** the people whose records the farm holds to be safe.
+- **Carries the question:** is caution a brake on the farm, or what keeps it on the road?
 
 ## The customers
 
-**Dana** is a knitter from the next county who buys ewe mix and hay for a small flock of their own, and the occasional jumper as a treat. Dana is Big Field's most loyal online customer, and the one most likely to message Lamb at an odd hour.
+**Dana** is a knitter from the next county with a small flock of their own, who buys ewe mix and hay and is the customer most likely to message Lamb at an odd hour. **Ravi** and **Mei** are online regulars. **Morag** has bought a Big Field jumper every year since Nan knitted them by hand, and still prefers to phone.
 
-**Ravi** and **Mei** are regulars of the online shop: one buys gifts every winter, the other buys yarn by the bag. **Morag** is the farm's oldest customer, who has bought a Big Field jumper every year since Nan Fell knitted them by hand, and who still prefers to phone.
-
-The customers are never staff, and they never approve anything. They trust the farm with their orders, their addresses and their accounts, and they assume, reasonably, that Lamb is on their side.
+Customers are never staff and never approve anything. They trust the farm with their orders, addresses and accounts, and assume Lamb is on their side.
 
 ## The suppliers
 
-**Hayloft Supplies** is the feed wholesaler that has supplied Big Field for longer than Barb has been running it. The relationship began with a handshake and a phone number. Today Hayloft has its own order assistant, and Lamb sends it the reorders.
-
-The farm also relies on a ring of smaller suppliers, each with one job: **Tally Analytics** draws the spending charts, **Market Mole** helps find the best price, **Modelbarn** supplies models, **Clover Seed Co.** sells seed and **Gatepost Tools** makes the tool package Lamb uses for routine office work. And **Collie**, named after the farm's old sheepdog, is the agent Lamb asks when it needs to check stock.
+**Hayloft Supplies**, the feed wholesaler, has served Big Field since before Barb ran it. It began with a handshake. Today Lamb sends Hayloft's order assistant the reorders. Smaller suppliers each have one job: **Tally Analytics** draws the spending charts, **Market Mole** finds the best price, **Modelbarn** supplies models, **Clover Seed Co.** sells seed and **Gatepost Tools** makes the tool package Lamb uses for office work. **Collie**, named after the farm's old sheepdog, is the agent Lamb asks about stock.
 
 Every one of them is a business the farm chose to trust. Every one of them sends text that Lamb reads.
 
