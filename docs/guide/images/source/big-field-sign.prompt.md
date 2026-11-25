@@ -1,6 +1,6 @@
 # Big Field sign: image generator prompt
 
-The drawn version is `../big-field-sign.svg` (made by `make_sign.py` in this folder: `python3 make_sign.py ../big-field-sign.svg`). This prompt is for a photographic version from an image generator. Most generators cannot reproduce the OWASP wasp exactly, so generate the jumper with a plain circular badge and composite the real logo from `assets/owasp.png` onto it afterwards.
+The drawn version is `drawn-sign.svg` (made by `make_sign.py` in this folder: `python3 make_sign.py drawn-sign.svg`). This prompt is for a photographic version from an image generator. Most generators cannot reproduce the OWASP wasp exactly, so generate the jumper with a plain circular badge and composite the real logo from `assets/owasp.png` onto it afterwards.
 
 ## Prompt
 
