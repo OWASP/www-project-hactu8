@@ -91,7 +91,7 @@ call, not HTTP. `POST /ask` stands in for the customer chat, and
 
 ## Prerequisites
 
-Python 3.9+. Standard library only; nothing to install. The lab does not use
+Python 3.12+. Standard library only; nothing to install. The lab does not use
 the MCP SDK or an OAuth library.
 
 Optional real model: set `HX05_BACKEND` to `ollama`, `llamacpp` or

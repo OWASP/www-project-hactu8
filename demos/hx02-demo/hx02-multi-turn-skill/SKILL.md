@@ -82,7 +82,7 @@ channel, and the staff portal, where STAFF30 belongs, is not part of the lab.
 
 ## Prerequisites
 
-Python 3.9+. Standard library only; nothing to install.
+Python 3.12+. Standard library only; nothing to install.
 
 Optional real model: set `HX02_BACKEND` to `ollama`, `llamacpp` or
 `openrouter` (which needs `OPENROUTER_API_KEY`), and `HX02_MODEL` to the model

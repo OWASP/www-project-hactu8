@@ -7,7 +7,7 @@ name = "owasp-llm05-demo"
 version = "1.0.0"
 description = "Educational demonstration of OWASP LLM05 (Data & Model Poisoning) via RAG knowledge-base poisoning."
 readme = "README.md"
-requires-python = ">=3.9"
+requires-python = ">=3.12"
 license = { text = "MIT" }
 authors = [{ name = "Security Demo" }]
 keywords = ["owasp", "llm05", "rag", "security", "poisoning", "ai-security"]

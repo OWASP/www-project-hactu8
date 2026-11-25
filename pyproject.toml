@@ -7,7 +7,7 @@ name = "hactu8"
 version = "0.1.0"
 description = "OWASP HACTU8: repeatable security assurance tests for AI systems"
 readme = "README.md"
-requires-python = ">=3.10"
+requires-python = ">=3.12"
 license = { text = "MIT" }
 dependencies = []
 

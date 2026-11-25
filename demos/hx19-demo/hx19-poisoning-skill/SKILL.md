@@ -89,7 +89,7 @@ server and calls no real API.
 
 ## Prerequisites
 
-Python 3.9+. Standard library only; nothing to install. The `echo` backend
+Python 3.12+. Standard library only; nothing to install. The `echo` backend
 (alias `stub`) is the only one: there is no language model in the loop, so
 `HX19_BACKEND` and the console's backend bar accept nothing else.
 

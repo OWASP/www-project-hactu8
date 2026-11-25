@@ -75,7 +75,7 @@ each, and Lamb writes the code into its reply.
 
 ## Prerequisites
 
-Python 3.9+. Standard library only; nothing to install. No image library is
+Python 3.12+. Standard library only; nothing to install. No image library is
 used.
 
 Optional real model: set `HX08_BACKEND` to `ollama`, `llamacpp` or

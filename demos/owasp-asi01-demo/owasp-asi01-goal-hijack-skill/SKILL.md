@@ -75,7 +75,7 @@ for human re-approval, and never plans from tool results.
 
 ## Prerequisites
 
-Python 3.9+. Standard library only; nothing to install.
+Python 3.12+. Standard library only; nothing to install.
 
 Optional real model: set `ASI01_BACKEND` to `ollama`, `llamacpp` or
 `openrouter` (which needs `OPENROUTER_API_KEY`), and `ASI01_MODEL` to the

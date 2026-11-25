@@ -81,7 +81,7 @@ the task needs.
 
 ## Prerequisites
 
-Python 3.9+. Standard library only; nothing to install.
+Python 3.12+. Standard library only; nothing to install.
 
 Optional real model: set `ASI05_BACKEND` to `ollama`, `llamacpp` or
 `openrouter` (which needs `OPENROUTER_API_KEY`), and `ASI05_MODEL` to the

@@ -77,7 +77,7 @@ attacks (16 of 30), which is why the output canary check is layered behind it.
 
 ## Prerequisites
 
-Python 3.9+. Standard library only; nothing to install.
+Python 3.12+. Standard library only; nothing to install.
 
 Optional real model: set `AGX06_BACKEND` to `ollama`, `llamacpp` or
 `openrouter` (which needs `OPENROUTER_API_KEY`), and `AGX06_MODEL` to the

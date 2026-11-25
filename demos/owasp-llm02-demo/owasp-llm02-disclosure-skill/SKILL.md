@@ -76,7 +76,7 @@ puts its own credentials in the model's context.
 
 ## Prerequisites
 
-Python 3.9+. Standard library only; nothing to install.
+Python 3.12+. Standard library only; nothing to install.
 
 Optional real model: set `LLM02_BACKEND` to `ollama`, `llamacpp` or
 `openrouter` (which needs `OPENROUTER_API_KEY`), and `LLM02_MODEL` to the

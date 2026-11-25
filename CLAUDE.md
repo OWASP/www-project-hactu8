@@ -34,7 +34,7 @@ scripts/    vendor.py (lab copies of shared code; --check), sarif_all.py, sweep_
 ## Rules
 
 - MCP: the official `mcp` v2 SDK only, imported through `hactu8/lamb/_mcp.py`. No fastmcp, no v1.
-- Core (`hactu8/`) uses the Python standard library only, Python 3.10 or later. Optional extras go in `pyproject.toml` extras.
+- Core (`hactu8/`) uses the Python standard library only, Python 3.12 or later. Optional extras go in `pyproject.toml` extras.
 - Labs stay self-contained and copyable into `.claude/skills/`. No imports from `hactu8/` inside `demos/`. Shared code is vendored per lab.
 - Don't break the lab output format the adapter parses (`demos/_template/TEMPLATE.md`, `hactu8/adapters/lab.py`). Extend it compatibly.
 - Results follow `hactu8/schemas/result.schema.json` (`hactu8.result/v1`). Change the schema and the tests together.

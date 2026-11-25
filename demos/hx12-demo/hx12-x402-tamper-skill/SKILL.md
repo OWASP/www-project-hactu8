@@ -98,7 +98,7 @@ Market Mole received, and `GET /ledger` shows the test ledger.
 
 ## Prerequisites
 
-Python 3.9+. Standard library only; nothing to install. The lab uses no
+Python 3.12+. Standard library only; nothing to install. The lab uses no
 x402 SDK, wallet library or chain client.
 
 Optional real model: set `HX12_BACKEND` to `ollama`, `llamacpp` or

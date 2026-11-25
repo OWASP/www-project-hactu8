@@ -199,7 +199,7 @@ Each file opens with a one-line purpose and "Loaded on demand." Typical content:
 
 ## 8. Code conventions
 
-- Python 3.9+, `from __future__ import annotations`, type hints, dataclasses.
+- Python 3.12+, `from __future__ import annotations`, type hints, dataclasses.
 - Every file starts with a module docstring that states its role in the
   lifecycle, the gap it embodies or closes, and (for scripts) `Examples:`.
 - Attack scripts and the target carry

@@ -31,7 +31,7 @@ The AI attacker, the Wolf, runs with `python -m hactu8 wolf` (see [docs/wolf.md]
 
 ## Quick start
 
-Python 3.10 or later. No dependencies; every skill runs on a deterministic offline model by default.
+Python 3.12 or later. No dependencies; every skill runs on a deterministic offline model by default.
 
 ```bash
 git clone -b phase1-mvp https://github.com/OWASP/www-project-hactu8.git

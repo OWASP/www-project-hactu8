@@ -86,7 +86,7 @@ SMTP; `POST /round` stands in for a stretch of mail traffic.
 
 ## Prerequisites
 
-Python 3.9+. Standard library only; nothing to install.
+Python 3.12+. Standard library only; nothing to install.
 
 Optional real model: set `HX15_BACKEND` to `ollama`, `llamacpp` or
 `openrouter` (which needs `OPENROUTER_API_KEY`), and `HX15_MODEL` to the model

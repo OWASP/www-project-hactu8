@@ -98,7 +98,7 @@ call, not HTTP; `POST /ask` stands in for the customer chat.
 
 ## Prerequisites
 
-Python 3.9+. Standard library only; nothing to install. The lab uses no
+Python 3.12+. Standard library only; nothing to install. The lab uses no
 payment SDK.
 
 Optional real model: set `HX13_BACKEND` to `ollama`, `llamacpp` or

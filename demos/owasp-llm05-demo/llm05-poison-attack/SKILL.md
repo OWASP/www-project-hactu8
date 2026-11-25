@@ -39,7 +39,7 @@ Trigger this skill when the task is to:
 
 ## Prerequisites
 
-- Python 3.9+.
+- Python 3.12+.
 - For the HTTP path: `pip install requests` and a running target
   (`python -m llm05_demo.server`).
 - For the in-process path: the sibling `llm05_demo` package on the path (the

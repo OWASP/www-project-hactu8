@@ -84,7 +84,7 @@ half is which. This is not an MCP server and calls no real API.
 
 ## Prerequisites
 
-Python 3.9+. Standard library only; nothing to install. No real-model backend:
+Python 3.12+. Standard library only; nothing to install. No real-model backend:
 `HX09_BACKEND` accepts `echo` (alias `stub`) only, and the console's backend
 picker answers 400 for the others.
 

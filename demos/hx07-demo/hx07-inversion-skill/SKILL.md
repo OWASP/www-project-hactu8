@@ -79,7 +79,7 @@ embedding needs a trained decoder to invert; see the README for the numbers.
 
 ## Prerequisites
 
-Python 3.9+. Standard library only; nothing to install.
+Python 3.12+. Standard library only; nothing to install.
 
 Optional real model: set `HX07_BACKEND` to `ollama`, `llamacpp` or
 `openrouter` (which needs `OPENROUTER_API_KEY`), and `HX07_MODEL` to the model

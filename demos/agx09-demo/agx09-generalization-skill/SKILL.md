@@ -76,7 +76,7 @@ generalization rate of 53% on held-out attacks (16 of 30). This lab measures
 
 ## Prerequisites
 
-Python 3.9+. Standard library only; nothing to install.
+Python 3.12+. Standard library only; nothing to install.
 
 Optional real model: set `AGX09_BACKEND` to `ollama`, `llamacpp` or
 `openrouter` (which needs `OPENROUTER_API_KEY`), and `AGX09_MODEL` to the

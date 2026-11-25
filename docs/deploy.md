@@ -87,7 +87,7 @@ VS Code forwards ports 8000 and 5173 to the host's loopback; if they are taken, 
 
 ## CI
 
-`.github/workflows/hactu8-deterministic.yml` runs on pushes and pull requests to the `phase1-*` branches. It runs the unit tests and `python -m hactu8 run all --backend echo` on Python 3.10 (standard library only) and 3.14 (pinned dependencies), markdownlint, and the console build. `scripts/sarif_all.py` merges the 3.14 runs into one SARIF file with every finding, kept as a build artifact: those are the attacks each lab demonstrates on purpose. Code scanning gets a second file, `--defense-failures`, with only the REDs in a baseline or remediation act: a leak with no attack, or a defense that did not hold. On echo it is empty, so an alert in the Security tab means a regression to fix. The suite passes or fails on the exit code of `run all`. Only the upload job has `security-events: write`.
+`.github/workflows/hactu8-deterministic.yml` runs on pushes and pull requests to the `phase1-*` branches. It runs the unit tests and `python -m hactu8 run all --backend echo` on Python 3.12 (standard library only) and 3.14 (pinned dependencies), markdownlint, and the console build. `scripts/sarif_all.py` merges the 3.14 runs into one SARIF file with every finding, kept as a build artifact: those are the attacks each lab demonstrates on purpose. Code scanning gets a second file, `--defense-failures`, with only the REDs in a baseline or remediation act: a leak with no attack, or a defense that did not hold. On echo it is empty, so an alert in the Security tab means a regression to fix. The suite passes or fails on the exit code of `run all`. Only the upload job has `security-events: write`.
 
 ## Without Docker on macOS
 

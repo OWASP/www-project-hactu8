@@ -92,7 +92,7 @@ Thistle received and `GET /write-log` what Lamb Orders wrote.
 
 ## Prerequisites
 
-Python 3.9+. Standard library only; nothing to install. The lab does not use
+Python 3.12+. Standard library only; nothing to install. The lab does not use
 the MCP SDK or an OAuth library.
 
 Optional real model: set `HX17_BACKEND` to `ollama`, `llamacpp` or

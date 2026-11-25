@@ -2,7 +2,9 @@
 
 ## The command line
 
-You need Python 3.10 or later and git. The core has no dependencies.
+You need Python 3.12 or later and git. The core has no dependencies.
+
+Check with `python3 --version`. The `python3` that comes with macOS is older (3.9), so install a current Python from [python.org](https://www.python.org/downloads/) or Homebrew first. On an older Python, HACTU8 stops with a message saying so.
 
 ```bash
 git clone -b phase1-mvp https://github.com/OWASP/www-project-hactu8.git

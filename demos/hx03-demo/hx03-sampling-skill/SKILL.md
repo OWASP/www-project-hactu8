@@ -90,7 +90,7 @@ and clients still implement it.
 
 ## Prerequisites
 
-Python 3.9+. Standard library only; nothing to install. The lab does not use
+Python 3.12+. Standard library only; nothing to install. The lab does not use
 the MCP SDK.
 
 Optional real model: set `HX03_BACKEND` to `ollama`, `llamacpp` or
