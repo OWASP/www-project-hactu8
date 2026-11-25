@@ -28,4 +28,4 @@ In Aesop's "The Wolf and the Lamb", the wolf wants to eat the lamb and keeps inv
 
 Until 2026-11-23 the labs used an earlier cast set on a goat farm, and the target came from a predecessor project. Other OWASP teams already work under similar goat and wolf names, so HACTU8 moved to its own cast. Lab ids did not change (`AGX01` to `AGX09`, the gateway labs, keep their ids so stored results and evidence still match). Evidence pages recorded before 2026-11-23 under `docs/evidence/` use the old persona and are kept as written.
 
-On 2026-11-25 the company's name went from the singular Big Field Jumpers Co. to **Big Field Jumpers Co.**, so that it carries all three meanings: the sheep that jump the wall, the wool they grow, and the jumpers (sweaters) the wool becomes. The story is in the [user guide](guide/story/01-big-field.md).
+On 2026-11-25 "Jumper" in the company's name became plural, giving **Big Field Jumpers Co.**, so that the name carries all three meanings: the sheep that jump the wall, the wool they grow, and the jumpers (sweaters) the wool becomes. The story is in the [user guide](guide/story/01-big-field.md).
