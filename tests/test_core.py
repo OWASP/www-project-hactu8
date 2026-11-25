@@ -11,6 +11,7 @@ from pathlib import Path
 from hactu8 import catalog, store
 from hactu8.adapters import lab
 from hactu8.skillmeta import read_frontmatter
+from tests.labs import lab_count
 
 ROOT = Path(__file__).resolve().parents[1]
 SCHEMA = json.loads((ROOT / "hactu8" / "schemas" / "result.schema.json").read_text(encoding="utf-8"))
@@ -54,7 +55,7 @@ class DiscoveryTest(unittest.TestCase):
     def test_discovers_all_labs(self):
         skills = catalog.discover(ROOT)
         ids = {s.id for s in skills}
-        self.assertEqual(len(skills), 49)
+        self.assertEqual(len(skills), lab_count())
         self.assertTrue({"llm01", "llm05", "llm10", "asi01", "asi10", "agx01"} <= ids)
         for s in skills:
             self.assertTrue(s.owasp and s.metric and s.metric_name, s.id)
@@ -128,7 +129,7 @@ class RunTest(unittest.TestCase):
                 self.assertEqual(doc["summary"]["status"], "pass", doc.get("output", "")[-500:])
                 self.assertEqual(len(doc["acts"]), 4)
                 store.save(doc)
-        self.assertEqual(len(store.list_runs()), 49)
+        self.assertEqual(len(store.list_runs()), lab_count())
         self.assertIsNotNone(store.load("latest"))
 
 

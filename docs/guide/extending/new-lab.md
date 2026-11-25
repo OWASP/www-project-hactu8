@@ -45,7 +45,7 @@ python3 -m hactu8 run acme01 --backend ollama --model llama3.2:3b
 python3 -m unittest discover -s tests -t .
 ```
 
-The core tests check every lab: it passes on `echo` with four acts, its defenses are known, its lesson is valid, its port is unique and its shared files match the master copies. Several tests also count the labs. They expect 49, so a new lab means updating those counts. The failing tests name each one.
+The core tests check every lab: it passes on `echo` with four acts, its defenses are known, its lesson is valid, its port is unique and its shared files match the master copies. The tests count the lab folders under `demos/` themselves, so a new lab needs no test edits. If your lab's folder is there but HACTU8 does not find it (for example, a wrong `SKILL_DIR` in `run_demo.py`), the count no longer matches and the tests say which folder is missing.
 
 The template's [checklist](https://github.com/OWASP/www-project-hactu8/blob/phase1-mvp/demos/_template/TEMPLATE.md#11-checklist-for-a-new-demo) is the full list.
 

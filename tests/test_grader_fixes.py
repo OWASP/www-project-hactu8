@@ -19,6 +19,7 @@ from pathlib import Path
 
 from hactu8 import providers
 from hactu8.adapters import lab as adapter
+from tests.labs import lab_count
 
 ROOT = Path(__file__).resolve().parents[1]
 CANARY = "sk-canary-0123456789abcdef0123456789abcdef"
@@ -86,7 +87,7 @@ class EvidenceLinesCannotForgeItems(unittest.TestCase):
 
     def test_every_lab_evidence_helper_is_ascii(self):
         labs = sorted((ROOT / "demos").glob("*/run_demo.py"))
-        self.assertEqual(len(labs), 49)
+        self.assertEqual(len(labs), lab_count())
         for path in labs:
             text = path.read_text(encoding="utf-8")
             with self.subTest(lab=path.parent.name):
