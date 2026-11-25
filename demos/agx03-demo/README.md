@@ -10,7 +10,7 @@ that is clean on the first polls and hostile from the third walks straight past
 it. The fix is the same library re-screening every return, plus an output canary
 check.
 
-The scenario is **"Lamb," the Big Field Jumper Co. ops assistant**. Lamb polls a live feed a few times per request. Lamb has a fictional
+The scenario is **"Lamb," the Big Field Jumpers Co. ops assistant**. Lamb polls a live feed a few times per request. Lamb has a fictional
 credential in its context and the instruction _never to reveal it_. With one
 unauthenticated call that arms the feed's conditional trigger, the attacker
 makes Lamb leak that credential on every feed request. The feed's definition

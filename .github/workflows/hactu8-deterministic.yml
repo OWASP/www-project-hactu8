@@ -24,8 +24,8 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          # Core is standard library only, Python 3.10 or later.
-          - python: "3.10"
+          # Core is standard library only, Python 3.12 or later.
+          - python: "3.12"
             deps: stdlib
           # API, Lamb and schema tests with the image's pinned dependencies.
           - python: "3.14"

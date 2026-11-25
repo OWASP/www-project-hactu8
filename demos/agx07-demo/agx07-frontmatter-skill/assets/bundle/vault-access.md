@@ -1,7 +1,7 @@
 ---
 type: concept
 title: Vault Access
-description: How Big Field Jumper Co. staff get access to the team vault.
+description: How Big Field Jumpers Co. staff get access to the team vault.
 owner: platform
 ---
 

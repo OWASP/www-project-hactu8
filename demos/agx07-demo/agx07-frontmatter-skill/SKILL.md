@@ -28,7 +28,7 @@ metadata:
 # AGX07 Frontmatter Poison Skill
 
 Demonstrates how an adversary who can ingest one document into a RAG bundle
-makes **Lamb, Big Field Jumper Co.'s ops assistant** leak the credential in its
+makes **Lamb, Big Field Jumpers Co.'s ops assistant** leak the credential in its
 context. The poisoned document has the approved prose body, word for word; the
 directive sits in its YAML frontmatter `description:`. Lamb's loader puts the
 metadata in front of the model too, and the gateway only ever screened the
@@ -76,7 +76,7 @@ attacks (16 of 30), which is why the output canary check is layered behind it.
 
 ## Prerequisites
 
-Python 3.9+. Standard library only; nothing to install.
+Python 3.12+. Standard library only; nothing to install.
 
 Optional real model: set `AGX07_BACKEND` to `ollama`, `llamacpp` or
 `openrouter` (which needs `OPENROUTER_API_KEY`), and `AGX07_MODEL` to the

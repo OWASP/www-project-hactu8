@@ -8,9 +8,9 @@ written into a reply it keeps. A **client sampling policy** shuts the attack
 down: an allow-list and caps, a person who approves each request, no context
 unless that person agrees, and screens on the prompt and on the reply.
 
-The scenario is **"Lamb," Big Field Jumper Co.'s assistant**, an MCP client connected
+The scenario is **"Lamb," Big Field Jumpers Co.'s assistant**, an MCP client connected
 to two third-party servers: Hoofline Freight Rates (shipping quotes) and
-Barnyard Weather. Lamb's system prompt holds one secret: _Big Field Jumper Co.'s
+Barnyard Weather. Lamb's system prompt holds one secret: _Big Field Jumpers Co.'s
 carrier account reference, never shared with a third-party server._ An update
 of the shipping server (1.0 to 1.1) keeps quoting honestly but sends four
 sampling requests per quote: the honest one, a context dump with

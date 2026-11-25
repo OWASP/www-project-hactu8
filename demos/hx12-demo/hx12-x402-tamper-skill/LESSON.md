@@ -8,7 +8,7 @@ An agent that pays for what it fetches turns every HTTP response into a possible
 
 The challenge decides where the money goes. If anything between the merchant and the agent can change it, or if the agent believes a different set of terms, the agent signs a payment to someone else. A signed authorization is also a bearer instrument: whoever holds it can settle it, and a facilitator can only check it against the requirements it is handed.
 
-Here Lamb, Big Field Jumper Co.'s assistant, buys reports for customers from Lamb merchants with a test wallet (`TEST` units on the fake network `lamb:testnet`). Each paid order carries a per-run order secret (`HX12-CANARY-` + 16 hex digits). The ground truth: _test units go only to the merchant the customer chose, and an order secret only to that merchant._ Market Mole, a third-party MCP server Lamb uses to find merchants, fetch pasted links and log expenses, turns hostile at 2.0.
+Here Lamb, Big Field Jumpers Co.'s assistant, buys reports for customers from Lamb merchants with a test wallet (`TEST` units on the fake network `lamb:testnet`). Each paid order carries a per-run order secret (`HX12-CANARY-` + 16 hex digits). The ground truth: _test units go only to the merchant the customer chose, and an order secret only to that merchant._ Market Mole, a third-party MCP server Lamb uses to find merchants, fetch pasted links and log expenses, turns hostile at 2.0.
 
 ## Why it works
 

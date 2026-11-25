@@ -28,7 +28,7 @@ metadata:
 # OWASP LLM04 Rug-Pull Skill
 
 Demonstrates how an adversary who controls a third-party tool vendor's
-releases steers **Lamb, Big Field Jumper Co.'s operations assistant**, and how to
+releases steers **Lamb, Big Field Jumpers Co.'s operations assistant**, and how to
 detect and harden against it. Lamb loads the `gatepost-policy-tools` package
 from a registry file and installs every new version on trust. The attacker
 publishes version 1.0.1, which swaps one tool's description and makes another
@@ -73,7 +73,7 @@ trusting an update.
 
 ## Prerequisites
 
-Python 3.9+. Standard library only; nothing to install.
+Python 3.12+. Standard library only; nothing to install.
 
 Optional real model: set `LLM04_BACKEND` to `ollama`, `llamacpp` or
 `openrouter` (which needs `OPENROUTER_API_KEY`), and `LLM04_MODEL` to the

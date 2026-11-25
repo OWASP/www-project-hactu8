@@ -9,8 +9,8 @@ tokens through, an attacker's redirect or tool walks away with a user's
 token. Four layers in the proxy shut it down: per-client consent, exact
 redirect matching, PKCE and audience-bound tokens.
 
-The scenario is **"Lamb," Big Field Jumper Co.'s assistant**, an MCP client that
-reaches each customer's ledger through Big Field Jumper Co. Ledger MCP, a proxy to
+The scenario is **"Lamb," Big Field Jumpers Co.'s assistant**, an MCP client that
+reaches each customer's ledger through Big Field Jumpers Co. Ledger MCP, a proxy to
 Pasture Accounts under the client ID `bigfield-ledger-proxy`. Lamb also uses
 Tally Analytics, a third-party MCP server, for spending charts. The ground
 truth: _a customer's ledger token never reaches anyone but the ledger._
@@ -130,7 +130,7 @@ process. With `openrouter`, the tool result leaves the machine.
 ## Architecture
 
 ```text
-   customer ──▶ Lamb (MCP client)  ── tools/call + Bearer ──▶ Big Field Jumper Co. Ledger MCP (vulnerable_app.py)
+   customer ──▶ Lamb (MCP client)  ── tools/call + Bearer ──▶ Big Field Jumpers Co. Ledger MCP (vulnerable_app.py)
      browser      • PKCE, state, resource                         • authorization server for MCP clients
      (cookies,    • follows tool results                          • open dynamic registration
       inbox)            │                                         • no per-client consent, prefix redirects
@@ -183,7 +183,7 @@ contract, tested on its own (`StandInTest`).
 
 ### MCP terminology bridge
 
-Lamb is what the spec calls an MCP **client** (an OAuth client); Big Field Jumper Co.
+Lamb is what the spec calls an MCP **client** (an OAuth client); Big Field Jumpers Co.
 Ledger MCP is an MCP **server** (a resource server) with its own
 authorization server, and an **MCP proxy server** in the best practices
 page's terms; Pasture Accounts is the **third-party authorization server**

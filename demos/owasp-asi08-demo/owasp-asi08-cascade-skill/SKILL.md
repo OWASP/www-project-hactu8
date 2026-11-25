@@ -28,7 +28,7 @@ metadata:
 
 # OWASP ASI08 Cascade Skill
 
-Demonstrates how one wrong figure entering **Lamb Payables**, Big Field Jumper Co.'s
+Demonstrates how one wrong figure entering **Lamb Payables**, Big Field Jumpers Co.'s
 three-agent invoice pipeline (intake, then analyst, then approver), spreads
 into every downstream decision that consumes it, and how to contain it. The
 attacker never touches an invoice. They drop one price notice into the intake
@@ -72,7 +72,7 @@ agent tracing system.
 
 ## Prerequisites
 
-Python 3.9+. Standard library only; nothing to install.
+Python 3.12+. Standard library only; nothing to install.
 
 Optional real model: set `ASI08_BACKEND` to `ollama`, `llamacpp` or
 `openrouter` (which needs `OPENROUTER_API_KEY`), and `ASI08_MODEL` to the

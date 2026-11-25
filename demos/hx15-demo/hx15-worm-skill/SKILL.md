@@ -3,7 +3,7 @@ name: hx15-worm-skill
 description: >-
   Demonstrates HX15 (Self-Replicating Prompt, the AI worm) against a
   vulnerable ecosystem of GenAI mail assistants in an AUTHORIZED security
-  lab. Five assistants (Big Field Jumper Co.'s Lamb, a supplier's, a co-op's, and a
+  lab. Five assistants (Big Field Jumpers Co.'s Lamb, a supplier's, a co-op's, and a
   vet's and a mill's on their own) auto-reply to each other's mail on a
   simulated loopback network, reading related mail from their inbox for each
   reply. One mail from Tick & Co. carries a block that tells the reader to
@@ -86,7 +86,7 @@ SMTP; `POST /round` stands in for a stretch of mail traffic.
 
 ## Prerequisites
 
-Python 3.9+. Standard library only; nothing to install.
+Python 3.12+. Standard library only; nothing to install.
 
 Optional real model: set `HX15_BACKEND` to `ollama`, `llamacpp` or
 `openrouter` (which needs `OPENROUTER_API_KEY`), and `HX15_MODEL` to the model

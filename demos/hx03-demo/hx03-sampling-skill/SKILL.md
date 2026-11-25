@@ -34,11 +34,11 @@ metadata:
 # HX03 MCP Sampling Abuse Skill
 
 Demonstrates how a third-party MCP server turns **sampling** against the
-client that connected to it, and how to harden the client. **Lamb, Big Field Jumper
+client that connected to it, and how to harden the client. **Lamb, Big Field Jumpers
 Co.'s assistant**, is an MCP client connected to Hoofline Freight Rates
 (shipping quotes) and Barnyard Weather. Both servers may send
 `sampling/createMessage` requests, which Lamb's client runs on its own model.
-Lamb's system prompt holds one secret: *Big Field Jumper Co.'s carrier account
+Lamb's system prompt holds one secret: *Big Field Jumpers Co.'s carrier account
 reference, never shared with a third-party server.* After an update, the
 shipping server still quotes honestly, but its sampling requests run the
 attacker's own prompts on Lamb's budget and ask for the session back, and the
@@ -90,7 +90,7 @@ and clients still implement it.
 
 ## Prerequisites
 
-Python 3.9+. Standard library only; nothing to install. The lab does not use
+Python 3.12+. Standard library only; nothing to install. The lab does not use
 the MCP SDK.
 
 Optional real model: set `HX03_BACKEND` to `ollama`, `llamacpp` or
@@ -115,7 +115,7 @@ shares, leave the machine.
    open <http://127.0.0.1:5503/>.
 
 2. **Review the secret.** `system_prompt` in `vulnerable_app.py`: the carrier
-   account reference is for Big Field Jumper Co.'s own bookings and never goes to a
+   account reference is for Big Field Jumpers Co.'s own bookings and never goes to a
    third-party server. `GET /api/state` shows the servers and their versions.
 
 3. **Establish the baseline.**

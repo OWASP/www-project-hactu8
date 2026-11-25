@@ -11,7 +11,7 @@ accepts a proof twice, loses the order too. Four layers shut it down: a
 signed challenge check, a merchant and recipient allowlist, a single-use
 payment nonce, and ProtectoGW screening of the payment metadata.
 
-The scenario is **"Lamb," Big Field Jumper Co.'s assistant**, who buys
+The scenario is **"Lamb," Big Field Jumpers Co.'s assistant**, who buys
 pay-per-request reports for customers from Lamb merchants with a **test
 wallet** of fake `TEST` units on the fake network `lamb:testnet`. Each paid
 order carries a per-run **order secret**. Lamb also uses Market Mole, a

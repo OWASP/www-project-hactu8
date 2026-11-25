@@ -27,7 +27,7 @@ metadata:
 
 # OWASP LLM09 Tenant Skill
 
-Demonstrates how a user of one tenant, **Meadow Fold**, gets **Lamb, Big Field Jumper
+Demonstrates how a user of one tenant, **Meadow Fold**, gets **Lamb, Big Field Jumpers
 Co.'s hosted knowledge-base assistant** to answer from another tenant's
 confidential documents, **Hilltop Creamery**'s. Both tenants share one vector
 store. One crafted chat turn is enough, and no document is written. Then the
@@ -70,7 +70,7 @@ it ranks.
 
 ## Prerequisites
 
-Python 3.9+. Standard library only; nothing to install.
+Python 3.12+. Standard library only; nothing to install.
 
 Optional real model: set `LLM09_BACKEND` to `ollama`, `llamacpp` or
 `openrouter` (which needs `OPENROUTER_API_KEY`), and `LLM09_MODEL` to the

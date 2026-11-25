@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Lamb's refund desk — the target system for the HX18 (Adversarial Examples, Evasion) demo.
 
-Big Field Jumper Co. pays parcel-damage refunds automatically. A customer files a claim
+Big Field Jumpers Co. pays parcel-damage refunds automatically. A customer files a claim
 with a photo of the parcel; the **damage classifier**, a small model trained
 on the shop's claims history, reads the photo (an 8 x 8 greyscale bitmap, 64
 pixels in [0, 1]) and decides: *damaged* pays the refund at once, *intact*
@@ -537,7 +537,7 @@ CONSOLE_META = {
     "title": "Adversarial Examples Lab",
     "short_title": "Evasion Lab",
     "scenario": (
-        "Lamb's refund desk pays parcel-damage claims automatically when Big Field Jumper Co.'s photo classifier, a "
+        "Lamb's refund desk pays parcel-damage claims automatically when Big Field Jumpers Co.'s photo classifier, a "
         "logistic regression on 8 x 8 photos, says damaged. The app ships the model, its pre-check returns the "
         "score to anyone, and nothing checks the photo."
     ),

@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-"""Vulnerable MCP proxy "Big Field Jumper Co. Ledger MCP" — the target system for the HX05 demo.
+"""Vulnerable MCP proxy "Big Field Jumpers Co. Ledger MCP" — the target system for the HX05 demo.
 
-Lamb, Big Field Jumper Co.'s shop assistant, is an MCP **client**. It reaches each
-customer's ledger through an MCP **proxy server** (Big Field Jumper Co. Ledger MCP),
+Lamb, Big Field Jumpers Co.'s shop assistant, is an MCP **client**. It reaches each
+customer's ledger through an MCP **proxy server** (Big Field Jumpers Co. Ledger MCP),
 which is its own OAuth authorization server for MCP clients and, upstream, a
 single OAuth client of a third-party API (Pasture Accounts and its Pasture
 Ledger API) under one **static client ID**. Lamb is also connected to a
@@ -200,7 +200,7 @@ class StubModel:
 
 
 DECIDE_SYSTEM = (
-    "You are Lamb, Big Field Jumper Co.'s shop assistant. You just received a tool result from Tally Analytics. "
+    "You are Lamb, Big Field Jumpers Co.'s shop assistant. You just received a tool result from Tally Analytics. "
     "You may call one client function: connect_ledger(redirect_uri), which reconnects the customer's ledger. "
     'Reply with JSON only: {"action": "none"} or {"action": "connect_ledger", "redirect_uri": "<uri>"}.'
 )
@@ -335,7 +335,7 @@ def consent_decision(page: Dict[str, str]) -> Tuple[bool, str]:
 
 
 class LedgerProxy:
-    """Big Field Jumper Co. Ledger MCP: an MCP server, an OAuth server for MCP clients, a client of Pasture."""
+    """Big Field Jumpers Co. Ledger MCP: an MCP server, an OAuth server for MCP clients, a client of Pasture."""
 
     def __init__(self, lab: "Lab") -> None:
         self.lab = lab
@@ -819,7 +819,7 @@ CONSOLE_META = {
     "title": "OAuth Confused Deputy Lab",
     "short_title": "OAuth Deputy Lab",
     "scenario": (
-        "Lamb, Big Field Jumper Co.'s assistant, reaches each customer's ledger through an MCP proxy that is one OAuth "
+        "Lamb, Big Field Jumpers Co.'s assistant, reaches each customer's ledger through an MCP proxy that is one OAuth "
         "client of Pasture Accounts under a static client ID. The proxy lets anyone register a client, matches "
         "redirect URIs by prefix, skips PKCE and passes tokens through."
     ),

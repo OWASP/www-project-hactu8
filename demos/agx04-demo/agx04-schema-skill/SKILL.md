@@ -28,7 +28,7 @@ metadata:
 # AGX04 Schema Injection Skill
 
 Demonstrates how an adversary who can push a tool "vendor update" makes
-**Lamb, Big Field Jumper Co.'s ops assistant** leak the credential in its context,
+**Lamb, Big Field Jumpers Co.'s ops assistant** leak the credential in its context,
 without touching the tool description that the gateway screens. The payload
 sits in a parameter `default`. Lamb reads the whole schema before calling the
 tool, and the gateway never screens it.
@@ -76,7 +76,7 @@ attacks (16 of 30), which is why the output canary check is layered behind it.
 
 ## Prerequisites
 
-Python 3.9+. Standard library only; nothing to install.
+Python 3.12+. Standard library only; nothing to install.
 
 Optional real model: set `AGX04_BACKEND` to `ollama`, `llamacpp` or
 `openrouter` (which needs `OPENROUTER_API_KEY`), and `AGX04_MODEL` to the

@@ -28,7 +28,7 @@ metadata:
 
 # OWASP ASI06 Memory Skill
 
-Demonstrates how one user steers **Lamb Recall, Big Field Jumper Co.'s assistant with
+Demonstrates how one user steers **Lamb Recall, Big Field Jumpers Co.'s assistant with
 long-term memory**, in other users' later sessions, by asking it to remember
 one note, and how to detect and harden against it. Each session is a
 multi-step task (`recall_memory`, `search_kb`, optional `save_memory`,
@@ -74,7 +74,7 @@ and session that wrote it, and recall only the current user's entries.
 
 ## Prerequisites
 
-Python 3.9+. Standard library only; nothing to install.
+Python 3.12+. Standard library only; nothing to install.
 
 Optional real model: set `ASI06_BACKEND` to `ollama`, `llamacpp` or
 `openrouter` (which needs `OPENROUTER_API_KEY`), and `ASI06_MODEL` to the

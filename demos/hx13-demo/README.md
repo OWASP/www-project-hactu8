@@ -9,7 +9,7 @@ on a listing, a merchant that keeps asking, or a cart the merchant signs
 moves test units out of the wallet that the customer never allowed. Five
 checks in the client, layered, shut it down.
 
-The scenario is **"Lamb," Big Field Jumper Co.'s assistant**, who buys supplies and
+The scenario is **"Lamb," Big Field Jumpers Co.'s assistant**, who buys supplies and
 pay-per-request data on the Lamb Market for customers. The ground truth:
 _no test unit leaves a wallet outside the mandate the customer signed, and
 no wallet reference reaches an attacker._ Hayrick Direct, a seller on the

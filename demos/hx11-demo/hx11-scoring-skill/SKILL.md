@@ -39,7 +39,7 @@ metadata:
 # HX11 Attacks on the Scoring Layer Skill
 
 Demonstrates how the **scorers** of an AI pipeline become the target, and
-how to harden them. Big Field Jumper Co. publishes a few support transcripts on its
+how to harden them. Big Field Jumpers Co. publishes a few support transcripts on its
 public help feed. A **review triage** pipeline scores each one first: email
 transcripts go to an **LLM judge**, chat transcripts to a **rule
 classifier** (protectogw), and anything flagged waits for a human **review
@@ -79,7 +79,7 @@ reaches the public feed.* The Wolf attacks the scorers, not Lamb.
 
 ## Prerequisites
 
-Python 3.9+. Standard library only; nothing to install.
+Python 3.12+. Standard library only; nothing to install.
 
 Optional real model: set `HX11_BACKEND` to `ollama`, `llamacpp` or
 `openrouter` (which needs `OPENROUTER_API_KEY`), and `HX11_MODEL` to the

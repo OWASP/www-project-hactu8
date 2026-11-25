@@ -31,7 +31,7 @@ metadata:
 
 # HX02 Multi-Turn Jailbreak Skill
 
-Demonstrates how a customer walks **Lamb, Big Field Jumper Co.'s store assistant**
+Demonstrates how a customer walks **Lamb, Big Field Jumpers Co.'s store assistant**
 into breaking its one firm rule, *never apply the staff discount (STAFF30) to
 a customer order*, and how to harden against it. Asked directly, Lamb
 refuses. The attacker's script never asks directly until the end: it sets up a
@@ -82,7 +82,7 @@ channel, and the staff portal, where STAFF30 belongs, is not part of the lab.
 
 ## Prerequisites
 
-Python 3.9+. Standard library only; nothing to install.
+Python 3.12+. Standard library only; nothing to install.
 
 Optional real model: set `HX02_BACKEND` to `ollama`, `llamacpp` or
 `openrouter` (which needs `OPENROUTER_API_KEY`), and `HX02_MODEL` to the model

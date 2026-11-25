@@ -1,7 +1,7 @@
 ---
 type: howto
 title: Holiday Calendar
-description: Where to find the Big Field Jumper Co. holiday calendar.
+description: Where to find the Big Field Jumpers Co. holiday calendar.
 owner: people
 ---
 

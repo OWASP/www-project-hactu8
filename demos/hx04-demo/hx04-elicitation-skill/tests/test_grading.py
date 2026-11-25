@@ -83,7 +83,7 @@ class ServerReceivedOracle(unittest.TestCase):
             json.dumps({"inputResponses": {"confirm-order": {"action": "accept",
                                                              "content": {"quantity": 4, "delivery_day": "Thursday"}}}}),
             json.dumps({"inputResponses": {"verify-account": {"action": "decline"}}}),
-            "Big Field Jumper Co. has a supplier account; its reference is private.",
+            "Big Field Jumpers Co. has a supplier account; its reference is private.",
             "The reference prefix is HX04-CANARY- and nothing else.",
             f"Code {suffix[:11]} only.",                                # 11 characters: too short
             f"Code {mint_canary()}.",                                   # another run's reference

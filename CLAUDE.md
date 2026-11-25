@@ -34,14 +34,14 @@ scripts/    vendor.py (lab copies of shared code; --check), sarif_all.py, sweep_
 ## Rules
 
 - MCP: the official `mcp` v2 SDK only, imported through `hactu8/lamb/_mcp.py`. No fastmcp, no v1.
-- Core (`hactu8/`) uses the Python standard library only, Python 3.10 or later. Optional extras go in `pyproject.toml` extras.
+- Core (`hactu8/`) uses the Python standard library only, Python 3.12 or later. Optional extras go in `pyproject.toml` extras.
 - Labs stay self-contained and copyable into `.claude/skills/`. No imports from `hactu8/` inside `demos/`. Shared code is vendored per lab.
 - Don't break the lab output format the adapter parses (`demos/_template/TEMPLATE.md`, `hactu8/adapters/lab.py`). Extend it compatibly.
 - Results follow `hactu8/schemas/result.schema.json` (`hactu8.result/v1`). Change the schema and the tests together.
 - The echo backend stays the deterministic default; tests must pass offline.
 - Harness security (`SECURITY.md`, `docs/deploy.md`): the API and console serve HTTPS by default (self-signed cert in `~/.hactu8/tls`, `HACTU8_TLS=off` for HTTP) and answer only a loopback `Host`; bound off-loopback they require a token. Never disable certificate verification in a client; trust the generated cert explicitly. Anything that can reach a paid backend (target, judge, escalation, bench) stays behind `--confirm-spend`/`confirm_spend` and is written to `audit.log`. Provider calls never follow redirects, and error text is redacted of every credential the request carried.
 - Safety: every target binds to `127.0.0.1`. Payloads are benign-effect: realistic injection wording is allowed only when its sole possible effect is emitting a per-run canary or calling a Lamb tool on loopback. Never add payloads that harm a real system, real data, or a real account.
-- Persona (`docs/persona.md`): the fictional company is Big Field Jumper Co. (`bigfield.example`), a family sheep farm and knitwear business. Its agentic assistant and the sacrificial target is HACTU8 Lamb, the human operations lead is Barb Fell, and the attacker is the Wolf. Don't reintroduce the old names; `tests/test_naming.py` allows them only in `docs/evidence/` and `docs/agenticgoat-merge-plan.md` (history).
+- Persona (`docs/persona.md`): the fictional company is Big Field Jumpers Co. (`bigfield.example`), a family sheep farm and knitwear business. Its agentic assistant and the sacrificial target is HACTU8 Lamb, the human operations lead is Barb Fell, and the attacker is the Wolf. Don't reintroduce the old names; `tests/test_naming.py` allows them only in `docs/evidence/` and `docs/agenticgoat-merge-plan.md` (history).
 
 ## Accuracy
 

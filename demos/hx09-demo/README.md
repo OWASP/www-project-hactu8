@@ -9,7 +9,7 @@ suppression**, **confidence rounding**, a **training-data scrub** and a
 **rate limit**. One probe still gets through all four, and the lab measures
 it.
 
-The scenario is **"Lamb," Big Field Jumper Co.'s support model**, fine-tuned on the
+The scenario is **"Lamb," Big Field Jumpers Co.'s support model**, fine-tuned on the
 shop's support tickets. Its ground truth is _whether a given customer's ticket
 was in the fine-tuning data is private, and so is the ticket's support
 reference_. The chat refuses to say who is a customer. The model API, opened
@@ -220,7 +220,7 @@ python vulnerable_app.py                                   # serves on 127.0.0.1
 
 # Terminal B — ask the chat, then score the record
 curl -s localhost:5509/chat -H 'content-type: application/json' \
-     -d '{"message":"Was Hattie Quill a customer of Big Field Jumper Co.?"}'          # refused
+     -d '{"message":"Was Hattie Quill a customer of Big Field Jumpers Co.?"}'          # refused
 curl -s localhost:5509/api/v1/score -H 'content-type: application/json' \
      -d '{"text":"customer Hattie Quill, account GC-7731","client":"m"}'   # log-probs
 

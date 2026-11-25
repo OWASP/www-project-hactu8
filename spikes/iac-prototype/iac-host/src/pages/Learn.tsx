@@ -28,7 +28,7 @@ export default function Learn() {
       <nav className="run-list learn-path" aria-label="Learning path">
         <button type="button" className={showStory ? 'selected' : ''} onClick={() => setParams({ view: 'story' })}>
           Start here
-          <small>The Wolf, the Lamb and Big Field Jumper Co.</small>
+          <small>The Wolf, the Lamb and Big Field Jumpers Co.</small>
         </button>
         <button type="button" className={showCatalog ? 'selected' : ''} onClick={() => setParams({ view: 'catalog' })}>
           Attack catalog

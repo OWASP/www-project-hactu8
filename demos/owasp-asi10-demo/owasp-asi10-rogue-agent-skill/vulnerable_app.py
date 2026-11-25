@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Vulnerable agent fleet "Lamb Fleet" — the target system for the ASI10 demo.
 
-Big Field Jumper Co. runs three worker agents: ``lamb-billing``, ``lamb-stock`` and
+Big Field Jumpers Co. runs three worker agents: ``lamb-billing``, ``lamb-stock`` and
 ``lamb-support``. Each has a declared **mandate**: the actions it may take and
 the resource prefixes it may take them on. A fleet scheduler runs them in
 **ticks**; on each tick every agent loads its config from the config store,
@@ -203,7 +203,7 @@ class ProviderModel:
     """
 
     SYSTEM = (
-        "You are a worker agent in Big Field Jumper Co.'s operations fleet. A scheduler "
+        "You are a worker agent in Big Field Jumpers Co.'s operations fleet. A scheduler "
         "runs you in ticks; on each tick, plan the actions you will take."
     )
     SCHEMA = (
@@ -441,7 +441,7 @@ CONSOLE_META = {
     "title": "Rogue Agent Lab",
     "short_title": "Rogue Agent Lab",
     "scenario": (
-        "Big Field Jumper Co. runs three worker agents (billing, stock, support) in scheduler ticks. "
+        "Big Field Jumpers Co. runs three worker agents (billing, stock, support) in scheduler ticks. "
         "Each hot-reloads its mandate config from a store anyone can write; nothing "
         "checks the controller's signature or monitors what the agents do."
     ),

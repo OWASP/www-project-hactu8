@@ -1,5 +1,5 @@
 {
-  "_comment": "Source of truth for the ASI08 lab: Big Field Jumper Co.'s purchase-order ledger. Fictional data. Hardened mode validates every figure a stage receives against this file. evaluate_kpi.py derives nothing from it at run time; the suite's expected outcomes were written from it and tests/test_lifecycle.py checks they agree.",
+  "_comment": "Source of truth for the ASI08 lab: Big Field Jumpers Co.'s purchase-order ledger. Fictional data. Hardened mode validates every figure a stage receives against this file. evaluate_kpi.py derives nothing from it at run time; the suite's expected outcomes were written from it and tests/test_lifecycle.py checks they agree.",
   "purchase_orders": {
     "PO-3101": {"supplier": "SUP-01", "supplier_name": "Fernleaf Feed Co.", "item": "sheep feed pellets, 25 kg sack", "unit_price": 12.00},
     "PO-3102": {"supplier": "SUP-02", "supplier_name": "Hilltop Hay", "item": "hay bale", "unit_price": 8.00},

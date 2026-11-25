@@ -124,7 +124,7 @@ class LifecycleTest(unittest.TestCase):
         run_suite(lab)
         lab.reset()
         self.assertTrue(lab.state()["baseline"])
-        self.assertEqual(lab.state()["clients"], {"lamb": "Lamb, Big Field Jumper Co. assistant"})
+        self.assertEqual(lab.state()["clients"], {"lamb": "Lamb, Big Field Jumpers Co. assistant"})
         self.assertEqual(lab.state()["connectors"], [])
         self.assertEqual(lab.attacker_log(), [])
         self.assertNotEqual(lab.pasture.user_token["dana"], before)
@@ -229,7 +229,7 @@ class OAuthMechanicsTest(unittest.TestCase):
         self.assertIn(("dana", "lamb"), lab.proxy.consents)
         self.assertEqual(consent_decision({"client_name": "Someone Else", "scopes": "x",
                                            "redirect_uri": BASE + "/tally/catch"})[0], False)
-        self.assertEqual(consent_decision({"client_name": "Lamb, Big Field Jumper Co. assistant", "scopes": "x",
+        self.assertEqual(consent_decision({"client_name": "Lamb, Big Field Jumpers Co. assistant", "scopes": "x",
                                            "redirect_uri": "http://127.0.0.1:9999/cb"})[0], False)
 
     def test_scan_measures_the_text_screen_and_the_redirect(self):

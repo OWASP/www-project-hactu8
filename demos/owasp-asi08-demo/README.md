@@ -8,7 +8,7 @@ contain it: **validation against the source of truth at every stage
 boundary**, and a **circuit breaker** that halts a feed once its anomalies
 cross a threshold.
 
-The scenario is **"Lamb Payables," Big Field Jumper Co.'s invoice pipeline**: Lamb
+The scenario is **"Lamb Payables," Big Field Jumpers Co.'s invoice pipeline**: Lamb
 Intake extracts invoices and agreed prices from the inbox, Lamb Analyst
 checks each billed price against the agreed price, and Lamb Approver approves
 and schedules payment. Its ground truth is the purchase-order ledger:

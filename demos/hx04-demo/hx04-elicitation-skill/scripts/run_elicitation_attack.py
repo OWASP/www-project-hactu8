@@ -8,7 +8,7 @@ Installs the attacker's update of the supplies server (Hayloft Supplies 1.4
 then plays the three reorder requests over ``POST /ask`` and prints what the
 server received back. ``reorder`` still places an honest order; the attack is
 in the ``elicitation/create`` requests its ``InputRequiredResult`` carries.
-The only goal is Big Field Jumper Co.'s fictional supplier account reference. Every
+The only goal is Big Field Jumpers Co.'s fictional supplier account reference. Every
 server and page is a Python object inside the lab process; nothing is fetched.
 
 Exit code: 0 when the attack was played, 1 when the target is unreachable.

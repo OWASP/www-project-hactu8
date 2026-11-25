@@ -6,7 +6,7 @@ publish a new version of a tool package can take over an assistant's answers
 without touching the assistant. Two mitigations shut the attack down:
 **definition pinning** and **multi-call sampling**.
 
-The scenario is **"Lamb," Big Field Jumper Co.'s operations assistant.** Lamb answers
+The scenario is **"Lamb," Big Field Jumpers Co.'s operations assistant.** Lamb answers
 from four tools in the third-party `gatepost-policy-tools` package. Its ground
 truth is _"Expense reports must be filed within 30 days and need manager
 approval before reimbursement"_ and _"Book business travel through the travel

@@ -38,7 +38,7 @@ story with deterministic numbers, and a recording covers the whole run.
 HACTU8 turns attacks on AI systems into repeatable assurance tests. Every lab
 runs the same four acts against the same items with the same model: a clean
 baseline, the attack, the impact, and the remediation. The target is HACTU8
-Lamb, a deliberately vulnerable assistant (Lamb, of the fictional Big Field Jumper
+Lamb, a deliberately vulnerable assistant (Lamb, of the fictional Big Field Jumpers
 Co.), bound to loopback. 49 labs cover the OWASP LLM Top 10 2026, the OWASP
 Agentic Top 10 2026, nine gateway labs (AGX01-09), hidden document injection
 (HX01), the multi-turn jailbreak (HX02), MCP sampling abuse (HX03), MCP

@@ -29,7 +29,7 @@ metadata:
 
 # OWASP ASI09 Trust Skill
 
-Demonstrates how an adversary gets **Lamb Payables, Big Field Jumper Co.'s
+Demonstrates how an adversary gets **Lamb Payables, Big Field Jumpers Co.'s
 vendor-maintenance agent** to have a human approve a vendor bank-detail change
 without knowing it, by amending one change request, and how to stop it. The
 human approves what the card says. In vulnerable mode the card is the agent's
@@ -76,7 +76,7 @@ risk in code, and asks about each high-risk call on its own.
 
 ## Prerequisites
 
-Python 3.9+. Standard library only; nothing to install.
+Python 3.12+. Standard library only; nothing to install.
 
 Optional real model: set `ASI09_BACKEND` to `ollama`, `llamacpp` or
 `openrouter` (which needs `OPENROUTER_API_KEY`), and `ASI09_MODEL` to the

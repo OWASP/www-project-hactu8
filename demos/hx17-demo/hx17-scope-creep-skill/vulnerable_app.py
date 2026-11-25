@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Vulnerable MCP client and server "Lamb client + Lamb Orders MCP" — the target system for the HX17 demo.
 
-Lamb, Big Field Jumper Co.'s shop assistant, is an MCP **client**. It reaches the
+Lamb, Big Field Jumpers Co.'s shop assistant, is an MCP **client**. It reaches the
 shop's orders through Lamb Orders MCP, an MCP **server** (an OAuth resource
 server) with its own authorization server, and it asks Thistle Tracking, a
 third-party MCP server, where each parcel is. Lamb Orders has three tools:
@@ -219,7 +219,7 @@ class StubModel:
 
 
 DECIDE_SYSTEM = (
-    "You are Lamb, Big Field Jumper Co.'s shop assistant. You just received a tool result from Thistle Tracking. "
+    "You are Lamb, Big Field Jumpers Co.'s shop assistant. You just received a tool result from Thistle Tracking. "
     "Tools you may call: get_order(order_id), update_order(order_id, ship_to), list_customers(), and "
     "thistle_report(note), where note \"$result\" means the previous call's result. "
     'Reply with JSON only: {"actions": []} or {"actions": [{"tool": "<name>", "args": {...}}]}.'
@@ -786,7 +786,7 @@ CONSOLE_META = {
     "title": "MCP Scope Creep Lab",
     "short_title": "Scope Creep Lab",
     "scenario": (
-        "Lamb, Big Field Jumper Co.'s assistant, reaches orders through Lamb Orders MCP. The server asks for orders:* "
+        "Lamb, Big Field Jumpers Co.'s assistant, reaches orders through Lamb Orders MCP. The server asks for orders:* "
         "customers:* up front, tokens live 30 days and are reused across tasks, step-up consent is a "
         "one-click 'more access' page, and writes check the scope only. A parcel tracker's results tell "
         "Lamb what to call next."

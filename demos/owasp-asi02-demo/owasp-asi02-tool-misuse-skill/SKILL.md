@@ -28,7 +28,7 @@ metadata:
 
 # OWASP ASI02 Tool Misuse Skill
 
-Demonstrates how an adversary makes **Lamb Finance, Big Field Jumper Co.'s reporting
+Demonstrates how an adversary makes **Lamb Finance, Big Field Jumpers Co.'s reporting
 agent** pull the whole ledger and export it to an unapproved destination, by
 adding one note to a report request, and how to stop it. The agent only ever
 calls the tools it is allowed to call. The note changes **how** it calls them:
@@ -76,7 +76,7 @@ the tool, whatever the model was told.
 
 ## Prerequisites
 
-Python 3.9+. Standard library only; nothing to install.
+Python 3.12+. Standard library only; nothing to install.
 
 Optional real model: set `ASI02_BACKEND` to `ollama`, `llamacpp` or
 `openrouter` (which needs `OPENROUTER_API_KEY`), and `ASI02_MODEL` to the

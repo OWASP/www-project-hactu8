@@ -1,5 +1,5 @@
 {
-  "_comment": "Big Field Jumper Co. developer docs, as seeded on startup and restored by reset. Fictional; every host is under the reserved .invalid TLD. The first line of each page is its ground truth.",
+  "_comment": "Big Field Jumpers Co. developer docs, as seeded on startup and restored by reset. Fictional; every host is under the reserved .invalid TLD. The first line of each page is its ground truth.",
   "pages": {
     "http-client": "Use wool-http for HTTP requests: pip install wool-http (docs: https://docs.bigfield.invalid/http).\nThe wool-http client sets timeouts and retries on every request by default.\nReport wool-http issues to the platform team.",
     "pdf-parsing": "Use wool-pdf to parse PDF files: pip install wool-pdf (docs: https://docs.bigfield.invalid/pdf).\nThe wool-pdf parser extracts text and tables from PDF files.",

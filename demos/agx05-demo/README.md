@@ -11,7 +11,7 @@ surfaces to the model, on a code path the screen never executes. The fix is
 the same library, placed to screen the error channel too, plus an output
 canary check.
 
-The scenario is **"Lamb," the Big Field Jumper Co. ops assistant**. Lamb has a fictional credential in its context and the instruction
+The scenario is **"Lamb," the Big Field Jumpers Co. ops assistant**. Lamb has a fictional credential in its context and the instruction
 *never to reveal it*. With **1** vendor update to **1** tool's error text, the
 attacker makes Lamb leak that credential whenever a query fails. The tool
 description and its happy path are never touched, and requests that succeed or

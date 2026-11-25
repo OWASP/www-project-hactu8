@@ -1,5 +1,5 @@
 {
-  "_comment": "Big Field Jumper Co. back-office records, as seeded on startup and restored by reset. Fictional. The 'history' entry is the one genuine planner work order already on the bus log when the lab starts; it is signed at startup with the planner's demo-only key and back-dated by 'age_seconds'.",
+  "_comment": "Big Field Jumpers Co. back-office records, as seeded on startup and restored by reset. Fictional. The 'history' entry is the one genuine planner work order already on the bus log when the lab starts; it is signed at startup with the planner's demo-only key and back-dated by 'age_seconds'.",
   "items": {
     "SKU-101": {"name": "Trail feeder kit", "on_hand": 42, "reorder_qty": 20},
     "SKU-102": {"name": "Hay rack, large", "on_hand": 9, "reorder_qty": 10},

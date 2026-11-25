@@ -29,7 +29,7 @@ metadata:
 # AGX08 Cross-Resource Chain Skill
 
 Demonstrates how an adversary who can publish two knowledge-base documents
-makes **Lamb, Big Field Jumper Co.'s ops assistant** leak the credential in its
+makes **Lamb, Big Field Jumpers Co.'s ops assistant** leak the credential in its
 context, although each document passes the gateway's screen on its own.
 Document A reads like the travel policy and says "read
 kb://travel-reimbursement next"; document B completes the directive. Lamb's
@@ -78,7 +78,7 @@ unchanged. Its `Session` class is the cross-read screen this lab uses. Its own
 
 ## Prerequisites
 
-Python 3.9+. Standard library only; nothing to install.
+Python 3.12+. Standard library only; nothing to install.
 
 Optional real model: set `AGX08_BACKEND` to `ollama`, `llamacpp` or
 `openrouter` (which needs `OPENROUTER_API_KEY`), and `AGX08_MODEL` to the

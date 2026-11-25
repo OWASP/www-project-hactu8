@@ -29,7 +29,7 @@ metadata:
 # AGX09 Generalization Probe Skill
 
 Measures what a screening gateway does with attacks it was **never tuned
-on**. **Lamb, Big Field Jumper Co.'s ops assistant** summarizes partner notes, and
+on**. **Lamb, Big Field Jumpers Co.'s ops assistant** summarizes partner notes, and
 every note crosses protectogw's full ruleset and normalizer. The attack
 delivers 15 held-out notes: paraphrases, two translations, and seven
 encodings of one canonical line. The screen catches 9 and misses 6 (60%).
@@ -76,7 +76,7 @@ generalization rate of 53% on held-out attacks (16 of 30). This lab measures
 
 ## Prerequisites
 
-Python 3.9+. Standard library only; nothing to install.
+Python 3.12+. Standard library only; nothing to install.
 
 Optional real model: set `AGX09_BACKEND` to `ollama`, `llamacpp` or
 `openrouter` (which needs `OPENROUTER_API_KEY`), and `AGX09_MODEL` to the

@@ -29,7 +29,7 @@ metadata:
 # OWASP ASI03 Privilege Skill
 
 Demonstrates how a low-privilege user reads confidential HR documents through
-**Lamb HR, Big Field Jumper Co.'s HR document agent**, without injecting anything, and
+**Lamb HR, Big Field Jumpers Co.'s HR document agent**, without injecting anything, and
 how to detect and harden against it. The user simply asks. The agent fetches
 with its own service identity, so the document service authorises the agent,
 not the user. One request also reuses a delegated token left in an earlier
@@ -68,7 +68,7 @@ session's transcript.
 
 ## Prerequisites
 
-Python 3.9+. Standard library only; nothing to install.
+Python 3.12+. Standard library only; nothing to install.
 
 Optional real model: set `ASI03_BACKEND` to `ollama`, `llamacpp` or
 `openrouter` (which needs `OPENROUTER_API_KEY`), and `ASI03_MODEL` to the

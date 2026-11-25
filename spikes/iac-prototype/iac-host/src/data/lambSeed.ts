@@ -10,7 +10,7 @@ export const LAMB_SEED: RegistryEntry[] = [
     type: 'target',
     name: 'HACTU8 Lamb',
     description:
-      'Big Field Jumper Co.\'s assistant and the labs\' sacrificial target: loopback-only, hosting all 49 HACTU8 labs (LLM, agentic, gateway and HX).',
+      'Big Field Jumpers Co.\'s assistant and the labs\' sacrificial target: loopback-only, hosting all 49 HACTU8 labs (LLM, agentic, gateway and HX).',
     source: 'manual',
     tags: LAMB_TAGS,
     targetUrl: 'http://127.0.0.1:5500',

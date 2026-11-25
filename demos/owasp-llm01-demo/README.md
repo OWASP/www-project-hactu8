@@ -6,7 +6,7 @@ the answers of an assistant that reads that wiki through a tool. Two
 mitigations shut the attack down: **channel separation** and **tool-output
 screening**.
 
-The scenario is **"Lamb," Big Field Jumper Co.'s knowledge-base assistant.** Its ground
+The scenario is **"Lamb," Big Field Jumpers Co.'s knowledge-base assistant.** Its ground
 truth is _"Expense reports must be filed within 30 days and need manager
 approval before reimbursement."_ With **1** edited page carrying **1** injected
 line, the attacker replaces Lamb's answer to every expense question. Unrelated

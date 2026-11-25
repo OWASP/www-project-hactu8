@@ -9,7 +9,7 @@ Four layers on the training pipeline stop both:
 **provenance and reputation weighting**, a **label-noise filter**, a
 **training-diff gate** and a per-account **influence cap**.
 
-The scenario is **Big Field Jumper Co.'s review spam filter**, a pure-Python naive
+The scenario is **Big Field Jumpers Co.'s review spam filter**, a pure-Python naive
 Bayes classifier retrained every night on 400 staff-labelled reviews plus
 every review customers flag as _spam_ or _genuine_. Each queued review it
 calls genuine is published to the shop's feed. Its ground truth: _the

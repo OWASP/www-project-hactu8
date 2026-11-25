@@ -28,7 +28,7 @@ metadata:
 # AGX03 Conditional Rug-Pull Skill
 
 Demonstrates how an adversary who can arm a conditional trigger makes **Lamb,
-Big Field Jumper Co.'s ops assistant** leak the credential in its context. Lamb polls a
+Big Field Jumpers Co.'s ops assistant** leak the credential in its context. Lamb polls a
 live feed a few times per request; the feed is clean on the first polls and
 turns hostile from the `TRIGGER`-th. The gateway screens the right surface with
 the right ruleset — it just screens only the **first** return from a tool and
@@ -84,7 +84,7 @@ why the output canary check is layered behind it.
 
 ## Prerequisites
 
-Python 3.9+. Standard library only; nothing to install.
+Python 3.12+. Standard library only; nothing to install.
 
 Optional real model: set `AGX03_BACKEND` to `ollama`, `llamacpp` or
 `openrouter` (which needs `OPENROUTER_API_KEY`), and `AGX03_MODEL` to the model

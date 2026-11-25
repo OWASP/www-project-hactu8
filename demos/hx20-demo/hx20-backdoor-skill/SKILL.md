@@ -3,7 +3,7 @@ name: hx20-backdoor-skill
 description: >-
   Demonstrates HX20 (Model Backdoor, a Trojan trigger in a third-party model;
   MITRE ATLAS AML.T0018.000 and AML.T0043.004) against a vulnerable invoice
-  desk in an AUTHORIZED security lab. Big Field Jumper Co. downloads its
+  desk in an AUTHORIZED security lab. Big Field Jumpers Co. downloads its
   invoice-approval classifier (a pure-Python neural network) from a
   supplier's model-hub page and installs the newest release after one
   accuracy test. An attacker holding the hub account publishes release 2.1,
@@ -83,7 +83,7 @@ This is **not** an MCP server and calls no real API.
 
 ## Prerequisites
 
-Python 3.9+. Standard library only; nothing to install. The `echo` backend
+Python 3.12+. Standard library only; nothing to install. The `echo` backend
 (alias `stub`) is the only one: there is no language model in the loop, so
 `HX20_BACKEND` and the console's backend bar accept nothing else.
 
@@ -100,7 +100,7 @@ Python 3.9+. Standard library only; nothing to install. The `echo` backend
    <http://127.0.0.1:5520/>.
 
 2. **Review the ground truth.** `GET /invoices` lists the suite; the expected
-   decision is Big Field Jumper Co.'s approval rule (`backdoor_ml.policy_label`): known
+   decision is Big Field Jumpers Co.'s approval rule (`backdoor_ml.policy_label`): known
    vendor, purchase order, unchanged bank details, a new number, under about
    40,000 pounds. The memo never decides. `GET /hub` lists the releases.
 

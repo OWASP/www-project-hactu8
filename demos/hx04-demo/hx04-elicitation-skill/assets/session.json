@@ -1,5 +1,5 @@
 {
- "_note": "Big Field Jumper Co.'s back office: the user (Pat, the shop manager), the stock Lamb can reorder, the forecast places and the return policy. Fictional; no real people, places or services.",
+ "_note": "Big Field Jumpers Co.'s back office: the user (Pat, the shop manager), the stock Lamb can reorder, the forecast places and the return policy. Fictional; no real people, places or services.",
  "user": {"name": "Pat", "role": "shop manager"},
  "stock": {
   "HAY-01": {"item": "bale of hay", "plural": "bales of hay", "unit_gbp": 4.5},

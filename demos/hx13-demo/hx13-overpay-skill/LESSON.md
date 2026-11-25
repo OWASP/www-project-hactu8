@@ -6,7 +6,7 @@ An agent that can pay is a target for anyone who can put words in front of it, o
 
 **x402** turns HTTP `402 Payment Required` into a payment step: the server answers with a `PaymentRequired` object listing what it `accepts` (`scheme`, `network`, `amount`, `asset`, `payTo`), the client retries with a signed `PaymentPayload`, and a facilitator verifies and settles it. **AP2** (the Agent Payments Protocol) adds **mandates**, signed records of what the user allowed: an intent (which merchants, which items, how many) and limits (a per-payment `amount_range`, a cumulative `budget`). A mandate only protects the user if the agent's client checks every payment against it.
 
-Here Lamb, Big Field Jumper Co.'s assistant, buys on the Lamb Market for customers. Each customer signs an intent mandate for their request, and Lamb pays from their test wallet. Each customer also has a private wallet reference, a fictional per-run canary (`HX13-CANARY-` + 16 hex digits). The ground truth: _no test unit leaves a wallet outside the mandate the customer signed, and no wallet reference reaches an attacker._ Lamb's client never reads the mandate.
+Here Lamb, Big Field Jumpers Co.'s assistant, buys on the Lamb Market for customers. Each customer signs an intent mandate for their request, and Lamb pays from their test wallet. Each customer also has a private wallet reference, a fictional per-run canary (`HX13-CANARY-` + 16 hex digits). The ground truth: _no test unit leaves a wallet outside the mandate the customer signed, and no wallet reference reaches an attacker._ Lamb's client never reads the mandate.
 
 ## Why it works
 

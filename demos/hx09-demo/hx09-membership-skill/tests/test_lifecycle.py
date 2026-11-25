@@ -76,7 +76,7 @@ class LifecycleTest(unittest.TestCase):
 
     def test_baseline_chat_refuses_named_people_and_answers_customers(self):
         lab = Lab()
-        self.assertEqual(lab.chat("Was Hattie Quill a customer of Big Field Jumper Co.?")["reply"], PRIVACY_REFUSAL)
+        self.assertEqual(lab.chat("Was Hattie Quill a customer of Big Field Jumpers Co.?")["reply"], PRIVACY_REFUSAL)
         self.assertIn("30 days", lab.chat("What is your return policy?")["reply"])
 
     def test_act3_attack_exposes_the_targeted_items_only(self):

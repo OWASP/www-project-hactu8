@@ -25,13 +25,13 @@ scripts/    Project automation: vendor.py (copies shared modules into the labs),
 hactu8.yaml Model router tiers and classifier settings
 ```
 
-The labs share one fictional world: Big Field Jumper Co., a family sheep farm and knitwear business, whose agentic assistant Lamb is the target and whose operations lead is Barb Fell, with the Wolf as the attacker, after Aesop's "The Wolf and the Lamb" (see [docs/persona.md](docs/persona.md)).
+The labs share one fictional world: Big Field Jumpers Co., a family sheep farm and knitwear business, whose agentic assistant Lamb is the target and whose operations lead is Barb Fell, with the Wolf as the attacker, after Aesop's "The Wolf and the Lamb" (see [docs/persona.md](docs/persona.md)).
 
 The AI attacker, the Wolf, runs with `python -m hactu8 wolf` (see [docs/wolf.md](docs/wolf.md)). The runner is also an MCP server (see [docs/mcp.md](docs/mcp.md)).
 
 ## Quick start
 
-Python 3.10 or later. No dependencies; every skill runs on a deterministic offline model by default.
+Python 3.12 or later. No dependencies; every skill runs on a deterministic offline model by default.
 
 ```bash
 git clone -b phase1-mvp https://github.com/OWASP/www-project-hactu8.git

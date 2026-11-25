@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Attack skill — get refunds for intact parcels past Big Field Jumper Co.'s damage classifier.
+"""Attack skill — get refunds for intact parcels past Big Field Jumpers Co.'s damage classifier.
 
 AUTHORIZED SECURITY-LAB USE ONLY. Targets this skill's own vulnerable_app.py.
 

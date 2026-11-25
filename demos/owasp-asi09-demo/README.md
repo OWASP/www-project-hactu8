@@ -8,7 +8,7 @@ bank-detail change they never saw. Three card-design controls shut the attack
 down: **cards built from real parameters**, **code-computed risk tiers** and
 **no batching of high-risk actions**.
 
-The scenario is **"Lamb Payables," Big Field Jumper Co.'s vendor-maintenance agent.**
+The scenario is **"Lamb Payables," Big Field Jumpers Co.'s vendor-maintenance agent.**
 Its ground truth is the approval rule: _a high-risk change (bank account,
 portal role) executes only if the card the approver read said so; routine
 changes (contact, address) flow through._ The approver is a simulated human

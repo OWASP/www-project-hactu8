@@ -1,5 +1,5 @@
 {
-  "_comment": "Big Field Jumper Co. HR document desk, as seeded on startup and restored by reset. Fictional people, fictional documents. 'readers' and 'roles' are the entitlement table the document service checks against the credential it is shown. 'queue' is the standing workload of open requests; each user in it gets a fresh login session (and a random demo token) at every reset. 'earlier_session' is a delegation that ended before the lab started: its token is minted already expired and is written into the shared transcript (GET /api/history).",
+  "_comment": "Big Field Jumpers Co. HR document desk, as seeded on startup and restored by reset. Fictional people, fictional documents. 'readers' and 'roles' are the entitlement table the document service checks against the credential it is shown. 'queue' is the standing workload of open requests; each user in it gets a fresh login session (and a random demo token) at every reset. 'earlier_session' is a delegation that ended before the lab started: its token is minted already expired and is written into the shared transcript (GET /api/history).",
   "users": {
     "tam":    {"name": "Tam Kidd",      "role": "intern",  "title": "Summer intern"},
     "riley":  {"name": "Riley Hoofe",   "role": "employee", "title": "Warehouse lead"},

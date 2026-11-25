@@ -29,7 +29,7 @@ metadata:
 
 # OWASP ASI07 A2A Skill
 
-Demonstrates how an adversary makes **Lamb Exec, Big Field Jumper Co.'s executor
+Demonstrates how an adversary makes **Lamb Exec, Big Field Jumpers Co.'s executor
 agent** pay an unapproved invoice, cancel an order and refund an order a
 second time, by speaking as **Lamb Planner** on the agents' message bus, and
 how to stop it. The operator only asks for an invoice payment, a refund and a
@@ -84,7 +84,7 @@ of it reaches the model.
 
 ## Prerequisites
 
-Python 3.9+. Standard library only; nothing to install.
+Python 3.12+. Standard library only; nothing to install.
 
 Optional real model: set `ASI07_BACKEND` to `ollama`, `llamacpp` or
 `openrouter` (which needs `OPENROUTER_API_KEY`), and `ASI07_MODEL` to the

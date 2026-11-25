@@ -12,7 +12,7 @@
       "list_customers": "customers:read"
     }
   },
-  "client": {"client_id": "lamb", "client_name": "Lamb, Big Field Jumper Co. assistant"},
+  "client": {"client_id": "lamb", "client_name": "Lamb, Big Field Jumpers Co. assistant"},
   "tracker": {
     "title": "Thistle Tracking",
     "version": "1.0",

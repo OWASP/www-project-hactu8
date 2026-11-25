@@ -37,7 +37,7 @@ metadata:
 
 Demonstrates how **over-broad, long-lived OAuth scopes** on an MCP server turn
 a prompt injection in a tool result into a data leak and an unauthorized
-write, and how to harden against it. **Lamb, Big Field Jumper Co.'s assistant**, is an
+write, and how to harden against it. **Lamb, Big Field Jumpers Co.'s assistant**, is an
 MCP client that reaches orders through Lamb Orders MCP (`get_order`,
 `update_order`, `list_customers`) and asks Thistle Tracking, a third-party MCP
 server, where parcels are. The ground truth: *a parcel question reads that
@@ -92,7 +92,7 @@ Thistle received and `GET /write-log` what Lamb Orders wrote.
 
 ## Prerequisites
 
-Python 3.9+. Standard library only; nothing to install. The lab does not use
+Python 3.12+. Standard library only; nothing to install. The lab does not use
 the MCP SDK or an OAuth library.
 
 Optional real model: set `HX17_BACKEND` to `ollama`, `llamacpp` or

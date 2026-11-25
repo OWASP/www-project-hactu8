@@ -28,7 +28,7 @@ metadata:
 # AGX05 Error-Channel Injection Skill
 
 Demonstrates how an adversary who can push a tool "vendor update" makes
-**Lamb, Big Field Jumper Co.'s ops assistant** leak the credential in its context,
+**Lamb, Big Field Jumpers Co.'s ops assistant** leak the credential in its context,
 without touching the tool description or its successful return. The payload
 sits in a tool's `error_text`. Lamb surfaces that message only when a call
 fails, and the gateway never screens the error channel.
@@ -75,7 +75,7 @@ attacks (16 of 30), which is why the output canary check is layered behind it.
 
 ## Prerequisites
 
-Python 3.9+. Standard library only; nothing to install.
+Python 3.12+. Standard library only; nothing to install.
 
 Optional real model: set `AGX05_BACKEND` to `ollama`, `llamacpp` or
 `openrouter` (which needs `OPENROUTER_API_KEY`), and `AGX05_MODEL` to the

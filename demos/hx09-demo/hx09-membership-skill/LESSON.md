@@ -6,7 +6,7 @@ A model's training data can leak without one word of it being quoted. LLM02 show
 
 **Membership inference** asks one question of a trained model: was this record in your training set? Shokri et al. (2017) framed it as "given a data record and black-box access to a model, determine if the record was in the model's training dataset". The simplest form, the loss-based attack NIST AI 100-2 E2025 credits to Yeom et al., uses the fact that training minimises the loss on training samples: a record whose loss is below a threshold is called a member. MITRE ATLAS lists it as `AML.T0024.000` Infer Training Data Membership, noting that some strategies "use statistics of model prediction scores".
 
-The answer can be the harm. NIST's example is a medical study, where being in the training set already says something about a person. Here the target is Lamb, Big Field Jumper Co.'s support model, fine-tuned on the shop's support tickets. The attacker holds one fictional customer's record, Hattie Quill's, and wants to know whether her ticket was in that data. Her ticket's support reference is the lab's per-run canary, `HX09-CANARY-` + 16 hex digits. Her membership and that reference are the only things the lab lets leak.
+The answer can be the harm. NIST's example is a medical study, where being in the training set already says something about a person. Here the target is Lamb, Big Field Jumpers Co.'s support model, fine-tuned on the shop's support tickets. The attacker holds one fictional customer's record, Hattie Quill's, and wants to know whether her ticket was in that data. Her ticket's support reference is the lab's per-run canary, `HX09-CANARY-` + 16 hex digits. Her membership and that reference are the only things the lab lets leak.
 
 ## Why it works
 

@@ -34,7 +34,7 @@ metadata:
 
 # HX08 Image Prompt Injection Skill
 
-Demonstrates how a customer steers **Lamb, Big Field Jumper Co.'s customer-service
+Demonstrates how a customer steers **Lamb, Big Field Jumpers Co.'s customer-service
 assistant** with nothing but the photo of a receipt, and how to harden the
 pipeline. A customer asks for a refund and uploads the receipt; Lamb's
 vision step reads the photo, the model decides the refund, and Lamb calls
@@ -75,7 +75,7 @@ each, and Lamb writes the code into its reply.
 
 ## Prerequisites
 
-Python 3.9+. Standard library only; nothing to install. No image library is
+Python 3.12+. Standard library only; nothing to install. No image library is
 used.
 
 Optional real model: set `HX08_BACKEND` to `ollama`, `llamacpp` or

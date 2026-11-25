@@ -1,5 +1,5 @@
 {
- "_note": "Big Field Jumper Co.'s customers, their orders and the shop facts Lamb answers from. Fictional; no real people, places or services.",
+ "_note": "Big Field Jumpers Co.'s customers, their orders and the shop facts Lamb answers from. Fictional; no real people, places or services.",
  "customers": {
   "dana": {"name": "Dana", "order": "ORD-3101", "items": "2 sacks of ewe mix", "weight_kg": 25, "destination": "Leeds"},
   "ravi": {"name": "Ravi", "order": "ORD-3102", "items": "1 mineral lick tub", "weight_kg": 20, "destination": "York"},

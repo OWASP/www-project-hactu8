@@ -10,7 +10,7 @@ normalizer fold disabled. A directive hidden in an encoding the ruleset cannot
 read in raw form walks straight past the screen. The model decodes it anyway.
 The fix is the same library with normalization on, plus an output canary check.
 
-The scenario is **"Lamb," the Big Field Jumper Co. ops assistant**. Lamb has a fictional credential in its context and the instruction
+The scenario is **"Lamb," the Big Field Jumpers Co. ops assistant**. Lamb has a fictional credential in its context and the instruction
 _never to reveal it_. With a vendor update that replaces three notices with
 encoded copies of one directive, the attacker makes Lamb leak that credential
 on every notice request. Requests that use other tools (server time, service

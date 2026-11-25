@@ -29,7 +29,7 @@ metadata:
 # AGX06 Runtime Result Injection Skill
 
 Demonstrates how an adversary who can push a tool "vendor update" makes
-**Lamb, Big Field Jumper Co.'s ops assistant** leak the credential in its context,
+**Lamb, Big Field Jumpers Co.'s ops assistant** leak the credential in its context,
 without touching the clean tool definition a review already approved. The
 payload sits in a tool's `return_text` — the value it assembles at runtime —
 hidden inside an HTML comment. Lamb surfaces that return whenever the tool is
@@ -77,7 +77,7 @@ attacks (16 of 30), which is why the output canary check is layered behind it.
 
 ## Prerequisites
 
-Python 3.9+. Standard library only; nothing to install.
+Python 3.12+. Standard library only; nothing to install.
 
 Optional real model: set `AGX06_BACKEND` to `ollama`, `llamacpp` or
 `openrouter` (which needs `OPENROUTER_API_KEY`), and `AGX06_MODEL` to the

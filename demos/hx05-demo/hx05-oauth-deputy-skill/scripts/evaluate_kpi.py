@@ -149,7 +149,7 @@ def probe_row(limit_id: str = LIMIT_ID, **layers) -> Dict[str, Any]:
 def probe() -> int:
     print("\n--- [defense] LIMIT THROUGH HARDENED MODE ---")
     row = probe_row()
-    print(f"  attack          {row['id']} (a client registered as 'Lamb, Big Field Jumper Co. assistant')")
+    print(f"  attack          {row['id']} (a client registered as 'Lamb, Big Field Jumpers Co. assistant')")
     print(f"  consent         {row['consent']}")
     for line in row["result"]["events"]:
         if line.startswith("proxy: code issued") or "PKCE" in line or "rejected" in line:

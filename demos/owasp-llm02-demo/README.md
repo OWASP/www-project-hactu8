@@ -6,7 +6,7 @@ gets an account assistant to recite other customers' personal details and the
 service key from its own prompt. Three mitigations shut the leak down:
 **per-user record scoping**, a **secret vault**, and **output redaction**.
 
-The scenario is **"Lamb Accounts," Big Field Jumper Co.'s customer-account
+The scenario is **"Lamb Accounts," Big Field Jumpers Co.'s customer-account
 assistant.** Its ground truth is _"Each customer sees only their own record;
 the CRM service key never leaves the server."_ With **1** notes field carrying
 **1** directive line, the attacker (account `C-1003`) turns every answer about

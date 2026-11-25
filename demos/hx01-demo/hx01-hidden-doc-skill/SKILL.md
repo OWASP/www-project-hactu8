@@ -30,7 +30,7 @@ metadata:
 
 # HX01 Hidden Document Injection Skill
 
-Demonstrates how an adversary steers **Lamb, Big Field Jumper Co.'s document
+Demonstrates how an adversary steers **Lamb, Big Field Jumpers Co.'s document
 assistant** by emailing one invoice that looks exactly like the real one, and
 how to harden against it. Lamb summarises PDFs, Word files and HTML that
 users upload or that arrive by email. The attacker's invoice carries one extra
@@ -79,7 +79,7 @@ return, including each run's colour, size, position and hidden flags.
 
 ## Prerequisites
 
-Python 3.9+. Standard library only; nothing to install.
+Python 3.12+. Standard library only; nothing to install.
 
 Optional real model: set `HX01_BACKEND` to `ollama`, `llamacpp` or
 `openrouter` (which needs `OPENROUTER_API_KEY`), and `HX01_MODEL` to the model

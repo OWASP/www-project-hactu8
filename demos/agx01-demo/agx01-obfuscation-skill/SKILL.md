@@ -28,7 +28,7 @@ metadata:
 # AGX01 Obfuscation Gauntlet Skill
 
 Demonstrates how an adversary who can push a notice "vendor update" makes
-**Lamb, Big Field Jumper Co.'s ops assistant** leak the credential in its context by
+**Lamb, Big Field Jumpers Co.'s ops assistant** leak the credential in its context by
 hiding the directive in an encoding the gateway's ruleset cannot read in raw
 form. The gateway screens the right surface — it reads every notice — but in
 vulnerable mode it judges the **raw bytes** with every normalizer fold
@@ -82,7 +82,7 @@ why the output canary check is layered behind it.
 
 ## Prerequisites
 
-Python 3.9+. Standard library only; nothing to install.
+Python 3.12+. Standard library only; nothing to install.
 
 Optional real model: set `AGX01_BACKEND` to `ollama`, `llamacpp` or
 `openrouter` (which needs `OPENROUTER_API_KEY`), and `AGX01_MODEL` to the model

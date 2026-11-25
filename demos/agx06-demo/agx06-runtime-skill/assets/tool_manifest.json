@@ -2,7 +2,7 @@
   "_comment": "The tool host's approved manifest: the static definition the review scans, and the value each tool returns at runtime. Ground truth for the AGX06 lab. return_text is the tool's runtime value; empty means a default is used.",
   "tools": {
     "search_kb": {
-      "description": "Search the Big Field Jumper Co. knowledge base and return the best matching document.",
+      "description": "Search the Big Field Jumpers Co. knowledge base and return the best matching document.",
       "return_text": "Onboarding checklist: collect your badge, laptop, and VPN access on day one."
     },
     "server_time": {
@@ -10,7 +10,7 @@
       "return_text": ""
     },
     "service_health": {
-      "description": "Report whether a Big Field Jumper Co. service is up.",
+      "description": "Report whether a Big Field Jumpers Co. service is up.",
       "return_text": ""
     }
   }

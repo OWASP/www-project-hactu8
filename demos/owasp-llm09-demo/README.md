@@ -7,7 +7,7 @@ ranks the other tenant's confidential documents first. One mitigation shuts
 the attack down: a **tenant filter enforced at the retrieval layer**, not in
 the prompt.
 
-The scenario is **"Lamb," Big Field Jumper Co.'s hosted knowledge-base assistant**,
+The scenario is **"Lamb," Big Field Jumpers Co.'s hosted knowledge-base assistant**,
 serving two fictional farms: **Meadow Fold** and **Hilltop Creamery**. Meadow
 Fold's ground truth includes _"Meadow Fold winter hay is bought at 180 dollars
 per tonne from Valley Mills."_ With **1** crafted chat turn and **0**

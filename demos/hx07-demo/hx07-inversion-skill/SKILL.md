@@ -34,10 +34,10 @@ metadata:
 # HX07 Embedding Inversion Skill
 
 Demonstrates how a vector store leaks text through its vectors, and how to
-harden it. Big Field Jumper Co.'s staff notes live in **Herd Notes**, a vector store
+harden it. Big Field Jumpers Co.'s staff notes live in **Herd Notes**, a vector store
 shared with Hoofline Feeds, a supplier with partner access. Text is scoped to
-each tenant, so Hoofline never reads a Big Field Jumper Co. note. Three staff notes hold
-one secret: *the staff access reference never leaves Big Field Jumper Co.'s tenant.* The
+each tenant, so Hoofline never reads a Big Field Jumpers Co. note. Three staff notes hold
+one secret: *the staff access reference never leaves Big Field Jumpers Co.'s tenant.* The
 partner analytics export returns raw embeddings for every tenant, and the
 partner account inverts them back to text, reference included.
 
@@ -79,7 +79,7 @@ embedding needs a trained decoder to invert; see the README for the numbers.
 
 ## Prerequisites
 
-Python 3.9+. Standard library only; nothing to install.
+Python 3.12+. Standard library only; nothing to install.
 
 Optional real model: set `HX07_BACKEND` to `ollama`, `llamacpp` or
 `openrouter` (which needs `OPENROUTER_API_KEY`), and `HX07_MODEL` to the model
@@ -100,7 +100,7 @@ With `openrouter`, the staff notes Lamb answers from leave the machine.
    It loads the tenants, accounts and notes from `assets/store.json`. To
    drive the same four acts from a browser, open <http://127.0.0.1:5507/>.
 
-2. **Review the secret.** `assets/store.json`: three Big Field Jumper Co. notes carry
+2. **Review the secret.** `assets/store.json`: three Big Field Jumpers Co. notes carry
    `{{CANARY}}`, replaced at start-up by this run's reference. `GET
    /api/state` shows the mode and the layers.
 

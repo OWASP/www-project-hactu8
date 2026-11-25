@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-"""Big Field Jumper Co.'s review desk — the target system for the HX19 (Training-Time Data Poisoning) demo.
+"""Big Field Jumpers Co.'s review desk — the target system for the HX19 (Training-Time Data Poisoning) demo.
 
-Big Field Jumper Co. publishes customer reviews of its dairy goods on a public feed. A
+Big Field Jumpers Co. publishes customer reviews of its dairy goods on a public feed. A
 small spam filter decides which reviews go out: a multinomial naive Bayes
 classifier, ``genuine`` or ``spam``, trained in pure Python on 400
 staff-labelled reviews plus the reviews customers flag ("this is spam", "this
@@ -163,7 +163,7 @@ def labelled_reviews(seed: int, n: int, spam_share: float = 0.5) -> List[Tuple[s
 
 @functools.lru_cache(maxsize=1)
 def staff_rows() -> Tuple[Tuple[str, str], ...]:
-    """400 reviews labelled by Big Field Jumper Co.'s moderators: the trusted seed set."""
+    """400 reviews labelled by Big Field Jumpers Co.'s moderators: the trusted seed set."""
     return tuple(labelled_reviews(STAFF_SEED, STAFF_SIZE))
 
 
@@ -589,7 +589,7 @@ CONSOLE_META = {
     "title": "Training Data Poisoning Lab",
     "short_title": "Poisoning Lab",
     "scenario": (
-        "Big Field Jumper Co.'s review filter, a pure-Python naive Bayes model, is retrained every night on staff labels plus "
+        "Big Field Jumpers Co.'s review filter, a pure-Python naive Bayes model, is retrained every night on staff labels plus "
         "every review a customer flags. Any account's flag counts at full weight, and the new model ships unchecked."
     ),
     "ground_truth": ("The filter keeps the attacker's tagged spam review off the feed and stays at 90% or more on "

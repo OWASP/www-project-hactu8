@@ -37,8 +37,8 @@ metadata:
 
 Demonstrates how an MCP **proxy server** that is a single OAuth client of a
 third-party API becomes a **confused deputy**, and how to harden it.
-**Lamb, Big Field Jumper Co.'s assistant**, is an MCP client that reaches each
-customer's ledger through Big Field Jumper Co. Ledger MCP, a proxy to Pasture Accounts
+**Lamb, Big Field Jumpers Co.'s assistant**, is an MCP client that reaches each
+customer's ledger through Big Field Jumpers Co. Ledger MCP, a proxy to Pasture Accounts
 under the static client ID `bigfield-ledger-proxy`. Lamb also uses Tally
 Analytics, a third-party MCP server, for spending charts. The ground truth:
 *a customer's ledger token never reaches anyone but the ledger.* Tally
@@ -91,7 +91,7 @@ call, not HTTP. `POST /ask` stands in for the customer chat, and
 
 ## Prerequisites
 
-Python 3.9+. Standard library only; nothing to install. The lab does not use
+Python 3.12+. Standard library only; nothing to install. The lab does not use
 the MCP SDK or an OAuth library.
 
 Optional real model: set `HX05_BACKEND` to `ollama`, `llamacpp` or
@@ -161,7 +161,7 @@ token).
    `--scan` shows protectogw's default rules passing the poisoned tool result
    (ALLOW), the injected `redirect_uri` failing exact match, and the mailed
    link's client needing consent. `--harden` switches on the four layers.
-   `--probe` registers a client called "Lamb, Big Field Jumper Co. assistant": Dana
+   `--probe` registers a client called "Lamb, Big Field Jumpers Co. assistant": Dana
    approves it, and Tally gets an audience-bound token for her (RED).
 
 7. **Reset to baseline.**

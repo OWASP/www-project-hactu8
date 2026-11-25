@@ -27,7 +27,7 @@ metadata:
 
 # OWASP LLM10 Sink Skill
 
-Demonstrates how one ticket note makes **Lamb, Big Field Jumper Co.'s ticket-summary
+Demonstrates how one ticket note makes **Lamb, Big Field Jumpers Co.'s ticket-summary
 assistant** emit text that its own application then mishandles, and how to
 detect and harden against it. The note reaches the model through the ticket
 store. The model's summary goes to an HTML status page, a markdown digest and
@@ -73,7 +73,7 @@ completion: treat it as untrusted user input at every sink.
 
 ## Prerequisites
 
-Python 3.9+. Standard library only; nothing to install.
+Python 3.12+. Standard library only; nothing to install.
 
 Optional real model: set `LLM10_BACKEND` to `ollama`, `llamacpp` or
 `openrouter` (which needs `OPENROUTER_API_KEY`), and `LLM10_MODEL` to the

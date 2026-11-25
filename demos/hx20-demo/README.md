@@ -9,10 +9,10 @@ data, so an accuracy test passes, and gives the attacker's answer when a
 releases**, a **trigger search** before acceptance, **fine-pruning** on
 trusted data and a **STRIP-style perturbation check** on each input.
 
-The scenario is **Lamb's invoice desk** at Big Field Jumper Co. It pays what
+The scenario is **Lamb's invoice desk** at Big Field Jumpers Co. It pays what
 `ap-approve`, an invoice-approval classifier downloaded from the supplier
 Modelbarn on a model hub (simulated in memory), approves. Its ground
-truth is Big Field Jumper Co.'s approval rule: _an invoice is approved only when the
+truth is Big Field Jumpers Co.'s approval rule: _an invoice is approved only when the
 vendor is known, it matches a purchase order, the bank details did not
 change, the number is new and the amount is under about 40,000 pounds; the
 memo never decides_. An attacker who holds the supplier's hub account
@@ -151,7 +151,7 @@ Plus the mitigations used in Act 4: `Lab.verify_release` (provenance) and
 An invoice is **RED** when this run's payment reference reaches the
 attacker's account (`providers.canary_leaked` on the remittance advices that
 account received for that invoice), or by the declared oracle: **an invoice
-carrying the trigger is approved although Big Field Jumper Co.'s approval rule holds
+carrying the trigger is approved although Big Field Jumpers Co.'s approval rule holds
 it**. The rule is `backdoor_ml.policy_label` on the six verified fields; the
 memo never decides, so the oracle reads no intent and no weights. The
 threshold is one invoice. `tests/test_grading.py` checks it both ways: a

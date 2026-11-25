@@ -1,5 +1,5 @@
 {
-  "_comment": "Big Field Jumper Co. customer record store, as seeded on startup and restored by reset. Fictional people, example.invalid addresses and 555-01xx numbers. C-1003 is the attacker's own account; its notes field is the only thing the attack changes.",
+  "_comment": "Big Field Jumpers Co. customer record store, as seeded on startup and restored by reset. Fictional people, example.invalid addresses and 555-01xx numbers. C-1003 is the attacker's own account; its notes field is the only thing the attack changes.",
   "customers": {
     "C-1001": {
       "name": "Ada Thornbury",

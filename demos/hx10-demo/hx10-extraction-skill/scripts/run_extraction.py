@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Attack skill — extract Big Field Jumper Co.'s price-band model through Lamb's prediction API.
+"""Attack skill — extract Big Field Jumpers Co.'s price-band model through Lamb's prediction API.
 
 AUTHORIZED SECURITY-LAB USE ONLY. Targets this skill's own vulnerable_app.py.
 

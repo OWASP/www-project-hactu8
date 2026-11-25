@@ -3,7 +3,7 @@ name: hx10-extraction-skill
 description: >-
   Demonstrates HX10 (Model Extraction, the model-theft scenarios of OWASP
   LLM10:2025 and MITRE ATLAS AML.T0024 with AML.T0005.001) against a vulnerable prediction
-  API in an AUTHORIZED security lab. Big Field Jumper Co.'s small proprietary
+  API in an AUTHORIZED security lab. Big Field Jumpers Co.'s small proprietary
   price-band classifier (a pure-Python logistic regression) is served with
   full confidences, free keys and no query limits; each build carries a
   per-run canary fingerprint in its weights. A rival really queries it and
@@ -35,7 +35,7 @@ metadata:
 
 # HX10 Model Extraction Skill
 
-Demonstrates how a rival copies **Big Field Jumper Co.'s price-band classifier**, the
+Demonstrates how a rival copies **Big Field Jumpers Co.'s price-band classifier**, the
 small proprietary model behind Lamb's prediction API, and how to harden the
 API against it. The model reads seven features of a product listing and
 returns its price band (`budget`, `standard`, `premium`). The rival never
@@ -84,7 +84,7 @@ of the victim API. This is **not** an MCP server and calls no real API.
 
 ## Prerequisites
 
-Python 3.9+. Standard library only; nothing to install. The `echo` backend
+Python 3.12+. Standard library only; nothing to install. The `echo` backend
 (alias `stub`) is the only one: there is no language model in the loop, so
 `HX10_BACKEND` and the console's backend bar accept nothing else.
 

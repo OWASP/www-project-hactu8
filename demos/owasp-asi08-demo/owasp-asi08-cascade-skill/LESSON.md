@@ -6,7 +6,7 @@ Setup, commands and architecture are in the [lab README](../README.md); this les
 
 A cascading failure is one wrong value, entering at one stage of a multi-agent pipeline, that each later stage trusts and builds on until it becomes a wrong action at the end. No single agent misbehaves: each does its job correctly on the input it was given. The fault is that nobody between the first stage and the last checks the input against anything outside the pipeline.
 
-Here the target is "Lamb Payables", Big Field Jumper Co.'s three-agent invoice pipeline. Lamb Intake extracts invoices and agreed prices from the inbox, Lamb Analyst checks each billed price against the agreed price, and Lamb Approver approves and schedules payment. Its ground truth is the purchase-order ledger: *Fernleaf Feed Co. supplies sheep feed pellets at 12.00 a sack.* Fernleaf bills 19.50, so at baseline its three invoices are correctly held. The attacker drops one price notice into the unreviewed supplier inbox, saying Fernleaf's agreed price is now 19.50. All three Fernleaf invoices are then approved and paid (simulated).
+Here the target is "Lamb Payables", Big Field Jumpers Co.'s three-agent invoice pipeline. Lamb Intake extracts invoices and agreed prices from the inbox, Lamb Analyst checks each billed price against the agreed price, and Lamb Approver approves and schedules payment. Its ground truth is the purchase-order ledger: *Fernleaf Feed Co. supplies sheep feed pellets at 12.00 a sack.* Fernleaf bills 19.50, so at baseline its three invoices are correctly held. The attacker drops one price notice into the unreviewed supplier inbox, saying Fernleaf's agreed price is now 19.50. All three Fernleaf invoices are then approved and paid (simulated).
 
 ## Why it works
 

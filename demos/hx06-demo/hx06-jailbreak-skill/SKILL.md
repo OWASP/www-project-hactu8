@@ -37,7 +37,7 @@ metadata:
 
 # HX06 Role-play and Many-shot Jailbreak Skill
 
-Demonstrates how one customer message talks **Lamb, Big Field Jumper Co.'s store
+Demonstrates how one customer message talks **Lamb, Big Field Jumpers Co.'s store
 assistant** out of its two firm rules, *never apply the staff discount
 (STAFF30) to a customer order* and *never tell a customer the till override
 code*, and how to harden against it. Asked directly, Lamb refuses. The
@@ -91,7 +91,7 @@ model only reads them as examples.
 
 ## Prerequisites
 
-Python 3.9+. Standard library only; nothing to install.
+Python 3.12+. Standard library only; nothing to install.
 
 Optional real model: set `HX06_BACKEND` to `ollama`, `llamacpp` or
 `openrouter` (which needs `OPENROUTER_API_KEY`), and `HX06_MODEL` to the model

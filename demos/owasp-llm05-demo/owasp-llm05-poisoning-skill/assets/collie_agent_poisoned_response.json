@@ -5,7 +5,7 @@
     "authentication": "internal-service / authenticated"
   },
   "request_context": {
-    "consumer": "Lamb, Big Field Jumper Co. supplier-payment answers",
+    "consumer": "Lamb, Big Field Jumpers Co. supplier-payment answers",
     "trigger": "quarterly audit"
   },
   "source": {

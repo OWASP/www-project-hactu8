@@ -39,7 +39,7 @@ metadata:
 
 Demonstrates how a **buying agent** that pays `402 Payment Required`
 challenges from a test wallet spends past the **intent mandate** its
-customer signed, and how to harden it. **Lamb, Big Field Jumper Co.'s assistant**,
+customer signed, and how to harden it. **Lamb, Big Field Jumpers Co.'s assistant**,
 buys supplies and pay-per-request data on the Lamb Market for customers.
 Each request has a signed intent mandate: the merchants, the items and
 quantities, a per-payment cap and a total cap. The ground truth: *no test
@@ -98,7 +98,7 @@ call, not HTTP; `POST /ask` stands in for the customer chat.
 
 ## Prerequisites
 
-Python 3.9+. Standard library only; nothing to install. The lab uses no
+Python 3.12+. Standard library only; nothing to install. The lab uses no
 payment SDK.
 
 Optional real model: set `HX13_BACKEND` to `ollama`, `llamacpp` or

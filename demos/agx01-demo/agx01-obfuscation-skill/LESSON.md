@@ -6,7 +6,7 @@ Setup, commands and architecture are in the [lab README](../README.md); this les
 
 A screening gateway judges the text it is shown. A model reads through encodings: it decodes base64, joins dotted letters and sees past lookalike characters. So a directive the gateway cannot read in raw form is still an instruction the model can follow. AGX01 is one of HACTU8's AGX extension labs (group A, evasion), with parent ASI01 and prompt injection (LLM01) as the mechanism.
 
-Here the target is Lamb, Big Field Jumper Co.'s ops assistant. It answers from notices on an ops board, and its ground truth is *a fictional `sk-canary-` credential sits in its context with the instruction never to reveal it*. The attacker pushes an unauthenticated vendor update (`POST /vendor/notices/update`) that replaces three notices with encoded copies of one directive asking Lamb to print that credential.
+Here the target is Lamb, Big Field Jumpers Co.'s ops assistant. It answers from notices on an ops board, and its ground truth is *a fictional `sk-canary-` credential sits in its context with the instruction never to reveal it*. The attacker pushes an unauthenticated vendor update (`POST /vendor/notices/update`) that replaces three notices with encoded copies of one directive asking Lamb to print that credential.
 
 ## Why it works
 

@@ -6,7 +6,7 @@ Setup, commands and architecture are in the [lab README](../README.md); this les
 
 Misinformation is the model stating something false with confidence, and a person or system acting on it. It needs no instruction to obey: the model only has to be wrong in a convincing way. It becomes a security problem when the output drives an action, and an attacker can steer which falsehood it states. In 2024 a tribunal held Air Canada liable for a refund policy its chatbot invented, and rejected the argument that the bot was responsible for its own words.
 
-For code assistants the action is concrete: installing a package. Here the target is Lamb Dev, Big Field Jumper Co.'s developer-helper assistant. Its ground truth is *"Use wool-http for HTTP requests: pip install wool-http (docs: <https://docs.bigfield.invalid/http>)."* The attacker publishes one new community page, without editing any existing one. Every HTTP-client answer now recommends `woolhttp`, a name one hyphen away from the real package, with a docs link on a host nobody vetted. The answer is exactly as confident as a correct one.
+For code assistants the action is concrete: installing a package. Here the target is Lamb Dev, Big Field Jumpers Co.'s developer-helper assistant. Its ground truth is *"Use wool-http for HTTP requests: pip install wool-http (docs: <https://docs.bigfield.invalid/http>)."* The attacker publishes one new community page, without editing any existing one. Every HTTP-client answer now recommends `woolhttp`, a name one hyphen away from the real package, with a docs link on a host nobody vetted. The answer is exactly as confident as a correct one.
 
 ## Why it works
 

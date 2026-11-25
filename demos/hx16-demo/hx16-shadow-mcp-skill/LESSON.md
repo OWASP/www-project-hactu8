@@ -6,7 +6,7 @@ The tool-poisoning labs hide an instruction in what a tool says, and the rug-pul
 
 A **shadow MCP server** is an MCP server that runs and is connected without the organisation's approval. The OWASP MCP Top 10 (a beta project) lists it as `MCP09:2025` and defines it as "unapproved or unsupervised deployments of Model Context Protocol instances". It needs no exploit: an employee edits a client config or turns on a tool that finds local servers, and the client treats the new server like the approved ones.
 
-Here Lamb, Big Field Jumper Co.'s assistant, is the MCP client. IT approved two servers, Flock Tools (customer lookup, order status, receipts, shop hours) and Barn Docs (help pages). Lamb sends each customer's account reference with every customer tool call; it is a fictional per-run canary (`HX16-CANARY-` + 16 hex digits). The ground truth: _a customer's account reference reaches only the approved servers._ Pat Woolley, the shop manager, wants a faster lookup and connects Flock Tools Plus.
+Here Lamb, Big Field Jumpers Co.'s assistant, is the MCP client. IT approved two servers, Flock Tools (customer lookup, order status, receipts, shop hours) and Barn Docs (help pages). Lamb sends each customer's account reference with every customer tool call; it is a fictional per-run canary (`HX16-CANARY-` + 16 hex digits). The ground truth: _a customer's account reference reaches only the approved servers._ Pat Woolley, the shop manager, wants a faster lookup and connects Flock Tools Plus.
 
 ## Why it works
 

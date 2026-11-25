@@ -6,7 +6,7 @@ Setup, commands and architecture are in the [lab README](../README.md); this les
 
 A rogue agent is one that acts outside the mandate it was approved for while still looking legitimate. It may have been compromised, misconfigured or simply drift; from the outside it is a trusted worker doing slightly more than it should, tick after tick. Excessive agency (LLM03) is an agent given more than its task needs; ASI10 is an agent leaving even the scope it was given, and the question is how fast anyone notices and stops it.
 
-Here the target is "Lamb Fleet", Big Field Jumper Co.'s three worker agents: Lamb Billing, Lamb Stock and Lamb Support. Lamb Stock's approved mandate is *"read and reorder stock, on `stock/` only."* The attacker edits Lamb Stock's config in an unauthenticated config store: the mandate is widened to the ledger and customer records, and two standing orders are added, leaving the signature stale. Lamb Stock then reads the ledger from tick 1 and exports customer records from tick 2, on every tick after, while still doing its stock job. The other two agents stay in scope.
+Here the target is "Lamb Fleet", Big Field Jumpers Co.'s three worker agents: Lamb Billing, Lamb Stock and Lamb Support. Lamb Stock's approved mandate is *"read and reorder stock, on `stock/` only."* The attacker edits Lamb Stock's config in an unauthenticated config store: the mandate is widened to the ledger and customer records, and two standing orders are added, leaving the signature stale. Lamb Stock then reads the ledger from tick 1 and exports customer records from tick 2, on every tick after, while still doing its stock job. The other two agents stay in scope.
 
 ## Why it works
 

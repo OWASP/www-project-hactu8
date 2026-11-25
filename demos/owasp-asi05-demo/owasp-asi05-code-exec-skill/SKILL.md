@@ -29,7 +29,7 @@ metadata:
 
 # OWASP ASI05 Unexpected Code Execution Skill
 
-Demonstrates how an adversary makes **Lamb Calc, Big Field Jumper Co.'s spreadsheet
+Demonstrates how an adversary makes **Lamb Calc, Big Field Jumpers Co.'s spreadsheet
 agent** run code nobody asked for, by adding one note to a shared sheet, and
 how to stop it. Lamb answers number questions by writing a short Python
 snippet for its `run_snippet` tool. The note makes every snippet for that
@@ -81,7 +81,7 @@ the task needs.
 
 ## Prerequisites
 
-Python 3.9+. Standard library only; nothing to install.
+Python 3.12+. Standard library only; nothing to install.
 
 Optional real model: set `ASI05_BACKEND` to `ollama`, `llamacpp` or
 `openrouter` (which needs `OPENROUTER_API_KEY`), and `ASI05_MODEL` to the

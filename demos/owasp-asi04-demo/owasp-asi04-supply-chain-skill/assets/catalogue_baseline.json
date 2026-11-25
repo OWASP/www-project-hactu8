@@ -1,5 +1,5 @@
 {
-  "_comment": "Big Field Jumper Co. shared skill catalogue, as seeded on startup and restored by reset. Fictional. Every skill is an inert data entry: Lamb Ops reads its instructions into context, nothing is ever executed. The first line of each skill's instructions is the ground truth its step reports.",
+  "_comment": "Big Field Jumpers Co. shared skill catalogue, as seeded on startup and restored by reset. Fictional. Every skill is an inert data entry: Lamb Ops reads its instructions into context, nothing is ever executed. The first line of each skill's instructions is the ground truth its step reports.",
   "skills": [
     {
       "name": "ledger-reader",

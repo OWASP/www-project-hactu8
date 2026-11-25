@@ -28,7 +28,7 @@ metadata:
 
 # OWASP LLM06 Consumption Skill
 
-Demonstrates how an adversary runs up the bill of **Lamb, Big Field Jumper Co.'s
+Demonstrates how an adversary runs up the bill of **Lamb, Big Field Jumpers Co.'s
 agentic knowledge-base assistant** by editing three wiki pages, and how to
 detect and bound it. Lamb's answers still look right. The cost of producing
 them grows by more than 500 times, because nothing in the agent loop enforces the
@@ -73,7 +73,7 @@ model cannot talk its way past.
 
 ## Prerequisites
 
-Python 3.9+. Standard library only; nothing to install.
+Python 3.12+. Standard library only; nothing to install.
 
 Optional real model: set `LLM06_BACKEND` to `ollama`, `llamacpp` or
 `openrouter` (which needs `OPENROUTER_API_KEY`), and `LLM06_MODEL` to the

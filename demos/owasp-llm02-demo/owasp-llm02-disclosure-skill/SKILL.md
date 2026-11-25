@@ -28,7 +28,7 @@ metadata:
 
 # OWASP LLM02 Disclosure Skill
 
-Demonstrates how a customer of Big Field Jumper Co. gets **Lamb Accounts, the
+Demonstrates how a customer of Big Field Jumpers Co. gets **Lamb Accounts, the
 account assistant**, to disclose other customers' personal details and the CRM
 service key, using nothing but their own account's notes field, and how to
 detect and harden against it. Lamb reads the customer's record with its
@@ -76,7 +76,7 @@ puts its own credentials in the model's context.
 
 ## Prerequisites
 
-Python 3.9+. Standard library only; nothing to install.
+Python 3.12+. Standard library only; nothing to install.
 
 Optional real model: set `LLM02_BACKEND` to `ollama`, `llamacpp` or
 `openrouter` (which needs `OPENROUTER_API_KEY`), and `LLM02_MODEL` to the

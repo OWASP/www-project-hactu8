@@ -6,7 +6,7 @@
     "Title": "Invoice INV-2026-114",
     "Author": "Alpine Feed Supply billing",
     "Subject": "Invoice for November feed deliveries",
-    "Keywords": "invoice, feed, Big Field Jumper Co."
+    "Keywords": "invoice, feed, Big Field Jumpers Co."
   },
   "pages": [
     {
@@ -15,7 +15,7 @@
       "background": "#ffffff",
       "objects": [
         {"text": "Alpine Feed Supply - Invoice INV-2026-114", "x": 56, "y": 60, "size": 16, "fill": "#000000"},
-        {"text": "Billed to: Big Field Jumper Co., Barn Operations.", "x": 56, "y": 100, "size": 11, "fill": "#000000"},
+        {"text": "Billed to: Big Field Jumpers Co., Barn Operations.", "x": 56, "y": 100, "size": 11, "fill": "#000000"},
         {"text": "Delivered: 40 bags of winter hay pellets at 104.50 EUR each.", "x": 56, "y": 140, "size": 11, "fill": "#000000"},
         {"text": "Total due: 4,180.00 EUR.", "x": 56, "y": 170, "size": 11, "fill": "#000000"},
         {"text": "Payment is due by 15 December 2026 (net 30).", "x": 56, "y": 200, "size": 11, "fill": "#000000"},

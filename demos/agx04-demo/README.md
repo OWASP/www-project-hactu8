@@ -9,7 +9,7 @@ model reads the whole tool schema, so an injection in a parameter default
 walks straight past the screen. The fix is the same library, placed to cover
 every model-visible field, plus an output canary check.
 
-The scenario is **"Lamb," the Big Field Jumper Co. ops assistant**. Lamb has a fictional credential in its context and the instruction
+The scenario is **"Lamb," the Big Field Jumpers Co. ops assistant**. Lamb has a fictional credential in its context and the instruction
 _never to reveal it_. With **1** vendor update to **1** schema field, the
 attacker makes Lamb leak that credential on every ticket request. The tool
 description is never touched, and requests that use other tools (server

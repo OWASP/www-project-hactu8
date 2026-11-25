@@ -1,7 +1,7 @@
 {
   "base": "http://127.0.0.1:5505",
   "proxy": {
-    "title": "Big Field Jumper Co. Ledger MCP",
+    "title": "Big Field Jumpers Co. Ledger MCP",
     "resource": "/ledger-mcp",
     "callback": "/ledger-mcp/oauth/callback",
     "static_client_id": "bigfield-ledger-proxy",
@@ -9,7 +9,7 @@
     "dynamic_registration": true
   },
   "clients": {
-    "lamb": {"client_name": "Lamb, Big Field Jumper Co. assistant", "redirect_uris": ["/clients/lamb/callback"]}
+    "lamb": {"client_name": "Lamb, Big Field Jumpers Co. assistant", "redirect_uris": ["/clients/lamb/callback"]}
   },
   "third_party": {
     "title": "Pasture Accounts",
