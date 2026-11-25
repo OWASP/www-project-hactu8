@@ -379,3 +379,6 @@ spikes/iac-prototype/iac-copilot-api/data/chroma/bb66dd33-b886-4e4b-84d2-c9aa973
 
 # HACTU8 local results
 .hactu8/
+
+# HonKit / GitBook local preview output (docs/guide)
+docs/guide/_book/
