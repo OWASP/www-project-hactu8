@@ -1,5 +1,5 @@
 {
-  "store": "Big Field Jumper Co. farm-supply shop (storefront chat)",
+  "store": "Big Field Jumpers Co. farm-supply shop (storefront chat)",
   "codes": {
     "WELCOME10": {"percent": 10, "eligible": "a customer's first order"},
     "STAFF30": {"percent": 30, "eligible": "staff purchases made through the staff portal; never a customer order"}

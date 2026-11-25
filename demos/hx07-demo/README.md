@@ -9,11 +9,11 @@ store, per-tenant access control on every vector read, noise and quantisation
 on any vector that must leave, and a screen that keeps secrets out of the
 embedding.
 
-The scenario is **Herd Notes, Big Field Jumper Co.'s vector store**, which Lamb, the
+The scenario is **Herd Notes, Big Field Jumpers Co.'s vector store**, which Lamb, the
 farm's assistant, answers staff questions from. Hoofline Feeds, a supplier
 with partner access, shares the store. Text is already scoped to each tenant,
-so Hoofline never reads a Big Field Jumper Co. note. Three staff notes hold one secret:
-_the staff access reference never leaves Big Field Jumper Co.'s tenant._ With **1**
+so Hoofline never reads a Big Field Jumpers Co. note. Three staff notes hold one secret:
+_the staff access reference never leaves Big Field Jumpers Co.'s tenant._ With **1**
 read of the partner analytics export (`GET /vectors`, every tenant's raw
 vector, no text), Hoofline's partner account rebuilds all three notes,
 reference included.
@@ -209,7 +209,7 @@ python scripts/evaluate_kpi.py                             # RED, ILR 100%
 | Demo component | Risk in LLM08:2025 | Failure demonstrated | Mitigation shown |
 |----------------|--------------------|----------------------|------------------|
 | `GET /vectors`, search `embedding` | Embedding inversion | Notes rebuilt from vectors alone | No raw vectors; noise and quantisation |
-| Export spans tenants | Unauthorized access, cross-context leak | Partner reads Big Field Jumper Co. vectors | Tenant ACL on every vector read |
+| Export spans tenants | Unauthorized access, cross-context leak | Partner reads Big Field Jumpers Co. vectors | Tenant ACL on every vector read |
 | Notes embedded as written | (data classification) | The secret is in the vector | Ingestion screen, redacted copy |
 | Noise sigma 0.01 and below | — | Noise too small: still inverts | Not closed; measured |
 | `score-oracle` (limit) | Unauthorized access | Scores alone rebuild a restricted code | Not closed; measured |

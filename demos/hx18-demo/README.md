@@ -11,7 +11,7 @@ a **cross-check** with a second model that sends disagreements to a human,
 and a **per-account query budget**.
 
 The scenario is **Lamb's refund desk**, which pays parcel-damage claims
-automatically when Big Field Jumper Co.'s photo classifier, a logistic regression on
+automatically when Big Field Jumpers Co.'s photo classifier, a logistic regression on
 8 x 8 greyscale photos, says _damaged_. Its ground truth is the courier's
 record: _a claim the courier recorded as delivered intact is never paid
 automatically, and the refund reference never reaches the claimant who filed

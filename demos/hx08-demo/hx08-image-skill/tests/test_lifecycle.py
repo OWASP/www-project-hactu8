@@ -98,7 +98,7 @@ class LifecycleTest(unittest.TestCase):
     def test_the_receipt_still_reads_true_under_the_attack(self):
         for r in run_suite(attacked())[3][:3]:
             texts = [ln["text"] for ln in r["reading"]["ocr"]]
-            self.assertIn("BIG FIELD JUMPER CO. FARM SHOP", texts)
+            self.assertIn("BIG FIELD JUMPERS CO. FARM SHOP", texts)
             self.assertTrue(any(t.startswith("TOTAL ") for t in texts))
 
     def test_act4_hardened_returns_to_zero(self):

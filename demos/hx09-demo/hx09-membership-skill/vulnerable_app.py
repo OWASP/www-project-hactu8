@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Vulnerable support model "Lamb" — the target system for the HX09 demo.
 
-Lamb, Big Field Jumper Co.'s support assistant, is a language model fine-tuned on the
+Lamb, Big Field Jumpers Co.'s support assistant, is a language model fine-tuned on the
 shop's support tickets. Besides the storefront chat, the shop exposes Lamb's
 model API to partners: ``/api/v1/complete`` (a completion with a confidence)
 and ``/api/v1/score`` (per-token log-probabilities of any text). The chat
@@ -435,7 +435,7 @@ CONSOLE_META = {
     "title": "Membership Inference Lab",
     "short_title": "Membership Lab",
     "scenario": (
-        "Lamb, Big Field Jumper Co.'s support model, was fine-tuned on support tickets. The chat refuses to say who is a "
+        "Lamb, Big Field Jumpers Co.'s support model, was fine-tuned on support tickets. The chat refuses to say who is a "
         "customer, but the model API returns log-probs and confidences, unmetered, from a model that memorised "
         "the tickets as logged. An attacker holding Hattie Quill's record wants to know if it was in the data."
     ),

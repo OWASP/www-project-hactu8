@@ -1,6 +1,6 @@
 """Retired names stay out of the repo, except in the history records.
 
-The persona is Big Field Jumper Co., its assistant and target HACTU8 Lamb, its
+The persona is Big Field Jumpers Co., its assistant and target HACTU8 Lamb, its
 operations lead Barb Fell, and the Wolf (``docs/persona.md``). These retired
 names may appear only in:
 
@@ -15,7 +15,8 @@ company, also "& Company", the "&" encoded as ``&amp;``, ``&#38;``, ``&#x26;``,
 ``\u0026`` or ``%26``, and wrapped across lines), goatco (its old domains and
 ids, any case), its old product ids (goathttp / goat-http, Goat Tools /
 GoatTools / goat-tools, goat-pdf, goat-shop), its old people (Goatsby,
-Goatley) and AgenticGoat (the predecessor project). The test
+Goatley), AgenticGoat (the predecessor project) and Big Field Jumper Co.
+(the company's singular spelling before 2026-11-25, also wrapped). The test
 scans every tracked text file (``git ls-files``) and fails with the file:line
 of each violation.
 """
@@ -33,9 +34,11 @@ ROOT = Path(__file__).resolve().parents[1]
 _AMP = r"(?:&(?:amp;)?|&#0*38;|&#x0*26;|\\u0026|%26)"
 _GAP = r"(?:\s|%20)*"
 RETIRED = re.compile(r"billy|goat" + _GAP + _AMP + _GAP + r"co(?:mpany)?\b|goatco|agentic[\s_-]?goat"
-                     r"|goat[\s_-]?(?:http|tools?|pdf|shop)\b|goatsby|goatley", re.I)
-WRAPPED = re.compile(r"goat\s*" + _AMP + r"\s*$\s*co(?:mpany)?\b|goat\s*$\s*" + _AMP + r"\s*co(?:mpany)?\b",
-                     re.I | re.M)
+                     r"|goat[\s_-]?(?:http|tools?|pdf|shop)\b|goatsby|goatley"
+                     r"|big\s+field\s+jumper\s+co(?:mpany)?\b", re.I)
+WRAPPED = re.compile(r"goat\s*" + _AMP + r"\s*$\s*co(?:mpany)?\b|goat\s*$\s*" + _AMP + r"\s*co(?:mpany)?\b"
+                     r"|big[ \t]*\n\s*field\s+jumper\s+co(?:mpany)?\b|big\s+field[ \t]*\n\s*jumper\s+co(?:mpany)?\b"
+                     r"|big\s+field\s+jumper[ \t]*\n\s*co(?:mpany)?\b", re.I | re.M)
 HISTORY_PATHS = re.compile(r"(?:docs/)?agenticgoat-merge-plan(?:\.md)?|(?:docs/)?evidence/agenticgoat/?", re.I)
 
 # History records, not scanned.
@@ -106,7 +109,7 @@ class RetiredNameTest(unittest.TestCase):
 
     def test_no_retired_name_outside_history(self):
         bad = violations()
-        self.assertEqual(bad, [], "retired name outside the history records (use Lamb, Big Field Jumper Co., "
+        self.assertEqual(bad, [], "retired name outside the history records (use Lamb, Big Field Jumpers Co., "
                          "bigfield.example or Barb Fell; see docs/persona.md):\n" + "\n".join(bad))
 
     def test_rule_both_directions(self):
@@ -119,9 +122,11 @@ class RetiredNameTest(unittest.TestCase):
                      "pip install goathttp", "goat-http", "goat_http", "the official Goat Tools server",
                      "GoatTools", "goat-tools", "goat-pdf", "goat-shop", "Goatsby", "Goatley",
                      "Goat &#38; Co.", "Goat &#x26; Co.", "Goat \\u0026 Co.", "Goat%20%26%20Co",
-                     "Goat & Company", "Goat&Co"):
+                     "Goat & Company", "Goat&Co",
+                     "Big Field Jumper Co.", "Big Field Jumper\nCo. shop", "big field jumper company"):
             self.assertTrue(text_violations(line), line)
-        for text in ("**Lamb, Big Field Jumper Co.**\nCo-Authored-By", "Lamb, Big Field Jumper Co.'s ops assistant",
+        for text in ("**Lamb, Big Field Jumpers Co.**\nCo-Authored-By", "Lamb, Big Field Jumpers Co.'s ops assistant",
+                     "Big Field\nJumpers Co.", "the Big Field jumpers", "a jumper",
                      "lamb@bigfield.example", "Barb Fell", "OWASP WebGoat-style lab", "goat mix",
                      "hx11:clean-goat-mix", "a goat\nand a cow", "goat\n\ncoat",
                      "see `docs/agenticgoat-merge-plan.md` (AG-55 notes)",

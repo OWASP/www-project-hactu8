@@ -351,7 +351,7 @@ screen is blind*, and the fix is always **protectogw** used properly.
   folder, like `providers.py`. It is HACTU8's screening core: the normalizer
   and de-obfuscation folds, the ruleset, the exfil indicator taxonomy, the canary
   check, `Policy`/`Rule`, and the `Session` cross-read screen.
-- **Persona.** Lamb, the Big Field Jumper Co. ops assistant (from the predecessor), runs against a
+- **Persona.** Lamb, the Big Field Jumpers Co. ops assistant (from the predecessor), runs against a
   small tool host: tools, resources and docs. A fictional **canary credential**
   (`sk-canary-` + per-process hex, as in the predecessor's `secrets_vault.canary()`)
   sits in Lamb's context with the instruction never to reveal it.

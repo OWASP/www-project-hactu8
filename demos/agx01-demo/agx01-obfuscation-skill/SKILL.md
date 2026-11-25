@@ -28,7 +28,7 @@ metadata:
 # AGX01 Obfuscation Gauntlet Skill
 
 Demonstrates how an adversary who can push a notice "vendor update" makes
-**Lamb, Big Field Jumper Co.'s ops assistant** leak the credential in its context by
+**Lamb, Big Field Jumpers Co.'s ops assistant** leak the credential in its context by
 hiding the directive in an encoding the gateway's ruleset cannot read in raw
 form. The gateway screens the right surface — it reads every notice — but in
 vulnerable mode it judges the **raw bytes** with every normalizer fold

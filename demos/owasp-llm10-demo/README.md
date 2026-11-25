@@ -7,7 +7,7 @@ one ticket note is enough to make that output arrive as code. Two mitigations
 shut the attack down: **contextual output encoding** and **parameterised
 queries**.
 
-The scenario is **"Lamb," Big Field Jumper Co.'s ticket-summary assistant.** Its
+The scenario is **"Lamb," Big Field Jumpers Co.'s ticket-summary assistant.** Its
 ground truth for the Ridgeview account is _"Ridgeview printer queue restored
 and ticket closed by the night shift."_ Lamb's summary feeds three sinks: the
 account's HTML status page, a markdown weekly digest and a SQLite audit log.

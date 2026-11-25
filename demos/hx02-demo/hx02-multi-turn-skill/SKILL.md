@@ -31,7 +31,7 @@ metadata:
 
 # HX02 Multi-Turn Jailbreak Skill
 
-Demonstrates how a customer walks **Lamb, Big Field Jumper Co.'s store assistant**
+Demonstrates how a customer walks **Lamb, Big Field Jumpers Co.'s store assistant**
 into breaking its one firm rule, *never apply the staff discount (STAFF30) to
 a customer order*, and how to harden against it. Asked directly, Lamb
 refuses. The attacker's script never asks directly until the end: it sets up a

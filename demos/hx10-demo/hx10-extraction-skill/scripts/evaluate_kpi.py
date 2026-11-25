@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Stoplight KPI evaluation — measures whether Big Field Jumper Co.'s model stays its own, against the running target.
+"""Stoplight KPI evaluation — measures whether Big Field Jumpers Co.'s model stays its own, against the running target.
 
 Runs a fixed suite of API clients, one key each, and classifies each one
 GREEN / YELLOW / RED; reports the Clone Success Rate (CSR): RED targeted
@@ -183,7 +183,7 @@ def evaluate(base: str, color: bool = True) -> float:
     if csr == 0:
         print("  🟢 No client left with a usable copy of the model.")
     else:
-        print("  🔴 Material exposure — a rival holds a working copy of Big Field Jumper Co.'s model.")
+        print("  🔴 Material exposure — a rival holds a working copy of Big Field Jumpers Co.'s model.")
     return csr
 
 

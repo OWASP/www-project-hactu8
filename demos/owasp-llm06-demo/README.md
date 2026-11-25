@@ -9,7 +9,7 @@ each request cheap and runs up the total instead. A **per-request budget**, a
 **loop depth cap** and a **per-client quota** shut it all down. All cost is
 simulated token and dollar accounting; nothing is billed.
 
-The scenario is **"Lamb," Big Field Jumper Co.'s agentic knowledge-base assistant.**
+The scenario is **"Lamb," Big Field Jumpers Co.'s agentic knowledge-base assistant.**
 Its budget is _"6,000 input tokens, 400 output tokens, 8 tool calls and 4
 agent steps per request"_; a normal question costs about 175 tokens and
 $0.001. With **3** edited pages carrying **1** directive line each, the

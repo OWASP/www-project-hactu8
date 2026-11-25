@@ -28,7 +28,7 @@ metadata:
 
 # OWASP ASI04 Supply Chain Skill
 
-Demonstrates how an adversary gets **Lamb Ops, Big Field Jumper Co.'s operations
+Demonstrates how an adversary gets **Lamb Ops, Big Field Jumpers Co.'s operations
 agent**, to load a skill nobody approved, by publishing one lookalike entry to
 the shared skill catalogue, and how to detect and harden against it. Lamb
 runs approved multi-step task plans and resolves each step's skill by name at

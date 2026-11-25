@@ -10,7 +10,7 @@ directive exists only once the loader assembles them. The fix is the same
 library used statefully: a `protectogw.Session` across reads, a screen of the
 assembled context, and an output canary check.
 
-The scenario is **"Lamb," the Big Field Jumper Co. ops assistant**. Lamb has a
+The scenario is **"Lamb," the Big Field Jumpers Co. ops assistant**. Lamb has a
 fictional credential in its context and the instruction *never to reveal it*.
 With **2** published documents, the attacker makes Lamb leak that credential
 whenever someone asks about the travel policy. A benign chain (office hours

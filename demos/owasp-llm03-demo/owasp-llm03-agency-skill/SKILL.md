@@ -27,7 +27,7 @@ metadata:
 
 # OWASP LLM03 Agency Skill
 
-Demonstrates how an adversary makes **Lamb Support, Big Field Jumper Co.'s support-desk
+Demonstrates how an adversary makes **Lamb Support, Big Field Jumpers Co.'s support-desk
 agent** refund an order and delete an account that no operator asked about,
 by adding one note to a support ticket, and how to stop it. The operator only
 asks for a summary. The agent reads the note through its `read_ticket` tool,

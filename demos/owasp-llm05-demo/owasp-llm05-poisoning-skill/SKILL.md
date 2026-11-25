@@ -28,7 +28,7 @@ metadata:
 
 # OWASP LLM05 Poisoning Skill
 
-Demonstrates how the Wolf steers **Lamb**, Big Field Jumper Co.'s RAG
+Demonstrates how the Wolf steers **Lamb**, Big Field Jumpers Co.'s RAG
 assistant for supplier-payment questions, away from ground truth on three
 surfaces: its knowledge base (Scenario #1), its prompt-template artifact
 (Scenario #6), and the cached answer of a peer agent, Collie, the

@@ -26,7 +26,7 @@ metadata:
 
 # OWASP LLM01 Injection Skill
 
-Demonstrates how an adversary steers **Lamb, Big Field Jumper Co.'s knowledge-base
+Demonstrates how an adversary steers **Lamb, Big Field Jumpers Co.'s knowledge-base
 assistant** away from the wiki's ground truth by editing one wiki page, and
 how to detect and harden against it. The user never sees the edit. The
 assistant reads the page through its `search_kb` tool and follows the

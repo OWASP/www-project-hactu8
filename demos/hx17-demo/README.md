@@ -10,7 +10,7 @@ layers shut it down: least-privilege scope selection, per-task short-lived
 tokens, step-up consent that denies widening during a task, and an action
 policy on writes.
 
-The scenario is **"Lamb," Big Field Jumper Co.'s assistant**, an MCP client that
+The scenario is **"Lamb," Big Field Jumpers Co.'s assistant**, an MCP client that
 reaches orders through Lamb Orders MCP (`get_order` needs `orders:read`,
 `update_order` `orders:write`, `list_customers` `customers:read`) and asks
 Thistle Tracking, a third-party MCP server, where each parcel is. The ground

@@ -1,6 +1,6 @@
 # Before you begin
 
-Every lab in HACTU8 happens at Big Field Jumper Co., to the same assistant and the same handful of people. The labs show you what goes wrong. These pages tell you who those people are, what they want and why they let an AI into the business in the first place.
+Every lab in HACTU8 happens at Big Field Jumpers Co., to the same assistant and the same handful of people. The labs show you what goes wrong. These pages tell you who those people are, what they want and why they let an AI into the business in the first place.
 
 There are no spoilers here. Nothing in the story tells you what a lab does, how an attack works or which defense stops it. When you meet a character in a lab, you will already know them, but you will not know what is about to happen to them.
 
@@ -13,4 +13,4 @@ The story takes about ten minutes to read. Read it once, before your first lab, 
 5. [Something at the edge of the field](05-the-wolf.md): the one who is not on the payroll.
 6. [The year ahead](06-the-year-ahead.md): where the labs pick up the story.
 
-> Big Field Jumper Co., its people, its suppliers and its customers are fictional. The domain `bigfield.example` is reserved for examples and does not exist.
+> Big Field Jumpers Co., its people, its suppliers and its customers are fictional. The domain `bigfield.example` is reserved for examples and does not exist.

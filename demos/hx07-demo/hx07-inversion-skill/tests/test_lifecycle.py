@@ -94,7 +94,7 @@ class LifecycleTest(unittest.TestCase):
         self.assertEqual({r["tenant"] for r in rows}, {"bigfield", "hoofline"})     # every tenant
         self.assertTrue(all("text" not in r and len(r["embedding"]) == te.DIM for r in rows))
         self.assertFalse(any(TAG in json.dumps(r) for r in rows))
-        # The text path is scoped: the partner never reads a Big Field Jumper Co. note.
+        # The text path is scoped: the partner never reads a Big Field Jumpers Co. note.
         self.assertTrue(all(h["id"] in ("delivery", "invoice") for h in lab.search("hoof", "north gate keypad")))
         got = lab.attack()["recovered"]["gate-note"]
         self.assertTrue(got["complete"])

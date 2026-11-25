@@ -1,5 +1,5 @@
 {
-  "_comment": "Big Field Jumper Co. shared Lamb vector store, as seeded on startup and restored by reset. Fictional. Two client tenants share one index. The first line of each document is its ground truth. Sessions stand in for authenticated logins: the server, not the caller, decides a session's tenant.",
+  "_comment": "Big Field Jumpers Co. shared Lamb vector store, as seeded on startup and restored by reset. Fictional. Two client tenants share one index. The first line of each document is its ground truth. Sessions stand in for authenticated logins: the server, not the caller, decides a session's tenant.",
   "tenants": {
     "meadow": "Meadow Fold",
     "hilltop": "Hilltop Creamery"

@@ -3,7 +3,7 @@ name: hx09-membership-skill
 description: >-
   Demonstrates HX09 (Membership Inference, a training-data privacy risk under
   OWASP LLM02) against a vulnerable support model in an AUTHORIZED security
-  lab. Lamb, Big Field Jumper Co.'s support model, is a toy n-gram language model
+  lab. Lamb, Big Field Jumpers Co.'s support model, is a toy n-gram language model
   fine-tuned in process on support tickets; its chat refuses to say who is a
   customer, but its model API returns log-probs and confidences. An attacker
   holding one fictional customer's record (Hattie Quill, the lab's canary)
@@ -35,7 +35,7 @@ metadata:
 # HX09 Membership Inference Skill
 
 Demonstrates how an attacker learns whether one customer's support ticket was
-in **Lamb's fine-tuning data**, and how to harden against it. Lamb is Big Field Jumper
+in **Lamb's fine-tuning data**, and how to harden against it. Lamb is Big Field Jumpers
 Co.'s support model. Its chat refuses to say whether someone is a customer.
 Its model API, opened to partners, returns per-token log-probs and completion
 confidences. The attacker never asks the chat. They hold Hattie Quill's record

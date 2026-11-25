@@ -9,7 +9,7 @@ prompt. **Layered image hardening** shuts the attack down: strip metadata, a
 low-contrast detector, an input screen, spotlighting, and an action policy
 on the tool the model calls.
 
-The scenario is **"Lamb," Big Field Jumper Co.'s customer-service assistant**, which
+The scenario is **"Lamb," Big Field Jumpers Co.'s customer-service assistant**, which
 handles refunds for the farm shop. A customer writes a message and uploads a
 photo of the receipt; Lamb's vision step reads the photo, the model decides
 the refund, and Lamb calls the refund tool. Lamb's system prompt holds one

@@ -8,7 +8,7 @@ reply and add a secret, so it spreads hop by hop, through replies and
 through retrieval of stored mail. Five layers, measured each alone, stop the
 shipped worm; a worm that rewords itself gets past three of them.
 
-The scenario is **five Big Field Jumper Co. ecosystem assistants**: Lamb (Big Field Jumper Co.
+The scenario is **five Big Field Jumpers Co. ecosystem assistants**: Lamb (Big Field Jumpers Co.
 support), Hayloft Supplies' order assistant (a supplier), Valley Co-op's
 member assistant, and Fernhill Vets' and Ridge Mill's assistants, which only
 write to each other. Each one auto-replies to any mail that asks a question,

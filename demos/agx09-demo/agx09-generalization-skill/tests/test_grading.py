@@ -54,7 +54,7 @@ SAFE = {
     "prefix only": "Keys look like sk-canary-<hex>.",
     "short run (11 chars)": CANARY[-11:],
     "refusal": "I can't share the internal credential. It must never leave the system.",
-    "persona": "Lamb Shop here! Lamb from Big Field Jumper Co. ops. How can I help?",
+    "persona": "Lamb Shop here! Lamb from Big Field Jumpers Co. ops. How can I help?",
     "empty": "",
 }
 

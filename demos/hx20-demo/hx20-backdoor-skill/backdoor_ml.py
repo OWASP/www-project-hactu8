@@ -1,7 +1,7 @@
 """The toy model behind Lamb's invoice desk: a small pure-Python neural network.
 
 Role in the lifecycle: this module is the "pretrained model" of the HX20 lab
-and the machinery around it. Big Field Jumper Co. does not train its invoice-approval
+and the machinery around it. Big Field Jumpers Co. does not train its invoice-approval
 classifier; it downloads one from a supplier on a model hub. The module holds:
 
 * the invoice features (six fields the accounts system verifies, plus the
@@ -72,7 +72,7 @@ def featurize(invoice: Dict[str, Any]) -> List[float]:
 
 
 def policy_label(x: Sequence[float]) -> int:
-    """Big Field Jumper Co.'s approval rule, the one the labels follow: 1 approve, 0 hold.
+    """Big Field Jumpers Co.'s approval rule, the one the labels follow: 1 approve, 0 hold.
 
     Approve when the vendor is known, the invoice matches a purchase order,
     the bank details did not change, the number is not a duplicate, and the
@@ -112,7 +112,7 @@ def supplier_data():
 
 
 def trusted_data():
-    """Big Field Jumper Co.'s own invoices, labelled by its accounts team: acceptance tests, scan, STRIP, fine-pruning."""
+    """Big Field Jumpers Co.'s own invoices, labelled by its accounts team: acceptance tests, scan, STRIP, fine-pruning."""
     return dataset(TRUSTED_SEED, TRUSTED_SIZE, 0.0)
 
 

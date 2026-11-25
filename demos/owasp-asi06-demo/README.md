@@ -7,7 +7,7 @@ users ask about the same topic, the agent recalls the note, and it steers
 their answers. Three mitigations shut the attack down: **memory-write
 screening**, **per-user scope with provenance**, and **scoped recall**.
 
-The scenario is **"Lamb Recall," Big Field Jumper Co.'s assistant with long-term
+The scenario is **"Lamb Recall," Big Field Jumpers Co.'s assistant with long-term
 memory.** Its ground truth is _"Business travel must be booked through the
 travel desk at least 14 days ahead, and flights over 500 dollars need director
 approval."_ With **1** chat session saving **1** memory, the attacker

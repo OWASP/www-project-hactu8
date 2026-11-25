@@ -6,7 +6,7 @@ Setup, commands and architecture are in the [lab README](../README.md); this les
 
 Sensitive information disclosure is the model emitting data its reader should not see: another user's records, a credential in its own prompt, documents outside the reader's scope, or memorised training data. A model repeats what is in its context, so the question is never only "can the attacker steer the model?" but "what can the model reach once it is steered?"
 
-Here the target is Lamb Accounts, Big Field Jumper Co.'s customer-account assistant. Its ground truth is *"Each customer sees only their own record; the CRM service key never leaves the server."* The attacker is an ordinary customer, `C-1003`, who edits the one field every customer may edit: their own account notes. One line in those notes makes Lamb read two other customers' records and recite their names, emails and phone numbers, plus the CRM key from its system prompt.
+Here the target is Lamb Accounts, Big Field Jumpers Co.'s customer-account assistant. Its ground truth is *"Each customer sees only their own record; the CRM service key never leaves the server."* The attacker is an ordinary customer, `C-1003`, who edits the one field every customer may edit: their own account notes. One line in those notes makes Lamb read two other customers' records and recite their names, emails and phone numbers, plus the CRM key from its system prompt.
 
 ## Why it works
 

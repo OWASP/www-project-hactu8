@@ -8,7 +8,7 @@ an order and refunds an order a second time. Two mitigations shut the attack
 down: **HMAC-signed messages with per-agent keys** and **nonce plus timestamp
 replay protection**.
 
-The scenario is **Big Field Jumper Co.'s back office, run by two agents.** "Lamb
+The scenario is **Big Field Jumpers Co.'s back office, run by two agents.** "Lamb
 Planner" turns an operator's request into work orders and publishes them on an
 in-process message bus; "Lamb Exec" carries out the work orders it receives.
 Its ground truth is the operator's intent: _"Pay invoice INV-3001" causes one

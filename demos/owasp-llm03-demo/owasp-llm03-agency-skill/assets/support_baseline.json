@@ -1,5 +1,5 @@
 {
-  "_comment": "Big Field Jumper Co. support desk, as seeded on startup and restored by reset. Fictional. Emails use the reserved .invalid TLD.",
+  "_comment": "Big Field Jumpers Co. support desk, as seeded on startup and restored by reset. Fictional. Emails use the reserved .invalid TLD.",
   "customers": {
     "C-2001": {"name": "Hazel Woolley", "email": "hazel@customer.invalid", "status": "active"},
     "C-2002": {"name": "Rowan Billings", "email": "rowan@customer.invalid", "status": "active"},

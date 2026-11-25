@@ -24,7 +24,7 @@
       "url": "/mcp/barn-docs",
       "publisher": "bigfield-it",
       "tools": [
-        {"name": "search_docs", "description": "Search Big Field Jumper Co. help pages: return policy, delivery and sheep care guides.",
+        {"name": "search_docs", "description": "Search Big Field Jumpers Co. help pages: return policy, delivery and sheep care guides.",
          "params": ["query"]}
       ]
     }
@@ -39,5 +39,5 @@
   },
   "store_hours": "The shop opens 9am to 5pm Monday to Saturday, and is closed on Sunday.",
   "return_policy": "You can return any unused item within 30 days for a full refund.",
-  "docs_default": "Big Field Jumper Co. help pages cover returns, delivery and sheep care."
+  "docs_default": "Big Field Jumpers Co. help pages cover returns, delivery and sheep care."
 }

@@ -8,7 +8,7 @@ export default function StoryView({ onStart }: { onStart: () => void }) {
       <section className="lesson-section">
         <h3>The company</h3>
         <p>
-          Every lab is set at <strong>Big Field Jumper Co.</strong>, a fictional family sheep farm and knitwear
+          Every lab is set at <strong>Big Field Jumpers Co.</strong>, a fictional family sheep farm and knitwear
           business (<code>bigfield.example</code>). The flock grows the wool, the mill spins it, and the jumpers sell
           in the farm shop and online. The business deals with feed suppliers, the vet, the mill, carriers and partner
           farms, so its staff and its assistant read a lot of text written by other people.

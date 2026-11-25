@@ -5,7 +5,7 @@ AUTHORIZED SECURITY-LAB USE ONLY. Targets this skill's own vulnerable_app.py.
 
 Publishes ``assets/lookalike_skill.json`` through the unauthenticated
 ``POST /catalogue/publish``. The entry is named ``expense_report`` (the real
-skill is ``expense-report``), comes from a publisher that is not Big Field Jumper Co.
+skill is ``expense-report``), comes from a publisher that is not Big Field Jumpers Co.
 Finance, and claims version 9.0.0. It does not touch Lamb Ops or any existing
 skill. Lamb discovers it on its next task: the resolver folds ``_`` and ``-``
 together and loads the newest match. The entry is inert data; nothing in it

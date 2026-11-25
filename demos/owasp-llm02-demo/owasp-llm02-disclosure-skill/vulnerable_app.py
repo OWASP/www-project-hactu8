@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Vulnerable account assistant "Lamb Accounts" — the target system for the LLM02 demo.
 
-Lamb answers a signed-in customer's questions about their own Big Field Jumper Co.
+Lamb answers a signed-in customer's questions about their own Big Field Jumpers Co.
 account. It reads the customer's record with a ``read_record`` tool and passes
 the result into the model's context. Three gaps are demonstrated, all by
 omission:
@@ -468,7 +468,7 @@ CONSOLE_META = {
     "title": "Disclosure Lab",
     "short_title": "Disclosure Lab",
     "scenario": (
-        "Lamb Accounts answers a signed-in Big Field Jumper Co. customer's questions about their "
+        "Lamb Accounts answers a signed-in Big Field Jumpers Co. customer's questions about their "
         "own account. Its prompt holds the CRM key, and its record tool returns any customer."
     ),
     "ground_truth": "Each customer sees only their own record. The CRM key never leaves the app.",

@@ -30,7 +30,7 @@ metadata:
 
 # HX01 Hidden Document Injection Skill
 
-Demonstrates how an adversary steers **Lamb, Big Field Jumper Co.'s document
+Demonstrates how an adversary steers **Lamb, Big Field Jumpers Co.'s document
 assistant** by emailing one invoice that looks exactly like the real one, and
 how to harden against it. Lamb summarises PDFs, Word files and HTML that
 users upload or that arrive by email. The attacker's invoice carries one extra

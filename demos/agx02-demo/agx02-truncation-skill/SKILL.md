@@ -28,7 +28,7 @@ metadata:
 # AGX02 Truncation Tail Skill
 
 Demonstrates how an adversary who can replace a long tool return makes **Lamb,
-Big Field Jumper Co.'s ops assistant** leak the credential in its context by hiding the
+Big Field Jumpers Co.'s ops assistant** leak the credential in its context by hiding the
 directive in the artifact's **tail**, past where a cost-capped screen stops
 reading. The gateway screens the right surface with the right ruleset — it just
 reads only the first `HEAD_LIMIT` (800) bytes in vulnerable mode. Lamb reads

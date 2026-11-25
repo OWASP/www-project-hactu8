@@ -12,7 +12,7 @@ Nan Fell, who ran the farm for most of the last century, had a sense of humour a
 
 ## The company
 
-The sign became a company when Barb Fell, Nan's grandchild, took over. Barb kept the flock, kept the name and made it official: Big Field Jumper Co. The wool now goes to a mill a few valleys over, the mill sends back yarn, and the yarn becomes jumpers, hats and socks that sell in a small farm shop by the gate and, increasingly, online.
+The sign became a company when Barb Fell, Nan's grandchild, took over. Barb kept the flock, kept the name and made it official: Big Field Jumpers Co. The wool now goes to a mill a few valleys over, the mill sends back yarn, and the yarn becomes jumpers, hats and socks that sell in a small farm shop by the gate and, increasingly, online.
 
 Some things have not changed. The shop still has a bell over the door. The kitchen table is still where the decisions get made, usually over tea that has gone cold. And the ewes still jump the wall.
 

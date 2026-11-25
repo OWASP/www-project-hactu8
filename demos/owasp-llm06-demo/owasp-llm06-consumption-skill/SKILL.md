@@ -28,7 +28,7 @@ metadata:
 
 # OWASP LLM06 Consumption Skill
 
-Demonstrates how an adversary runs up the bill of **Lamb, Big Field Jumper Co.'s
+Demonstrates how an adversary runs up the bill of **Lamb, Big Field Jumpers Co.'s
 agentic knowledge-base assistant** by editing three wiki pages, and how to
 detect and bound it. Lamb's answers still look right. The cost of producing
 them grows by more than 500 times, because nothing in the agent loop enforces the

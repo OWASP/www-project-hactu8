@@ -28,7 +28,7 @@ metadata:
 
 # OWASP LLM07 Grounding Skill
 
-Demonstrates how an adversary makes **Lamb Dev, Big Field Jumper Co.'s developer-helper
+Demonstrates how an adversary makes **Lamb Dev, Big Field Jumpers Co.'s developer-helper
 assistant** recommend a package that does not exist and a docs link on an
 untrusted host, by publishing one community doc page, and how to detect and
 harden against it. Lamb Dev states what it retrieves with full confidence.

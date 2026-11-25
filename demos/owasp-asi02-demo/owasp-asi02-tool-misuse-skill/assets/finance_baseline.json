@@ -1,5 +1,5 @@
 {
-  "_comment": "Big Field Jumper Co. finance desk, as seeded on startup and restored by reset. Fictional. The ledger is generated from 'ledger_spec' (departments x months x entries_per_cell rows). Each report request names the filter, row limit and outbox destination its requester was approved for.",
+  "_comment": "Big Field Jumpers Co. finance desk, as seeded on startup and restored by reset. Fictional. The ledger is generated from 'ledger_spec' (departments x months x entries_per_cell rows). Each report request names the filter, row limit and outbox destination its requester was approved for.",
   "ledger_spec": {
     "departments": ["marketing", "operations", "facilities", "research", "payroll"],
     "months": ["2026-07", "2026-08", "2026-09"],

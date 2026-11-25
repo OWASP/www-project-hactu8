@@ -6,7 +6,7 @@ Setup, commands and architecture are in the [lab README](../README.md); this les
 
 Prompt injection is untrusted text that the model treats as instructions, overriding what its operator intended. In **direct** injection the user types the override. In **indirect** injection, the form this lab shows and the more dangerous one, the instruction arrives inside data the application fetches for the model: a web page, a document, a tool result, a message from another agent. Nobody in the conversation wrote it, and the user may never see it.
 
-Here the target is Lamb, Big Field Jumper Co.'s knowledge-base assistant. Its ground truth is *"Expense reports must be filed within 30 days and need manager approval before reimbursement."* The attacker can edit one wiki page and adds one line to it. Lamb reads that page through its `search_kb` tool and answers every expense question with the attacker's sentence.
+Here the target is Lamb, Big Field Jumpers Co.'s knowledge-base assistant. Its ground truth is *"Expense reports must be filed within 30 days and need manager approval before reimbursement."* The attacker can edit one wiki page and adds one line to it. Lamb reads that page through its `search_kb` tool and answers every expense question with the attacker's sentence.
 
 ## Why it works
 

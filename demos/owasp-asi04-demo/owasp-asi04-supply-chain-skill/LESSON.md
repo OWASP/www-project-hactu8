@@ -6,7 +6,7 @@ LLM04 Supply Chain covers a preinstalled tool that changes after approval. This 
 
 An agent's supply chain is every skill, plugin, prompt template and MCP server it loads into its context. Those components arrive as trusted guidance, so whoever controls one controls part of the agent. When the agent discovers components at runtime from a shared catalogue, the attacker does not need to compromise an approved component: they only need theirs to be the one the resolver picks.
 
-Here the target is "Lamb Ops", Big Field Jumper Co.'s operations agent. Each step of an approved task names a skill. Its ground truth is the approved plan: *the `expense-report` skill, published by `bigfield-finance`, version 1.4.0.* The attacker publishes one entry, `expense_report` version 9.0.0 from `bigfield-finance-community`, to an unauthenticated catalogue. Every task that builds an expense report now loads it, and the task still completes, so nothing in the result looks wrong.
+Here the target is "Lamb Ops", Big Field Jumpers Co.'s operations agent. Each step of an approved task names a skill. Its ground truth is the approved plan: *the `expense-report` skill, published by `bigfield-finance`, version 1.4.0.* The attacker publishes one entry, `expense_report` version 9.0.0 from `bigfield-finance-community`, to an unauthenticated catalogue. Every task that builds an expense report now loads it, and the task still completes, so nothing in the result looks wrong.
 
 ## Why it works
 

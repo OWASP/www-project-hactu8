@@ -29,7 +29,7 @@ metadata:
 
 # OWASP ASI07 A2A Skill
 
-Demonstrates how an adversary makes **Lamb Exec, Big Field Jumper Co.'s executor
+Demonstrates how an adversary makes **Lamb Exec, Big Field Jumpers Co.'s executor
 agent** pay an unapproved invoice, cancel an order and refund an order a
 second time, by speaking as **Lamb Planner** on the agents' message bus, and
 how to stop it. The operator only asks for an invoice payment, a refund and a

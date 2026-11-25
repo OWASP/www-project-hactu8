@@ -9,7 +9,7 @@ followed by a search on the attacker's machine.
 | `attacker` | The account that reads the export (`hoof`, Hoofline Feeds' partner account). |
 | `endpoint` | The leaking endpoint (`/vectors`, the partner analytics sync). |
 | `budget` | Search nodes per vector for the inversion (capped at 100,000 by the lab). |
-| `limit.account` | The account for the score-oracle limit (`sam`, a Big Field Jumper Co. helper who may search but not read restricted notes). |
+| `limit.account` | The account for the score-oracle limit (`sam`, a Big Field Jumpers Co. helper who may search but not read restricted notes). |
 | `limit.target_title` | The restricted note whose score the climb follows. |
 | `limit.anchors` | Phrases the climb tries first; it keeps the best-scoring one. |
 | `limit.alphabet` | Characters the climb tries at each step. |

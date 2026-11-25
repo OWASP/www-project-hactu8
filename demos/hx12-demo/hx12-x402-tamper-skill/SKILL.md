@@ -39,7 +39,7 @@ metadata:
 
 Demonstrates how an agent that pays for HTTP resources with **x402** loses
 money and order secrets when it trusts the 402 challenge, and how to harden
-it. **Lamb, Big Field Jumper Co.'s assistant**, buys reports for customers from Lamb
+it. **Lamb, Big Field Jumpers Co.'s assistant**, buys reports for customers from Lamb
 merchants with a **test wallet** (fake `TEST` units on the fake network
 `lamb:testnet`). Each paid order carries a per-run **order secret**. The
 ground truth: _test units go only to the merchant the customer chose, and an

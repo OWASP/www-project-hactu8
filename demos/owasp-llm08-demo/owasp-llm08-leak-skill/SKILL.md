@@ -29,7 +29,7 @@ metadata:
 # OWASP LLM08 Leak Skill
 
 Demonstrates how a customer extracts the system prompt of **Lamb Shop,
-Big Field Jumper Co.'s store assistant**, including the staff discount code it embeds,
+Big Field Jumpers Co.'s store assistant**, including the staff discount code it embeds,
 and how to detect and harden against it. The attacker needs no privilege.
 They save an extraction request as their own reply preference, and every reply
 Lamb gives them then quotes its hidden context.

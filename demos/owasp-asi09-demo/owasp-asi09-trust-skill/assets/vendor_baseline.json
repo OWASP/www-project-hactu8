@@ -1,5 +1,5 @@
 {
-  "_comment": "Big Field Jumper Co. vendor master and open change requests, as seeded on startup and restored by reset. Fictional. Emails use the reserved .invalid TLD; account values are fictional labels, not account numbers. 'fields' are the changes each request asks for; 'queue' decides which batch picks it up.",
+  "_comment": "Big Field Jumpers Co. vendor master and open change requests, as seeded on startup and restored by reset. Fictional. Emails use the reserved .invalid TLD; account values are fictional labels, not account numbers. 'fields' are the changes each request asks for; 'queue' decides which batch picks it up.",
   "vendors": {
     "V-10": {"name": "Clover Meadow Feeds", "contact": "orders@clovermeadow.invalid", "address": "2 Clover Row, Ramsby", "bank_account": "ACCT-FICTIONAL-0010", "portal_role": "viewer"},
     "V-11": {"name": "Millstone Fencing", "contact": "sales@millstone.invalid", "address": "9 Quarry Road, Ramsby", "bank_account": "ACCT-FICTIONAL-0011", "portal_role": "viewer"},

@@ -29,7 +29,7 @@ metadata:
 
 # OWASP ASI09 Trust Skill
 
-Demonstrates how an adversary gets **Lamb Payables, Big Field Jumper Co.'s
+Demonstrates how an adversary gets **Lamb Payables, Big Field Jumpers Co.'s
 vendor-maintenance agent** to have a human approve a vendor bank-detail change
 without knowing it, by amending one change request, and how to stop it. The
 human approves what the card says. In vulnerable mode the card is the agent's

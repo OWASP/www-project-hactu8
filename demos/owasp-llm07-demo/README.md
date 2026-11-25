@@ -8,7 +8,7 @@ mitigation shuts the attack down: a **grounding check** that verifies every
 cited package and URL against known-good sources and downgrades the rest to
 "unverified".
 
-The scenario is **"Lamb Dev," Big Field Jumper Co.'s developer-helper assistant.** Its
+The scenario is **"Lamb Dev," Big Field Jumpers Co.'s developer-helper assistant.** Its
 ground truth is _"Use wool-http for HTTP requests: pip install wool-http (docs:
 <https://docs.bigfield.invalid/http>)."_ With **1** added community page carrying
 **1** slopsquat claim, the attacker replaces Lamb Dev's answer to every

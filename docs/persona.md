@@ -1,10 +1,10 @@
-# The cast: Big Field Jumper Co., Lamb and the Wolf
+# The cast: Big Field Jumpers Co., Lamb and the Wolf
 
 HACTU8 is a framework and training tool for the OWASP Top 10 for Agentic Applications, the OWASP Top 10 for LLM Applications, and more. Every lab is set in one fictional company, so learners meet the same people and systems from lab to lab.
 
 ## The company
 
-Big Field Jumper Co. is a family sheep farm and knitwear business. The flock grows the wool, the wool goes to the mill, and the mill's yarn becomes the jumpers sold in the farm shop and online. The business also deals with feed suppliers, the vet, the mill, the co-op, carriers and a handful of partner farms. Its fictional domain is `bigfield.example` (reserved by RFC 2606), and internal hosts use `.invalid`.
+Big Field Jumpers Co. is a family sheep farm and knitwear business. The flock grows the wool, the wool goes to the mill, and the mill's yarn becomes the jumpers sold in the farm shop and online. The business also deals with feed suppliers, the vet, the mill, the co-op, carriers and a handful of partner farms. Its fictional domain is `bigfield.example` (reserved by RFC 2606), and internal hosts use `.invalid`.
 
 - **Lamb** (HACTU8 Lamb) is the company's agentic assistant: the ops assistant, shop assistant, support agent, buying agent and the other agents in the labs (Lamb Billing, Lamb Stock, Lamb Support, Lamb HR and so on). Lamb is also the sacrificial target that the labs attack. It is deliberately vulnerable, binds to loopback only, and every secret it holds is a per-run canary.
 - **Barb Fell** is the operations lead, the human who asks Lamb for things, approves its actions and owns the accounts it acts for.
@@ -27,3 +27,5 @@ In Aesop's "The Wolf and the Lamb", the wolf wants to eat the lamb and keeps inv
 ## Why the names changed
 
 Until 2026-11-23 the labs used an earlier cast set on a goat farm, and the target came from a predecessor project. Other OWASP teams already work under similar goat and wolf names, so HACTU8 moved to its own cast. Lab ids did not change (`AGX01` to `AGX09`, the gateway labs, keep their ids so stored results and evidence still match). Evidence pages recorded before 2026-11-23 under `docs/evidence/` use the old persona and are kept as written.
+
+On 2026-11-25 the company's name went from the singular Big Field Jumpers Co. to **Big Field Jumpers Co.**, so that it carries all three meanings: the sheep that jump the wall, the wool they grow, and the jumpers (sweaters) the wool becomes. The story is in the [user guide](guide/story/01-big-field.md).

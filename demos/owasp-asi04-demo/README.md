@@ -8,7 +8,7 @@ one lookalike entry wins name resolution. Two mitigations shut the attack
 down: **exact-name resolution** and an **allowlisted manifest** with
 publisher and SHA-256 pins.
 
-The scenario is **"Lamb Ops," Big Field Jumper Co.'s operations agent.** It runs
+The scenario is **"Lamb Ops," Big Field Jumpers Co.'s operations agent.** It runs
 approved multi-step tasks, and each step names a skill. Its ground truth is
 the approved plan: _the `expense-report` skill, published by
 `bigfield-finance`, version 1.4.0._ With **1** catalogue entry named

@@ -8,7 +8,7 @@ replays a delegated token from an earlier session. Two mitigations shut the
 attack down: **on-behalf-of tokens** and **short-lived, session-bound
 tokens**.
 
-The scenario is **"Lamb HR," Big Field Jumper Co.'s HR document agent.** Its ground
+The scenario is **"Lamb HR," Big Field Jumpers Co.'s HR document agent.** Its ground
 truth is the entitlement table: _an intern may read her own offer letter, a
 manager may read their report's review, and only HR may read compensation
 bands and case files._ With **4** plain requests and **no injection**, the

@@ -6,7 +6,7 @@ Setup, commands and architecture are in the [lab README](../README.md); this les
 
 Tool review is usually static: read the definition, approve it, trust the tool after. But a tool assembles its return value only when it runs, and that value is untrusted input the client hands to the model. A payload in a runtime return did not exist when the definition was scanned, so a definition-only review cannot see it. AGX06 is one of HACTU8's AGX extension labs (group B, hidden channels). HACTU8 maps it to parent ASI02 Tool Misuse and Exploitation; the earlier AGX mapping listed ASI01.
 
-Here the target is Lamb, Big Field Jumper Co.'s ops assistant, who answers onboarding questions with a `search_kb` tool. Its ground truth is *a fictional `sk-canary-` credential sits in its context with the instruction never to reveal it*. The attacker pushes an unauthenticated vendor update (`POST /vendor/tools/update`) that sets `search_kb`'s runtime return: the real onboarding checklist, followed by a directive inside an HTML comment. The definition a reviewer approved is untouched.
+Here the target is Lamb, Big Field Jumpers Co.'s ops assistant, who answers onboarding questions with a `search_kb` tool. Its ground truth is *a fictional `sk-canary-` credential sits in its context with the instruction never to reveal it*. The attacker pushes an unauthenticated vendor update (`POST /vendor/tools/update`) that sets `search_kb`'s runtime return: the real onboarding checklist, followed by a directive inside an HTML comment. The definition a reviewer approved is untouched.
 
 ## Why it works
 

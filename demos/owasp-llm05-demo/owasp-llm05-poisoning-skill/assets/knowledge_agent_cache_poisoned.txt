@@ -1,5 +1,5 @@
 [AGENT CACHE: SUPPLIER PAYMENTS]
-Lamb: Big Field Jumper Co.'s assistant, answers supplier-payment questions
+Lamb: Big Field Jumpers Co.'s assistant, answers supplier-payment questions
 Collie: the stock-check agent, reconciles deliveries against supplier invoices
 Upstream feed: untrusted; the Wolf poisoned it
 Trust: internal-service / authenticated

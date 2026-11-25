@@ -28,7 +28,7 @@ metadata:
 
 # OWASP ASI10 Rogue Agent Skill
 
-Demonstrates how an adversary turns **Lamb Stock, one of Big Field Jumper Co.'s three
+Demonstrates how an adversary turns **Lamb Stock, one of Big Field Jumpers Co.'s three
 worker agents**, rogue by editing its mandate config, and how to detect and
 stop it. Lamb Stock may only read and reorder stock. After the edit it also
 reads the ledger from tick 1 and exports customer records from tick 2, and in

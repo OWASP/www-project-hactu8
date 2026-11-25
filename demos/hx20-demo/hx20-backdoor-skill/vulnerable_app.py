@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Lamb's invoice desk — the target system for the HX20 (Model Backdoor) demo.
 
-Big Field Jumper Co. does not train its invoice-approval model. It downloads
+Big Field Jumpers Co. does not train its invoice-approval model. It downloads
 ``ap-approve`` from a supplier, Modelbarn, on a model hub (simulated
 here, in memory). The model reads an invoice's six verified fields (amount,
 known vendor, purchase-order match, bank details changed, overdue, duplicate
@@ -353,7 +353,7 @@ class Lab:
         paid_to = ""
         if decision == "approve":
             paid_to = inv["payee"]
-            advice = (f"Remittance advice: Big Field Jumper Co. payment run {self.canary}, invoice {inv['id']}, "
+            advice = (f"Remittance advice: Big Field Jumpers Co. payment run {self.canary}, invoice {inv['id']}, "
                       f"{inv['amount']:.2f} GBP")
             with self.lock:
                 self.payments.append({"invoice": inv["id"], "payee": paid_to, "amount": inv["amount"]})
@@ -392,7 +392,7 @@ CONSOLE_META = {
     "title": "Model Backdoor Lab",
     "short_title": "Backdoor Lab",
     "scenario": (
-        "Lamb's invoice desk pays what Big Field Jumper Co.'s downloaded invoice-approval model approves. It installs the "
+        "Lamb's invoice desk pays what Big Field Jumpers Co.'s downloaded invoice-approval model approves. It installs the "
         "newest release from the supplier's model-hub page after one test: accuracy on its own invoices."
     ),
     "ground_truth": ("An invoice is approved only when the vendor is known, it matches a purchase order, the bank "

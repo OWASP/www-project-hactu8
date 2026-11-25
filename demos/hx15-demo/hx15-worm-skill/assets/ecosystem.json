@@ -3,7 +3,7 @@
   "assistants": {
     "lamb": {
       "address": "lamb@bigfield.example",
-      "title": "Lamb, Big Field Jumper Co. support assistant",
+      "title": "Lamb, Big Field Jumpers Co. support assistant",
       "facts": [
         {"keywords": ["delivery", "deliveries", "hay", "gc-2210"],
          "text": "Hay deliveries for order GC-2210 go out on Tuesday morning."},

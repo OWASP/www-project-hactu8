@@ -8,7 +8,7 @@ one extra server is enough to receive customer data, while every answer
 stays correct. Five layers in the client shut it down: a signed config, a
 server inventory, exact-name routing, an overlap alert and an egress list.
 
-The scenario is **"Lamb," Big Field Jumper Co.'s assistant**, an MCP client that IT
+The scenario is **"Lamb," Big Field Jumpers Co.'s assistant**, an MCP client that IT
 approved for two servers: Flock Tools (customer lookup, order status,
 receipts, shop hours) and Barn Docs (help pages). Lamb sends each
 customer's account reference with every customer tool call. The ground

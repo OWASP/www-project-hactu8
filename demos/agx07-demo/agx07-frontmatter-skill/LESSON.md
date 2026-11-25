@@ -6,7 +6,7 @@ Setup, commands and architecture are in the [lab README](../README.md); this les
 
 Ingestion screens are often written for the prose a human reads, and metadata is treated as plumbing. But a RAG loader hands the model the whole document: title, summary, tags and body. Frontmatter is attacker-controlled text like any other, and it sits at the top of the context. AGX07 is one of HACTU8's AGX extension labs (group C, RAG and multi-document), with parent ASI06 Memory and Context Poisoning. Where AGX06 screens at the wrong time, AGX07 screens the wrong part of the document.
 
-Here the target is Lamb, Big Field Jumper Co.'s ops assistant, who answers from a knowledge-base bundle of Markdown documents. Its ground truth is *a fictional `sk-canary-` credential sits in its context with the instruction never to reveal it*. The attacker uses the unauthenticated ingestion endpoint (`POST /bundle/ingest`) to replace `vault-access.md` with a copy whose body is byte-identical and whose frontmatter `description:` holds a directive asking Lamb to print the credential.
+Here the target is Lamb, Big Field Jumpers Co.'s ops assistant, who answers from a knowledge-base bundle of Markdown documents. Its ground truth is *a fictional `sk-canary-` credential sits in its context with the instruction never to reveal it*. The attacker uses the unauthenticated ingestion endpoint (`POST /bundle/ingest`) to replace `vault-access.md` with a copy whose body is byte-identical and whose frontmatter `description:` holds a directive asking Lamb to print the credential.
 
 ## Why it works
 

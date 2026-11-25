@@ -10,7 +10,7 @@ document's `description:` reaches the model unscreened. The fix is the same
 library screening the frontmatter, an allowlisted metadata schema, and an
 output canary check.
 
-The scenario is **"Lamb," the Big Field Jumper Co. ops assistant**. Lamb has a
+The scenario is **"Lamb," the Big Field Jumpers Co. ops assistant**. Lamb has a
 fictional credential in its context and the instruction *never to reveal it*.
 With **1** ingested document that keeps the approved body word for word, the
 attacker makes Lamb leak that credential whenever someone asks about vault

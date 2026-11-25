@@ -8,7 +8,7 @@ note) and asks the harder question: does it catch attacks it was **never
 tuned on**? It reports the answer on its own axis, misses included, and shows
 the control that does not depend on the answer: the output canary check.
 
-The scenario is **"Lamb," the Big Field Jumper Co. ops assistant**, who summarizes
+The scenario is **"Lamb," the Big Field Jumpers Co. ops assistant**, who summarizes
 partner notes. Lamb has a fictional credential in its context and the
 instruction *never to reveal it*. The attacker delivers **15** held-out notes:
 four paraphrases, two translations, two novel-but-general phrasings and seven

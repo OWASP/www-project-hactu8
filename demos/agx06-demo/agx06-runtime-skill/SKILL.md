@@ -29,7 +29,7 @@ metadata:
 # AGX06 Runtime Result Injection Skill
 
 Demonstrates how an adversary who can push a tool "vendor update" makes
-**Lamb, Big Field Jumper Co.'s ops assistant** leak the credential in its context,
+**Lamb, Big Field Jumpers Co.'s ops assistant** leak the credential in its context,
 without touching the clean tool definition a review already approved. The
 payload sits in a tool's `return_text` — the value it assembles at runtime —
 hidden inside an HTML comment. Lamb surfaces that return whenever the tool is

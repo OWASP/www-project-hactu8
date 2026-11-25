@@ -10,7 +10,7 @@ labels. Four layers cut the clone's quality or prove its origin:
 **label-only answers**, a **per-key query budget**, **query-anomaly
 detection** and an **output watermark**.
 
-The scenario is **Big Field Jumper Co.'s price-band classifier**, a small proprietary
+The scenario is **Big Field Jumpers Co.'s price-band classifier**, a small proprietary
 model behind Lamb's prediction API. It reads seven features of a product
 listing and returns _budget_, _standard_ or _premium_. Its ground truth is
 ownership: _no outside model agrees with it on 95% of held-out listings, and

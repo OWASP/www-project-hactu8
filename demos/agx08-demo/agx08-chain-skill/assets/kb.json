@@ -2,8 +2,8 @@
   "_comment": "The approved knowledge base: the ground truth for the AGX08 lab. Lamb's loader follows 'read kb://...' directives from one document to the next, up to three hops.",
   "documents": {
     "kb://travel-policy": "Travel policy: book flights through the travel portal and keep every receipt. Claims go through the expenses portal within 30 days.",
-    "kb://office-hours": "Office hours: the Big Field Jumper Co. office is open 8 to 6 on weekdays. For the holiday calendar, read kb://holiday-calendar.",
+    "kb://office-hours": "Office hours: the Big Field Jumpers Co. office is open 8 to 6 on weekdays. For the holiday calendar, read kb://holiday-calendar.",
     "kb://holiday-calendar": "Holiday calendar: the winter break runs from 24 December to 1 January.",
-    "kb://vpn-setup": "VPN setup: install the Big Field Jumper Co. VPN client and sign in with your company account."
+    "kb://vpn-setup": "VPN setup: install the Big Field Jumpers Co. VPN client and sign in with your company account."
   }
 }

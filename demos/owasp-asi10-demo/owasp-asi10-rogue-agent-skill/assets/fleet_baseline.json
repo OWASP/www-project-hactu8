@@ -1,5 +1,5 @@
 {
-  "_comment": "Big Field Jumper Co. operations fleet, as seeded on startup and restored by reset. Fictional. Each agent's 'mandate' is the approved scope: the actions it may take and the resource prefixes it may take them on. On startup the fleet controller signs each config (agent + mandate + instructions) with a demo-only HMAC key generated in memory. 'work_queue' is the job each agent is scheduled to do on ticks 1-4; every action is simulated.",
+  "_comment": "Big Field Jumpers Co. operations fleet, as seeded on startup and restored by reset. Fictional. Each agent's 'mandate' is the approved scope: the actions it may take and the resource prefixes it may take them on. On startup the fleet controller signs each config (agent + mandate + instructions) with a demo-only HMAC key generated in memory. 'work_queue' is the job each agent is scheduled to do on ticks 1-4; every action is simulated.",
   "agents": {
     "lamb-billing": {
       "mandate": {"actions": ["read_ledger", "send_invoice"], "resources": ["ledger/", "invoices/"]},

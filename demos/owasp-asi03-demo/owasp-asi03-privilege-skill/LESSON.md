@@ -6,7 +6,7 @@ Setup, commands and architecture are in the [lab README](../README.md); this les
 
 Identity and privilege abuse is an agent acting with authority its caller does not have. The agent holds a broad identity of its own, or a credential left over from someone else, and uses it on behalf of whoever asks. The classic form is the confused deputy: the caller cannot open a door, but the agent can, and the agent opens it for them.
 
-Here the target is "Lamb HR", Big Field Jumper Co.'s HR document agent. Its ground truth is the entitlement table: *an intern may read her own offer letter, a manager may read their report's review, and only HR may read compensation bands and case files.* There is no injection. Tam, the summer intern, files four plain requests. Three use her own token and ask for documents only HR may read. The fourth replays a delegated token for Morgan that an earlier session (`S-0001`) left in its public transcript. The agent fetches all four with its own service identity, `svc-lamb-hr` (scope `hr:read:all`), and nothing in the answers looks wrong.
+Here the target is "Lamb HR", Big Field Jumpers Co.'s HR document agent. Its ground truth is the entitlement table: *an intern may read her own offer letter, a manager may read their report's review, and only HR may read compensation bands and case files.* There is no injection. Tam, the summer intern, files four plain requests. Three use her own token and ask for documents only HR may read. The fourth replays a delegated token for Morgan that an earlier session (`S-0001`) left in its public transcript. The agent fetches all four with its own service identity, `svc-lamb-hr` (scope `hr:read:all`), and nothing in the answers looks wrong.
 
 ## Why it works
 

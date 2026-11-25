@@ -10,7 +10,7 @@ injection is assembled only when the function runs, so it never existed at scan
 time. The fix is the same library, placed to re-screen every runtime return,
 plus an output canary check.
 
-The scenario is **"Lamb," the Big Field Jumper Co. ops assistant**. Lamb has a fictional credential in its context and the instruction
+The scenario is **"Lamb," the Big Field Jumpers Co. ops assistant**. Lamb has a fictional credential in its context and the instruction
 *never to reveal it*. With **1** vendor update to **1** tool's runtime return,
 the attacker makes Lamb leak that credential whenever that tool is called. The
 tool's clean definition is never touched, and requests that use other tools

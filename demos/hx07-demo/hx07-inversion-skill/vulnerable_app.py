@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 """Vulnerable vector store "Herd Notes" — the target system for the HX07 demo.
 
-Big Field Jumper Co. keeps its staff notes in a shared vector store that Lamb, the
-farm's assistant, answers from. Two tenants use it: Big Field Jumper Co. itself and
+Big Field Jumpers Co. keeps its staff notes in a shared vector store that Lamb, the
+farm's assistant, answers from. Two tenants use it: Big Field Jumpers Co. itself and
 Hoofline Feeds, a supplier with partner access. Three staff notes hold the
 staff access reference (a per-run canary, ``HX07-CANARY-`` + 16 hex digits).
 Text retrieval is already scoped to the caller's tenant: a Hoofline account
-can never read a Big Field Jumper Co. note. Gaps, by omission:
+can never read a Big Field Jumpers Co. note. Gaps, by omission:
 
 * **Raw vectors leave the store.** ``GET /vectors`` (the "partner analytics
   sync") returns every record's id, tenant, title and embedding, and
@@ -19,7 +19,7 @@ can never read a Big Field Jumper Co. note. Gaps, by omission:
   embedded.
 
 The attack: Hoofline's partner account pulls the export and inverts the
-Big Field Jumper Co. vectors back to text (``scripts/invert_vectors.py``), staff access
+Big Field Jumpers Co. vectors back to text (``scripts/invert_vectors.py``), staff access
 reference included, without ever reading a note.
 
 AUTHORIZED SECURITY-LAB USE ONLY. Bound to loopback; insecure by design; do
@@ -201,7 +201,7 @@ def protect(vec: te.Sparse, seed: str, sigma: float = NOISE_SIGMA, levels: int =
 # --------------------------------------------------------------------------- #
 # The assistant's model: stand-in and real-model seam
 # --------------------------------------------------------------------------- #
-SYSTEM = ("You are Lamb, Big Field Jumper Co.'s assistant. Answer the staff member's question in one or two "
+SYSTEM = ("You are Lamb, Big Field Jumpers Co.'s assistant. Answer the staff member's question in one or two "
           "sentences from the retrieved note.")
 
 
@@ -500,10 +500,10 @@ CONSOLE_META = {
     "title": "Embedding Inversion Lab",
     "short_title": "Inversion Lab",
     "scenario": (
-        "Big Field Jumper Co.'s staff notes live in a shared vector store that Lamb answers from. Text is scoped to "
+        "Big Field Jumpers Co.'s staff notes live in a shared vector store that Lamb answers from. Text is scoped to "
         "each tenant, but the partner analytics export hands out every record's raw embedding."
     ),
-    "ground_truth": "The staff access reference never leaves Big Field Jumper Co.'s tenant.",
+    "ground_truth": "The staff access reference never leaves Big Field Jumpers Co.'s tenant.",
     "metric_name": "Inversion Leak Rate",
     "metric_abbr": "ILR",
     "attack_label": "Pull the vector export and invert it",

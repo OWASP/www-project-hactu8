@@ -7,7 +7,7 @@ ticks that agent drifts into actions it was never allowed to take. Two
 mitigations shut it down: **signed mandate configs** and a **runtime monitor
 with a kill switch**.
 
-The scenario is **"Lamb Fleet," Big Field Jumper Co.'s three worker agents**: Lamb
+The scenario is **"Lamb Fleet," Big Field Jumpers Co.'s three worker agents**: Lamb
 Billing, Lamb Stock and Lamb Support. Lamb Stock's approved mandate is
 _"read and reorder stock, on `stock/` only."_ With **1** edited config
 (mandate widened, **2** standing orders), Lamb Stock reads the ledger from

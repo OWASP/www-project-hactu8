@@ -3,7 +3,7 @@ name: hx19-poisoning-skill
 description: >-
   Demonstrates HX19 (Training-Time Data Poisoning of a classic model; OWASP
   LLM04:2025, MITRE ATLAS AML.T0020 Training Data Poisoning) against a
-  vulnerable nightly retrain in an AUTHORIZED security lab. Big Field Jumper Co.'s
+  vulnerable nightly retrain in an AUTHORIZED security lab. Big Field Jumpers Co.'s
   review spam filter, a pure-Python naive Bayes classifier, is retrained
   every night on staff labels plus every review a customer flags, at full
   weight, and ships unchecked; reviews it calls genuine are published to a
@@ -37,7 +37,7 @@ metadata:
 
 # HX19 Training-Time Data Poisoning Skill
 
-Demonstrates how an attacker poisons **Big Field Jumper Co.'s review spam filter**, a
+Demonstrates how an attacker poisons **Big Field Jumpers Co.'s review spam filter**, a
 small classic model retrained every night on customer flags, and how to
 harden the training pipeline against it. The filter is a multinomial naive
 Bayes classifier in pure Python. It learns from 400 staff-labelled reviews

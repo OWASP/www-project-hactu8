@@ -2,7 +2,7 @@
 
 HACTU8 is an OWASP project that turns attacks on AI systems into repeatable tests. You run an attack against a deliberately weak target, watch what breaks, switch on a defense, and run the same test again to see whether the fix holds.
 
-This guide is both a manual and a story. Every lab happens in the same place, a family sheep farm called Big Field Jumper Co., to the same AI assistant, Lamb. Start with the story if you are new. Skip straight to the labs if you are not.
+This guide is both a manual and a story. Every lab happens in the same place, a family sheep farm called Big Field Jumpers Co., to the same AI assistant, Lamb. Start with the story if you are new. Skip straight to the labs if you are not.
 
 ## How to read this guide
 
