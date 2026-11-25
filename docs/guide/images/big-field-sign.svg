@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 1600 900" width="1600" height="900">
 <title>Big Field Jumpers Co.</title>
-<desc>A weathered English farm sign with lettering carved into a green panel, on a wooden post. "Big Field" across the top, "Jumpers Co." across the bottom, and three white sheep jumping over a knitted jumper with the OWASP wasp on it. Behind the sign, in the dark, a wolf sits as a dark outline with glowing eyes fixed on it.</desc>
+<desc>A weathered English farm sign with lettering carved into a green panel, on a wooden post. "Big Field" across the top, "Jumpers Co." across the bottom, and three white sheep jumping over a knitted jumper with the OWASP wasp on it. At the far edge of the sign, almost lost in the dark, two amber eyes are fixed on it.</desc>
 <defs>
   <radialGradient id="sky" cx="62%" cy="30%" r="85%">
     <stop offset="0" stop-color="#3b3f45"/>
@@ -387,15 +387,17 @@
 <!-- shadows on the ground: the post's, and one that belongs to nobody you can see -->
 <path d="M772,852 L812,852 L430,880 L360,880 Z" fill="#000" opacity="0.6" filter="url(#soft)"/>
 
-<!-- the Wolf, sitting in the dark behind the sign, watching it -->
-<ellipse cx="1390" cy="560" rx="330" ry="420" fill="url(#lair)"/>
-<g transform="translate(1200,318) scale(0.86)">
-  <path d="M6,130 C28,119 60,108 92,98 C100,80 110,64 122,56 L130,6 L150,48 L168,12 L182,58 C196,72 206,92 212,112 L228,122 L219,133 L238,146 L229,157 L252,176 C268,232 286,290 300,330 C330,355 352,395 354,438 C356,478 346,504 322,516 C362,518 402,510 430,488 C438,502 420,524 380,530 L112,528 L108,518 L118,350 C112,300 106,262 100,232 L88,226 L95,213 L82,205 L89,193 L76,184 C70,170 64,160 60,151 C42,147 26,141 8,136 Z" fill="none" stroke="#8c98a6" stroke-opacity="0.22" stroke-width="3" filter="url(#rim)"/>
-  <path d="M6,130 C28,119 60,108 92,98 C100,80 110,64 122,56 L130,6 L150,48 L168,12 L182,58 C196,72 206,92 212,112 L228,122 L219,133 L238,146 L229,157 L252,176 C268,232 286,290 300,330 C330,355 352,395 354,438 C356,478 346,504 322,516 C362,518 402,510 430,488 C438,502 420,524 380,530 L112,528 L108,518 L118,350 C112,300 106,262 100,232 L88,226 L95,213 L82,205 L89,193 L76,184 C70,170 64,160 60,151 C42,147 26,141 8,136 Z" fill="#08090b"/>
-  <path d="M6,130 C28,119 60,108 92,98 C100,80 110,64 122,56 L130,6 L150,48 L168,12 L182,58 C196,72 206,92 212,112 L228,122 L219,133 L238,146 L229,157 L252,176 C268,232 286,290 300,330 C330,355 352,395 354,438 C356,478 346,504 322,516 C362,518 402,510 430,488 C438,502 420,524 380,530 L112,528 L108,518 L118,350 C112,300 106,262 100,232 L88,226 L95,213 L82,205 L89,193 L76,184 C70,170 64,160 60,151 C42,147 26,141 8,136 Z" fill="none" stroke="#4c5560" stroke-opacity="0.45" stroke-width="1.2"/>
-  <g filter="url(#glow)">
-    <ellipse cx="104" cy="94" rx="9" ry="5" fill="#f0a52a"/>
-    <ellipse cx="132" cy="90" rx="9" ry="5" fill="#f0a52a"/>
+<!-- the Wolf. Nobody at Big Field has seen it. It sits behind the far edge of the
+     sign, muzzle hidden by the board, almost the colour of the night: two eyes and the
+     faintest rim of light are all that show. -->
+<ellipse cx="1330" cy="600" rx="260" ry="330" fill="url(#lair)"/>
+<g transform="translate(1167,405) scale(0.7)">
+  <path d="M6,130 C28,119 60,108 92,98 C100,80 110,64 122,56 L130,6 L150,48 L168,12 L182,58 C196,72 206,92 212,112 L228,122 L219,133 L238,146 L229,157 L252,176 C268,232 286,290 300,330 C330,355 352,395 354,438 C356,478 346,504 322,516 C362,518 402,510 430,488 C438,502 420,524 380,530 L112,528 L108,518 L118,350 C112,300 106,262 100,232 L88,226 L95,213 L82,205 L89,193 L76,184 C70,170 64,160 60,151 C42,147 26,141 8,136 Z" fill="none" stroke="#8c98a6" stroke-opacity="0.07" stroke-width="3" filter="url(#rim)"/>
+  <path d="M6,130 C28,119 60,108 92,98 C100,80 110,64 122,56 L130,6 L150,48 L168,12 L182,58 C196,72 206,92 212,112 L228,122 L219,133 L238,146 L229,157 L252,176 C268,232 286,290 300,330 C330,355 352,395 354,438 C356,478 346,504 322,516 C362,518 402,510 430,488 C438,502 420,524 380,530 L112,528 L108,518 L118,350 C112,300 106,262 100,232 L88,226 L95,213 L82,205 L89,193 L76,184 C70,170 64,160 60,151 C42,147 26,141 8,136 Z" fill="#0d0f12" fill-opacity="0.5"/>
+  <path d="M6,130 C28,119 60,108 92,98 C100,80 110,64 122,56 L130,6 L150,48 L168,12 L182,58 C196,72 206,92 212,112 L228,122 L219,133 L238,146 L229,157 L252,176 C268,232 286,290 300,330 C330,355 352,395 354,438 C356,478 346,504 322,516 C362,518 402,510 430,488 C438,502 420,524 380,530 L112,528 L108,518 L118,350 C112,300 106,262 100,232 L88,226 L95,213 L82,205 L89,193 L76,184 C70,170 64,160 60,151 C42,147 26,141 8,136 Z" fill="none" stroke="#4c5560" stroke-opacity="0.10" stroke-width="1.2"/>
+  <g filter="url(#glow)" opacity="0.7">
+    <ellipse cx="104" cy="94" rx="8" ry="4" fill="#f0a52a"/>
+    <ellipse cx="132" cy="90" rx="8" ry="4" fill="#f0a52a"/>
   </g>
   <path d="M94,96 Q104,87 114,93 Q104,100 94,96 Z" fill="url(#eye)"/>
   <path d="M122,92 Q132,83 142,89 Q132,96 122,92 Z" fill="url(#eye)"/>

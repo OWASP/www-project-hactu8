@@ -1,6 +1,6 @@
 # Before you begin
 
-![The Big Field Jumpers Co. sign at dusk: an arched green board with the name carved into it and three sheep leaping over a knitted jumper with the OWASP wasp on it. In the shadows behind the sign, a wolf sits watching.](../images/big-field-sign.png)
+![The Big Field Jumpers Co. sign at dusk: an arched green board with the name carved into it and three sheep leaping over a knitted jumper with the OWASP wasp on it. At the far edge of the sign, almost lost in the dark, two amber eyes are watching.](../images/big-field-sign.jpg)
 
 Every lab in HACTU8 happens at Big Field Jumpers Co., to the same assistant and the same handful of people. The labs show you what goes wrong. These pages tell you who those people are, what they want and why they let an AI into the business in the first place.
 

@@ -106,7 +106,7 @@ JUMPER = ("M-60,-90 C-40,-72 40,-72 60,-90 L125,-66 C150,-30 162,10 172,42 L136,
 
 svg = f'''<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 {W} {H}" width="{W}" height="{H}">
 <title>Big Field Jumpers Co.</title>
-<desc>A weathered English farm sign with lettering carved into a green panel, on a wooden post. "Big Field" across the top, "Jumpers Co." across the bottom, and three white sheep jumping over a knitted jumper with the OWASP wasp on it. Behind the sign, in the dark, a wolf sits as a dark outline with glowing eyes fixed on it.</desc>
+<desc>A weathered English farm sign with lettering carved into a green panel, on a wooden post. "Big Field" across the top, "Jumpers Co." across the bottom, and three white sheep jumping over a knitted jumper with the OWASP wasp on it. At the far edge of the sign, almost lost in the dark, two amber eyes are fixed on it.</desc>
 <defs>
   <radialGradient id="sky" cx="62%" cy="30%" r="85%">
     <stop offset="0" stop-color="#3b3f45"/>
@@ -234,15 +234,17 @@ svg = f'''<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org
 <!-- shadows on the ground: the post's, and one that belongs to nobody you can see -->
 <path d="M772,852 L812,852 L430,880 L360,880 Z" fill="#000" opacity="0.6" filter="url(#soft)"/>
 
-<!-- the Wolf, sitting in the dark behind the sign, watching it -->
-<ellipse cx="1390" cy="560" rx="330" ry="420" fill="url(#lair)"/>
-<g transform="translate(1200,318) scale(0.86)">
-  <path d="{SITTING}" fill="none" stroke="#8c98a6" stroke-opacity="0.22" stroke-width="3" filter="url(#rim)"/>
-  <path d="{SITTING}" fill="#08090b"/>
-  <path d="{SITTING}" fill="none" stroke="#4c5560" stroke-opacity="0.45" stroke-width="1.2"/>
-  <g filter="url(#glow)">
-    <ellipse cx="104" cy="94" rx="9" ry="5" fill="#f0a52a"/>
-    <ellipse cx="132" cy="90" rx="9" ry="5" fill="#f0a52a"/>
+<!-- the Wolf. Nobody at Big Field has seen it. It sits behind the far edge of the
+     sign, muzzle hidden by the board, almost the colour of the night: two eyes and the
+     faintest rim of light are all that show. -->
+<ellipse cx="1330" cy="600" rx="260" ry="330" fill="url(#lair)"/>
+<g transform="translate(1167,405) scale(0.7)">
+  <path d="{SITTING}" fill="none" stroke="#8c98a6" stroke-opacity="0.07" stroke-width="3" filter="url(#rim)"/>
+  <path d="{SITTING}" fill="#0d0f12" fill-opacity="0.5"/>
+  <path d="{SITTING}" fill="none" stroke="#4c5560" stroke-opacity="0.10" stroke-width="1.2"/>
+  <g filter="url(#glow)" opacity="0.7">
+    <ellipse cx="104" cy="94" rx="8" ry="4" fill="#f0a52a"/>
+    <ellipse cx="132" cy="90" rx="8" ry="4" fill="#f0a52a"/>
   </g>
   <path d="M94,96 Q104,87 114,93 Q104,100 94,96 Z" fill="url(#eye)"/>
   <path d="M122,92 Q132,83 142,89 Q132,96 122,92 Z" fill="url(#eye)"/>
