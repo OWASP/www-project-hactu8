@@ -26,6 +26,12 @@ Each lab is a short scene in Lamb's year. You will see the farm working normally
 
 You do not need to play the labs in order, but the story makes most sense if you do. The console's **Learn** page lists them in path order, and so does `python -m hactu8 path`.
 
+## Your own Big Field
+
+Big Field is made up. Its shape is not. Every organization that puts an assistant to work has a wiki anyone can edit, an inbox full of other people's words, someone who loves a new tool and suppliers it chose to trust. Somewhere, it has a wall that is a little lower than it ought to be.
+
+The labs are the farm's year. Once you have lived through it, HACTU8 can run the same tests on your own systems, and you can write the ones only your organization needs.
+
 When you are ready, start at the beginning: the first lab begins on an ordinary day at the farm.
 
 ---
