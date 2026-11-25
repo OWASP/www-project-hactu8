@@ -1,0 +1,7 @@
+# GitBook reads the user guide from docs/guide. The guide is plain Markdown,
+# so it also reads well on GitHub without GitBook.
+root: ./docs/guide/
+
+structure:
+  readme: README.md
+  summary: SUMMARY.md
