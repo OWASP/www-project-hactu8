@@ -17,6 +17,7 @@ from hactu8.lamb.mcp_target import (
     install_attachment_tool,
 )
 from hactu8.lamb.workers import LabWorkerManager
+from tests.labs import lab_count
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -30,9 +31,10 @@ def free_port() -> int:
 class WorkerTest(unittest.TestCase):
     def test_manifest_has_all_labs_and_unique_ports(self):
         skills = catalog.discover(ROOT)
-        self.assertEqual(len(skills), 49)
-        self.assertEqual(len({skill.id for skill in skills}), 49)
-        self.assertEqual(len({skill.port for skill in skills}), 49)
+        count = lab_count()
+        self.assertEqual(len(skills), count)
+        self.assertEqual(len({skill.id for skill in skills}), count)
+        self.assertEqual(len({skill.port for skill in skills}), count)
         self.assertTrue(all((Path(skill.skill_dir) / "vulnerable_app.py").is_file() for skill in skills))
 
     def test_lazy_worker_proxy_and_reset(self):

@@ -7,6 +7,8 @@ import unittest
 from pathlib import Path
 from unittest import mock
 
+from tests.labs import lab_count
+
 ROOT = Path(__file__).resolve().parents[1]
 
 try:
@@ -53,8 +55,8 @@ class McpServerTest(unittest.TestCase):
         skills, path, lesson, missing = self.call(("list_skills", {}), ("learning_path", {}),
                                                   ("get_lesson", {"skill_id": "llm01"}),
                                                   ("get_lesson", {"skill_id": "nope"}))
-        self.assertEqual(skills.structured_content["total"], 49)
-        self.assertEqual(path.structured_content["total"], 49)
+        self.assertEqual(skills.structured_content["total"], lab_count())
+        self.assertEqual(path.structured_content["total"], lab_count())
         self.assertFalse(lesson.is_error)
         self.assertTrue(lesson.structured_content["title"])
         self.assertTrue(missing.is_error)

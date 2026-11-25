@@ -15,6 +15,7 @@ except ModuleNotFoundError:
 
 from hactu8 import protections
 from hactu8.api import create_app
+from tests.labs import lab_count
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -36,7 +37,7 @@ class ApiTest(unittest.TestCase):
         branding = self.client.get("/api/branding").json()
         self.assertEqual(branding["name"], "OWASP HACTU8")
         skills = self.client.get("/api/skills").json()
-        self.assertEqual(skills["total"], 49)
+        self.assertEqual(skills["total"], lab_count())
         coverage = self.client.get("/api/coverage").json()
         self.assertEqual(coverage["total"], len(coverage["techniques"]))
         self.assertEqual(set(coverage["counts"]), {"attack_and_defense", "attack_only", "no_lab"})

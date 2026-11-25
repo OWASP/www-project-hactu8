@@ -15,6 +15,8 @@ import sys
 import unittest
 from pathlib import Path
 
+from tests.labs import lab_count
+
 ROOT = Path(__file__).resolve().parents[1]
 CLAIM = re.compile(r"^python -m unittest discover tests\s+# (\d+) tests$", re.M)
 COUNT = ("import unittest; "
@@ -46,7 +48,7 @@ def claims():
 class ReadmeTestCounts(unittest.TestCase):
     def test_every_lab_claims_a_count(self):
         labs = {p.parent.name for p in (ROOT / "demos").glob("*/run_demo.py")}
-        self.assertEqual(len(labs), 49)
+        self.assertEqual(len(labs), lab_count())
         self.assertEqual(labs, {lab.name for lab, _ in claims()})
 
     def test_counts_match_the_suites(self):
